@@ -2,6 +2,16 @@ import { IConfig } from 'umi-types';
 
 // ref: https://umijs.org/config/
 const config: IConfig =  {
+
+  routes: [
+    // userLogin
+    {
+      path:'/user',
+      component: '../layouts/UserLayout.tsx'
+    }
+  ],
+
+
   treeShaking: true,
   plugins: [
     // ref: https://umijs.org/plugin/umi-plugin-react.html
