@@ -8,6 +8,14 @@ const config: IConfig =  {
     {
       path:'/user',
       component: '../layouts/UserLayout.tsx'
+    },
+    {
+      path:'/data',
+      component: '../layouts/BasicLayout.tsx'
+    },
+    {
+      path:'/signup',
+      component: '../layouts/SignUpLayout.tsx'
     }
   ],
 
