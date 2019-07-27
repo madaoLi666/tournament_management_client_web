@@ -1,3 +1,7 @@
+import { IRoute } from 'umi-types';
+import uRoutes, { MAIN_PATH } from '@/config/router';
+
+
 
 export const dva = {
   config: {
@@ -7,3 +11,13 @@ export const dva = {
     },
   },
 };
+
+export function patchRoutes(routes: IRoute) {
+
+  routes.forEach((v:IRoute) => {
+    if(v.path === MAIN_PATH){
+      v.routes = uRoutes;
+    }
+  });
+  console.log(routes);
+}
