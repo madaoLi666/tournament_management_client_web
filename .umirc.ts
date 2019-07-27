@@ -9,13 +9,8 @@ const config: IConfig =  {
   routes:[
     // 登陆页面 fix
     { path: '/login', component: './Login/Login.tsx', exact: true },
-    // 报名页面
-    {
-      path: '/enroll', exact: true,
-      routes: [
-        {path: './', component: './Enroll/Main.tsx'},
-      ]
-    },
+    // 报名页面 fix
+    { path: '/enroll', exact: true, routes: [{path: './', component: './Enroll/Main.tsx'},] },
     // 主用户界面 - 这个位置是动态设置的
     {
       path: '/',

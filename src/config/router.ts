@@ -21,9 +21,8 @@ import { IRoute } from 'umi-types';
 
 const uRoutes:Array<IRoute> = [
   {
-    path: '/', component: require('../pages/index.tsx').default
+    path: '/', component: require('../pages/index.tsx').default, isRender: false, name: ''
   },
-  // { path: '/', component: './index.tsx'},
 ];
 
 export const MAIN_PATH = '/';
