@@ -9,7 +9,6 @@ import { IRoute } from 'umi-types';
 * @Routes - 包裹此级中routes组件，需在Routes的组件中配置children
 * @routes - 此路径后的子路由
 * */
-
 // export interface IRoute {
 //   path?: string;
 //   component?: string;
@@ -21,8 +20,13 @@ import { IRoute } from 'umi-types';
 
 const uRoutes:Array<IRoute> = [
   {
-    path: '/', component: require('../pages/index.tsx').default, isRender: false, name: ''
+    path: '/a', isRender: true, name: '登陆模块',
+    routes: [
+      { path: '/a', component: require('../pages/Login/Login.tsx').default , isRender: true, name: '登陆页面'}
+    ],
   },
+  { path: '/b', component: require('../pages/Enroll/Main.tsx').default, isRender: true, name: '报名模块' },
+  { path: '/', component: require('../pages/index.tsx').default, isRender: false, name: '' },
 ];
 
 export const MAIN_PATH = '/';

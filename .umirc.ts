@@ -14,7 +14,7 @@ const config: IConfig =  {
     // 主用户界面 - 这个位置是动态设置的
     {
       path: '/',
-      Routes: ['./src/layouts/index.tsx'],
+      Routes: ['./src/layouts/BasicLayout.tsx'],
       routes: []
     },
   ],
