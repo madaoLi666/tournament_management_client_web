@@ -242,45 +242,55 @@ let ItemHandler = function (itemProps: ItemProps, formStyle: FormStyle, getField
     }
 };
 
-function InitialForm(props:any) {
-    
-    React.useEffect(() => {
-        const { form, handler } = props;
-        if (handler) {
-            handler(handleSubmit, form.resetFields, form.setFieldsValue);
-        }
-    })
-
-    function handleSubmit() {
-        let res: any = false;
-        props.form.validateFields((err:any,value:any) => {
-            if (!err) {
-                res = value;
-            }
-        });
-        return res;
+class InitialForm extends React.Component<FormProps,{}>{
+    constructor(props: any){
+      super(props);
+      this.handleSubmit = this.handleSubmit.bind(this);
     }
-
-    const { form, formItem, formStyle } = props;
-    const { getFieldDecorator, setFields } = form;
-    let formDOM: any[] = [];
-    formItem.map((v: ItemProps) => {
+  
+    componentDidMount(): void {
+      const { form ,handler } = this.props;
+      if(handler){
+        // 将提交方法、重置方法、设置值 传出
+        handler(this.handleSubmit, form.resetFields, form.setFieldsValue);
+      }
+    }
+  
+    // 回return出去一个boolean
+    handleSubmit():any {
+      let res: any = false;
+      this.props.form.validateFields((err, value) => {
+        if(!err) {
+          // 这里把表单验证值返回父类元素
+          res = value;
+        }
+      });
+      return res;
+    };
+  
+    render() {
+      const {form, formItem, formStyle} = this.props;
+      // 拿表单绑定方法
+      const { getFieldDecorator, setFields} = form;
+      // 渲染表单信息
+      let formDOM:any[] = [];
+      formItem.map(v => {
         formDOM.push(ItemHandler(v,formStyle,getFieldDecorator,setFields));
-    });
-
-    return (
+      });
+      // @ts-ignore
+      return (
         <div>
-            <Form
-                layout={formStyle.formLayout}
-                labelCol={formStyle.formItemLayout.labelCol}
-                wrapperCol={formStyle.formItemLayout.wrapperCol}            
-            >
-                {formDOM}
-            </Form>
+          <Form
+            layout={formStyle.formLayout}
+            labelCol={formStyle.formItemLayout.labelCol}
+            wrapperCol={formStyle.formItemLayout.wrapperCol}
+          >
+            {formDOM}
+          </Form>
         </div>
-    );
-}
-
-
-export default Form.create<FormProps>({})(InitialForm);
+      );
+    }
+  }
+  
+  export default Form.create<FormProps>({})(InitialForm);
 
