@@ -22,6 +22,7 @@
 
 # ignore my private note
 /PRIVATENOTE.md
+
 # IDEs and editors
 /.idea
 */.idea
