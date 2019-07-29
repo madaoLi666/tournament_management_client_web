@@ -2,16 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4f4dfbe7-62e3-46a7-bde2-fd81e7e54b6e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/layouts/BasicLayout.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/layouts/BasicLayout.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/layouts/SignUpLayout.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/layouts/SignUpLayout.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/menu.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.umirc.ts" beforeDir="false" afterPath="$PROJECT_DIR$/.umirc.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/AntdForm/InitialForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/AntdForm/InitialForm.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/config/router.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/router.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tslint.yml" beforeDir="false" afterPath="$PROJECT_DIR$/tslint.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/layouts/SignUpLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/layouts/SignUpLayout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/Login/Login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Login/Login.tsx" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -25,23 +21,91 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/layouts/BasicLayout.tsx">
+        <entry file="file://$PROJECT_DIR$/.umirc.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="104">
-              <caret line="59" column="18" lean-forward="true" selection-start-line="59" selection-start-column="18" selection-end-line="59" selection-end-column="18" />
+            <state relative-caret-position="240">
+              <caret line="16" column="6" lean-forward="true" selection-start-line="16" selection-start-column="6" selection-end-line="16" selection-end-column="6" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/layouts/SignUpLayout.tsx">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="360">
+              <caret line="21" column="24" lean-forward="true" selection-start-line="21" selection-start-column="24" selection-end-line="21" selection-end-column="24" />
               <folding>
-                <element signature="e#0#51#0" expanded="true" />
-                <element signature="n#!!block;n#initialMenuDOM#0" />
+                <element signature="e#0#31#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/config/router.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="259">
+              <caret line="22" column="78" selection-start-line="22" selection-start-column="78" selection-end-line="22" selection-end-column="78" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/pages/Login/Login.tsx">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="329">
+              <caret line="44" column="10" lean-forward="true" selection-start-line="44" selection-start-column="10" selection-end-line="44" selection-end-column="10" />
+              <folding>
+                <element signature="e#0#26#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/config/router.ts">
+        <entry file="file://$PROJECT_DIR$/src/components/AntdForm/InitialForm.tsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="263">
-              <caret line="28" column="4" selection-start-line="28" selection-start-column="4" selection-end-line="28" selection-end-column="4" />
+            <state relative-caret-position="-717">
+              <caret line="255" column="56" lean-forward="true" selection-start-line="255" selection-start-column="56" selection-end-line="255" selection-end-column="56" />
+              <folding>
+                <element signature="e#0#51#0" expanded="true" />
+                <element signature="n#!!block;n#ItemList#0" />
+                <element signature="e#383#951#0" />
+                <element signature="n#!!block;n#ItemProps#0" />
+                <element signature="n#!!block;n#FormStyle#0" />
+                <element signature="n#!!block;n#FormProps#0" />
+                <element signature="e#1992#2522#0" />
+                <element signature="e#2068#2106#0" />
+                <element signature="e#2223#2267#0" />
+                <element signature="e#2352#2400#0" />
+                <element signature="e#2478#2518#0" />
+                <element signature="e#2567#2764#0" />
+                <element signature="e#3050#3334#0" />
+                <element signature="e#3339#3574#0" />
+                <element signature="e#3595#4333#0" />
+                <element signature="e#3780#3992#0" />
+                <element signature="e#3843#3982#0" />
+                <element signature="e#3996#4060#0" />
+                <element signature="e#4229#4311#0" />
+                <element signature="e#4338#5082#0" />
+                <element signature="e#4499#4721#0" />
+                <element signature="e#4562#4711#0" />
+                <element signature="e#4725#4812#0" />
+                <element signature="e#4991#5059#0" />
+                <element signature="e#5087#5759#0" />
+                <element signature="e#5242#5455#0" />
+                <element signature="e#5305#5445#0" />
+                <element signature="e#5459#5526#0" />
+                <element signature="e#5677#5736#0" />
+                <element signature="e#5764#5900#0" />
+                <element signature="e#5905#6097#0" />
+                <element signature="e#6102#6322#0" />
+                <element signature="e#6327#6386#0" />
+                <element signature="e#6479#6878#0" />
+                <element signature="e#6500#6867#0" />
+                <element signature="e#6882#7222#0" />
+                <element signature="e#6903#7211#0" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -66,6 +130,7 @@
       <find>LinkList</find>
       <find>key</find>
       <find>prop</find>
+      <find>getFieldDecorator</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -76,24 +141,26 @@
       <list>
         <option value="$PROJECT_DIR$/src/utils/request.ts" />
         <option value="$PROJECT_DIR$/node_modules/umi/bin/umi.js" />
-        <option value="$PROJECT_DIR$/src/pages/Login/Login.tsx" />
         <option value="$PROJECT_DIR$/src/pages/Enroll/Main.tsx" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/package.json" />
         <option value="$PROJECT_DIR$/yarn-error.log" />
-        <option value="$PROJECT_DIR$/.umirc.ts" />
         <option value="$PROJECT_DIR$/PRIVATENOTE.md" />
         <option value="$PROJECT_DIR$/src/utils/menu.ts" />
         <option value="$PROJECT_DIR$/src/app.ts" />
-        <option value="$PROJECT_DIR$/src/layouts/BasicLayout.tsx" />
         <option value="$PROJECT_DIR$/tslint.yml" />
+        <option value="$PROJECT_DIR$/src/layouts/BasicLayout.tsx" />
         <option value="$PROJECT_DIR$/src/config/router.ts" />
+        <option value="$PROJECT_DIR$/src/layouts/SignUpLayout.tsx" />
+        <option value="$PROJECT_DIR$/.umirc.ts" />
+        <option value="$PROJECT_DIR$/src/pages/Login/Login.tsx" />
+        <option value="$PROJECT_DIR$/src/components/AntdForm/InitialForm.tsx" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="97" />
-    <option name="y" value="35" />
+    <option name="x" value="243" />
+    <option name="y" value="23" />
     <option name="width" value="1175" />
     <option name="height" value="796" />
   </component>
@@ -103,6 +170,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -121,11 +189,29 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="config" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="userEntryPage" type="b2602c69:ProjectViewProjectNode" />
+              <item name="userEntryPage" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="layouts" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="userEntryPage" type="b2602c69:ProjectViewProjectNode" />
+              <item name="userEntryPage" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="pages" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="userEntryPage" type="b2602c69:ProjectViewProjectNode" />
+              <item name="userEntryPage" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="pages" type="462c0819:PsiDirectoryNode" />
+              <item name="Login" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -172,17 +258,18 @@
       <workItem from="1564231008968" duration="2809000" />
       <workItem from="1564244604655" duration="1804000" />
       <workItem from="1564297759030" duration="4572000" />
+      <workItem from="1564407813877" duration="2036000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="21583000" />
+    <option name="totallyTimeSpent" value="24172000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="97" y="35" width="1175" height="796" extended-state="0" />
+    <frame x="243" y="23" width="1175" height="796" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2677643" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14731368" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
@@ -197,7 +284,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="TypeScript" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.21511628" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.21511628" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -271,13 +358,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="63">
           <caret line="3" column="35" selection-start-line="3" selection-start-column="35" selection-end-line="3" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/pages/Login/Login.tsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="42">
-          <caret line="2" column="15" selection-start-line="2" selection-start-column="15" selection-end-line="2" selection-end-column="15" />
         </state>
       </provider>
     </entry>
@@ -386,13 +466,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.umirc.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5">
-          <caret line="8" column="10" lean-forward="true" selection-start-line="8" selection-start-column="10" selection-end-line="8" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tslint.yml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="231">
@@ -402,8 +475,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/layouts/BasicLayout.tsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="104">
-          <caret line="59" column="18" lean-forward="true" selection-start-line="59" selection-start-column="18" selection-end-line="59" selection-end-column="18" />
+        <state relative-caret-position="304">
+          <caret line="65" column="7" lean-forward="true" selection-start-line="65" selection-start-column="7" selection-end-line="65" selection-end-column="7" />
           <folding>
             <element signature="e#0#51#0" expanded="true" />
             <element signature="n#!!block;n#initialMenuDOM#0" />
@@ -411,10 +484,90 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/layouts/SignUpLayout.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="42">
+          <caret line="2" column="1" lean-forward="true" selection-start-line="2" selection-start-column="1" selection-end-line="2" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/layouts/SignUpLayout.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="21" column="24" lean-forward="true" selection-start-line="21" selection-start-column="24" selection-end-line="21" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pages/Login/Login.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="329">
+          <caret line="44" column="10" lean-forward="true" selection-start-line="44" selection-start-column="10" selection-end-line="44" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/config/router.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="263">
-          <caret line="28" column="4" selection-start-line="28" selection-start-column="4" selection-end-line="28" selection-end-column="4" />
+        <state relative-caret-position="259">
+          <caret line="22" column="78" selection-start-line="22" selection-start-column="78" selection-end-line="22" selection-end-column="78" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.umirc.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" column="6" lean-forward="true" selection-start-line="16" selection-start-column="6" selection-end-line="16" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/AntdForm/InitialForm.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-717">
+          <caret line="255" column="56" lean-forward="true" selection-start-line="255" selection-start-column="56" selection-end-line="255" selection-end-column="56" />
+          <folding>
+            <element signature="e#0#51#0" expanded="true" />
+            <element signature="n#!!block;n#ItemList#0" />
+            <element signature="e#383#951#0" />
+            <element signature="n#!!block;n#ItemProps#0" />
+            <element signature="n#!!block;n#FormStyle#0" />
+            <element signature="n#!!block;n#FormProps#0" />
+            <element signature="e#1992#2522#0" />
+            <element signature="e#2068#2106#0" />
+            <element signature="e#2223#2267#0" />
+            <element signature="e#2352#2400#0" />
+            <element signature="e#2478#2518#0" />
+            <element signature="e#2567#2764#0" />
+            <element signature="e#3050#3334#0" />
+            <element signature="e#3339#3574#0" />
+            <element signature="e#3595#4333#0" />
+            <element signature="e#3780#3992#0" />
+            <element signature="e#3843#3982#0" />
+            <element signature="e#3996#4060#0" />
+            <element signature="e#4229#4311#0" />
+            <element signature="e#4338#5082#0" />
+            <element signature="e#4499#4721#0" />
+            <element signature="e#4562#4711#0" />
+            <element signature="e#4725#4812#0" />
+            <element signature="e#4991#5059#0" />
+            <element signature="e#5087#5759#0" />
+            <element signature="e#5242#5455#0" />
+            <element signature="e#5305#5445#0" />
+            <element signature="e#5459#5526#0" />
+            <element signature="e#5677#5736#0" />
+            <element signature="e#5764#5900#0" />
+            <element signature="e#5905#6097#0" />
+            <element signature="e#6102#6322#0" />
+            <element signature="e#6327#6386#0" />
+            <element signature="e#6479#6878#0" />
+            <element signature="e#6500#6867#0" />
+            <element signature="e#6882#7222#0" />
+            <element signature="e#6903#7211#0" />
+          </folding>
         </state>
       </provider>
     </entry>

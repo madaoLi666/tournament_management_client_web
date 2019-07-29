@@ -19,12 +19,6 @@ import { IRoute } from 'umi-types';
 // }
 
 const uRoutes:Array<IRoute> = [
-  {
-    path: '/a', isRender: true, name: '登陆模块',
-    routes: [
-      { path: '/a', component: require('../pages/Login/Login.tsx').default , isRender: true, name: '登陆页面'}
-    ],
-  },
   { path: '/b', component: require('../pages/Enroll/Main.tsx').default, isRender: true, name: '报名模块' },
   { path: '/', component: require('../pages/index.tsx').default, isRender: false, name: '' },
 ];

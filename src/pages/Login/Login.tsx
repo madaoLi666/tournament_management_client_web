@@ -1,7 +1,8 @@
 import React from 'react';
-import InitialForm,{ItemProps} from '@/components/AntdForm/InitialForm.tsx';
+import InitialForm,{ ItemProps, FormStyle } from '@/components/AntdForm/InitialForm.tsx';
 
-let formStyle = {   //formStyle
+
+let formStyle:FormStyle = {
   formLayout: 'inline',
   formItemLayout: {
     wrapperCol: {},
@@ -9,7 +10,7 @@ let formStyle = {   //formStyle
   }
 };
 
-let formItem = [    //field,wrapperCol,type
+let formItem:Array<ItemProps> = [
   {
     type: 'input', field: 'username', rules: [{required: true, message: '请输入账号'}],
     placeholder: '请输入账号',
@@ -30,26 +31,20 @@ let formItem = [    //field,wrapperCol,type
   }
 ];
 
-export default function Login(props: any) {
+export default class Login extends React.Component {
 
-  const [state,setstate] = React.useState(props)
+  render(): React.ReactNode {
+    return (
+      <div>
+        <p>Login.tsx</p>
+        {/*InitialForm*/}
+        <InitialForm
+          formItem={formItem}
+          handler={null}
+          formStyle={formStyle}
+        />
+      </div>
 
-
-  function formDataSubmit () {}
-  function formDataReset () {}
-
-  function formDataHandler(submit: any, reset: any) {
-    console.log("test")
+    );
   }
-
-  return (
-    <div>
-      <InitialForm    //InitialForm
-        formItem={formItem}
-        handler={formDataHandler}
-        formStyle={formStyle}
-      />
-    </div>
-  
-  );
 }

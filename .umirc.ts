@@ -8,7 +8,13 @@ const config: IConfig =  {
   //
   routes:[
     // 登陆页面 fix
-    { path: '/login', component: './Login/Login.tsx', exact: true },
+    {
+      path: '/login', name: '登陆模块',
+      Routes: ['./src/layouts/SignUpLayout.tsx'],
+      routes: [
+        { path: '/login', component: './Login/Login.tsx', name: '登陆页面'}
+      ],
+    },
     // 报名页面 fix
     { path: '/enroll', exact: true, routes: [{path: './', component: './Enroll/Main.tsx'},] },
     // 主用户界面 - 这个位置是动态设置的
