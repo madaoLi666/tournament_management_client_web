@@ -212,7 +212,7 @@ let ItemHandler = function (itemProps: ItemProps, formStyle: FormStyle, getField
 
 
   // 是否为vertical - 不需要渲染
-  if(formStyle.formLayout === 'vertical'){
+  if(formStyle.formLayout === 'vertical'||'horizontal'){
     // vertical
     targetDOM = (
       <Form.Item label={itemProps.label} key={itemProps.field}>
@@ -241,7 +241,7 @@ let ItemHandler = function (itemProps: ItemProps, formStyle: FormStyle, getField
         key={itemProps.field}
         labelCol={itemProps.labelCol}
         wrapperCol={itemProps.wrapperCol}
-        // width 有可能不能修改
+        // width 有可能不能修改 - 这里 marginBottom考虑保留
         style={{width: width, marginBottom: itemProps['margin_bottom']}}
       >
         {itemDOM}
@@ -252,34 +252,34 @@ let ItemHandler = function (itemProps: ItemProps, formStyle: FormStyle, getField
 
 
   // 判断formStyle中是否有layout的值 没有return带labelCol的
-  if(formStyle.formLayout === 'inline'){
-    return (
-      <Form.Item
-        label={itemProps.label}
-        key={itemProps.field}
-        labelCol={itemProps.labelCol}
-        wrapperCol={itemProps.wrapperCol}
-        // width 有可能不能修改
-        style={{width: width, marginBottom: itemProps['margin_bottom']}}
-      >
-        {itemDOM}
-        <p style={{color: 'red', fontSize: '10px'}}>{itemProps.tip}</p>
-      </Form.Item>
-    );
-  }else{
-    return (
-      <Form.Item
-        label={itemProps.label}
-        key={itemProps.field}
-        colon={true}
-        // width 有可能不能修改
-        style={{width: width, marginBottom: itemProps['margin_bottom']}}
-      >
-        {itemDOM}
-        <p style={{color: 'red', fontSize: '10px'}}>{itemProps.tip}</p>
-      </Form.Item>
-    );
-  }
+  // if(formStyle.formLayout === 'inline'){
+  //   return (
+  //     <Form.Item
+  //       label={itemProps.label}
+  //       key={itemProps.field}
+  //       labelCol={itemProps.labelCol}
+  //       wrapperCol={itemProps.wrapperCol}
+  //       // width 有可能不能修改
+  //       style={{width: width, marginBottom: itemProps['margin_bottom']}}
+  //     >
+  //       {itemDOM}
+  //       <p style={{color: 'red', fontSize: '10px'}}>{itemProps.tip}</p>
+  //     </Form.Item>
+  //   );
+  // }else{
+  //   return (
+  //     <Form.Item
+  //       label={itemProps.label}
+  //       key={itemProps.field}
+  //       colon={true}
+  //       // width 有可能不能修改
+  //       style={{width: width, marginBottom: itemProps['margin_bottom']}}
+  //     >
+  //       {itemDOM}
+  //       <p style={{color: 'red', fontSize: '10px'}}>{itemProps.tip}</p>
+  //     </Form.Item>
+  //   );
+  // }
 
   return targetDOM;
 
@@ -321,12 +321,15 @@ class InitialForm extends React.Component<FormProps,{}>{
       formDOM.push(ItemHandler(v,formStyle,getFieldDecorator,setFields));
     });
     // @ts-ignore
+
+    // 是否需要全局的formItemLayout
+    const needFormItemLayout:boolean = formStyle.formLayout === 'horizontal';
     return (
       <div>
         <Form
           layout={formStyle.formLayout}
-          labelCol={formStyle.formItemLayout.labelCol}
-          wrapperCol={formStyle.formItemLayout.wrapperCol}
+          labelCol={needFormItemLayout ? formStyle.formItemLayout.labelCol : {}}
+          wrapperCol={needFormItemLayout ? formStyle.formItemLayout.wrapperCol : {}}
         >
           {formDOM}
         </Form>
