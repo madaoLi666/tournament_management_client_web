@@ -17,9 +17,6 @@
 .umi
 .umi-production
 
-# ignore the idea document
-./idea
-
 # ignore my private note
 /PRIVATENOTE.md
 

@@ -3,7 +3,7 @@ import InitialForm,{ ItemProps, FormStyle } from '@/components/AntdForm/InitialF
 
 
 let formStyle:FormStyle = {
-  formLayout: 'inline',
+  formLayout: 'vertical',
   formItemLayout: {
     wrapperCol: {},
     labelCol: {}
@@ -12,22 +12,15 @@ let formStyle:FormStyle = {
 
 let formItem:Array<ItemProps> = [
   {
-    type: 'input', field: 'username', rules: [{required: true, message: '请输入账号'}],
+    type: 'input', field: 'username', rules: [{required: true, message: '请输入账号'}],label: 'username',
     placeholder: '请输入账号',
-    height: '40px',
-    width: '100%',
-    wrapperCol:{
-      sm: {span: 24, offset: 0}
-    }
+    height: '40px'
   },
   {
-    type: 'input', field: 'password', rules: [{required: true, message: '请输入密码'}],
+    type: 'input', field: 'password', rules: [{required: true, message: '请输入密码'}],label: 'password',
     placeholder: '请输入密码',
     height: '40px',
-    width: '100%',
-    wrapperCol:{
-      sm: {span: 24, offset: 0}
-    }
+    width: '400px'
   }
 ];
 

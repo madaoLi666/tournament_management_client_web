@@ -75,21 +75,7 @@ let ItemHandler = function (itemProps: ItemProps, formStyle: FormStyle, getField
     height: string = '',
     labelCol :object = {},
     wrapperCol: object ={};
-  // 是否是inline
-  if(formStyle.formLayout === 'inline'){
-    if(itemProps.hasOwnProperty('width') && itemProps.width !== undefined){
-      width = itemProps.width;
-    }
-    if(itemProps.hasOwnProperty('labelCol')&& itemProps.hasOwnProperty('label') && itemProps.labelCol !== undefined){
-      labelCol = itemProps.labelCol;
-    }
-    if(itemProps.hasOwnProperty('wrapperCol') && itemProps.wrapperCol !== undefined){
-      wrapperCol = itemProps.wrapperCol;
-    }
-    if(itemProps.hasOwnProperty('height') && itemProps.height !== undefined) {
-      height = itemProps.height;
-    }
-  }
+
   // item填充
   switch (itemProps.type) {
     case 'text':
@@ -221,6 +207,50 @@ let ItemHandler = function (itemProps: ItemProps, formStyle: FormStyle, getField
       break;
   }
 
+  // 最后return回去的DOM
+  let targetDOM:React.ReactNode;
+
+
+  // 是否为vertical - 不需要渲染
+  if(formStyle.formLayout === 'vertical'){
+    // vertical
+    targetDOM = (
+      <Form.Item label={itemProps.label} key={itemProps.field}>
+        {itemDOM}
+        <p style={{color: 'red', fontSize: '10px'}}>{itemProps.tip}</p>
+      </Form.Item>
+    );
+  }else if(formStyle.formLayout === 'inline'){
+    // inline
+    if(itemProps.hasOwnProperty('width') && itemProps.width !== undefined){
+      width = itemProps.width;
+    }
+    if(itemProps.hasOwnProperty('labelCol')&& itemProps.hasOwnProperty('label') && itemProps.labelCol !== undefined){
+      labelCol = itemProps.labelCol;
+    }
+    if(itemProps.hasOwnProperty('wrapperCol') && itemProps.wrapperCol !== undefined){
+      wrapperCol = itemProps.wrapperCol;
+    }
+    if(itemProps.hasOwnProperty('height') && itemProps.height !== undefined) {
+      height = itemProps.height;
+    }
+
+    targetDOM = (
+      <Form.Item
+        label={itemProps.label}
+        key={itemProps.field}
+        labelCol={itemProps.labelCol}
+        wrapperCol={itemProps.wrapperCol}
+        // width 有可能不能修改
+        style={{width: width, marginBottom: itemProps['margin_bottom']}}
+      >
+        {itemDOM}
+        <p style={{color: 'red', fontSize: '10px'}}>{itemProps.tip}</p>
+      </Form.Item>
+    );
+  }
+
+
   // 判断formStyle中是否有layout的值 没有return带labelCol的
   if(formStyle.formLayout === 'inline'){
     return (
@@ -250,6 +280,8 @@ let ItemHandler = function (itemProps: ItemProps, formStyle: FormStyle, getField
       </Form.Item>
     );
   }
+
+  return targetDOM;
 
 };
 
