@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect } from 'react';
 import {
-  Form, Input, InputNumber, Switch, Button, Select, Checkbox, Radio, DatePicker,
+  Form, Input, InputNumber, Switch, Button, Select, Checkbox, Radio, DatePicker,Icon
 } from 'antd';
 import moment from 'moment';
 import { FormComponentProps} from 'antd/lib/form';
@@ -45,6 +45,7 @@ export interface ItemProps{
   label?:string|React.ReactNode; initialValue?: any;
   tip?:string|React.ReactNode;
   rules?:any; trigger?:string; placeholder?: string;
+  isHide?:boolean;
   //checkbox select radio_group
   list?:Array<ItemList>;
   //inputnumber

@@ -32,3 +32,10 @@ line-height: 44px;
     padding: 0 16px;
     text-align: center;
 }
+
+.desc h2 {
+    font-family: initial;
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: 2px;
+}

@@ -12,7 +12,8 @@ const config: IConfig =  {
       path: '/login', name: '登陆模块',
       Routes: ['./src/layouts/UserLayout.tsx'],
       routes: [
-        { path: '/login', component: './Login/Login.tsx', name: '登陆页面'}
+        { path: '/login', component: './Login/Login.tsx', name: '个人登陆页面'},
+        { path: '/login/company', component: './Login/CompanyLogin.tsx', name: '单位登陆页面' }
       ],
     },
     // 报名页面 fix

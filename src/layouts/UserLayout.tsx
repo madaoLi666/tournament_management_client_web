@@ -12,12 +12,12 @@ export default function LoginLayout(props:any) {
         <div className={styles.container}>
         <div className={styles.content}>
             <div className={styles.top}>
+                <div className={styles.desc}><h2>轮滑赛事报名系统</h2></div>
                 <div className={styles.header}>
                     <Link to="/">
                         <span className={styles.title}>This is a link</span>
                     </Link>
                 </div>
-                <div className={styles.desc}><h2>登陆</h2></div>
             </div>
         </div>
         <main>
