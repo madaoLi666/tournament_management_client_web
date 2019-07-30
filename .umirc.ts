@@ -10,7 +10,7 @@ const config: IConfig =  {
     // 登陆页面 fix
     {
       path: '/login', name: '登陆模块',
-      Routes: ['./src/layouts/SignUpLayout.tsx'],
+      Routes: ['./src/layouts/UserLayout.tsx'],
       routes: [
         { path: '/login', component: './Login/Login.tsx', name: '登陆页面'}
       ],

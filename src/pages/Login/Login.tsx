@@ -1,5 +1,6 @@
 import React from 'react';
 import InitialForm,{ ItemProps, FormStyle } from '@/components/AntdForm/InitialForm.tsx';
+import styles from './Login.css';
 
 
 let formStyle:FormStyle = {
