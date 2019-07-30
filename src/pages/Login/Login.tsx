@@ -1,5 +1,6 @@
 import React from 'react';
 import InitialForm,{ ItemProps, FormStyle } from '@/components/AntdForm/InitialForm.tsx';
+import request from '@/utils/request.ts';
 import styles from './Login.css';
 import { Card, Button, Icon,Tabs, Tag } from 'antd';
 import router from 'umi/router';
@@ -56,34 +57,35 @@ export default class Login extends React.Component {
   public change=()=> {
     console.log("切换到单位报名");
     router.push('/login/company')
-  }
+  };
 
   // 获取验证码
   public Verification=() => {
 
-  }
+  };
 
   // 个人报名表单提交
   public PersonHandle=() => {
 
-  }
+  };
 
   // 单位报名表单提交
   public CompanyHandle=() => {
 
-  }
+  };
+
 
   render(): React.ReactNode {
     return (
-      <div className={styles.CardForm}>  
-              
+      <div className={styles.CardForm}>
+
         <Card title="个人登陆" extra={<div><Tag color="magenta">单位登陆点击这里➡</Tag><Button onClick={this.change} type="primary" >单位登陆<Icon type="right"/></Button></div>} style={{width:"40%",height:"400px"}}  >
           <Tabs defaultActiveKey="1">
             <TabPane tab={<span><Icon type="user"/>账号密码登陆</span>} key="1" >
               <InitialForm
                 formItem={formItem}
                 handler={this.PersonHandle}
-                formStyle={formStyle}            
+                formStyle={formStyle}
               />
               <Button type="primary" style={{marginLeft:"260px"}} onClick={this.PersonHandle} >登陆</Button>
             </TabPane>
@@ -91,12 +93,12 @@ export default class Login extends React.Component {
               <InitialForm
                 formItem={MobileFormItem}
                 handler={null}
-                formStyle={MobileFormStyle}            
+                formStyle={MobileFormStyle}
               />
               <Button type="primary" style={{marginLeft:"220px"}} onClick={this.Verification} >获取验证码</Button>
             </TabPane>
           </Tabs>
-        
+
         </Card>
       </div>
 

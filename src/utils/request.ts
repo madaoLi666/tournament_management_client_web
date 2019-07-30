@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios,{ AxiosRequestConfig, AxiosResponse } from 'axios';
 
 const BASE_URL:string = '';
 const TIMEOUT:number = 1000;
@@ -10,13 +10,30 @@ let axiosInstance = axios.create({
 });
 
 //
-axiosInstance.interceptors.request.use((config:object):object => {
+axiosInstance.interceptors.request.use((config:AxiosRequestConfig):AxiosRequestConfig => {
+  const { method, data } = config;
+  let { url } = config;
+  // 对get方法的数据进行拼接
+  if(method === 'get'){
+    if(data && Object.keys(data).length !== 0){
+      url += '?';
+      for(let key in data){
+        if(data.hasOwnProperty(key)){
+          url += `${key}=${data[key]}&`;
+        }
+      }
+      // @ts-ignore
+      config.url = url.slice(0,-1);
+      console.log(url);
+    }
+  }
   return config;
 });
 
 //
-axiosInstance.interceptors.response.use((response:any):any => {
-  return response;
+axiosInstance.interceptors.response.use((response:AxiosResponse):any => {
+  // 对response的状况进行修改
+  return response.data;
 });
 
 export default axiosInstance;
