@@ -1,0 +1,12 @@
+.content {
+    margin-left: 34%;
+    max-width: 34%;
+}
+
+.content p {
+    font-size: 26px
+}
+
+.content .inline {
+    margin-left: 76%;
+}
