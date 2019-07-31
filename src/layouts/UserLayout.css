@@ -1,41 +1,19 @@
 .container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: auto;
-    background-image: url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg');
-    background-repeat: no-repeat;
-    background-position: center 110px;
-    background-size: 100%;
-    background-color: #F8F8F8;
+  height: 100vh;
+  background-image: url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg');
+  background-repeat: no-repeat;
+  background-size: 100%;
 }
-
-.content {
-    padding: 32px 0;
-}
-
-.top {
-    text-align: center;
-}
-
 .header {
-height: 44px;
-line-height: 44px;
+  background-color: #f0f2f5;
+  text-align: center;
+  height: 10vh;
 }
 
-.header a {
-    text-decoration: none;
-}
-
-.clsString {
-    margin: 48px 0 24px 0;
-    padding: 0 16px;
-    text-align: center;
-}
-
-.desc h2 {
-    font-family: initial;
-    font-size: 28px;
-    font-weight: 500;
-    letter-spacing: 2px;
+.footer {
+  background-color: #f0f2f5;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 }

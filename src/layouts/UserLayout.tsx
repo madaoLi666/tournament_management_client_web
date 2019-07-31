@@ -6,26 +6,19 @@ import { Layout } from 'antd';
 
 const { Header, Content, Footer } = Layout;
 
-export default function LoginLayout(props:any) {
+export default function LoginLayout(props: any) {
 
-    return (
-        <div className={styles.container}>
-        <div className={styles.content}>
-            <div className={styles.top}>
-                <div className={styles.desc}><h2>轮滑赛事报名系统</h2></div>
-                <div className={styles.header}>
-                    <Link to="/">
-                        <span className={styles.title}>This is a link</span>
-                    </Link>
-                </div>
-            </div>
-        </div>
-        <main>
-            {props.children}
-        </main>
-        <footer className={styles.clsString}>
-            This is a footer
-        </footer>
-    </div>
-    )
+  return (
+    <Layout>
+      <Header className={styles.header}>
+        This is a header
+      </Header>
+      <Content className={styles.container}>
+        {props.children}
+      </Content>
+      <Footer className={styles.footer}>
+        This is a footer
+      </Footer>
+    </Layout>
+  );
 }

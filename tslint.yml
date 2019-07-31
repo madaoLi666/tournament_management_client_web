@@ -6,8 +6,8 @@ jsRules:
 rules:
   eofline: true
   no-console: false
+  jsx-no-lambda: false
   no-construct: true
   no-debugger: true
   no-reference: true
-  jsx-no-lambda: false
 

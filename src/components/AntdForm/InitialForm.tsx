@@ -67,15 +67,18 @@ export interface FormProps extends FormComponentProps{
   formItem: Array<ItemProps>;
   handler: any;
   formStyle: FormStyle;
+  // 保留 upDateKey
+  upDateKey?: any
 }
 
 let ItemHandler = function (itemProps: ItemProps, formStyle: FormStyle, getFieldDecorator: any, setFields: any): ReactNode{
   let itemDOM:any;
+  // height 是否需要保留 - jcedo 2019-07-31
   // 样式 default
-  let width :string = '',
-    height: string = '',
-    labelCol :object = {},
-    wrapperCol: object ={};
+  // let width :string = '',
+  //   height: string = '',
+  //   labelCol :object = {},
+  //   wrapperCol: object ={};
 
   // item填充
   switch (itemProps.type) {
@@ -90,7 +93,7 @@ let ItemHandler = function (itemProps: ItemProps, formStyle: FormStyle, getField
         itemProps.field,
         { initialValue: itemProps.initialValue, rules:itemProps.rules},
       )(
-        <Input style={{height: height}} placeholder={itemProps.placeholder} autoComplete='off'  />,
+        <Input style={{height: itemProps.height}} placeholder={itemProps.placeholder} autoComplete='off'  />,
       );
       break;
     case 'input_number':
@@ -210,13 +213,15 @@ let ItemHandler = function (itemProps: ItemProps, formStyle: FormStyle, getField
 
   // 最后return回去的DOM
   let targetDOM:React.ReactNode;
-
-
   // 是否为vertical - 不需要渲染
   if(formStyle.formLayout === 'vertical'||'horizontal'){
     // vertical
     targetDOM = (
-      <Form.Item label={itemProps.label} key={itemProps.field}>
+      <Form.Item
+        label={itemProps.label}
+        key={itemProps.field}
+        style={{marginBottom: itemProps['margin_bottom']}}
+      >
         {itemDOM}
         <p style={{color: 'red', fontSize: '10px'}}>{itemProps.tip}</p>
       </Form.Item>
@@ -249,6 +254,15 @@ class InitialForm extends React.Component<FormProps,{}>{
   }
 
   componentDidMount(): void {
+    const { form ,handler } = this.props;
+    if(handler){
+      // 将提交方法、重置方法、设置值 传出
+      handler(this.handleSubmit, form.resetFields, form.setFieldsValue);
+    }
+  }
+
+  // 保留 - 暂时不知道是否有用
+  componentDidUpdate(prevProps: Readonly<FormProps>, prevState: Readonly<{}>, snapshot?: any): void {
     const { form ,handler } = this.props;
     if(handler){
       // 将提交方法、重置方法、设置值 传出

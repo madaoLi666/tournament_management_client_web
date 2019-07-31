@@ -19,6 +19,4 @@ export function patchRoutes(routes: IRoute) {
       v.routes = uRoutes;
     }
   });
-  console.warn('动态配置的routes');
-  console.log(routes);
 }
