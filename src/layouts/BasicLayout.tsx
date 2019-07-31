@@ -5,7 +5,8 @@ import router from 'umi/router';
 import uRoutes from '@/config/router';
 
 import { Layout, Menu, Breadcrumb, Icon, Drawer, Button } from 'antd';
-import styles from './BasicLayout.css';
+// @ts-ignore
+import styles from './index.less';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -55,7 +56,7 @@ function BasicLayout(props: any) {
   const [visible, setVisible] = React.useState(false);
   function showDrawer() {setVisible(!visible);}
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout style={{ minHeight: '100vh' }} className={styles['basic-layout']}>
       <Drawer
         title='标题'
         placement='left'
@@ -64,7 +65,7 @@ function BasicLayout(props: any) {
         visible={visible}
         bodyStyle={drawerStyle}
       >
-        <div className={styles.logo}>
+        <div className={styles['logo']}>
           <Menu theme='light' mode='inline'>
             {/* 动态渲染 */}
             {initialMenuDOM(uRoutes)}

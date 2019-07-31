@@ -1,5 +1,6 @@
 import * as React from 'react';
-import styles from './Register.css'
+// @ts-ignore
+import styles from './index.less';
 import InitialForm,{ ItemProps, FormStyle } from '@/components/AntdForm/InitialForm.tsx';
 import { Button } from 'antd';
 import { Link } from 'umi'
@@ -31,7 +32,7 @@ class Register extends React.Component {
     }
     render() {
         return (
-            <div className={styles.content}>
+            <div className={styles['register-page']}>
               <p>注册</p>
               <div>
               <InitialForm
@@ -39,7 +40,7 @@ class Register extends React.Component {
                 handler={null}
                 formStyle={formStyle}            
               />
-              <Button className={styles.inline} >获取验证码</Button>
+              <Button className={styles['inline']} >获取验证码</Button>
               </div>
               <Button type="primary" style={{width:'60%',marginTop:'10%'}} >注册</Button>
               <Link to='/login' style={{marginLeft:'15%'}}>使用已有账号登陆</Link>

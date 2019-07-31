@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import InitialForm, { ItemProps, FormStyle } from '@/components/AntdForm/InitialForm.tsx';
 import {
   Card,Button,Input,Icon,Row, Col,
 } from 'antd';
@@ -28,14 +27,23 @@ function Login(): React.ReactNode {
   let formDOM: React.ReactNode = mode === '0' ? (
     <div className={styles['form-input-block']}>
       <Input placeholder='请输入账号/手机号码/电子邮箱' prefix={<Icon type="user"/>} style={{height: '40px'}} />
-      <Input placeholder='请输入密码'  prefix={<Icon type="lock"/>} type='password' style={{height: '40px'}} />
+      <Input.Password placeholder='请输入密码'  prefix={<Icon type="lock"/>} style={{height: '40px'}} />
       <Button style={{width: '100%', height: '40px'}} type='primary'>
         登陆
       </Button>
     </div>
 
   ) : (
-    <div>以手机号码获取验证码登陆</div>
+    <div className={styles['form-input-block']}>
+      <div style={{display:'flex'}}>
+      <Input placeholder='请输入手机号码' prefix={<Icon type="mobile"/>} style={{height: '40px'}}  />
+      <Button type="primary" style={{height:40}}>发送验证码</Button>
+      </div>
+      <Input placeholder='请输入验证码' prefix={<Icon type="lock"/>} style={{height: '40px'}}  />
+      <Button style={{width: '100%', height: '40px'}} type='primary'>
+        登陆
+      </Button>
+    </div>
   );
 
   return (
@@ -51,7 +59,7 @@ function Login(): React.ReactNode {
               <div style={{ paddingTop: '10px' }}>
                 {formDOM}
                 <p>
-                  ——&nbsp;&nbsp; <strong>其他方式登陆</strong> &nbsp;&nbsp;——
+                  ——&nbsp;&nbsp; <strong>其他登陆方式</strong> &nbsp;&nbsp;——
                 </p>
                 <div className={styles['icon-group-block']}>
                   排布图标 用于切换登陆的方式

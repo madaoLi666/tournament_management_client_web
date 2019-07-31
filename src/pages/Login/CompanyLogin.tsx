@@ -1,5 +1,6 @@
 import * as React from 'react';
-import styles from './CompanyLogin.css';
+// @ts-ignore
+import styles from '@/pages/Login/index.less';
 import { Card, Button, Icon, Tag, Input } from 'antd';
 import InitialForm,{ ItemProps, FormStyle } from '@/components/AntdForm/InitialForm.tsx';
 import router from 'umi/router';
