@@ -13,8 +13,8 @@ const config: IConfig =  {
       Routes: ['./src/layouts/UserLayout.tsx'],
       routes: [
         { path: '/login', component: './Login/Login.tsx', name: '个人登陆页面'},
-        { path: '/login/company', component: './Login/CompanyLogin.tsx', name: '单位登陆页面' },
-        { path: '/login/register', component: './Login/Register.tsx', name: '个人注册页面' }
+        { path: '/login/register', component: './Login/Register.tsx', name: '个人注册页面' },
+        { path: '/login/bindUnit', component: './Login/BindUnit.tsx', name: '绑定单位页面' }
       ],
     },
     // 报名页面 fix

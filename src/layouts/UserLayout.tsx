@@ -11,7 +11,7 @@ export default function LoginLayout(props: any) {
     <Layout className={styles['login-layout']}>
       <Header className={styles['header']}>
         <div>
-        <strong>轮滑赛事辅助系统平台</strong>
+          <p><strong>轮滑赛事辅助系统平台</strong></p>
         </div>
       </Header>
       <Content className={styles['container']}>
