@@ -1,8 +1,18 @@
 import React,{ useState,useEffect } from 'react';
 // @ts-ignore
 import styles from './index.less';
-import InitialForm,{ItemProps,FormStyle,ItemList} from '@/components/AntdForm/InitialForm.tsx';
 import { Row, Col, Card, Tabs, Form, Input, Button } from 'antd';
+import { FormComponentProps } from 'antd/lib/form';
+
+// 注册新用户表单项
+interface UserFormProps extends FormComponentProps {
+  userID: string;
+  password: string;
+  comfirmPassword: string;
+  verificationCode: string;
+  email: string;
+  emailVerificationCode: string;
+}
 
 // 标签页
 const { TabPane } = Tabs;
@@ -11,106 +21,174 @@ const { TabPane } = Tabs;
 const autoAdjust = {
   xs: { span: 20 }, sm: { span: 12 }, md: { span: 12 }, lg: { span: 8 }, xl: { span: 8 }, xxl: { span: 8 },
 };
+// 表单layout
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 8 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 16 },
+  },
+};
 
-// 已有账号登陆表单layout
-const oldFormLayout = {
-  labelCol: { span:4 },
-  wrapperCol: { span:17 }
-}
+// 标签页tab文字DOM
+let TabsTitle1:React.ReactNode = (
+  <strong>第一次登陆，注册新账号</strong>
+)
+let TabsTitle2:React.ReactNode = (
+  <strong>已有账号，马上绑定</strong>
+)
 
-let formStyle:FormStyle = {
-  formLayout: 'horizontal',
-  formItemLayout: {
-    wrapperCol: { md:{span:18},sm:{span:18},xs:{span:24} },
-    labelCol: { md:{span:4},sm:{span:6},xs:{span:24} }
+class UserForm extends React.Component<UserFormProps,any> {
+  constructor(props:UserFormProps) {
+    super(props);
+    this.state = { 
+      // 登陆密码二次验证
+      confirmDirty: false
+     };
   }
-}
-
-// chcekBox的item
-let checkBox:Array<ItemList> = [{
-  label:'已阅读并同意',
-  value:'1' 
-}]
-
-let formItem = [
-  { label:'手机',type:'input',field:'userPhone', rules:[{required:true, message: '请输入手机号'}],
-    height:'32px',margin_bottom:'-10px'
-  },
-  { label:'验证码',type:'input',field:'userPhoneValid', rules:[{required:true, message: '请输入验证码'}],
-  height:'32px',margin_bottom:'-10px'
-  },
-  { label:'邮箱',type:'input',field:'email', rules:[{required:true, message: '请输入邮箱'}],
-    height:'32px',margin_bottom:'-10px'
-  },
-  { label:'验证码',type:'input',field:'emailValid', rules:[{required:true, message: '请输入验证码'}],
-    height:'32px',margin_bottom:'-10px'
-  },
-  { label:'用户名',type:'input',field:'userid', rules:[{required:true, message: '请输入用户名'}],
-    height:'32px',margin_bottom:'-10px'
-  },
-  { label:'登陆密码',type:'input',field:'password', rules:[{required:true, message: '请输入登陆密码'}],
-    height:'32px',margin_bottom:'-10px'
-  },
-  { label:'确认密码',type:'input',field:'comfirmPassword', rules:[{required:true, message: '请输入确认密码'}],
-    height:'32px',margin_bottom:'-10px'
-  },
-  {
-    type:'checkbox_group',field:'checkComfirm',list:checkBox
-  }
-]
-
-
-function Register(): React.ReactNode {
-  // 标签页state,默认第一页
-  const [tabsState,settabsState] = useState("1");
-
-  // 标签页tab文字DOM
-  let TabsTitle1:React.ReactNode = (
-    <strong>第一次登陆，注册新账号</strong>
-  )
-  let TabsTitle2:React.ReactNode = (
-    <strong>已有账号，马上绑定</strong>
-  )
 
   // 提交表单  
-  function handleSubmit(event:any) {
+  public handleSubmit=(event:any) => {
     event.preventDefault();
-    console.log(event.target.value);
+    this.props.form.validateFieldsAndScroll((err:any,values:any) => {
+      if (!err) {
+        console.log('Received values of form :',values);
+      }
+    })
   }
 
-  // FormDOM TODO 表单验证
-  let FormDOM:React.ReactNode = (
-    <Form onSubmit={handleSubmit} layout="horizontal" className={styles['register-form']} >
-      <Form.Item label="用户名" {...oldFormLayout}>
-        <Input />
-      </Form.Item>
-      <Form.Item label="密码" {...oldFormLayout} >
-        <Input.Password/>
-      </Form.Item>
-      <Form.Item label="验证码" {...oldFormLayout}>
-        <Input style={{width:'60%',marginRight:'40%'}} />
-      </Form.Item>
-      <Button type="primary" style={{width:'80%',marginRight:'10%'}} >马上绑定，进入下一步</Button>
-    </Form>
-  )
+  // 验证密码onBlur 类型暂时不知道，暂定any
+  public handleConfirm = (e:any) => {
+    const { value } = e.target;
+    let { confirmDirty } = this.state;
+    this.setState({
+      confirmDirty:confirmDirty || !!value
+    })
+  }
+
+  // 验证二次密码 类型暂时不知道，暂定any
+  public compareToFirstPassword = (rule:any, value:any, callback:any) => {
+    const { form } = this.props;
+    // getFieldValue可以通过key获取表单的值
+    if (value && value !== form.getFieldValue('password')) {
+      callback('两个密码不相同！请检查')
+    }else {
+      callback();
+    }
+  }
+
+  // 也是验证密码
+  public validateToNextPassword = (rule:any, value:any, callback:any) => {
+    const { form } = this.props;
+    if( value && this.state.confirmDirty ) {
+      form.validateFields(['confirm'],{force: true});
+    }
+    callback();
+  }
+
+
+  render() {
+  // Row的gutter
+  // 
+    const { getFieldDecorator } = this.props.form;
+
+    return (
+      <Form {...formItemLayout} onSubmit={this.handleSubmit}>
+        <Form.Item label='用户名'>
+          {getFieldDecorator('userID',{
+            rules:[{required: true, message: '请输入用户名！'}]
+          })(<Input placeholder='如果是用微信授权登陆,可预填微信名称' />)}
+        </Form.Item>
+        <Form.Item label='登陆密码' hasFeedback={true}>
+          {getFieldDecorator('password',{
+            rules:[{required: true, message: '请输入密码！'},{validator:this.validateToNextPassword}]
+          })(<Input.Password />)}
+        </Form.Item>
+        <Form.Item label='确认密码' hasFeedback={true}>
+          {getFieldDecorator('comfirmPassword',{
+            rules:[{required: true,message: '请确认密码！'},{validator:this.compareToFirstPassword}]
+          })(<Input.Password onBlur={this.handleConfirm} />)}
+        </Form.Item>
+        <Form.Item label='验证码' extra='请输入右边的验证码'>
+          <Row  gutter={8}>
+            <Col span={12}>
+              {getFieldDecorator('verificationCode',{
+                rules:[{required: true, message: '请输入右边的验证码！'}]
+              })(<Input />)}
+            </Col>
+            <Col span={12}>
+              <Button type="primary" >获取验证码</Button>
+            </Col>
+          </Row>
+        </Form.Item>
+        <Form.Item label='邮箱'>
+          <Row gutter={8}>
+            <Col span={12}>
+              {getFieldDecorator('email',{
+                rules:[{required: true, message: '请输入邮箱！'},{type: 'email', message: '请输入正确的邮箱格式！'}]
+              })(<Input />)}  
+            </Col>
+            <Col span={12}>
+              <Button type="primary" >发送邮箱验证码</Button>
+            </Col>
+          </Row>
+        </Form.Item>
+        <Form.Item label='邮箱验证码'>
+          {getFieldDecorator('emailVerificationCode',{
+            rules:[{required: true, message: '请输入邮箱验证码！'}]
+          })(<Input />)}
+        </Form.Item>
+        <Button type="primary" >注册绑定,并进入下一步操作</Button>
+      </Form>
+    );
+  }
+}
+
+const App = Form.create<UserFormProps>({
+  name:'register'
+})(UserForm);
+
+
+
+
+class Register extends React.Component<any,any> {
+  // 标签页state,默认第一页
+  constructor(props:any) {
+    super(props);
+    this.state = {
+      TabsState:"1"
+    }
+  }
+
+
+  render() {
+  
+  let test:UserFormProps = {
+    userID:'1',
+    password:'111',
+    comfirmPassword:'111',
+    verificationCode:'123',
+    email:'1213',
+    emailVerificationCode:'12'
+  }
+
+  let { TabsState } = this.state;
 
   // 标签页DOM
   let TabsDOM:React.ReactNode = (
-    <Tabs defaultActiveKey={tabsState} >
+    <Tabs defaultActiveKey={TabsState} >
       <TabPane tab={TabsTitle1} key="1">
-        <InitialForm
-          formItem={formItem}
-          handler={null}
-          formStyle={formStyle}
-        />
-      <Button type="primary" style={{width:'80%',marginRight:'10%'}} >注册绑定，并进入下一步操作</Button>
+        <App {...test} />
       </TabPane>
       <TabPane tab={TabsTitle2} key="2">
-        {FormDOM}
+        Content2
+        <p>可用单位账号密码登陆,进行取消单位授权操作</p>
       </TabPane>
     </Tabs>
   )
-
 
   return (
     <div className={styles['register-page']}>
@@ -128,6 +206,9 @@ function Register(): React.ReactNode {
       </Row>      
     </div>
   )
+  }
+
+
 
 }
 
