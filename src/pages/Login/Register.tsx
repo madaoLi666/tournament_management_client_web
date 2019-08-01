@@ -5,13 +5,9 @@ import { Row, Col, Card, Tabs, Form, Input, Button } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 
 // 注册新用户表单项
-interface UserFormProps extends FormComponentProps {
-  userID: string;
-  password: string;
-  comfirmPassword: string;
-  verificationCode: string;
-  email: string;
-  emailVerificationCode: string;
+interface UserFormProps{
+  form?:FormComponentProps;
+  teststr?:string;
 }
 
 // 标签页
@@ -41,8 +37,8 @@ let TabsTitle2:React.ReactNode = (
   <strong>已有账号，马上绑定</strong>
 )
 
-class UserForm extends React.Component<UserFormProps,any> {
-  constructor(props:UserFormProps) {
+class UserForm extends React.Component<UserFormProps & FormComponentProps,any> {
+  constructor(props:UserFormProps & FormComponentProps) {
     super(props);
     this.state = { 
       // 登陆密码二次验证
@@ -94,6 +90,19 @@ class UserForm extends React.Component<UserFormProps,any> {
   // Row的gutter
   // 
     const { getFieldDecorator } = this.props.form;
+    // 最后提交按钮的layout
+    const tailFormItemLayout = {
+      wrapperCol: {
+        xs: {
+          span: 24,
+          offset: 0,
+        },
+        sm: {
+          span: 16,
+          offset: 8,
+        },
+      },
+    };
 
     return (
       <Form {...formItemLayout} onSubmit={this.handleSubmit}>
@@ -141,13 +150,15 @@ class UserForm extends React.Component<UserFormProps,any> {
             rules:[{required: true, message: '请输入邮箱验证码！'}]
           })(<Input />)}
         </Form.Item>
-        <Button type="primary" >注册绑定,并进入下一步操作</Button>
+        <Form.Item {...tailFormItemLayout}>
+          <Button type="primary" htmlType="submit" >注册绑定,并进入下一步操作</Button>
+        </Form.Item>
       </Form>
     );
   }
 }
 
-const App = Form.create<UserFormProps>({
+const App = Form.create<UserFormProps & FormComponentProps>({
   name:'register'
 })(UserForm);
 
@@ -167,12 +178,7 @@ class Register extends React.Component<any,any> {
   render() {
   
   let test:UserFormProps = {
-    userID:'1',
-    password:'111',
-    comfirmPassword:'111',
-    verificationCode:'123',
-    email:'1213',
-    emailVerificationCode:'12'
+    teststr:'123'
   }
 
   let { TabsState } = this.state;
