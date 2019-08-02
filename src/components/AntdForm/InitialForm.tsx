@@ -46,6 +46,8 @@ export interface ItemProps{
   tip?:string|React.ReactNode;
   rules?:any; trigger?:string; placeholder?: string;
   isHide?:boolean;
+  // 读取的组件的属性
+  valuePropName?:string;
   //checkbox select radio_group
   list?:Array<ItemList>;
   //inputnumber
@@ -54,6 +56,8 @@ export interface ItemProps{
   labelCol?:object; wrapperCol?:object;
   width?:string; height?:string;
   margin_bottom?:string;
+  // 自定义选项
+  customDOM?: ReactNode;
 }
 
 // 样式
@@ -206,13 +210,26 @@ let ItemHandler = function (itemProps: ItemProps, formStyle: FormStyle, getField
         <RangePicker/>
       );
       break;
+    case 'custom':
+      // 自定义选项
+      let custom = itemProps.customDOM;
+      itemDOM = getFieldDecorator(
+        itemProps.field,
+        {
+          rules:itemProps.rules,
+
+        },
+      )(
+        custom
+      );
+      break;
     default:
       itemDOM = <span>不能辨别其属性</span>;
       break;
   }
 
   // 最后return回去的DOM
-  let targetDOM:React.ReactNode;
+  let targetDOM:ReactNode;
   // 是否为vertical - 不需要渲染
   if(formStyle.formLayout === 'vertical'||'horizontal'){
     // vertical

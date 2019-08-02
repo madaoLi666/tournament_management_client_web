@@ -31,13 +31,19 @@ const formStyle:FormStyle = {
   }
 };
 // 表单Item
-const newFormItem = [
+const newFormItem:Array<ItemProps> = [
   {type: 'input', field: 'unitName',label: '单位名称', rules:[{required:true}], margin_bottom:'-10px'},
   {type: 'input', field: 'password',label: '密码', rules:[{required:true}], margin_bottom:'-10px'},
   {type: 'input', field: 'confirmPassword',label: '确认密码', rules:[{required:true}], margin_bottom:'-10px'},
   {type: 'input', field: 'contact',label: '联系人', rules:[{required:true}], margin_bottom:'-10px'},
   {type: 'input', field: 'phoneNumber',label: '手机', rules:[{required:true}], margin_bottom:'-10px'},
   {type: 'input', field: 'email',label: '邮箱', rules:[{required:true}], margin_bottom:'-10px'},
+  {
+    type: 'custom', field: 'c',label: '邮箱', rules:[{required:true}], margin_bottom:'-10px',
+    customDOM: (
+      <Input addonAfter={<Button onClick={() => {console.log('a')}}>获取验证码</Button>} />
+    )
+  },
 ];
 
 

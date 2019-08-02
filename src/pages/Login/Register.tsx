@@ -16,7 +16,7 @@ const autoAdjust = {
 const oldFormLayout = {
   labelCol: { span:4 },
   wrapperCol: { span:17 }
-}
+};
 
 let formStyle:FormStyle = {
   formLayout: 'horizontal',
@@ -24,12 +24,12 @@ let formStyle:FormStyle = {
     wrapperCol: { md:{span:18},sm:{span:18},xs:{span:24} },
     labelCol: { md:{span:4},sm:{span:6},xs:{span:24} }
   }
-}
+};
 
 // chcekBox的item
 let checkBox:Array<ItemList> = [{
   label:'已阅读并同意',
-  value:'1' 
+  value:'1'
 }]
 
 let formItem = [
@@ -72,7 +72,7 @@ function Register(): React.ReactNode {
     <strong>已有账号，马上绑定</strong>
   )
 
-  // 提交表单  
+  // 提交表单
   function handleSubmit(event:any) {
     event.preventDefault();
     console.log(event.target.value);
@@ -117,7 +117,7 @@ function Register(): React.ReactNode {
       <Row justify="center" type="flex">
         <Col {...autoAdjust}>
           <div className={styles['register-block']}>
-            <Card 
+            <Card
               style={{width: '100%',height: '150%', borderRadius: '5px', boxShadow: '1px 1px 5px #111'}}
               headStyle={{color: '#2a8ff7'}}
             >
@@ -125,7 +125,7 @@ function Register(): React.ReactNode {
             </Card>
           </div>
         </Col>
-      </Row>      
+      </Row>
     </div>
   )
 
