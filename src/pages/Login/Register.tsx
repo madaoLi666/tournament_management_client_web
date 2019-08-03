@@ -4,10 +4,14 @@ import styles from './index.less';
 import { Row, Col, Card, Tabs, Form, Input, Button } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 
-// 注册新用户表单项
+// 注册新用户表单项的接口，暂时不知道要写什么
 interface UserFormProps {
   form?: FormComponentProps;
-  teststr?: string;
+}
+
+// 已有账户表单项的接口，暂时不知道要写什么
+interface OldUserFormProps {
+  form?: FormComponentProps;
 }
 
 // 标签页
@@ -20,12 +24,31 @@ const autoAdjust = {
 // 表单layout
 const formItemLayout = {
   labelCol: {
-    xs: { span: 24 },
+    xs: { span: 12 },
     sm: { span: 8 },
+    md: { span: 6 },
+    lg: { span: 7 },
   },
   wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 16 },
+    xs: { span: 12 },
+    sm: { span: 15 },
+    md: { span: 16 },
+    lg: { span: 14 },
+  },
+};
+// 最后提交按钮的layout
+const tailFormItemLayout = {
+  wrapperCol: {
+    xs: {
+      span: 24,
+      offset: 0,
+    },
+    sm: {
+      span: 10,
+      offset: 1,
+    },
+    md: { span: 15, offset: 4 },
+    lg: { span: 16, offset: 4 },
   },
 };
 
@@ -38,6 +61,7 @@ const oldFormLayout = {
 let TabsTitle1: React.ReactNode = (<strong>第一次登陆，注册新账号</strong>);
 let TabsTitle2: React.ReactNode = (<strong>已有账号，马上绑定</strong>);
 
+// 用户注册表单
 class UserForm extends React.Component<UserFormProps & FormComponentProps, any> {
   constructor(props: UserFormProps & FormComponentProps) {
     super(props);
@@ -56,8 +80,6 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
       }
     });
   };
-
-
   // 验证密码onBlur 类型暂时不知道，暂定any
   public handleConfirm = (e: any) => {
     const { value } = e.target;
@@ -66,10 +88,8 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
       confirmDirty: confirmDirty || !!value,
     });
   };
-
-
-  // 验证二次密码 类型暂时不知道，暂定any
-  public compareToFirstPassword = (rule: any, value: any, callback: any) => {
+  // 验证二次密码
+  public compareToFirstPassword = (rule: any, value: string, callback: Function) => {
     const { form } = this.props;
     // getFieldValue可以通过key获取表单的值
     if (value && value !== form.getFieldValue('password')) {
@@ -78,9 +98,8 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
       callback();
     }
   };
-
   // 也是验证密码
-  public validateToNextPassword = (rule: any, value: any, callback: any) => {
+  public validateToNextPassword = (rule: any, value: string, callback: Function) => {
     const { form } = this.props;
     if (value && this.state.confirmDirty) {
       form.validateFields(['confirm'], { force: true });
@@ -93,19 +112,6 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
     // Row的gutter
     //
     const { getFieldDecorator } = this.props.form;
-    // 最后提交按钮的layout
-    const tailFormItemLayout = {
-      wrapperCol: {
-        xs: {
-          span: 24,
-          offset: 0,
-        },
-        sm: {
-          span: 16,
-          offset: 8,
-        },
-      },
-    };
 
     return (
       <Form {...formItemLayout} onSubmit={this.handleSubmit}>
@@ -124,8 +130,8 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
             rules: [{ required: true, message: '请确认密码！' }, { validator: this.compareToFirstPassword }],
           })(<Input.Password onBlur={this.handleConfirm}/>)}
         </Form.Item>
-        <Form.Item label='验证码' extra='请输入右边的验证码'>
-          <Row gutter={8}>
+        <Form.Item label='验证码'>
+          <Row>
             <Col span={12}>
               {getFieldDecorator('verificationCode', {
                 rules: [{ required: true, message: '请输入右边的验证码！' }],
@@ -137,7 +143,7 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
           </Row>
         </Form.Item>
         <Form.Item label='邮箱'>
-          <Row gutter={8}>
+          <Row>
             <Col span={12}>
               {getFieldDecorator('email', {
                 rules: [{ required: true, message: '请输入邮箱！' }, { type: 'email', message: '请输入正确的邮箱格式！' }],
@@ -161,9 +167,63 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
   }
 }
 
-const App = Form.create<UserFormProps & FormComponentProps>({
+
+const RegisterForm = Form.create<UserFormProps & FormComponentProps>({
   name: 'register',
 })(UserForm);
+
+
+class OldUserForm extends React.Component<OldUserFormProps & FormComponentProps, any> {
+  constructor(props: UserFormProps & FormComponentProps) {
+    super(props);
+    this.state = {};
+  }
+
+  public handleSubmit = (e: any) => {
+    e.preventDefault();
+    this.props.form.validateFieldsAndScroll((err: any, values: any) => {
+      if (!err) {
+        console.log('Received values of form :', values);
+      }
+    });
+  };
+
+  render() {
+    const { getFieldDecorator } = this.props.form;
+
+    return (
+      <Form {...formItemLayout} onSubmit={this.handleSubmit}>
+        <Form.Item label='用户名'>
+          {getFieldDecorator('oldUserID', {
+            rules: [{ required: true, message: '请输入用户名！' }],
+          })(<Input/>)}
+        </Form.Item>
+        <Form.Item label='密码'>
+          {getFieldDecorator('oldPassword', {
+            rules: [{ required: true, message: '请输入密码！' }],
+          })(<Input/>)}
+        </Form.Item>
+        <Form.Item label='验证码'>
+          <Row>
+            <Col span={12}>
+              {getFieldDecorator('oldVerificationCode', {
+                rules: [{ required: true, message: '请输入右边的验证码！' }],
+              })(<Input/>)}
+            </Col>
+          </Row>
+        </Form.Item>
+        <p style={{ marginTop: 40 }}>可用单位账号密码登陆,进行取消单位授权操作</p>
+        <Form.Item {...tailFormItemLayout} style={{ marginTop: 40 }}>
+          <Button type="primary" htmlType="submit" style={{ width: '100%' }}>注册绑定,并进入下一步操作</Button>
+        </Form.Item>
+      </Form>
+    );
+  }
+}
+
+const OldUserFormInfo = Form.create<OldUserFormProps & FormComponentProps>({
+  name: 'oldUser',
+})(OldUserForm);
 
 
 class Register extends React.Component<any, any> {
@@ -178,9 +238,6 @@ class Register extends React.Component<any, any> {
 
   render() {
 
-    let test: UserFormProps = {
-      teststr: '123',
-    };
 
     let { TabsState } = this.state;
 
@@ -188,11 +245,10 @@ class Register extends React.Component<any, any> {
     let TabsDOM: React.ReactNode = (
       <Tabs defaultActiveKey={TabsState}>
         <TabPane tab={TabsTitle1} key="1">
-          <App {...test} />
+          <RegisterForm/>
         </TabPane>
         <TabPane tab={TabsTitle2} key="2">
-          Content2
-          <p>可用单位账号密码登陆,进行取消单位授权操作</p>
+          <OldUserFormInfo/>
         </TabPane>
       </Tabs>
     );
@@ -203,7 +259,7 @@ class Register extends React.Component<any, any> {
           <Col {...autoAdjust}>
             <div className={styles['register-block']}>
               <Card
-                style={{ width: '100%', height: '150%', borderRadius: '5px', boxShadow: '1px 1px 5px #111' }}
+                style={{ width: '100%' ,height: '100%', borderRadius: '5px', boxShadow: '1px 1px 5px #111' }}
                 headStyle={{ color: '#2a8ff7' }}
               >
                 {TabsDOM}
@@ -214,8 +270,6 @@ class Register extends React.Component<any, any> {
       </div>
     );
   }
-
-
 }
 
 export default Register;
