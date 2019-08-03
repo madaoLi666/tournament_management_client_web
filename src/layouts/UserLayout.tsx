@@ -11,13 +11,8 @@ export default function LoginLayout(props: any) {
   const { children } = props;
 
 
-
-  useEffect(() => {
-    console.log(window.outerHeight)
-  });
-
   return (
-    <Layout className={styles['login-layout']}>
+    <Layout className={styles['login-layout']} style={{ minHeight: '100vh' }}>
       <Header className={styles.header}>
         <p><strong>轮滑赛事辅助系统平台</strong></p>
       </Header>

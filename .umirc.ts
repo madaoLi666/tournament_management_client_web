@@ -27,6 +27,7 @@ const config: IConfig =  {
     },
   ],
   treeShaking: true,
+  publicPath: '/',
   plugins: [
     // ref: https://umijs.org/plugin/umi-plugin-react.html
     ['umi-plugin-react', {
