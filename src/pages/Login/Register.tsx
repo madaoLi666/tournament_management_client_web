@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './index.less';
 import { Row, Col, Card, Tabs, Form, Input, Button } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
+import axiosInstance from './../../utils/request';
 
 // 注册新用户表单项的接口，暂时不知道要写什么
 interface UserFormProps {
@@ -50,12 +51,6 @@ const tailFormItemLayout = {
     md: { span: 15, offset: 4 },
     lg: { span: 16, offset: 4 },
   },
-};
-
-// 已有账号登陆表单layout
-const oldFormLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 17 },
 };
 // 标签页tab文字DOM
 let TabsTitle1: React.ReactNode = (<strong>第一次登陆，注册新账号</strong>);
