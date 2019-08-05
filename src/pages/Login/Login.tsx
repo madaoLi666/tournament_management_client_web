@@ -20,21 +20,18 @@ function Login(): React.ReactNode {
   * '2' - 微信二维码扫描
   */
   const [mode, setMode] = useState('0');
-  // 以 mode '0' 登入 
+  // 以 mode '0' 登入
   const [userInfo ,setUserInfo] = useState({username:'',password:''});
   // 以mode '1' 登入 - verificationCode 为 字符串的验证码
   const [phoneInfo, setPhoneInfo] = useState({phoneNumber:'',verificationCode:''});
   // 发送验证码操作
   function sendCode() {
     console.log('我发送了验证码请求');
-    var api = 'http://47.106.15.217:9090/phoneCode?phonenumber=1560221889'
-    axiosInstance.get(api)
+    var api = 'https://www.gsta.top/v3/phoneCode/';
+    axiosInstance.get(api,{data:{phonenumber: "15521244464"}})
     .then(function (response) {
       console.log(response);
     })
-    .catch(function (error) {
-      console.log(error);
-    });
   }
   // 根据不相同的mode渲染 对应的DOM
   let formDOM: React.ReactNode = mode === '0' ? (

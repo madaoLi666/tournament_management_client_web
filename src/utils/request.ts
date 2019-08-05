@@ -1,6 +1,6 @@
 import axios,{ AxiosRequestConfig, AxiosResponse } from 'axios';
 
-const BASE_URL:string = '';
+const BASE_URL:string = 'https://www.gsta.top/';
 const TIMEOUT:number = 1000;
 
 let axiosInstance = axios.create({
@@ -9,7 +9,6 @@ let axiosInstance = axios.create({
   headers: {}
 });
 
-//
 axiosInstance.interceptors.request.use((config:AxiosRequestConfig):AxiosRequestConfig => {
   const { method, data } = config;
   let { url } = config;
@@ -24,15 +23,14 @@ axiosInstance.interceptors.request.use((config:AxiosRequestConfig):AxiosRequestC
       }
       // @ts-ignore
       config.url = url.slice(0,-1);
-      console.log(url);
     }
   }
   return config;
 });
 
-//
 axiosInstance.interceptors.response.use((response:AxiosResponse):any => {
   // 对response的状况进行修改
+
   return response.data;
 });
 

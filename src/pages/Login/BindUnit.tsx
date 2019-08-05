@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Card, Col, Form, Input, Row, Tabs } from 'antd';
+import { connect } from 'dva';
 import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
 import { ColProps } from 'antd/lib/grid';
 import { checkEmail, checkPhoneNumber } from '@/utils/regulars.ts';
@@ -10,6 +11,11 @@ interface NewUnitFromProps extends FormComponentProps {
   emitData: (data: any) => void;
   unitNameIsLegal: (unitName: string) => Promise<boolean>;
 }
+
+interface BindUnitFromProps extends FormComponentProps {
+  emitData: (data: any) => void;
+}
+
 
 const { TabPane } = Tabs;
 // 自适应的姗格配置
@@ -77,7 +83,6 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
       }
     })
   };
-
   // 提交信息
   handleSubmit = (e: React.FormEvent): void => {
     const { emitData } = this.props;
@@ -92,7 +97,6 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-
     // @ts-ignore
     return (
       <div>
@@ -105,14 +109,14 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
               rules: [{ required: true, message: '请输入单位名称' },{ validator: this.checkUnitNameIsLegal }],
               validateTrigger: 'onBlur',
             })(
-              <Input placeholder='请输入单位名称'/>,
+              <Input placeholder='请输入单位名称' autoComplete='off' />
             )}
           </Form.Item>
           <Form.Item label='密码'>
             {getFieldDecorator('password', {
               rules: [{ required: true, message: '请输入密码' }, { validator: this.compareToConfirmPassword }],
             })(
-              <Input type='password' placeholder='请输入密码'/>,
+              <Input type='password' placeholder='请输入密码' autoComplete='off'/>
             )}
           </Form.Item>
           <Form.Item label='确认密码'>
@@ -120,14 +124,14 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
               rules: [{ required: true, message: '请输入密码' }, { validator: this.compareToFirstPassword }],
 
             })(
-              <Input type='password' placeholder='请再次输入密码'/>,
+              <Input type='password' placeholder='请再次输入密码' autoComplete='off' />
             )}
           </Form.Item>
           <Form.Item label='联系人'>
             {getFieldDecorator('contact', {
               rules: [{ required: true, message: '请输入联系人姓名' }],
             })(
-              <Input placeholder='请输入联系人姓名'/>,
+              <Input placeholder='请输入联系人姓名' autoComplete='off' />
             )}
           </Form.Item>
           <Form.Item label='手机号码'>
@@ -135,7 +139,7 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
               rules: [{ required: true, message: '请输入手机号码' }, { pattern: checkPhoneNumber, message: '请输入正确的手机号码' }],
               validateTrigger: 'onBlur',
             })(
-              <Input placeholder='请输入手机号码'/>,
+              <Input placeholder='请输入手机号码' autoComplete='off' />
             )}
           </Form.Item>
           <Form.Item label='邮箱'>
@@ -143,7 +147,7 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
               rules: [{ required: true, message: '请输入电子邮箱' }, { pattern: checkEmail, message: '请输入正确的邮箱地址' }],
               validateTrigger: 'onBlur',
             })(
-              <Input placeholder='请输入邮箱地址'/>,
+              <Input placeholder='请输入邮箱地址' autoComplete='off' />
             )}
           </Form.Item>
           <Form.Item label='地址'>
@@ -164,24 +168,70 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
 }
 const NUForm = Form.create<NewUnitFromProps>()(NewUnitForm);
 
+// 绑定单位表单
 class BindUnitForm extends React.Component<NewUnitFromProps, any>{
+
+  // 提交信息
+  handleSubmit = (e: React.FormEvent): void => {
+    const { emitData } = this.props;
+    // 阻止冒泡
+    e.preventDefault();
+    this.props.form.validateFieldsAndScroll((err: ValidateCallback<any>, values: any) => {
+      if (!err) {
+        emitData(values);
+      }
+    });
+  };
+
   render(): React.ReactNode {
+    const { getFieldDecorator } = this.props.form;
     return (
-      <Form/>
+      <Form
+        {...newUnitFormStyle}
+        onSubmit={this.handleSubmit}
+      >
+        <Form.Item label='用户名'>
+          {getFieldDecorator('unitName',{
+            rules:[{required:true, message: '请输入用户名称'}]
+          })(
+            <Input placeholder='请输入用户名称' autoComplete='off' />
+          )}
+        </Form.Item>
+
+        <Form.Item label='密码'>
+          {getFieldDecorator('password',{
+            rules:[{required:true, message: '请输入用户名称'}]
+          })(
+            <Input placeholder='请输入账号密码' type='password' autoComplete='off' />
+          )}
+        </Form.Item>
+
+        <Form.Item
+          labelCol={{ span: 0 }}
+          wrapperCol={{ span: 24 }}
+        >
+          <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
+            Register
+          </Button>
+        </Form.Item>
+      </Form>
     )
   }
 }
+const BForm = Form.create<BindUnitFromProps>()(BindUnitForm);
 
 
-
-export default function BindUnit() {
-
+function BindUnit() {
 
   // 传入 NewUnitForm 中，已提供外部的表单处理
   function submitRegister(data: any): void {
     console.log(data);
   }
 
+  //
+  function submitBindUnitData(data: any): void{
+    console.log(data);
+  }
 
   // 这里做异步请求检查单位的名称是否存在
   async function checkUnitNameIsLegal(unitName:string): Promise<boolean> {
@@ -202,7 +252,9 @@ export default function BindUnit() {
           unitNameIsLegal={checkUnitNameIsLegal}
         />
       </TabPane>
-      <TabPane tab={<div>已有账号，马上绑定</div>} key="2"/>
+      <TabPane tab={<div>已有账号，马上绑定</div>} key="2">
+        <BForm emitData={submitBindUnitData}/>
+      </TabPane>
     </Tabs>
   );
 
@@ -220,5 +272,6 @@ export default function BindUnit() {
       </Row>
     </div>
   );
-};
+}
 
+export default connect(store => ({}))(BindUnit);
