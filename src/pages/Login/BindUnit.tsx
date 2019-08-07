@@ -1,9 +1,13 @@
 import React from 'react';
-import { Button, Card, Col, Form, Input, Row, Tabs } from 'antd';
 import { connect } from 'dva';
+import { Button, Card, Col, Form, Input, Row, Tabs, Cascader } from 'antd';
+import AddressInput from '@/components/AddressInput/AddressInput.tsx';
 import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
 import { ColProps } from 'antd/lib/grid';
 import { checkEmail, checkPhoneNumber } from '@/utils/regulars.ts';
+
+
+import { getVerificationPic } from '@/services/login';
 // @ts-ignore
 import styles from './index.less';
 
@@ -11,13 +15,14 @@ interface NewUnitFromProps extends FormComponentProps {
   emitData: (data: any) => void;
   unitNameIsLegal: (unitName: string) => Promise<boolean>;
 }
-
 interface BindUnitFromProps extends FormComponentProps {
   emitData: (data: any) => void;
 }
 
 
+
 const { TabPane } = Tabs;
+const InputGroup  = Input.Group;
 // 自适应的姗格配置
 const autoAdjust: ColProps = {
   xs: { span: 20 },
@@ -44,12 +49,7 @@ const newUnitFormStyle: FormProps = {
 };
 class NewUnitForm extends React.Component<NewUnitFromProps, any> {
 
-  componentDidMount(): void {
-    // fetch('../src/public/residence.json')
-    //   .then(response => (response.json()))
-    //   .then(data => {console.log(data);})
-    //   .catch(e => {console.error(e)});
-  }
+  componentDidMount(): void {}
 
   // ------------  类型暂时找不到 -------------------------//
   // 与confirmPassword比较
@@ -97,6 +97,8 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
 
   render() {
     const { getFieldDecorator } = this.props.form;
+
+
     // @ts-ignore
     return (
       <div>
@@ -151,7 +153,9 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
             )}
           </Form.Item>
           <Form.Item label='地址'>
-            {getFieldDecorator('residence', {})(<p>留空</p>)}
+            {getFieldDecorator('residence', {})(
+              <AddressInput/>
+            )}
           </Form.Item>
           <Form.Item
             labelCol={{ span: 0 }}
@@ -184,7 +188,12 @@ class BindUnitForm extends React.Component<NewUnitFromProps, any>{
   };
 
   render(): React.ReactNode {
+
     const { getFieldDecorator } = this.props.form;
+    getVerificationPic().then(res => {
+      console.log(res);
+    });
+
     return (
       <Form
         {...newUnitFormStyle}
@@ -224,15 +233,14 @@ const BForm = Form.create<BindUnitFromProps>()(BindUnitForm);
 function BindUnit() {
 
   // 传入 NewUnitForm 中，已提供外部的表单处理
+  // 这里可以拿到表单的信息
   function submitRegister(data: any): void {
     console.log(data);
   }
-
   //
   function submitBindUnitData(data: any): void{
     console.log(data);
   }
-
   // 这里做异步请求检查单位的名称是否存在
   async function checkUnitNameIsLegal(unitName:string): Promise<boolean> {
     return await fetch(`http://47.106.15.217:9090/mock/19/newUnitAccount/?name=${unitName}`, {

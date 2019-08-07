@@ -1,8 +1,8 @@
 import { AnyAction } from 'redux';
-import { EffectsCommandMap } from 'dva';
+import { Model, EffectsCommandMap } from 'dva';
 import { sendVerification2Phone } from '@/services/login.ts';
 
-export default {
+const LOGIN_MODEL:Model = {
   namespace: 'login',
   state: {},
   reducers: {
@@ -10,7 +10,9 @@ export default {
   },
   effects: {
     *sendVerification2Phone(action: AnyAction, effect: EffectsCommandMap){
-      yield console.log('a');
+      yield console.log();
     }
   }
-}
+};
+
+export default LOGIN_MODEL;
