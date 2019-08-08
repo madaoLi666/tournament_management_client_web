@@ -27,7 +27,7 @@ function Login(): React.ReactNode {
   // 发送验证码操作
   function sendCode() {
     console.log('我发送了验证码请求');
-    var api = 'https://www.gsta.top/v3/phoneCode/';
+    var api = 'http://www.gsta.top/v3/phoneCode/';
     axiosInstance.get(api,{data:{phonenumber: "15521244464"}})
     .then(function (response) {
       console.log(response);

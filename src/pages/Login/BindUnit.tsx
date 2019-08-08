@@ -19,10 +19,7 @@ interface BindUnitFromProps extends FormComponentProps {
   emitData: (data: any) => void;
 }
 
-
-
 const { TabPane } = Tabs;
-const InputGroup  = Input.Group;
 // 自适应的姗格配置
 const autoAdjust: ColProps = {
   xs: { span: 20 },
@@ -98,8 +95,6 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
   render() {
     const { getFieldDecorator } = this.props.form;
 
-
-    // @ts-ignore
     return (
       <div>
         <Form
