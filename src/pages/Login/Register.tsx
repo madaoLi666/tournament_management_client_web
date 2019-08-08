@@ -72,6 +72,20 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
     this.props.form.validateFieldsAndScroll((err: any, values: any) => {
       if (!err) {
         console.log('Received values of form :', values);
+        var api = 'http://47.106.15.217:9090/mock/19/personalAccountRegister/';
+        axiosInstance.post(api,{
+          username:values.userID,
+          password:values.password,
+          code:values.verificationCode,
+          email:values.email,
+          email验证:values.emailVerificationCode,
+          // TODO 手机获取
+          phonenumber:15626466587
+        }).then(function (response) {
+          console.log(response);
+        }).catch(function (error) {
+          console.log(error)
+        });
       }
     });
   };

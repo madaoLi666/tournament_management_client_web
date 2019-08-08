@@ -1,18 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import {
-  Card,Button,Input,Icon,Row, Col,
+  Card, Button, Input, Icon, Row, Col,
 } from 'antd';
 // @ts-ignore
 import styles from '@/pages/Login/index.less';
-import axiosInstance from './../../utils/request';
+import { Dispatch } from 'redux';
+import { connect } from 'dva';
 
+export interface SendCodeProps {
+  phoneNumber: number;
+  dispatch: Dispatch<{ type: string, payload: any }>;
+}
 
 // Col 自适应
 const autoAdjust = {
   xs: { span: 20 }, sm: { span: 12 }, md: { span: 12 }, lg: { span: 8 }, xl: { span: 8 }, xxl: { span: 8 },
 };
 
-function Login(): React.ReactNode {
+function Login(props: SendCodeProps) {
   /*
   * 设置是 个人登陆还是团队登陆
   * '0' - 以账号名称/手机号码/邮箱登陆 + 密码 登陆
@@ -21,36 +26,54 @@ function Login(): React.ReactNode {
   */
   const [mode, setMode] = useState('0');
   // 以 mode '0' 登入
-  const [userInfo ,setUserInfo] = useState({username:'',password:''});
+  const [userInfo, setUserInfo] = useState({ username: '', password: '' });
   // 以mode '1' 登入 - verificationCode 为 字符串的验证码
-  const [phoneInfo, setPhoneInfo] = useState({phoneNumber:'',verificationCode:''});
-  // 发送验证码操作
-  function sendCode() {
-    console.log('我发送了验证码请求');
-    var api = 'http://www.gsta.top/v3/phoneCode/';
-    axiosInstance.get(api,{data:{phonenumber: "15521244464"}})
-    .then(function (response) {
-      console.log(response);
-    })
+  const [phoneInfo, setPhoneInfo] = useState({ phoneNumber: '', verificationCode: '' });
+
+  // onChange 绑定电话号码
+  function BindPhoneNumber(event: React.ChangeEvent<HTMLInputElement>) {
+    var phone: string | undefined = event.currentTarget.value;
+    if (typeof phone === 'undefined') {
+      alert('您输入了错误的手机号码信息');
+      return;
+    }
+    if ((/^[0-9]*$/.test(phone)) === false) {
+      alert('您输入了错误的手机号码信息');
+    }
+    setPhoneInfo(
+      {
+        phoneNumber: phone,
+        verificationCode: '',
+      },
+    );
   }
+
+  // 发送验证码操作 类型不定
+  const sendCode: any = (event: React.MouseEvent<HTMLButtonElement>): void => {
+    console.log('我发送了验证码');
+    props.dispatch({
+      type: 'login/sendVerification2Phone',
+      payload: phoneInfo.phoneNumber,
+    });
+  };
   // 根据不相同的mode渲染 对应的DOM
   let formDOM: React.ReactNode = mode === '0' ? (
     <div className={styles['form-input-block']}>
-      <Input placeholder='请输入账号/手机号码/电子邮箱' prefix={<Icon type="user"/>} style={{height: '40px'}} />
-      <Input.Password placeholder='请输入密码'  prefix={<Icon type="lock"/>} style={{height: '40px'}} />
-      <Button style={{width: '100%', height: '40px'}} type='primary'>
+      <Input placeholder='请输入账号/手机号码/电子邮箱' prefix={<Icon type="user"/>} style={{ height: '40px' }}/>
+      <Input.Password placeholder='请输入密码' prefix={<Icon type="lock"/>} style={{ height: '40px' }}/>
+      <Button style={{ width: '100%', height: '40px' }} type='primary'>
         登陆
       </Button>
     </div>
 
   ) : (
     <div className={styles['form-input-block']}>
-      <div style={{display:'flex'}}>
-      <Input placeholder='请输入手机号码' prefix={<Icon type="mobile"/>} style={{height: '40px'}}  />
-      <Button type="primary" onClick={sendCode} style={{height:40}}>发送验证码</Button>
+      <div style={{ display: 'flex' }}>
+        <Input id="phoneNumber" onChange={BindPhoneNumber} placeholder='请输入手机号码' prefix={<Icon type="mobile"/>} style={{ height: '40px' }}/>
+        <Button type="primary" onClick={sendCode} style={{ height: 40 }}>发送验证码</Button>
       </div>
-      <Input placeholder='请输入验证码' prefix={<Icon type="lock"/>} style={{height: '40px'}}  />
-      <Button style={{width: '100%', height: '40px'}} type='primary'>
+      <Input placeholder='请输入验证码' prefix={<Icon type="lock"/>} style={{ height: '40px' }}/>
+      <Button style={{ width: '100%', height: '40px' }} type='primary'>
         登陆
       </Button>
     </div>
@@ -62,8 +85,8 @@ function Login(): React.ReactNode {
         <Col {...autoAdjust}>
           <div className={styles['login-block']}>
             <Card
-              style={{width: '100%',height: '100%', borderRadius: '5px', boxShadow: '1px 1px 5px #111'}}
-              headStyle={{color: '#2a8ff7'}}
+              style={{ width: '100%', height: '100%', borderRadius: '5px', boxShadow: '1px 1px 5px #111' }}
+              headStyle={{ color: '#2a8ff7' }}
               title='赛事报名通道登录平台'
             >
               <div style={{ paddingTop: '10px' }}>
@@ -77,17 +100,15 @@ function Login(): React.ReactNode {
                   {/* 在linter中有限制  */}
                   {mode === '0' ?
                     <div>
-                      <Button onClick={() => {setMode('1')}}>手机短信验证登陆</Button>
-                      <Button onClick={() => {setMode('2')}}>二维码登陆</Button>
+                      <Button onClick={() => {setMode('1');}}>手机短信验证登陆</Button>
+                      <Button onClick={() => {setMode('2');}}>二维码登陆</Button>
                     </div>
-                  :
+                    :
                     <div>
-                      <Button onClick={() => {setMode('0')}}>电话/邮箱/用户名 + 密码登陆</Button>
-                      <Button onClick={() => {setMode('2')}}>二维码登陆</Button>
+                      <Button onClick={() => {setMode('0');}}>电话/邮箱/用户名 + 密码登陆</Button>
+                      <Button onClick={() => {setMode('2');}}>二维码登陆</Button>
                     </div>
                   }
-
-
                 </div>
               </div>
             </Card>
@@ -98,4 +119,8 @@ function Login(): React.ReactNode {
   );
 }
 
-export default Login;
+const mapStateToProps = (phoneNumber: string) => {
+  return phoneNumber;
+};
+
+export default connect(mapStateToProps)(Login);
