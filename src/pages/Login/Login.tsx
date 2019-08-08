@@ -1,18 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import {
-  Card,Button,Input,Icon,Row, Col,
+  Card,Button,Input,Icon,Row, Col
 } from 'antd';
 // @ts-ignore
 import styles from '@/pages/Login/index.less';
-import axiosInstance from './../../utils/request';
+import { Dispatch } from '../../../node_modules/redux';
+import { connect } from 'dva';
 
+export interface SendCodeProps {
+  phoneNumber:number;
+  dispatch: Dispatch<{type: string, payload: any}>;
+}
 
 // Col 自适应
 const autoAdjust = {
   xs: { span: 20 }, sm: { span: 12 }, md: { span: 12 }, lg: { span: 8 }, xl: { span: 8 }, xxl: { span: 8 },
 };
 
-function Login(): React.ReactNode {
+function Login(props:SendCodeProps) {
   /*
   * 设置是 个人登陆还是团队登陆
   * '0' - 以账号名称/手机号码/邮箱登陆 + 密码 登陆
@@ -24,15 +29,31 @@ function Login(): React.ReactNode {
   const [userInfo ,setUserInfo] = useState({username:'',password:''});
   // 以mode '1' 登入 - verificationCode 为 字符串的验证码
   const [phoneInfo, setPhoneInfo] = useState({phoneNumber:'',verificationCode:''});
-  // 发送验证码操作
-  function sendCode() {
-    console.log('我发送了验证码请求');
-    var api = 'https://www.gsta.top/v3/phoneCode/';
-    axiosInstance.get(api,{data:{phonenumber: "15521244464"}})
-    .then(function (response) {
-      console.log(response);
-    })
+  // onChange 绑定电话号码
+  function BindPhoneNumber(event:React.ChangeEvent<HTMLInputElement>) {
+    var phone:string | undefined = event.currentTarget.value;
+    if (typeof phone === 'undefined') {
+      alert('您输入了错误的手机号码信息')
+      return
+    }
+    if ( (/^[0-9]*$/.test(phone)) === false) {
+      alert('您输入了错误的手机号码信息')
+    }
+    setPhoneInfo(
+      {
+        phoneNumber : phone,
+        verificationCode : ''
+      }
+    )
   }
+  // 发送验证码操作 类型不定
+  const sendCode:any = (event: React.MouseEvent<HTMLButtonElement>): void => {
+    console.log("我发送了验证码");
+    props.dispatch({
+      type:'login/sendVerification2Phone',
+      payload:phoneInfo.phoneNumber
+    });
+  };
   // 根据不相同的mode渲染 对应的DOM
   let formDOM: React.ReactNode = mode === '0' ? (
     <div className={styles['form-input-block']}>
@@ -46,7 +67,7 @@ function Login(): React.ReactNode {
   ) : (
     <div className={styles['form-input-block']}>
       <div style={{display:'flex'}}>
-      <Input placeholder='请输入手机号码' prefix={<Icon type="mobile"/>} style={{height: '40px'}}  />
+      <Input id="phoneNumber" onChange={BindPhoneNumber} placeholder='请输入手机号码' prefix={<Icon type="mobile"/>} style={{height: '40px'}}  />
       <Button type="primary" onClick={sendCode} style={{height:40}}>发送验证码</Button>
       </div>
       <Input placeholder='请输入验证码' prefix={<Icon type="lock"/>} style={{height: '40px'}}  />
@@ -98,4 +119,8 @@ function Login(): React.ReactNode {
   );
 }
 
-export default Login;
+const mapStateToProps = (phoneNumber: string) => {
+  return phoneNumber;
+}
+
+export default connect(mapStateToProps)(Login);
