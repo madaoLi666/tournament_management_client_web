@@ -1,6 +1,5 @@
 import { AnyAction } from 'redux';
 import { Model, EffectsCommandMap } from 'dva';
-import { sendVerification2Phone } from '@/services/login.ts';
 
 const LOGIN_MODEL:Model = {
   namespace: 'login',

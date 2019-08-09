@@ -12,7 +12,8 @@ const config: IConfig =  {
         { path: '/login', component: './Login/Login.tsx', name: '个人登陆页面'},
         { path: '/login/register', component: './Login/Register.tsx', name: '个人注册页面' },
         { path: '/login/bindUnit', component: './Login/BindUnit.tsx', name: '绑定单位页面' },
-        { path: '/login/mobileValidate', component: './Login/MobileValidate.tsx', name: '手机验证页面' }
+        { path: '/login/mobileValidate', component: './Login/MobileValidate.tsx', name: '手机验证页面' },
+        { path: '/login/infoSupplement', component: './Login/BasicInfoSupplement.tsx', name: '运动员信息补全' }
       ],
     },
     // 报名页面 fix
