@@ -4,11 +4,10 @@ import {
 } from 'antd';
 // @ts-ignore
 import styles from '@/pages/Login/index.less';
-import { Dispatch } from '../../../node_modules/redux';
+import { Dispatch } from 'redux';
 import { connect } from 'dva';
 
 export interface SendCodeProps {
-  phoneNumber:number;
   dispatch: Dispatch<{type: string, payload: any}>;
 }
 
@@ -29,7 +28,7 @@ function Login(props:SendCodeProps) {
   const [userInfo ,setUserInfo] = useState({username:'',password:''});
   // 以mode '1' 登入 - verificationCode 为 字符串的验证码
   const [phoneInfo, setPhoneInfo] = useState({phoneNumber:'',verificationCode:''});
-  // onChange 绑定电话号码
+  // onChange 绑定mode1 电话号码
   function BindPhoneNumber(event:React.ChangeEvent<HTMLInputElement>) {
     var phone:string | undefined = event.currentTarget.value;
     if (typeof phone === 'undefined') {
@@ -47,19 +46,53 @@ function Login(props:SendCodeProps) {
     )
   }
   // 发送验证码操作 类型不定
-  const sendCode:any = (event: React.MouseEvent<HTMLButtonElement>): void => {
-    console.log("我发送了验证码");
+  function sendCode(event: React.MouseEvent<HTMLButtonElement>) {
     props.dispatch({
-      type:'login/sendVerification2Phone',
-      payload:phoneInfo.phoneNumber
-    });
+      type: 'login/sendVerification2Phone',
+      payload: phoneInfo.phoneNumber
+    })
+    // TODO 返回正确的验证码
+  };
+  // onChange 绑定mode1 电话号码的验证码
+  function BindPhoneVerificationCode(event:React.ChangeEvent<HTMLInputElement>) {
+    var phoneVerificationCode = event.currentTarget.value;
+    setPhoneInfo({
+      phoneNumber: phoneInfo.phoneNumber,
+      verificationCode: phoneVerificationCode
+    })
+  }
+  // mode1 登陆按钮函数
+  function loginWithMode1(event:React.MouseEvent<HTMLButtonElement>) {
+    // TODO验证是否正确
+  }
+  // onChange 绑定mode0 账号密码登陆
+  function BindUserInfoUserName(event:React.ChangeEvent<HTMLInputElement>) {
+    var username:string = event.currentTarget.value;
+    setUserInfo({
+      username: username,
+      password: userInfo.password
+    })
+  }
+  function BindUserInfoPassword(event:React.ChangeEvent<HTMLInputElement>) {
+    var password:string = event.currentTarget.value;
+    setUserInfo({
+      username: userInfo.username,
+      password: password
+    })
+  }
+  // 以mode '0' 登陆的函数
+  function loginWithMode0(event:React.MouseEvent<HTMLButtonElement>) {
+    props.dispatch({
+      type:'login/sendLoginRequser',
+      payload: userInfo
+    })
   };
   // 根据不相同的mode渲染 对应的DOM
   let formDOM: React.ReactNode = mode === '0' ? (
     <div className={styles['form-input-block']}>
-      <Input placeholder='请输入账号/手机号码/电子邮箱' prefix={<Icon type="user"/>} style={{height: '40px'}} />
-      <Input.Password placeholder='请输入密码'  prefix={<Icon type="lock"/>} style={{height: '40px'}} />
-      <Button style={{width: '100%', height: '40px'}} type='primary'>
+      <Input onChange={BindUserInfoUserName} placeholder='请输入账号/手机号码/电子邮箱' prefix={<Icon type="user"/>} style={{height: '40px'}} />
+      <Input.Password onChange={BindUserInfoPassword} placeholder='请输入密码'  prefix={<Icon type="lock"/>} style={{height: '40px'}} />
+      <Button onClick={loginWithMode0} style={{width: '100%', height: '40px'}} type='primary'>
         登陆
       </Button>
     </div>
@@ -70,7 +103,7 @@ function Login(props:SendCodeProps) {
       <Input id="phoneNumber" onChange={BindPhoneNumber} placeholder='请输入手机号码' prefix={<Icon type="mobile"/>} style={{height: '40px'}}  />
       <Button type="primary" onClick={sendCode} style={{height:40}}>发送验证码</Button>
       </div>
-      <Input placeholder='请输入验证码' prefix={<Icon type="lock"/>} style={{height: '40px'}}  />
+      <Input onChange={BindPhoneVerificationCode} placeholder='请输入验证码' prefix={<Icon type="lock"/>} style={{height: '40px'}}  />
       <Button style={{width: '100%', height: '40px'}} type='primary'>
         登陆
       </Button>
@@ -123,4 +156,11 @@ const mapStateToProps = (phoneNumber: string) => {
   return phoneNumber;
 }
 
+const loginMapStateToProps = (state:{username:string,passowrd:string}) => {
+  return state;
+}
+
+// 账号密码登陆的 connect
+connect(loginMapStateToProps)(Login);
+// 手机验证码登陆的 connect
 export default connect(mapStateToProps)(Login);

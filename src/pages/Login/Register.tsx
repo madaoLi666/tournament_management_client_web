@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 // @ts-ignore
 import styles from './index.less';
 import { Row, Col, Card, Tabs, Form, Input, Button } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import axiosInstance from './../../utils/request';
+import { connect } from 'dva';
 
 // 注册新用户表单项的接口，暂时不知道要写什么
 interface UserFormProps {
+  sendCode?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  sendEmailCode?: Function;
   form?: FormComponentProps;
 }
 
@@ -63,6 +66,7 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
     this.state = {
       // 登陆密码二次验证
       confirmDirty: false,
+      verificationCode:''
     };
   }
 
@@ -72,7 +76,7 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
     this.props.form.validateFieldsAndScroll((err: any, values: any) => {
       if (!err) {
         console.log('Received values of form :', values);
-        var api = 'http://47.106.15.217:9090/mock/19/personalAccountRegister/';
+        var api = 'https://www.gsta.top/v3/personalAccountRegister/';
         axiosInstance.post(api,{
           username:values.userID,
           password:values.password,
@@ -89,6 +93,13 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
       }
     });
   };
+  // onChange 绑定验证码的值
+  public BindVerificationCode = (event:React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      verificationCode:event.currentTarget.value
+    } 
+    )
+  }
   // 验证密码onBlur 类型暂时不知道，暂定any
   public handleConfirm = (e: any) => {
     const { value } = e.target;
@@ -115,6 +126,10 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
     }
     callback();
   };
+  // public toParent = (event:React.MouseEvent<HTMLButtonElement>) => {
+  //   // @ts-ignore
+  //   this.props.sendCode(event,this.state.verificationCode);
+  // }
 
 
   render() {
@@ -144,10 +159,10 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
             <Col span={12}>
               {getFieldDecorator('verificationCode', {
                 rules: [{ required: true, message: '请输入右边的验证码！' }],
-              })(<Input/>)}
+              })(<Input onChange={this.BindVerificationCode}/>)}
             </Col>
             <Col span={12}>
-              <Button type="primary">获取验证码</Button>
+              <Button onClick={this.props.sendCode} type="primary">获取验证码</Button>
             </Col>
           </Row>
         </Form.Item>
@@ -244,17 +259,25 @@ class Register extends React.Component<any, any> {
     };
   }
 
+  // 获取验证码
+  public sendCode = (event:React.MouseEvent<HTMLButtonElement>) => {
+    const { dispatch } = this.props;
+    // 调用接口
+    dispatch({
+      type:'register/sendVerificationCode'
+    }
+    )
+  }
 
   render() {
 
-
     let { TabsState } = this.state;
-
+    
     // 标签页DOM
     let TabsDOM: React.ReactNode = (
       <Tabs defaultActiveKey={TabsState}>
         <TabPane tab={TabsTitle1} key="1">
-          <RegisterForm/>
+          <RegisterForm sendCode={this.sendCode}/>
         </TabPane>
         <TabPane tab={TabsTitle2} key="2">
           <OldUserFormInfo/>
@@ -281,4 +304,7 @@ class Register extends React.Component<any, any> {
   }
 }
 
-export default Register;
+
+
+
+export default connect()(Register);
