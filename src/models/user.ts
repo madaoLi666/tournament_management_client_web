@@ -9,8 +9,9 @@ const USER_MODEL:Model = {
     name: 'an',
     username:'',
     userPassword:'',
-    phoneNumber:'',
-    email:''
+    phoneNumber:'15626466587',
+    email:'',
+    unitaccount:''
   },
   reducers: {
     // 存手机进state
@@ -27,6 +28,13 @@ const USER_MODEL:Model = {
     // 存email
     modifyEmail(state: any, action: AnyAction) {
       state.email = action.email;
+      return state;
+    },
+    // 个人注册后存的信息
+    saveValue(state: any, action: AnyAction) {
+      state.username = action.value.username
+      state.email = action.value.email
+      state.unitaccount = action.value.unitaccount
       return state;
     }
   },
@@ -45,6 +53,11 @@ const USER_MODEL:Model = {
         console.log(err)
       })
     },
+    // 个人注册成功后，存进state
+    *saveInfo(action: AnyAction, effect: EffectsCommandMap) {
+      console.log(action.value);
+      yield effect.put({type:'saveValue',value:action.value})
+    }
   }
 };
 

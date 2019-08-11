@@ -1,12 +1,28 @@
 import React from 'react';
 // @ts-ignore
 import styles from './index.less';
-import { Row, Col, Card, Tabs, Form, Input, Button } from 'antd';
+import { Row, Col, Card, Tabs, Form, Input, Button, Modal } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
-import { Dispatch } from 'redux';
+import { personalAccountRegister,PersonInfo } from '@/services/register.ts';
 
-// 注册新用户表单项的接口，暂时不知道要写什么
+
+
+// 个人注册成功后返回信息
+interface RightResponse {
+  username?: string
+  email?: string
+  phone?: string
+  unitaccount?: string
+}
+
+interface Response {
+  data: RightResponse
+  error: string
+  notice: string
+}
+
+// 注册新用户表单项的接口
 interface UserFormProps {
   sendCode?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   sendEmailCode?: (event: React.MouseEvent<HTMLButtonElement>, email: string) => void;
@@ -66,25 +82,39 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
     this.state = {
       // 登陆密码二次验证
       confirmDirty: false,
-      verificationCode:'',
-      email:''
+      email:'',
+      // 注册失败对话框 state
+      errorText:'error of register',
+      visible: false,
+      confirmLoading: false
     };
   }
 
-  // 提交表单
-  public handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    this.props.form.validateFieldsAndScroll((err: any, values: any) => {
-      if (!err) {
-        console.log('Received values of form :', values);
-        // @ts-ignore
-        this.props.dispatch({
-          type: 'register/personRegister',
-          person: values
-        })
-      }
-    });
-  };
+  // 注册失败的对话框函数
+  public showModal = () => {
+    this.setState({
+      visible: true
+    })
+  }
+  // 对话框确定按钮
+  public handleOK = () => {
+    this.setState({
+      errorText:this.state.errorText,
+      confirmLoading: true
+    })
+    setTimeout(() => {
+      this.setState({
+        visible: false,
+        confirmLoading: false
+      });
+    },1000);
+  }
+  // 对话框取消按钮
+  public handleCancel = () => {
+    this.setState({
+      visible: false
+    })
+  }
   // 验证密码onBlur 类型暂时不知道，暂定any
   public handleConfirm = (e: any) => {
     const { value } = e.target;
@@ -122,69 +152,108 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
     // @ts-ignore
     this.props.sendEmailCode(event, this.state.email);
   }
+  // 提交表单
+  public handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    this.props.form.validateFieldsAndScroll((err: any, values: any) => {
+      if (!err) {
+        let personInfo:PersonInfo = {
+            Username: values.userID,
+            Password: values.password,
+            Email: values.email,
+            Emailcode: values.emailVerificationCode,
+            // @ts-ignore
+            Phonenumber: this.props.personInfo.phoneNumber
+        }
+        console.log(personInfo);
+        // 如果注册成功存进user state
+        let saveState = (value: RightResponse) => {
+          // @ts-ignore
+          this.props.dispatch({
+            type: 'user/saveInfo',
+            value: value
+          })
+        }
+        // 调用修改state
+        let changeState = (error: string) => {
+          this.setState({
+            visible: true,
+            errorText: error
+          })
+        }
+        personalAccountRegister(personInfo)
+        .then(function (res: Response) {
+          if (res.error !== "") {
+            console.log(res);
+            changeState(res.error);
+          }else {
+            console.log(res);
+            saveState(res.data);
+          }
+        })
+        .catch(function (err:Response) {
+            console.log(err)
+        })
+      }
+    });
+  };
 
 
   render() {
-    // Row的gutter
-    //
+    
     const { getFieldDecorator } = this.props.form;
+    const { visible,confirmLoading,errorText } = this.state;
 
     return (
-      <Form {...formItemLayout} onSubmit={this.handleSubmit}>
-        <Form.Item label='用户名'>
-          {getFieldDecorator('userID', {
-            rules: [{ required: true, message: '请输入用户名！' }],
-          })(<Input placeholder='如果是用微信授权登陆,可预填微信名称'/>)}
-        </Form.Item>
-        <Form.Item label='登陆密码' hasFeedback={true}>
-          {getFieldDecorator('password', {
-            rules: [{ required: true, message: '请输入密码！' }, { validator: this.validateToNextPassword }],
-          })(<Input.Password/>)}
-        </Form.Item>
-        <Form.Item label='确认密码' hasFeedback={true}>
-          {getFieldDecorator('comfirmPassword', {
-            rules: [{ required: true, message: '请确认密码！' }, { validator: this.compareToFirstPassword }],
-          })(<Input.Password onBlur={this.handleConfirm}/>)}
-        </Form.Item>
-        <Form.Item label='验证码'>
-          <Row>
-            <Col span={12}>
-              {getFieldDecorator('verificationCode', {
-                rules: [{ required: true, message: '请输入右边的验证码！' }],
-              })(<Input/>)}
-            </Col>
-            <Col span={12}>
-              <Button onClick={this.props.sendCode} type="primary">获取验证码</Button>
-            </Col>
-          </Row>
-        </Form.Item>
-        <Form.Item label='邮箱'>
-          <Row>
-            <Col span={12}>
-              {getFieldDecorator('email', {
-                rules: [{ required: true, message: '请输入邮箱！' }, { type: 'email', message: '请输入正确的邮箱格式！' }],
-              })(<Input  onChange={this.BindEmail} />)}
-            </Col>
-            <Col span={12}>
-              <Button onClick={this.toParent} type="primary">发送邮箱验证码</Button>
-            </Col>
-          </Row>
-        </Form.Item>
-        <Form.Item label='邮箱验证码'>
-          {getFieldDecorator('emailVerificationCode', {
-            rules: [{ required: true, message: '请输入邮箱验证码！' }],
-          })(<Input/>)}
-        </Form.Item>
-        <Form.Item {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">注册绑定,并进入下一步操作</Button>
-        </Form.Item>
-      </Form>
+      <div>
+        <Modal title="注册错误" onCancel={this.handleCancel} visible={visible} onOk={this.handleOK} confirmLoading={confirmLoading}><p>{errorText}</p></Modal>
+        <Form {...formItemLayout} onSubmit={this.handleSubmit}>
+          <Form.Item label='用户名'>
+            {getFieldDecorator('userID', {
+              rules: [{ required: true, message: '请输入用户名！' }],
+            })(<Input placeholder='如果是用微信授权登陆,可预填微信名称'/>)}
+          </Form.Item>
+          <Form.Item label='登陆密码' hasFeedback={true}>
+            {getFieldDecorator('password', {
+              rules: [{ required: true, message: '请输入密码！' }, { validator: this.validateToNextPassword }],
+            })(<Input.Password/>)}
+          </Form.Item>
+          <Form.Item label='确认密码' hasFeedback={true}>
+            {getFieldDecorator('comfirmPassword', {
+              rules: [{ required: true, message: '请确认密码！' }, { validator: this.compareToFirstPassword }],
+            })(<Input.Password onBlur={this.handleConfirm}/>)}
+          </Form.Item>
+          <Form.Item label='邮箱'>
+            <Row>
+              <Col span={12}>
+                {getFieldDecorator('email', {
+                  rules: [{ required: true, message: '请输入邮箱！' }, { type: 'email', message: '请输入正确的邮箱格式！' }],
+                })(<Input  onChange={this.BindEmail} />)}
+              </Col>
+              <Col span={12}>
+                <Button onClick={this.toParent} type="primary">发送邮箱验证码</Button>
+              </Col>
+            </Row>
+          </Form.Item>
+          <Form.Item label='邮箱验证码'>
+            {getFieldDecorator('emailVerificationCode', {
+              rules: [{ required: true, message: '请输入邮箱验证码！' }],
+            })(<Input/>)}
+          </Form.Item>
+          <Form.Item {...tailFormItemLayout}>
+            <Button type="primary" htmlType="submit">注册绑定,并进入下一步操作</Button>
+          </Form.Item>
+        </Form>
+      </div>
     );
   }
 }
 
+function phoneStateToProps(state: any) {
+  return {personInfo: state.user}
+}
 
-const RegisterForm = connect()(Form.create<UserFormProps & FormComponentProps>({
+const RegisterForm = connect(phoneStateToProps)(Form.create<UserFormProps & FormComponentProps>({
   name: 'register',
 })(UserForm));
 
@@ -267,7 +336,6 @@ class Register extends React.Component<any, any> {
       email: email
     })
   }
-
   render() {
 
     let { TabsState } = this.state;

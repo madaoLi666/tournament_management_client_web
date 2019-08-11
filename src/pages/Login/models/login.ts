@@ -5,6 +5,7 @@ import { sendVerification2Phone, Response } from '@/services/login.ts';
 const LOGIN_MODEL:Model = {
   namespace: 'login',
   state: {
+    
   },
   reducers: {
     

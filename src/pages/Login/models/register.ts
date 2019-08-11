@@ -39,24 +39,23 @@ const RESISTER_MODEL:Model = {
            yield effect.put({type: 'user/modifyEmail', email:action.email})
         },
         // 个人注册
-        *personRegister(action: AnyAction, effect: EffectsCommandMap) {
-            let phone:any = yield effect.select((state:any) => ({phonenumber: state.user.phoneNumber}))
-            let personInfo:PersonInfo = {
-                Username: action.person.userID,
-                Password: action.person.password,
-                Email: action.person.email,
-                Emailcode: action.person.emailVerificationCode,
-                Phonenumber: phone.phonenumber,
-                Phonecode: action.person.verificationCode
-            }
-            yield personalAccountRegister(personInfo)
-            .then(function (res:Response) {
-                console.log(res)
-            })
-            .catch(function (err:Response) {
-                console.log(err)
-            })
-        }
+        // *personRegister(action: AnyAction, effect: EffectsCommandMap) {
+        //     let phone:any = yield effect.select((state:any) => ({phonenumber: state.user.phoneNumber}))
+        //     let personInfo:PersonInfo = {
+        //         Username: action.person.userID,
+        //         Password: action.person.password,
+        //         Email: action.person.email,
+        //         Emailcode: action.person.emailVerificationCode,
+        //         Phonenumber: phone.phonenumber,
+        //     }
+        //     yield personalAccountRegister(personInfo)
+        //     .then(function (res:Response) {
+        //         console.log(res)
+        //     })
+        //     .catch(function (err:Response) {
+        //         console.log(err)
+        //     })
+        // },
     }
 };
 

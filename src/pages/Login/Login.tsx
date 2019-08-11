@@ -153,10 +153,6 @@ function Login(props: SendCodeProps) {
   );
 }
 
-const mapStateToProps = (phoneNumber: string) => {
-  return phoneNumber;
-};
-
 const loginMapStateToProps = (state:{username:string,passowrd:string}) => {
   return state;
 }
@@ -164,4 +160,4 @@ const loginMapStateToProps = (state:{username:string,passowrd:string}) => {
 // 账号密码登陆的 connect
 connect(loginMapStateToProps)(Login);
 // 手机验证码登陆的 connect
-export default connect(mapStateToProps)(Login);
+export default connect()(Login);
