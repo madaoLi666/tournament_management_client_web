@@ -49,10 +49,9 @@ function Login(props: SendCodeProps) {
   // 发送验证码操作 类型不定
   function sendCode(event: React.MouseEvent<HTMLButtonElement>) {
     props.dispatch({
-      type: 'login/sendVerification2Phone',
+      type: 'login/sendPhoneNumberForCode',
       payload: phoneInfo.phoneNumber
     })
-    // TODO 返回正确的验证码
   };
   // onChange 绑定mode1 电话号码的验证码
   function BindPhoneVerificationCode(event:React.ChangeEvent<HTMLInputElement>) {
@@ -64,7 +63,10 @@ function Login(props: SendCodeProps) {
   }
   // mode1 登陆按钮函数
   function loginWithMode1(event:React.MouseEvent<HTMLButtonElement>) {
-    // TODO验证是否正确
+    props.dispatch({
+      type:'user/checkCode',
+      payload: phoneInfo.verificationCode
+    })
   }
   // onChange 绑定mode0 账号密码登陆
   function BindUserInfoUserName(event:React.ChangeEvent<HTMLInputElement>) {
@@ -105,7 +107,7 @@ function Login(props: SendCodeProps) {
         <Button type="primary" onClick={sendCode} style={{ height: 40 }}>发送验证码</Button>
       </div>
       <Input onChange={BindPhoneVerificationCode} placeholder='请输入验证码' prefix={<Icon type="lock"/>} style={{height: '40px'}}  />
-      <Button style={{width: '100%', height: '40px'}} type='primary'>
+      <Button onClick={loginWithMode1} style={{width: '100%', height: '40px'}} type='primary'>
         登陆
       </Button>
     </div>

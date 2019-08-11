@@ -3,13 +3,13 @@ import React from 'react';
 import styles from './index.less';
 import { Row, Col, Card, Tabs, Form, Input, Button } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
-import axiosInstance from './../../utils/request';
 import { connect } from 'dva';
+import { Dispatch } from 'redux';
 
 // 注册新用户表单项的接口，暂时不知道要写什么
 interface UserFormProps {
   sendCode?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  sendEmailCode?: Function;
+  sendEmailCode?: (event: React.MouseEvent<HTMLButtonElement>, email: string) => void;
   form?: FormComponentProps;
 }
 
@@ -66,40 +66,25 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
     this.state = {
       // 登陆密码二次验证
       confirmDirty: false,
-      verificationCode:''
+      verificationCode:'',
+      email:''
     };
   }
 
   // 提交表单
-  public handleSubmit = (event: any) => {
+  public handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     this.props.form.validateFieldsAndScroll((err: any, values: any) => {
       if (!err) {
         console.log('Received values of form :', values);
-        var api = 'https://www.gsta.top/v3/personalAccountRegister/';
-        axiosInstance.post(api,{
-          username:values.userID,
-          password:values.password,
-          code:values.verificationCode,
-          email:values.email,
-          email验证:values.emailVerificationCode,
-          // TODO 手机获取
-          phonenumber:15626466587
-        }).then(function (response) {
-          console.log(response);
-        }).catch(function (error) {
-          console.log(error)
-        });
+        // @ts-ignore
+        this.props.dispatch({
+          type: 'register/personRegister',
+          person: values
+        })
       }
     });
   };
-  // onChange 绑定验证码的值
-  public BindVerificationCode = (event:React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({
-      verificationCode:event.currentTarget.value
-    } 
-    )
-  }
   // 验证密码onBlur 类型暂时不知道，暂定any
   public handleConfirm = (e: any) => {
     const { value } = e.target;
@@ -126,10 +111,17 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
     }
     callback();
   };
-  // public toParent = (event:React.MouseEvent<HTMLButtonElement>) => {
-  //   // @ts-ignore
-  //   this.props.sendCode(event,this.state.verificationCode);
-  // }
+  // onChang 绑定email
+  public BindEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      email:event.currentTarget.value
+    })
+  }
+  // 给上层组件传email，然后根据email调用接口
+  public toParent = (event:React.MouseEvent<HTMLButtonElement>) => {
+    // @ts-ignore
+    this.props.sendEmailCode(event, this.state.email);
+  }
 
 
   render() {
@@ -159,7 +151,7 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
             <Col span={12}>
               {getFieldDecorator('verificationCode', {
                 rules: [{ required: true, message: '请输入右边的验证码！' }],
-              })(<Input onChange={this.BindVerificationCode}/>)}
+              })(<Input/>)}
             </Col>
             <Col span={12}>
               <Button onClick={this.props.sendCode} type="primary">获取验证码</Button>
@@ -171,10 +163,10 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
             <Col span={12}>
               {getFieldDecorator('email', {
                 rules: [{ required: true, message: '请输入邮箱！' }, { type: 'email', message: '请输入正确的邮箱格式！' }],
-              })(<Input/>)}
+              })(<Input  onChange={this.BindEmail} />)}
             </Col>
             <Col span={12}>
-              <Button type="primary">发送邮箱验证码</Button>
+              <Button onClick={this.toParent} type="primary">发送邮箱验证码</Button>
             </Col>
           </Row>
         </Form.Item>
@@ -192,10 +184,9 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
 }
 
 
-const RegisterForm = Form.create<UserFormProps & FormComponentProps>({
+const RegisterForm = connect()(Form.create<UserFormProps & FormComponentProps>({
   name: 'register',
-})(UserForm);
-
+})(UserForm));
 
 class OldUserForm extends React.Component<OldUserFormProps & FormComponentProps, any> {
   constructor(props: UserFormProps & FormComponentProps) {
@@ -245,9 +236,9 @@ class OldUserForm extends React.Component<OldUserFormProps & FormComponentProps,
   }
 }
 
-const OldUserFormInfo = Form.create<OldUserFormProps & FormComponentProps>({
+const OldUserFormInfo = connect()(Form.create<OldUserFormProps & FormComponentProps>({
   name: 'oldUser',
-})(OldUserForm);
+})(OldUserForm));
 
 
 class Register extends React.Component<any, any> {
@@ -268,6 +259,14 @@ class Register extends React.Component<any, any> {
     }
     )
   }
+  // 获取邮箱验证码
+  public sendEmail = (event: React.MouseEvent<HTMLButtonElement>, email: string) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'register/sendEmailCode',
+      email: email
+    })
+  }
 
   render() {
 
@@ -277,7 +276,7 @@ class Register extends React.Component<any, any> {
     let TabsDOM: React.ReactNode = (
       <Tabs defaultActiveKey={TabsState}>
         <TabPane tab={TabsTitle1} key="1">
-          <RegisterForm sendCode={this.sendCode}/>
+          <RegisterForm sendCode={this.sendCode} sendEmailCode={this.sendEmail} />
         </TabPane>
         <TabPane tab={TabsTitle2} key="2">
           <OldUserFormInfo/>
@@ -303,8 +302,6 @@ class Register extends React.Component<any, any> {
     );
   }
 }
-
-
 
 
 export default connect()(Register);
