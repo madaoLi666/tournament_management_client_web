@@ -2,6 +2,8 @@ import React, { useState, useEffect, ChangeEvent } from 'react';
 import {
   Card, Button, Input, Icon, Row, Col,
 } from 'antd';
+
+import axios from 'axios';
 // @ts-ignore
 import styles from '@/pages/Login/index.less';
 import { Dispatch } from 'redux';
@@ -30,9 +32,15 @@ function Login(props: SendCodeProps) {
   // 以mode '1' 登入 - verificationCode 为 字符串的验证码
   const [phoneInfo, setPhoneInfo] = useState({ phoneNumber: '', verificationCode: '' });
 
+  axios.get('@/public/a.json',{responseType: 'json'})
+    .then(res => {
+      console.log(res);
+    });
+
+
   // onChange 绑定电话号码
   function BindPhoneNumber(event: React.ChangeEvent<HTMLInputElement>) {
-    var phone: string | undefined = event.currentTarget.value;
+    let phone: string | undefined = event.currentTarget.value;
     if (typeof phone === 'undefined') {
       alert('您输入了错误的手机号码信息');
       return;

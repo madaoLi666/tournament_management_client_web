@@ -4,10 +4,10 @@ import { Button, Card, Col, Form, Input, Row, Tabs, Cascader } from 'antd';
 import AddressInput from '@/components/AddressInput/AddressInput.tsx';
 import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
 import { ColProps } from 'antd/lib/grid';
+import { Dispatch } from 'redux';
 import { checkEmail, checkPhoneNumber } from '@/utils/regulars.ts';
 
 
-import { getVerificationPic } from '@/services/login';
 // @ts-ignore
 import styles from './index.less';
 
@@ -74,11 +74,11 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
     const { unitNameIsLegal } = this.props;
     // 没有检查value是否为空 不知道会不会bug
     unitNameIsLegal(value).then(res => {
-      if (res) {callback()
+      if (res) {callback();
       } else {
-        callback('已有相同的单位名称')
+        callback('已有相同的单位名称');
       }
-    })
+    });
   };
   // 提交信息
   handleSubmit = (e: React.FormEvent): void => {
@@ -106,14 +106,14 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
               rules: [{ required: true, message: '请输入单位名称' },{ validator: this.checkUnitNameIsLegal }],
               validateTrigger: 'onBlur',
             })(
-              <Input placeholder='请输入单位名称' autoComplete='off' />
+              <Input placeholder='请输入单位名称' autoComplete='off' />,
             )}
           </Form.Item>
           <Form.Item label='密码'>
             {getFieldDecorator('password', {
               rules: [{ required: true, message: '请输入密码' }, { validator: this.compareToConfirmPassword }],
             })(
-              <Input type='password' placeholder='请输入密码' autoComplete='off'/>
+              <Input type='password' placeholder='请输入密码' autoComplete='off'/>,
             )}
           </Form.Item>
           <Form.Item label='确认密码'>
@@ -121,14 +121,14 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
               rules: [{ required: true, message: '请输入密码' }, { validator: this.compareToFirstPassword }],
 
             })(
-              <Input type='password' placeholder='请再次输入密码' autoComplete='off' />
+              <Input type='password' placeholder='请再次输入密码' autoComplete='off' />,
             )}
           </Form.Item>
           <Form.Item label='联系人'>
             {getFieldDecorator('contact', {
               rules: [{ required: true, message: '请输入联系人姓名' }],
             })(
-              <Input placeholder='请输入联系人姓名' autoComplete='off' />
+              <Input placeholder='请输入联系人姓名' autoComplete='off' />,
             )}
           </Form.Item>
           <Form.Item label='手机号码'>
@@ -136,7 +136,7 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
               rules: [{ required: true, message: '请输入手机号码' }, { pattern: checkPhoneNumber, message: '请输入正确的手机号码' }],
               validateTrigger: 'onBlur',
             })(
-              <Input placeholder='请输入手机号码' autoComplete='off' />
+              <Input placeholder='请输入手机号码' autoComplete='off' />,
             )}
           </Form.Item>
           <Form.Item label='邮箱'>
@@ -144,12 +144,12 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
               rules: [{ required: true, message: '请输入电子邮箱' }, { pattern: checkEmail, message: '请输入正确的邮箱地址' }],
               validateTrigger: 'onBlur',
             })(
-              <Input placeholder='请输入邮箱地址' autoComplete='off' />
+              <Input placeholder='请输入邮箱地址' autoComplete='off' />,
             )}
           </Form.Item>
           <Form.Item label='地址'>
             {getFieldDecorator('residence', {})(
-              <AddressInput/>
+              <AddressInput/>,
             )}
           </Form.Item>
           <Form.Item
@@ -185,9 +185,7 @@ class BindUnitForm extends React.Component<NewUnitFromProps, any>{
   render(): React.ReactNode {
 
     const { getFieldDecorator } = this.props.form;
-    getVerificationPic().then(res => {
-      console.log(res);
-    });
+
 
     return (
       <Form
@@ -196,17 +194,17 @@ class BindUnitForm extends React.Component<NewUnitFromProps, any>{
       >
         <Form.Item label='用户名'>
           {getFieldDecorator('unitName',{
-            rules:[{required:true, message: '请输入用户名称'}]
+            rules:[{required:true, message: '请输入用户名称'}],
           })(
-            <Input placeholder='请输入用户名称' autoComplete='off' />
+            <Input placeholder='请输入用户名称' autoComplete='off' />,
           )}
         </Form.Item>
 
         <Form.Item label='密码'>
           {getFieldDecorator('password',{
-            rules:[{required:true, message: '请输入用户名称'}]
+            rules:[{required:true, message: '请输入用户名称'}],
           })(
-            <Input placeholder='请输入账号密码' type='password' autoComplete='off' />
+            <Input placeholder='请输入账号密码' type='password' autoComplete='off' />,
           )}
         </Form.Item>
 
@@ -219,18 +217,23 @@ class BindUnitForm extends React.Component<NewUnitFromProps, any>{
           </Button>
         </Form.Item>
       </Form>
-    )
+    );
   }
 }
 const BForm = Form.create<BindUnitFromProps>()(BindUnitForm);
 
 
-function BindUnit() {
+
+function BindUnit(props: { dispatch: Dispatch; }) {
 
   // 传入 NewUnitForm 中，已提供外部的表单处理
   // 这里可以拿到表单的信息
   function submitRegister(data: any): void {
+    const { dispatch } = props;
     console.log(data);
+    dispatch({
+      type: 'register/checkoutUnitRegisterPayStatus'
+    })
   }
   //
   function submitBindUnitData(data: any): void{
@@ -240,7 +243,7 @@ function BindUnit() {
   async function checkUnitNameIsLegal(unitName:string): Promise<boolean> {
     return await fetch(`http://47.106.15.217:9090/mock/19/newUnitAccount/?name=${unitName}`, {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      method: 'GET'
+      method: 'GET',
     })
       .then(response => {
         return response.ok;
