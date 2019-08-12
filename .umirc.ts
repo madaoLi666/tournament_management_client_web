@@ -13,7 +13,8 @@ const config: IConfig =  {
         { path: '/login/register', component: './Login/Register.tsx', name: '个人注册页面' },
         { path: '/login/bindUnit', component: './Login/BindUnit.tsx', name: '绑定单位页面' },
         { path: '/login/mobileValidate', component: './Login/MobileValidate.tsx', name: '手机验证页面' },
-        { path: '/login/infoSupplement', component: './Login/BasicInfoSupplement.tsx', name: '运动员信息补全' }
+        { path: '/login/infoSupplement', component: './Login/BasicInfoSupplement.tsx', name: '运动员信息补全' },
+        { path: '/login/setRole', component: './Login/SetRole.tsx', name: '设置角色' }
       ],
     },
     // 报名页面 fix
@@ -21,12 +22,11 @@ const config: IConfig =  {
     // 主用户界面 - 这个位置是动态设置的
     {
       path: '/',
-      Routes: ['./src/layouts/BasicLayout.tsx'],
+      Routes: ['./src/layouts/BasicLayout.tsx','./src/pages/Authorized/Authorized.tsx'],
       routes: []
     },
   ],
   treeShaking: true,
-  publicPath: '/public',
   runtimePublicPath:true,
   plugins: [
     // ref: https://umijs.org/plugin/umi-plugin-react.html
@@ -36,16 +36,10 @@ const config: IConfig =  {
       dynamicImport: { webpackChunkName: true },
       title: 'userEntryPage',
       dll: true,
+      headScripts: [
+        {src: 'https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js'}
+      ],
 
-      // routes: {
-      //   exclude: [
-      //     /models\//,
-      //     /services\//,
-      //     /model\.(t|j)sx?$/,
-      //     /service\.(t|j)sx?$/,
-      //     /components\//,
-      //   ],
-      // }
     }],
   ]
 };

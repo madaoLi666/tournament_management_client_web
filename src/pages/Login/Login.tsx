@@ -9,15 +9,27 @@ import styles from '@/pages/Login/index.less';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
 
+
 export interface SendCodeProps {
-  phoneNumber: number;
-  dispatch: Dispatch<{ type: string, payload: any }>;
+  dispatch: Dispatch<{type: string, payload: any}>;
 }
 
 // Col 自适应
 const autoAdjust = {
   xs: { span: 20 }, sm: { span: 12 }, md: { span: 12 }, lg: { span: 8 }, xl: { span: 8 }, xxl: { span: 8 },
 };
+
+// 微信登陆实例
+// var obj = new WxLogin({
+//   self_redirect:true,
+//   id:"login_container",
+//   appid: "wx44ab1c3583d4306b",
+//   scope: "snsapi_login",
+//   redirect_uri: "localhost:8000",
+//   state: "",
+//   style: "black",
+//   href: ""
+// });
 
 function Login(props: SendCodeProps) {
   /*
@@ -30,17 +42,11 @@ function Login(props: SendCodeProps) {
   // 以 mode '0' 登入
   const [userInfo, setUserInfo] = useState({ username: '', password: '' });
   // 以mode '1' 登入 - verificationCode 为 字符串的验证码
-  const [phoneInfo, setPhoneInfo] = useState({ phoneNumber: '', verificationCode: '' });
 
-  axios.get('@/public/a.json',{responseType: 'json'})
-    .then(res => {
-      console.log(res);
-    });
-
-
-  // onChange 绑定电话号码
-  function BindPhoneNumber(event: React.ChangeEvent<HTMLInputElement>) {
-    let phone: string | undefined = event.currentTarget.value;
+  const [phoneInfo, setPhoneInfo] = useState({phoneNumber:'',verificationCode:''});
+  // onChange 绑定mode1 电话号码
+  function BindPhoneNumber(event:React.ChangeEvent<HTMLInputElement>) {
+    let phone:string | undefined = event.currentTarget.value;
     if (typeof phone === 'undefined') {
       alert('您输入了错误的手机号码信息');
       return;
@@ -56,20 +62,70 @@ function Login(props: SendCodeProps) {
     );
   }
 
+
+  // console.log(encodeURIComponent('http://www.gsta.top/v3/wechat_login'));
+
+  // fetch(`https://open.weixin.qq.com/connect/qrconnect?appid=wx44ab1c3583d4306b&redirect_uri=${encodeURIComponent('www.gsta.top/v3/wechat_login/')}&response_type=code&scope=snsapi_login&state=aaa#wechat_redirect`)
+  //   .then(res => {
+  //     console.log(res);
+  //   });
+
+
+  // axios.get('https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx44ab1c3583d4306b&secret=36894cd0c3ca047b998c4ebe22e89399&code=CODE&grant_type=authorization_code')
+  //   .then(res => {
+  //     console.log(res);
+  //   });
+
   // 发送验证码操作 类型不定
-  const sendCode: any = (event: React.MouseEvent<HTMLButtonElement>): void => {
-    console.log('我发送了验证码');
+  function sendCode(event: React.MouseEvent<HTMLElement>) {
     props.dispatch({
-      type: 'login/sendVerification2Phone',
-      payload: phoneInfo.phoneNumber,
-    });
-  };
+      type: 'login/sendPhoneNumberForCode',
+      payload: phoneInfo.phoneNumber
+    })
+  }
+  // onChange 绑定mode1 电话号码的验证码
+  function BindPhoneVerificationCode(event:React.ChangeEvent<HTMLInputElement>) {
+    let phoneVerificationCode = event.currentTarget.value;
+    setPhoneInfo({
+      phoneNumber: phoneInfo.phoneNumber,
+      verificationCode: phoneVerificationCode
+    })
+  }
+  // mode1 登陆按钮函数
+  function loginWithMode1(event:React.MouseEvent<HTMLElement>) {
+    props.dispatch({
+      type:'user/checkCode',
+      payload: phoneInfo.verificationCode
+    })
+  }
+  // onChange 绑定mode0 账号密码登陆
+  function BindUserInfoUserName(event:React.ChangeEvent<HTMLInputElement>) {
+    let username:string = event.currentTarget.value;
+    setUserInfo({
+      username: username,
+      password: userInfo.password
+    })
+  }
+  function BindUserInfoPassword(event:React.ChangeEvent<HTMLInputElement>) {
+    let password:string = event.currentTarget.value;
+    setUserInfo({
+      username: userInfo.username,
+      password: password
+    })
+  }
+  // 以mode '0' 登陆的函数
+  function loginWithMode0(event:React.MouseEvent<HTMLElement>) {
+    props.dispatch({
+      type:'login/sendLoginRequest',
+      payload: userInfo
+    })
+  }
   // 根据不相同的mode渲染 对应的DOM
   let formDOM: React.ReactNode = mode === '0' ? (
     <div className={styles['form-input-block']}>
-      <Input placeholder='请输入账号/手机号码/电子邮箱' prefix={<Icon type="user"/>} style={{ height: '40px' }}/>
-      <Input.Password placeholder='请输入密码' prefix={<Icon type="lock"/>} style={{ height: '40px' }}/>
-      <Button style={{ width: '100%', height: '40px' }} type='primary'>
+      <Input onChange={BindUserInfoUserName} placeholder='请输入账号/手机号码/电子邮箱' prefix={<Icon type="user"/>} style={{height: '40px'}} />
+      <Input.Password onChange={BindUserInfoPassword} placeholder='请输入密码'  prefix={<Icon type="lock"/>} style={{height: '40px'}} />
+      <Button onClick={loginWithMode0} style={{width: '100%', height: '40px'}} type='primary'>
         登陆
       </Button>
     </div>
@@ -80,8 +136,8 @@ function Login(props: SendCodeProps) {
         <Input id="phoneNumber" onChange={BindPhoneNumber} placeholder='请输入手机号码' prefix={<Icon type="mobile"/>} style={{ height: '40px' }}/>
         <Button type="primary" onClick={sendCode} style={{ height: 40 }}>发送验证码</Button>
       </div>
-      <Input placeholder='请输入验证码' prefix={<Icon type="lock"/>} style={{ height: '40px' }}/>
-      <Button style={{ width: '100%', height: '40px' }} type='primary'>
+      <Input onChange={BindPhoneVerificationCode} placeholder='请输入验证码' prefix={<Icon type="lock"/>} style={{height: '40px'}}  />
+      <Button onClick={loginWithMode1} style={{width: '100%', height: '40px'}} type='primary'>
         登陆
       </Button>
     </div>
@@ -127,8 +183,9 @@ function Login(props: SendCodeProps) {
   );
 }
 
-const mapStateToProps = (phoneNumber: string) => {
-  return phoneNumber;
-};
 
-export default connect(mapStateToProps)(Login);
+// 手机验证码登陆的 connect
+export default connect((state: any): object => {
+    console.log(state);
+    return{}
+})(Login);
