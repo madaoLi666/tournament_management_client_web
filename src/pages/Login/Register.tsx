@@ -148,10 +148,10 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
     })
   }
   // 给上层组件传email，然后根据email调用接口
-  public toParent = (event:React.MouseEvent<HTMLButtonElement>) => {
+  public toParent = (event:React.MouseEvent<HTMLElement>) => {
     // @ts-ignore
     this.props.sendEmailCode(event, this.state.email);
-  }
+  };
   // 提交表单
   public handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -173,7 +173,7 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
             type: 'user/saveInfo',
             value: value
           })
-        }
+        };
         // 调用修改state
         let changeState = (error: string) => {
           this.setState({
@@ -200,7 +200,7 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
 
 
   render() {
-    
+
     const { getFieldDecorator } = this.props.form;
     const { visible,confirmLoading,errorText } = this.state;
 
@@ -339,7 +339,7 @@ class Register extends React.Component<any, any> {
   render() {
 
     let { TabsState } = this.state;
-    
+
     // 标签页DOM
     let TabsDOM: React.ReactNode = (
       <Tabs defaultActiveKey={TabsState}>

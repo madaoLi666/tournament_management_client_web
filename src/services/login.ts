@@ -1,11 +1,16 @@
 import axiosInstance from '@/utils/request.ts';
-import { async } from 'q';
 
 // 接口返回数据格式
 export interface Response {
   data: string
   error: string
   notice: string
+}
+
+
+export async function Login(data: object): Promise<any>{
+  console.log(data);
+  return axiosInstance.post('/api-token-auth/',data);
 }
 
 // 请求发送手机验证码

@@ -58,7 +58,6 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
   };
   // 处理填写身份证事件
   handleIDCardChange = (rule: any, value: any, callback: Function) => {
-
     const { isIDCard } = this.state;
     const { setFieldsValue } = this.props.form;
     // 证件类型为身份证
@@ -90,7 +89,6 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
     }
     this.props.form.resetFields(['certificationNumber', 'sex', 'certificationNumber']);
   };
-
 
   render() {
     const { getFieldDecorator } = this.props.form;
@@ -149,6 +147,16 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
               style={{width: '100%'}}
               disabled={isIDCard}
             />
+          )}
+        </Form.Item>
+        <Form.Item label='角色'>
+          {getFieldDecorator('birthday',{
+            rules:[{required:true, message: '请选择你的身份信息'}]
+          })(
+            <Select>
+              <Option value='运动员'>运动员本人 或 运动员家长</Option>
+              <Option value='领队'>单位（协会/俱乐部）负责人、领队或教练</Option>
+            </Select>
           )}
         </Form.Item>
         <br/>

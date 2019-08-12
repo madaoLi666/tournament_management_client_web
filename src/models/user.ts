@@ -6,12 +6,12 @@ import router from 'umi/router';
 const USER_MODEL:Model = {
   namespace: 'user',
   state: {
-    name: 'an',
     username:'',
     userPassword:'',
     phoneNumber:'15626466587',
     email:'',
-    unitaccount:''
+    unitaccount:'',
+    token:''
   },
   reducers: {
     // 存手机进state

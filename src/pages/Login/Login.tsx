@@ -2,10 +2,13 @@ import React, { useState, useEffect, ChangeEvent } from 'react';
 import {
   Card, Button, Input, Icon, Row, Col,
 } from 'antd';
+
+import axios from 'axios';
 // @ts-ignore
 import styles from '@/pages/Login/index.less';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
+
 
 export interface SendCodeProps {
   dispatch: Dispatch<{type: string, payload: any}>;
@@ -15,6 +18,18 @@ export interface SendCodeProps {
 const autoAdjust = {
   xs: { span: 20 }, sm: { span: 12 }, md: { span: 12 }, lg: { span: 8 }, xl: { span: 8 }, xxl: { span: 8 },
 };
+
+// 微信登陆实例
+// var obj = new WxLogin({
+//   self_redirect:true,
+//   id:"login_container",
+//   appid: "wx44ab1c3583d4306b",
+//   scope: "snsapi_login",
+//   redirect_uri: "localhost:8000",
+//   state: "",
+//   style: "black",
+//   href: ""
+// });
 
 function Login(props: SendCodeProps) {
   /*
@@ -27,10 +42,11 @@ function Login(props: SendCodeProps) {
   // 以 mode '0' 登入
   const [userInfo, setUserInfo] = useState({ username: '', password: '' });
   // 以mode '1' 登入 - verificationCode 为 字符串的验证码
+
   const [phoneInfo, setPhoneInfo] = useState({phoneNumber:'',verificationCode:''});
   // onChange 绑定mode1 电话号码
   function BindPhoneNumber(event:React.ChangeEvent<HTMLInputElement>) {
-    var phone:string | undefined = event.currentTarget.value;
+    let phone:string | undefined = event.currentTarget.value;
     if (typeof phone === 'undefined') {
       alert('您输入了错误的手机号码信息');
       return;
@@ -46,23 +62,37 @@ function Login(props: SendCodeProps) {
     );
   }
 
+
+  // console.log(encodeURIComponent('http://www.gsta.top/v3/wechat_login'));
+
+  // fetch(`https://open.weixin.qq.com/connect/qrconnect?appid=wx44ab1c3583d4306b&redirect_uri=${encodeURIComponent('www.gsta.top/v3/wechat_login/')}&response_type=code&scope=snsapi_login&state=aaa#wechat_redirect`)
+  //   .then(res => {
+  //     console.log(res);
+  //   });
+
+
+  // axios.get('https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx44ab1c3583d4306b&secret=36894cd0c3ca047b998c4ebe22e89399&code=CODE&grant_type=authorization_code')
+  //   .then(res => {
+  //     console.log(res);
+  //   });
+
   // 发送验证码操作 类型不定
-  function sendCode(event: React.MouseEvent<HTMLButtonElement>) {
+  function sendCode(event: React.MouseEvent<HTMLElement>) {
     props.dispatch({
       type: 'login/sendPhoneNumberForCode',
       payload: phoneInfo.phoneNumber
     })
-  };
+  }
   // onChange 绑定mode1 电话号码的验证码
   function BindPhoneVerificationCode(event:React.ChangeEvent<HTMLInputElement>) {
-    var phoneVerificationCode = event.currentTarget.value;
+    let phoneVerificationCode = event.currentTarget.value;
     setPhoneInfo({
       phoneNumber: phoneInfo.phoneNumber,
       verificationCode: phoneVerificationCode
     })
   }
   // mode1 登陆按钮函数
-  function loginWithMode1(event:React.MouseEvent<HTMLButtonElement>) {
+  function loginWithMode1(event:React.MouseEvent<HTMLElement>) {
     props.dispatch({
       type:'user/checkCode',
       payload: phoneInfo.verificationCode
@@ -70,26 +100,26 @@ function Login(props: SendCodeProps) {
   }
   // onChange 绑定mode0 账号密码登陆
   function BindUserInfoUserName(event:React.ChangeEvent<HTMLInputElement>) {
-    var username:string = event.currentTarget.value;
+    let username:string = event.currentTarget.value;
     setUserInfo({
       username: username,
       password: userInfo.password
     })
   }
   function BindUserInfoPassword(event:React.ChangeEvent<HTMLInputElement>) {
-    var password:string = event.currentTarget.value;
+    let password:string = event.currentTarget.value;
     setUserInfo({
       username: userInfo.username,
       password: password
     })
   }
   // 以mode '0' 登陆的函数
-  function loginWithMode0(event:React.MouseEvent<HTMLButtonElement>) {
+  function loginWithMode0(event:React.MouseEvent<HTMLElement>) {
     props.dispatch({
-      type:'login/sendLoginRequser',
+      type:'login/sendLoginRequest',
       payload: userInfo
     })
-  };
+  }
   // 根据不相同的mode渲染 对应的DOM
   let formDOM: React.ReactNode = mode === '0' ? (
     <div className={styles['form-input-block']}>
@@ -153,11 +183,9 @@ function Login(props: SendCodeProps) {
   );
 }
 
-const loginMapStateToProps = (state:{username:string,passowrd:string}) => {
-  return state;
-}
 
-// 账号密码登陆的 connect
-connect(loginMapStateToProps)(Login);
 // 手机验证码登陆的 connect
-export default connect()(Login);
+export default connect((state: any): object => {
+    console.log(state);
+    return{}
+})(Login);
