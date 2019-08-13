@@ -1,6 +1,7 @@
 import { AnyAction } from 'redux';
 import { Model, EffectsCommandMap } from 'dva';
 import { sendVerification2Phone, Response, Login } from '@/services/login.ts';
+import router from 'umi/router';
 
 const LOGIN_MODEL:Model = {
   namespace: 'login',
@@ -14,11 +15,13 @@ const LOGIN_MODEL:Model = {
     // 账号密码登陆的请求
     *sendLoginRequest(action: AnyAction, effect: EffectsCommandMap) {
       const { payload } = action; const { put } = effect;
-      console.log(payload);
       let res = yield Login(payload);
-      console.log(res);
-      // payload.username,payload.password
-      // yield effect.put({type:'user/modifyUserInfo',userInfo: action.payload})
+      if(res){
+        // 本地存储token
+        yield  window.localStorage.setItem('TOKEN',res.data);
+        yield put({type:'user/modifyUserInfo',userInfo: action.payload});
+        yield router.push('/');
+      }
     },
     // 发送手机验证码
     *sendPhoneNumberForCode(action: AnyAction, effect: EffectsCommandMap) {

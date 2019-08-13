@@ -28,3 +28,8 @@ export async function checkVerificationCode(phoneInfo: any): Promise<any> {
   console.log(phoneInfo);
   return axiosInstance.post('/phoneCode/',{phonenumber: phoneInfo.phoneNumber, phonecode: phoneInfo.phonecode})
 }
+
+
+export async function checkAccountState(data?:object): Promise<any> {
+  return axiosInstance.get('/checkregisterstep/');
+}
