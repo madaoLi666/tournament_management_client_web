@@ -3,10 +3,14 @@ import axios,{ AxiosRequestConfig, AxiosResponse } from 'axios';
 const BASE_URL:string = 'https://www.gsta.top/v3';
 const TIMEOUT:number = 1000;
 
+const token = window.localStorage.getItem('TOKEN');
+
 let axiosInstance = axios.create({
   baseURL: BASE_URL,
   timeout: TIMEOUT,
-  headers: {}
+  headers: {
+    Authorization: token === null ? '' : `jwt ${token}`
+  }
 });
 
 axiosInstance.interceptors.request.use((config:AxiosRequestConfig):AxiosRequestConfig => {

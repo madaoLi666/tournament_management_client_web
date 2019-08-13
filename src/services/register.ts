@@ -26,3 +26,13 @@ export async function personalAccountRegister(personInfo: PersonInfo): Promise<a
         phonecode: personInfo.Phonecode
     })
 }
+
+// 补充个人信息
+export async function addAthleteInfo(data: object):Promise<any> {
+  return axiosInstance.post('/athletedata/',data);
+}
+
+// 注册成为个人账号
+export async function setAthleteRole(): Promise<any> {
+  return axiosInstance.post('/accountType/');
+}

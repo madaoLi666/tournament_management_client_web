@@ -164,7 +164,7 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
             Emailcode: values.emailVerificationCode,
             // @ts-ignore
             Phonenumber: this.props.personInfo.phoneNumber
-        }
+        };
         console.log(personInfo);
         // 如果注册成功存进user state
         let saveState = (value: RightResponse) => {

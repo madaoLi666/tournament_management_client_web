@@ -2,6 +2,7 @@ import React,{ Component } from 'react';
 import { Form, Input, Row, Col, Select, DatePicker, Button } from 'antd';
 import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
 import { ColProps } from 'antd/lib/grid';
+import { connect, DispatchProp } from 'dva';
 import moment from 'moment'
 import { checkIDCard } from '@/utils/regulars';
 // @ts-ignore
@@ -70,7 +71,6 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
     }
     if(checkIDCard.test(value) && isIDCard){
       const birthday = `${value.slice(6,10)}${value.slice(10,12)}${value.slice(12,14)}`;
-      console.log(birthday);
       setFieldsValue({
         sex: value.slice(-2,-1)%2 === 1 ? '男' : '女',
         birthday: moment(birthday)
@@ -132,11 +132,10 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
           {getFieldDecorator('sex',{
             rules:[{required:true, message: '请填写证件号码'}]
           })(
-            <Input
-              placeholder='请输入真实姓名'
-              autoComplete='off'
-              disabled={isIDCard}
-            />
+            <Select disabled={isIDCard}>
+              <Option value='男'>男</Option>
+              <Option value='女'>女</Option>
+            </Select>
           )}
         </Form.Item>
         <Form.Item label='出生年月日'>
@@ -147,16 +146,6 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
               style={{width: '100%'}}
               disabled={isIDCard}
             />
-          )}
-        </Form.Item>
-        <Form.Item label='角色'>
-          {getFieldDecorator('birthday',{
-            rules:[{required:true, message: '请选择你的身份信息'}]
-          })(
-            <Select>
-              <Option value='运动员'>运动员本人 或 运动员家长</Option>
-              <Option value='领队'>单位（协会/俱乐部）负责人、领队或教练</Option>
-            </Select>
           )}
         </Form.Item>
         <br/>
@@ -182,10 +171,14 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
 
 const BISForm = Form.create<BasicInfoSupplementFormProps>()(BasicInfoSupplementForm);
 
-function BasicInfoSupplement() {
+function BasicInfoSupplement({dispatch}:DispatchProp) {
 
   function submitInfoSupplementData(data: any):void{
-    console.log(data);
+    // 解析moment对象拿birthday
+    data.birthday = data.birthday.format('YYYY-MM-DD') + ' 00:00:00';
+
+    // 提交做请求
+    dispatch({type: 'register/addAthleteBaseInfo',payload:data})
   }
 
   return (
@@ -201,5 +194,5 @@ function BasicInfoSupplement() {
   )
 }
 
-export default BasicInfoSupplement
+export default connect()(BasicInfoSupplement);
 
