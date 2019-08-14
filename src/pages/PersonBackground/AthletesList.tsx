@@ -1,7 +1,7 @@
 import * as React from 'react';
 // @ts-ignore
 import styles from './index.less';
-import { Select, Input, Button, Modal, Layout, Table, Popconfirm, Icon } from 'antd';
+import { Select, Input, Button, Modal, Layout, Table, Popconfirm, Icon, Upload } from 'antd';
 import { ColumnProps, TableEventListeners } from 'antd/es/table';
 
 // 表格接口 key 是编号
@@ -26,6 +26,9 @@ export default function AthletesList() {
     // 添加运动员Modal
     const [ modalVisible,setModalVisible ] = React.useState(false);
     const [ modalLoading,setModalLoading ] = React.useState(false);
+    // 观察头像state
+    const [ previewVisbile,setPreViewVisible ] = React.useState(false);
+    const [ previewImage,setPreViewImage ] = React.useState('');
     // 选择框默认值
     let defaultvalue:any = "请选择搜索条件";
     // 修改确认
@@ -101,6 +104,33 @@ export default function AthletesList() {
     }
     function handleModalCancel() {
         setModalVisible(false);
+    }
+    // 上传图片
+    function getBase64(file: any) {
+        return new Promise((resolve: any, reject: any) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        })
+    }
+    // 测试头像
+    let fileList:{uid: string, name: string, status: string, url: string} = {
+        uid: '-1',
+        name: 'image.png',
+        status: 'done',
+        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    }
+    // 取消添加头像
+    function imageCancel() {
+        setPreViewVisible(false);
+    }
+    let handlePreview = async (file: any) => {
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj);
+        }
+        setPreViewImage(file.url || file.preview);
+        setPreViewVisible(true);
     }
     // 添加运动员DOM TODO
     let addAthleteDOM:React.ReactNode = (

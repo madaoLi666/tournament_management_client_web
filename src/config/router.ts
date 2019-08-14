@@ -21,7 +21,7 @@ import { IRoute } from 'umi-types';
 const uRoutes:Array<IRoute> = [
   { path: '/b', component: require('../pages/Enroll/Main.tsx').default, isRender: true, name: '报名模块' },
   // TODO 这个应写进运动员信息管理
-  { path: '/athletesList', component: require('../pages/PersonBackground/AthletesList.tsx').default, isRender: true, name: '添加运动员' },
+  { path: '/athletesList', component: require('../pages/PersonBackground/AthletesList.tsx').default, isRender: true, name: '运动员列表' },
 
   { path: '/', component: require('../pages/index.tsx').default, isRender: false, name: '' },
 ];
