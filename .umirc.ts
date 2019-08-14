@@ -4,7 +4,7 @@ import { IConfig } from 'umi-types';
 const config: IConfig =  {
   //
   routes:[
-    // 登陆页面 fix
+    // 登陆页面
     {
       path: '/login', name: '登陆模块',
       Routes: ['./src/layouts/UserLayout.tsx'],
@@ -17,11 +17,11 @@ const config: IConfig =  {
         { path: '/login/setRole', component: './Login/SetRole.tsx', name: '设置角色' }
       ],
     },
-    // 报名页面 fix
+    // 报名页面
     { path: '/enroll', exact: true, routes: [{path: './', component: './Enroll/Main.tsx'},] },
     // 主用户界面 - 这个位置是动态设置的
     {
-      path: '/',
+      path: '/user',
       Routes: ['./src/layouts/BasicLayout.tsx','./src/pages/Authorized/Authorized.tsx'],
       routes: []
     },

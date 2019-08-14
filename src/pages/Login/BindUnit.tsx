@@ -6,7 +6,7 @@ import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
 import { ColProps } from 'antd/lib/grid';
 import { Dispatch } from 'redux';
 import { checkEmail, checkPhoneNumber } from '@/utils/regulars.ts';
-
+import { getQRCodeForUnitRegister } from '@/services/pay';
 
 // @ts-ignore
 import styles from './index.less';
@@ -224,13 +224,17 @@ const BForm = Form.create<BindUnitFromProps>()(BindUnitForm);
 
 
 
-function BindUnit(props: { dispatch: Dispatch; }) {
+function BindUnit(props: { dispatch: Dispatch; phoneNumber: string}) {
 
   // 传入 NewUnitForm 中，已提供外部的表单处理
   // 这里可以拿到表单的信息
   function submitRegister(data: any): void {
-    const { dispatch } = props;
-    console.log(data);
+    const { dispatch, phoneNumber} = props;
+    // 返回为图片
+    getQRCodeForUnitRegister({phonenumber: phoneNumber})
+      .then(res => {})
+
+
     dispatch({
       type: 'register/checkoutUnitRegisterPayStatus'
     })
@@ -280,4 +284,6 @@ function BindUnit(props: { dispatch: Dispatch; }) {
   );
 }
 
-export default connect(store => ({}))(BindUnit);
+export default connect(({user}:any) => ({
+  phoneNumber: user.phoneNumber
+}))(BindUnit);

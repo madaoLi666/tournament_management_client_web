@@ -4,11 +4,11 @@ import { connect } from 'dva';
 import router from 'umi/router';
 import uRoutes from '@/config/router';
 
-import { Layout, Menu, Breadcrumb, Icon, Drawer, Button } from 'antd';
+import { Layout, Menu, Breadcrumb, Drawer, Button } from 'antd';
 // @ts-ignore
 import styles from './index.less';
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Footer } = Layout;
 const { SubMenu } = Menu;
 const drawerStyle = {
   padding: '0px'
@@ -89,10 +89,8 @@ function BasicLayout(props: any) {
 }
 
 export default connect((store) => {
-  console.warn('查看store中的数据');
-  console.log(store);
   return {
     // @ts-ignore
-    loading: store.loading.global
+
   }
 })(BasicLayout)

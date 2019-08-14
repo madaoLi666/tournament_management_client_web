@@ -1,6 +1,6 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import {
-  Card, Button, Input, Icon, Row, Col,
+  Card, Button, Input, Icon, Row, Col,Tabs
 } from 'antd';
 
 import axios from 'axios';
@@ -8,6 +8,8 @@ import axios from 'axios';
 import styles from '@/pages/Login/index.less';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
+
+const { TabPane } = Tabs;
 
 export interface SendCodeProps {
   dispatch: Dispatch<{type: string, payload: any}>;
@@ -18,11 +20,8 @@ const autoAdjust = {
   xs: { span: 20 }, sm: { span: 12 }, md: { span: 12 }, lg: { span: 8 }, xl: { span: 8 }, xxl: { span: 8 },
 };
 
-
-
 function Login(props: SendCodeProps) {
   /*
-  * 设置是 个人登陆还是团队登陆
   * '0' - 以账号名称/手机号码/邮箱登陆 + 密码 登陆
   * '1' - 以手机验证码方式登入
   * '2' - 微信二维码扫描
@@ -94,37 +93,7 @@ function Login(props: SendCodeProps) {
       payload: userInfo
     })
   }
-  // 根据不相同的mode渲染 对应的DOM
-  let formDOM: React.ReactNode;
-
-  if(mode === '0'){
-    formDOM = (
-      <div className={styles['form-input-block']}>
-        <Input onChange={BindUserInfoUserName} placeholder='请输入账号/手机号码/电子邮箱' prefix={<Icon type="user"/>} style={{height: '40px'}} />
-        <Input.Password onChange={BindUserInfoPassword} placeholder='请输入密码'  prefix={<Icon type="lock"/>} style={{height: '40px'}} />
-        <Button onClick={loginWithMode0} style={{width: '100%', height: '40px'}} type='primary'>
-          登陆
-        </Button>
-      </div>
-    );
-  }else if(mode === '1') {
-    formDOM = (
-      <div className={styles['form-input-block']}>
-        <div style={{ display: 'flex' }}>
-          <Input id="phoneNumber" onChange={BindPhoneNumber} placeholder='请输入手机号码' prefix={<Icon type="mobile"/>} style={{ height: '40px' }}/>
-          <Button type="primary" onClick={sendCode} style={{ height: 40 }}>发送验证码</Button>
-        </div>
-        <Input onChange={BindPhoneVerificationCode} placeholder='请输入验证码' prefix={<Icon type="lock"/>} style={{ height: '40px' }}/>
-        <Button onClick={loginWithMode1} style={{ width: '100%', height: '40px' }} type='primary'>
-          登陆
-        </Button>
-      </div>
-    );
-  }else if(mode === '2'){
-    formDOM = (<div id='login_container'/>);
-  }
-
-
+  // 初始化微信二维码
   useEffect(() => {
     if(mode === '2'){
       // @ts-ignore
@@ -147,32 +116,36 @@ function Login(props: SendCodeProps) {
         <Col {...autoAdjust}>
           <div className={styles['login-block']}>
             <Card
-              style={{ width: '100%', height: '400px', borderRadius: '5px', boxShadow: '1px 1px 5px #111' }}
+              style={{ width: '100%', height: '100%', borderRadius: '5px', boxShadow: '1px 1px 5px #111' }}
               headStyle={{ color: '#2a8ff7' }}
-              title='赛事报名通道登录平台'
             >
-              <div >
-                {formDOM}
-                <p>
-                  ——&nbsp;&nbsp; <strong>其他登陆方式</strong> &nbsp;&nbsp;——
-                </p>
-                <div className={styles['icon-group-block']}>
-                  排布图标 用于切换登陆的方式
-
-                  {/* 在linter中有限制  */}
-                  {mode === '0' ?
-                    <div>
-                      <Button onClick={() => {setMode('1');}}>手机短信验证登陆</Button>
-                      <Button onClick={() => {setMode('2');}}>二维码登陆</Button>
+              {/* TODO 2019-08-14 需要完善 */}
+              <Tabs onChange={(key:string) => setMode(key)}>
+                <TabPane tab="用户登陆" key="0">
+                  <div className={styles['form-input-block']}>
+                    <Input onChange={BindUserInfoUserName} placeholder='请输入账号/手机号码/电子邮箱' prefix={<Icon type="user"/>} style={{height: '40px'}} />
+                    <Input.Password onChange={BindUserInfoPassword} placeholder='请输入密码'  prefix={<Icon type="lock"/>} style={{height: '40px'}} />
+                    <Button onClick={loginWithMode0} style={{width: '100%', height: '40px'}} type='primary'>
+                      登陆
+                    </Button>
+                  </div>
+                </TabPane>
+                <TabPane tab="手机验证登陆" key="1">
+                  <div className={styles['form-input-block']}>
+                    <div style={{ display: 'flex' }}>
+                      <Input id="phoneNumber" onChange={BindPhoneNumber} placeholder='请输入手机号码' prefix={<Icon type="mobile"/>} style={{ height: '40px' }}/>
+                      <Button type="primary" onClick={sendCode} style={{ height: 40 }}>发送验证码</Button>
                     </div>
-                    :
-                    <div>
-                      <Button onClick={() => {setMode('0');}}>电话/邮箱/用户名 + 密码登陆</Button>
-                      <Button onClick={() => {setMode('2');}}>二维码登陆</Button>
-                    </div>
-                  }
-                </div>
-              </div>
+                    <Input onChange={BindPhoneVerificationCode} placeholder='请输入验证码' prefix={<Icon type="lock"/>} style={{ height: '40px' }}/>
+                    <Button onClick={loginWithMode1} style={{ width: '100%', height: '40px' }} type='primary'>
+                      登陆
+                    </Button>
+                  </div>
+                </TabPane>
+                <TabPane tab="微信扫码" key="2">
+                  <div id='login_container' />
+                </TabPane>
+              </Tabs>
             </Card>
           </div>
         </Col>
@@ -180,7 +153,6 @@ function Login(props: SendCodeProps) {
     </div>
   );
 }
-
 
 // 手机验证码登陆的 connect
 export default connect((state: any): object => {

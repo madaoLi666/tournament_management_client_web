@@ -32,9 +32,16 @@ const USER_MODEL:Model = {
     },
     // 个人注册后存的信息
     saveValue(state: any, action: AnyAction) {
-      state.username = action.value.username
-      state.email = action.value.email
-      state.unitaccount = action.value.unitaccount
+      state.username = action.value.username;
+      state.email = action.value.email;
+      state.unitaccount = action.value.unitaccount;
+      return state;
+    },
+    // 将本地的token设置到store中
+    setStoreByLocal(state: any, action: AnyAction): object {
+      const { payload } = action;
+      // state类型未定
+      state.token = payload.token;
       return state;
     }
   },

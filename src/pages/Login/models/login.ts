@@ -20,7 +20,7 @@ const LOGIN_MODEL:Model = {
         // 本地存储token
         yield  window.localStorage.setItem('TOKEN',res.data);
         yield put({type:'user/modifyUserInfo',userInfo: action.payload});
-        yield router.push('/');
+        yield router.push('/user');
       }
     },
     // 发送手机验证码
