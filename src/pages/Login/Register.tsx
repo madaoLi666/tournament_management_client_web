@@ -158,12 +158,12 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
     this.props.form.validateFieldsAndScroll((err: any, values: any) => {
       if (!err) {
         let personInfo:PersonInfo = {
-            Username: values.userID,
-            Password: values.password,
-            Email: values.email,
-            Emailcode: values.emailVerificationCode,
+            username: values.userID,
+            password: values.password,
+            email: values.email,
+            emailcode: values.emailVerificationCode,
             // @ts-ignore
-            Phonenumber: this.props.personInfo.phoneNumber
+            phonenumber: this.props.personInfo.phoneNumber
         };
         console.log(personInfo);
         // 如果注册成功存进user state

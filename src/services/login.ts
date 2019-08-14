@@ -14,8 +14,8 @@ export async function Login(data: object): Promise<any>{
 }
 
 // 请求发送手机验证码
-export async function sendVerification2Phone(data: string): Promise<any> {
-  return axiosInstance.get('/phoneCode/',{params:{phonenumber: data}});
+export async function sendVerification2Phone(data: object): Promise<any> {
+  return axiosInstance.get('/phoneCode/',{params: data});
 }
 
 // 获取验证码图片
@@ -24,9 +24,9 @@ export async function getVerificationPic(): Promise<any> {
 }
 
 // 校验手机验证码
-export async function checkVerificationCode(phoneInfo: any): Promise<any> {
-  console.log(phoneInfo);
-  return axiosInstance.post('/phoneCode/',{phonenumber: phoneInfo.phoneNumber, phonecode: phoneInfo.phonecode})
+export async function checkVerificationCode(data: object): Promise<any> {
+  console.log(data);
+  return axiosInstance.post('/phoneCode/',data);
 }
 
 

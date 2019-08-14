@@ -8,7 +8,7 @@ const USER_MODEL:Model = {
   state: {
     username:'',
     userPassword:'',
-    phoneNumber:'15626466587',
+    phoneNumber:'',
     email:'',
     unitaccount:'',
     token:''
@@ -49,7 +49,7 @@ const USER_MODEL:Model = {
     // 验证手机验证码是否正确
     *checkCode(action: AnyAction, effect: EffectsCommandMap) {
       let phone:any = yield effect.select((state:any) => ({phoneNumber: state.user.phoneNumber}))
-      var phoneInfo: {phoneNumber:string, phonecode: string} = {phoneNumber:phone.phoneNumber, phonecode: action.payload};
+      var phoneInfo: {phonenumber:string, phonecode: string} = {phonenumber:phone.phoneNumber, phonecode: action.payload};
       yield checkVerificationCode(phoneInfo)
       .then(function (res: Response) {
         if ( res.data == "true" ) {

@@ -25,14 +25,14 @@ const LOGIN_MODEL:Model = {
     },
     // 发送手机验证码
     *sendPhoneNumberForCode(action: AnyAction, effect: EffectsCommandMap) {
-      yield sendVerification2Phone(action.payload)
+      let data:{phonenumber: string} = {phonenumber: action.payload};
+      yield sendVerification2Phone(data)
             .then(function (res: Response) {
               console.log(res);
             })
             .catch(function (err: Response) {
               console.log(err);
             });
-      // TODO 怎么增加判别
       yield effect.put({type: 'user/modifyPhoneNumber', phoneNumber: action.payload})
     },
   }

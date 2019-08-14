@@ -19,7 +19,8 @@ const RESISTER_MODEL: Model = {
     * sendVerificationCode(action: AnyAction, effect: EffectsCommandMap) {
       // 发送手机验证码
       let phone: any = yield effect.select((state: any) => ({ phonenumber: state.user.phoneNumber }));
-      yield sendVerification2Phone(phone.phonenumber)
+      let data:{phonenumber: string} = {phonenumber: phone.phonenumber};
+      yield sendVerification2Phone(data)
         .then(function(res: Response) {
           console.log(res);
         })
@@ -29,7 +30,8 @@ const RESISTER_MODEL: Model = {
     },
     // 发送邮箱验证码
     * sendEmailCode(action: AnyAction, effect: EffectsCommandMap) {
-      yield sendEmailVerificationCode(action.email)
+      let data:{email: string} = {email: action.email};
+      yield sendEmailVerificationCode(data)
         .then(function(res: Response) {
           console.log(res);
         })
@@ -58,24 +60,6 @@ const RESISTER_MODEL: Model = {
       if(res && res.data === 'true') yield router.push('/');
 
     }
-    // 个人注册
-    // *personRegister(action: AnyAction, effect: EffectsCommandMap) {
-    //     let phone:any = yield effect.select((state:any) => ({phonenumber: state.user.phoneNumber}))
-    //     let personInfo:PersonInfo = {
-    //         Username: action.person.userID,
-    //         Password: action.person.password,
-    //         Email: action.person.email,
-    //         Emailcode: action.person.emailVerificationCode,
-    //         Phonenumber: phone.phonenumber,
-    //     }
-    //     yield personalAccountRegister(personInfo)
-    //     .then(function (res:Response) {
-    //         console.log(res)
-    //     })
-    //     .catch(function (err:Response) {
-    //         console.log(err)
-    //     })
-    // },
   },
 };
 
