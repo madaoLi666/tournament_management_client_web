@@ -26,7 +26,6 @@ const LOGIN_MODEL:Model = {
     // 发送手机验证码
     *sendPhoneNumberForCode(action: AnyAction, effect: EffectsCommandMap) {
       let res = yield sendVerification2Phone(action.payload);
-      console.log(res);
       // TODO 怎么增加判别
       yield effect.put({type: 'user/modifyPhoneNumber', phoneNumber: action.payload})
     },

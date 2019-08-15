@@ -32,6 +32,9 @@ function Login(props: SendCodeProps) {
   const [userInfo, setUserInfo] = useState({ username: '', password: '' });
   // 以mode '1' 登入 - verificationCode 为 字符串的验证码
   const [phoneInfo, setPhoneInfo] = useState({phoneNumber:'',verificationCode:''});
+
+  const [timeInterval,setTimeInterval] = useState(0);
+
   // onChange 绑定mode1 电话号码
   async function BindPhoneNumber(event:React.ChangeEvent<HTMLInputElement>) {
     let phone:string | undefined = event.currentTarget.value;
@@ -40,8 +43,17 @@ function Login(props: SendCodeProps) {
   }
   // 发送验证码操作 类型不定
   function sendCode(event: React.MouseEvent<HTMLElement>) {
+    // 60秒可发送一次
+    const timeInterval:number = 60000;
     if(checkPhoneNumber.test(phoneInfo.phoneNumber)){
-      props.dispatch({ type: 'login/sendPhoneNumberForCode', payload: phoneInfo.phoneNumber})
+      props.dispatch({ type: 'login/sendPhoneNumberForCode', payload: phoneInfo.phoneNumber});
+      // 设置state中
+      setTimeInterval(timeInterval);
+      // 计时 用于防止用户多次发送验证码
+      let i = setInterval(() => {
+        setTimeInterval(timeInterval => (timeInterval-1000));
+        if(timeInterval === 0) clearInterval(i);
+      },1000);
     }else {
       message.error('请输入正确的手机号码');
     }
@@ -126,7 +138,14 @@ function Login(props: SendCodeProps) {
                   <div className={styles['form-input-block']}>
                     <Input.Group compact={true}>
                       <Input id="phoneNumber" onChange={BindPhoneNumber} placeholder='请输入手机号码' prefix={<Icon type="mobile"/>} style={{ height: '40px', width: '70%' }} autoComplete='off' />
-                      <Button type="primary" onClick={sendCode} style={{ height: '40px', width: '30%' }}>发送验证码</Button>
+                      <Button
+                        type="primary"
+                        onClick={sendCode}
+                        style={{ height: '40px', width: '30%' }}
+                        disabled={timeInterval !== 0}
+                      >
+                        {timeInterval === 0 ? <span>发送验证码</span> : <span>{timeInterval/1000}秒</span>}
+                      </Button>
                     </Input.Group>
                     <Input onChange={BindPhoneVerificationCode} placeholder='请输入验证码' prefix={<Icon type="lock"/>} style={{ height: '40px' }} autoComplete='off' />
                   </div>
