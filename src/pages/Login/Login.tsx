@@ -1,6 +1,6 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import {
-  Card, Button, Input, Icon, Row, Col,Tabs
+  Card, Button, Input, Icon, Row, Col, Tabs, message
 } from 'antd';
 
 import axios from 'axios';
@@ -8,16 +8,16 @@ import axios from 'axios';
 import styles from '@/pages/Login/index.less';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
+import { checkPhoneNumber } from '@/utils/regulars';
 
 const { TabPane } = Tabs;
 
 export interface SendCodeProps {
   dispatch: Dispatch<{type: string, payload: any}>;
 }
-
 // Col 自适应
 const autoAdjust = {
-  xs: { span: 20 }, sm: { span: 12 }, md: { span: 12 }, lg: { span: 8 }, xl: { span: 8 }, xxl: { span: 8 },
+  xs: { span: 20 }, sm: { span: 20 }, md: { span: 14 }, lg: { span: 12 }, xl: { span: 10 }, xxl: { span: 10 },
 };
 
 function Login(props: SendCodeProps) {
@@ -30,31 +30,20 @@ function Login(props: SendCodeProps) {
   // 以 mode '0' 登入
   const [userInfo, setUserInfo] = useState({ username: '', password: '' });
   // 以mode '1' 登入 - verificationCode 为 字符串的验证码
-
   const [phoneInfo, setPhoneInfo] = useState({phoneNumber:'',verificationCode:''});
   // onChange 绑定mode1 电话号码
   function BindPhoneNumber(event:React.ChangeEvent<HTMLInputElement>) {
     let phone:string | undefined = event.currentTarget.value;
-    if (typeof phone === 'undefined') {
-      alert('您输入了错误的手机号码信息');
-      return;
-    }
-    if ((/^[0-9]*$/.test(phone)) === false) {
-      alert('您输入了错误的手机号码信息');
-    }
-    setPhoneInfo(
-      {
-        phoneNumber: phone,
-        verificationCode: '',
-      },
-    );
+    // 手机号码
+    setPhoneInfo({ phoneNumber: phone, verificationCode: '', });
   }
   // 发送验证码操作 类型不定
   function sendCode(event: React.MouseEvent<HTMLElement>) {
-    props.dispatch({
-      type: 'login/sendPhoneNumberForCode',
-      payload: phoneInfo.phoneNumber
-    })
+    if(checkPhoneNumber.test(phoneInfo.phoneNumber)){
+      props.dispatch({ type: 'login/sendPhoneNumberForCode', payload: phoneInfo.phoneNumber})
+    }else {
+      message.error('请输入正确的手机号码');
+    }
   }
   // onChange 绑定mode1 电话号码的验证码
   function BindPhoneVerificationCode(event:React.ChangeEvent<HTMLInputElement>) {
@@ -62,13 +51,6 @@ function Login(props: SendCodeProps) {
     setPhoneInfo({
       phoneNumber: phoneInfo.phoneNumber,
       verificationCode: phoneVerificationCode
-    })
-  }
-  // mode1 登陆按钮函数
-  function loginWithMode1(event:React.MouseEvent<HTMLElement>) {
-    props.dispatch({
-      type:'user/checkCode',
-      payload: phoneInfo.verificationCode
     })
   }
   // onChange 绑定mode0 账号密码登陆
@@ -86,14 +68,27 @@ function Login(props: SendCodeProps) {
       password: password
     })
   }
-  // 以mode '0' 登陆的函数
-  function loginWithMode0(event:React.MouseEvent<HTMLElement>) {
-    props.dispatch({
-      type:'login/sendLoginRequest',
-      payload: userInfo
-    })
+  // 登陆
+  function login(mode: string) {
+    const { dispatch } = props;
+    if(mode === '0') {
+      // 账号登陆
+      // 判断是否有值
+      if(userInfo.username !== '' && userInfo.password !== ''){
+        dispatch({ type:'login/sendLoginRequest', payload: userInfo })
+      }else{
+        message.warning('请先填写账号与密码')
+      }
+    }else if(mode === '1') {
+      // 检测手机验证码是否正确
+      if(phoneInfo.verificationCode !== '' && phoneInfo.verificationCode !== undefined ){
+        dispatch({ type:'user/checkCode', payload: phoneInfo.verificationCode })
+      }else{
+        message.error('请输入确认输入无误后再次登陆');
+      }
+    }
   }
-  // 初始化微信二维码
+  // 获取微信二维码
   useEffect(() => {
     if(mode === '2'){
       // @ts-ignore
@@ -119,33 +114,34 @@ function Login(props: SendCodeProps) {
               style={{ width: '100%', height: '100%', borderRadius: '5px', boxShadow: '1px 1px 5px #111' }}
               headStyle={{ color: '#2a8ff7' }}
             >
-              {/* TODO 2019-08-14 需要完善 */}
               <Tabs onChange={(key:string) => setMode(key)}>
                 <TabPane tab="用户登陆" key="0">
                   <div className={styles['form-input-block']}>
-                    <Input onChange={BindUserInfoUserName} placeholder='请输入账号/手机号码/电子邮箱' prefix={<Icon type="user"/>} style={{height: '40px'}} />
+                    <Input onChange={BindUserInfoUserName} placeholder='请输入账号/手机号码/电子邮箱' prefix={<Icon type="user"/>} style={{height: '40px'}} autoComplete='off' />
                     <Input.Password onChange={BindUserInfoPassword} placeholder='请输入密码'  prefix={<Icon type="lock"/>} style={{height: '40px'}} />
-                    <Button onClick={loginWithMode0} style={{width: '100%', height: '40px'}} type='primary'>
-                      登陆
-                    </Button>
                   </div>
                 </TabPane>
                 <TabPane tab="手机验证登陆" key="1">
                   <div className={styles['form-input-block']}>
-                    <div style={{ display: 'flex' }}>
-                      <Input id="phoneNumber" onChange={BindPhoneNumber} placeholder='请输入手机号码' prefix={<Icon type="mobile"/>} style={{ height: '40px' }}/>
-                      <Button type="primary" onClick={sendCode} style={{ height: 40 }}>发送验证码</Button>
-                    </div>
-                    <Input onChange={BindPhoneVerificationCode} placeholder='请输入验证码' prefix={<Icon type="lock"/>} style={{ height: '40px' }}/>
-                    <Button onClick={loginWithMode1} style={{ width: '100%', height: '40px' }} type='primary'>
-                      登陆
-                    </Button>
+                    <Input.Group compact={true}>
+                      <Input id="phoneNumber" onChange={BindPhoneNumber} placeholder='请输入手机号码' prefix={<Icon type="mobile"/>} style={{ height: '40px', width: '70%' }} autoComplete='off' />
+                      <Button type="primary" onClick={sendCode} style={{ height: '40px', width: '30%' }}>发送验证码</Button>
+                    </Input.Group>
+                    <Input onChange={BindPhoneVerificationCode} placeholder='请输入验证码' prefix={<Icon type="lock"/>} style={{ height: '40px' }} autoComplete='off' />
                   </div>
                 </TabPane>
                 <TabPane tab="微信扫码" key="2">
                   <div id='login_container' />
                 </TabPane>
               </Tabs>
+              { mode!== '2' ? (
+                <div className={styles['login-btn']}>
+                  <Button onClick={() => login(mode)} style={{ width: '100%', height: '40px', position: 'relative', bottom: '0' }} type='primary' >
+                    登陆
+                  </Button>
+                </div>
+              ) : <h4>--&nbsp;&nbsp;请扫码登陆&nbsp;&nbsp;--</h4>}
+
             </Card>
           </div>
         </Col>
@@ -153,7 +149,6 @@ function Login(props: SendCodeProps) {
     </div>
   );
 }
-
 // 手机验证码登陆的 connect
 export default connect((state: any): object => {
     return{}

@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'dva';
-import { Button, Card, Col, Form, Input, Row, Tabs, Cascader } from 'antd';
+import { Button, Card, Col, Form, Input, Row, Tabs, Cascader, Modal } from 'antd';
 import AddressInput from '@/components/AddressInput/AddressInput.tsx';
 import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
 import { ColProps } from 'antd/lib/grid';
@@ -226,20 +226,36 @@ const BForm = Form.create<BindUnitFromProps>()(BindUnitForm);
 
 function BindUnit(props: { dispatch: Dispatch; phoneNumber: string}) {
 
+  // modal的visible
+  const [visible,setVisible] = useState(false);
+  // 图片
+  const [picUrl,setPicUrl] = useState('');
+
   // 传入 NewUnitForm 中，已提供外部的表单处理
   // 这里可以拿到表单的信息
   function submitRegister(data: any): void {
     const { dispatch, phoneNumber} = props;
     // 返回为图片
     getQRCodeForUnitRegister({phonenumber: phoneNumber})
-      .then(res => {})
+      .then(async (res) => {
+        await setPicUrl(res.data);
+        await openDialog();
+      });
 
-
+    // 打开modal展示图片同时进行轮询
     dispatch({
       type: 'register/checkoutUnitRegisterPayStatus'
     })
   }
-  //
+
+  function openDialog() {
+    // 打开dialog
+    setVisible(true);
+    // 开始轮询
+  }
+
+
+  // 提供给教练员/领队做单位的绑定
   function submitBindUnitData(data: any): void{
     console.log(data);
   }
@@ -280,6 +296,14 @@ function BindUnit(props: { dispatch: Dispatch; phoneNumber: string}) {
           </Card>
         </Col>
       </Row>
+      <Modal visible={visible} style={{textAlign: 'center'}} footer={null}>
+        <div>
+          <img src={picUrl} alt=""/>
+        </div>
+        <div style={{marginTop: '20px'}}>
+          <h4>--&nbsp;&nbsp;请扫码支付相关注册费用&nbsp;&nbsp;--</h4>
+        </div>
+      </Modal>
     </div>
   );
 }
