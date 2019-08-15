@@ -7,38 +7,28 @@ import router from 'umi/router';
 const RESISTER_MODEL: Model = {
   namespace: 'register',
   state: {
-    verificationCode: '132',
+    
   },
   reducers: {
-    modifyCode(state: any, action: AnyAction) {
-      state.verificationCode = action.verificationCode;
-      return state;
-    },
   },
   effects: {
     * sendVerificationCode(action: AnyAction, effect: EffectsCommandMap) {
       // 发送手机验证码
       let phone: any = yield effect.select((state: any) => ({ phonenumber: state.user.phoneNumber }));
       let data:{phonenumber: string} = {phonenumber: phone.phonenumber};
-      yield sendVerification2Phone(data)
-        .then(function(res: Response) {
-          console.log(res);
-        })
-        .catch(function(err: Response) {
-          console.log(err);
-        });
+      let res = yield sendVerification2Phone(data)
+      if (res) {
+        // TODO
+      }
     },
     // 发送邮箱验证码
     * sendEmailCode(action: AnyAction, effect: EffectsCommandMap) {
-      let data:{email: string} = {email: action.email};
-      yield sendEmailVerificationCode(data)
-        .then(function(res: Response) {
-          console.log(res);
-        })
-        .catch(function(err: Response) {
-          console.log(err);
-        });
-      yield effect.put({ type: 'user/modifyEmail', email: action.email });
+      let data:{email: string} = {email: action.payload};
+      let res = yield sendEmailVerificationCode(data)
+      if (res) {
+        // TODO
+      }
+      yield effect.put({ type: 'user/modifyEmail', payload: action.payload });
     },
     // 为账号补全其个人信息
     * addAthleteBaseInfo(action: AnyAction, effect: EffectsCommandMap) {

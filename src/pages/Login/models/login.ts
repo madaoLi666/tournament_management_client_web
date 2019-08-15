@@ -19,21 +19,22 @@ const LOGIN_MODEL:Model = {
       if(res){
         // 本地存储token
         yield  window.localStorage.setItem('TOKEN',res.data);
-        yield put({type:'user/modifyUserInfo',userInfo: action.payload});
+        yield put({type:'user/modifyUserInfo',payload: action.payload});
         yield router.push('/user');
       }
     },
     // 发送手机验证码
     *sendPhoneNumberForCode(action: AnyAction, effect: EffectsCommandMap) {
       let data:{phonenumber: string} = {phonenumber: action.payload};
-      yield sendVerification2Phone(data)
-            .then(function (res: Response) {
-              console.log(res);
-            })
-            .catch(function (err: Response) {
-              console.log(err);
-            });
-      yield effect.put({type: 'user/modifyPhoneNumber', phoneNumber: action.payload})
+      let res = yield sendVerification2Phone(data)
+      if (res) {
+        if (res.data === "true") {
+          // TODO
+        }else {
+          // TODO
+        }
+      }
+      yield effect.put({type: 'user/modifyPhoneNumber', payload: action.payload})
     },
   }
 };

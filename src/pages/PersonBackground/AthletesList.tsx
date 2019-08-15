@@ -1,8 +1,9 @@
 import * as React from 'react';
 // @ts-ignore
 import styles from './index.less';
-import { Select, Input, Button, Modal, Layout, Table, Popconfirm, Icon, Upload } from 'antd';
+import { Select, Input, Button, Modal, Layout, Table, Popconfirm, Icon, Upload, message } from 'antd';
 import { ColumnProps, TableEventListeners } from 'antd/es/table';
+import { UploadFile, RcFile, UploadChangeParam } from 'antd/lib/upload/interface';
 
 // 表格接口 key 是编号
 interface Athlete {
@@ -27,8 +28,7 @@ export default function AthletesList() {
     const [ modalVisible,setModalVisible ] = React.useState(false);
     const [ modalLoading,setModalLoading ] = React.useState(false);
     // 观察头像state
-    const [ previewVisbile,setPreViewVisible ] = React.useState(false);
-    const [ previewImage,setPreViewImage ] = React.useState('');
+
     // 选择框默认值
     let defaultvalue:any = "请选择搜索条件";
     // 修改确认
@@ -105,40 +105,63 @@ export default function AthletesList() {
     function handleModalCancel() {
         setModalVisible(false);
     }
-    // 上传图片
-    function getBase64(file: any) {
-        return new Promise((resolve: any, reject: any) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        })
+
+    function getBase64(img: any,callback: any) {
+        const reader = new FileReader();
+        reader.addEventListener('load',() => callback(reader.result));
+        reader.readAsDataURL(img);
     }
-    // 测试头像
-    let fileList:{uid: string, name: string, status: string, url: string} = {
-        uid: '-1',
-        name: 'image.png',
-        status: 'done',
-        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    }
-    // 取消添加头像
-    function imageCancel() {
-        setPreViewVisible(false);
-    }
-    let handlePreview = async (file: any) => {
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
+
+    function beforeUpload(file: RcFile, FileList: RcFile[]) {
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+        if (!isJpgOrPng) {
+          message.error('You can only upload JPG/PNG file!');
         }
-        setPreViewImage(file.url || file.preview);
-        setPreViewVisible(true);
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isLt2M) {
+          message.error('Image must smaller than 2MB!');
+        }
+        return isJpgOrPng && isLt2M;
     }
-    // 添加运动员DOM TODO
-    let addAthleteDOM:React.ReactNode = (
+
+    const [ loading,setLoading ] = React.useState(false);
+    const [ imageUrl,setimageUrl ] = React.useState('');
+    let handleChange = (info: UploadChangeParam<UploadFile>) => {
+        if (info.file.status === "uploading") {
+            setLoading(true);
+            return;
+        }
+        if (info.file.status === 'done') {
+            getBase64(info.file.originFileObj, (imageUrl:any) => {
+                setimageUrl(imageUrl);
+                setLoading(false);
+            })
+        }
+    }
+
+    const uploadButton = (
         <div>
-            a
+            <Icon type={loading ? 'loading' : 'plus'} />
+            <div className="ant-upload-text" >Upload</div>
         </div>
     )
 
+    // 添加运动员DOM TODO
+    let addAthleteDOM:React.ReactNode = (
+        <div>
+            <Upload 
+                onChange={handleChange}
+                name="avatar"
+                listType="picture-card"
+                className="avatar-uploader"
+                showUploadList={false}
+                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                beforeUpload={beforeUpload}
+            >
+            {imageUrl ? <img src={imageUrl} alt="avatar" style={{width:"100%"}} /> : uploadButton}
+            </Upload>
+        </div>
+    )
     return (
         <Layout className={styles['AthletesList-page']}>
             <Modal 

@@ -16,12 +16,6 @@ interface RightResponse {
   unitaccount?: string
 }
 
-interface Response {
-  data: RightResponse
-  error: string
-  notice: string
-}
-
 // 注册新用户表单项的接口
 interface UserFormProps {
   sendCode?: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -171,7 +165,7 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
           // @ts-ignore
           this.props.dispatch({
             type: 'user/saveInfo',
-            value: value
+            payload: value
           })
         };
         // 调用修改state
@@ -181,8 +175,8 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
             errorText: error
           })
         }
-        personalAccountRegister(personInfo)
-        .then(function (res: Response) {
+        let res:any = personalAccountRegister(personInfo)
+        if (res) {
           if (res.error !== "") {
             console.log(res);
             changeState(res.error);
@@ -190,10 +184,7 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
             console.log(res);
             saveState(res.data);
           }
-        })
-        .catch(function (err:Response) {
-            console.log(err)
-        })
+        }
       }
     });
   };
@@ -215,8 +206,8 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
           </Form.Item>
           <Form.Item label='登陆密码' hasFeedback={true}>
             {getFieldDecorator('password', {
-              rules: [{ required: true, message: '请输入密码！' }, { validator: this.validateToNextPassword }],
-            })(<Input.Password/>)}
+              rules: [{ required: true, message: '请输入密码！' },{min:10,message:'密码长度至少为10位'}, { validator: this.validateToNextPassword }],
+            })(<Input.Password placeholder="密码长度最少为10位"/>)}
           </Form.Item>
           <Form.Item label='确认密码' hasFeedback={true}>
             {getFieldDecorator('comfirmPassword', {
@@ -284,8 +275,8 @@ class OldUserForm extends React.Component<OldUserFormProps & FormComponentProps,
         </Form.Item>
         <Form.Item label='密码'>
           {getFieldDecorator('oldPassword', {
-            rules: [{ required: true, message: '请输入密码！' }],
-          })(<Input/>)}
+            rules: [{ required: true, message: '请输入密码！' },{min:10,message:'密码长度至少为10位'}],
+          })(<Input.Password placeholder="密码长度最少为10位"/>)}
         </Form.Item>
         <Form.Item label='验证码'>
           <Row>
@@ -333,7 +324,7 @@ class Register extends React.Component<any, any> {
     const { dispatch } = this.props;
     dispatch({
       type: 'register/sendEmailCode',
-      email: email
+      payload: email
     })
   }
   render() {
