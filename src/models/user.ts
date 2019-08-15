@@ -1,6 +1,7 @@
 import { Model, EffectsCommandMap } from 'dva'
 import { AnyAction } from 'redux';
 import { checkVerificationCode, Response } from '@/services/login.ts';
+import { message } from 'antd';
 import router from 'umi/router';
 
 const USER_MODEL:Model = {
@@ -49,16 +50,14 @@ const USER_MODEL:Model = {
     // 验证手机验证码是否正确
     *checkCode(action: AnyAction, effect: EffectsCommandMap) {
       let phone:any = yield effect.select((state:any) => ({phoneNumber: state.user.phoneNumber}))
-      var phoneInfo: {phoneNumber:string, phonecode: string} = {phoneNumber:phone.phoneNumber, phonecode: action.payload};
-      yield checkVerificationCode(phoneInfo)
-      .then(function (res: Response) {
-        if ( res.data == "true" ) {
-          router.push('/login/register')
-        }
-      })
-      .catch(function (err: Response) {
-        console.log(err)
-      })
+      let phoneInfo: {phoneNumber:string, phonecode: string} = {phoneNumber:phone.phoneNumber, phonecode: action.payload};
+      let res = yield checkVerificationCode(phoneInfo);
+      if(res.data === 'true'){
+        yield router.push('/login/register')
+      }else{
+        //@ts-ignore
+        yield message.error('');
+      }
     },
     // 个人注册成功后，存进state
     *saveInfo(action: AnyAction, effect: EffectsCommandMap) {

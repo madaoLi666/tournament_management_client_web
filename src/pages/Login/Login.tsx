@@ -9,6 +9,7 @@ import styles from '@/pages/Login/index.less';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
 import { checkPhoneNumber } from '@/utils/regulars';
+import { async } from 'q';
 
 const { TabPane } = Tabs;
 
@@ -32,7 +33,7 @@ function Login(props: SendCodeProps) {
   // 以mode '1' 登入 - verificationCode 为 字符串的验证码
   const [phoneInfo, setPhoneInfo] = useState({phoneNumber:'',verificationCode:''});
   // onChange 绑定mode1 电话号码
-  function BindPhoneNumber(event:React.ChangeEvent<HTMLInputElement>) {
+  async function BindPhoneNumber(event:React.ChangeEvent<HTMLInputElement>) {
     let phone:string | undefined = event.currentTarget.value;
     // 手机号码
     setPhoneInfo({ phoneNumber: phone, verificationCode: '', });
@@ -81,7 +82,7 @@ function Login(props: SendCodeProps) {
       }
     }else if(mode === '1') {
       // 检测手机验证码是否正确
-      if(phoneInfo.verificationCode !== '' && phoneInfo.verificationCode !== undefined ){
+      if(phoneInfo.verificationCode !== '' && phoneInfo.verificationCode !== undefined && checkPhoneNumber.test(phoneInfo.phoneNumber) ){
         dispatch({ type:'user/checkCode', payload: phoneInfo.verificationCode })
       }else{
         message.error('请输入确认输入无误后再次登陆');
