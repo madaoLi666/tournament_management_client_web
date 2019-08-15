@@ -11,7 +11,8 @@ const USER_MODEL:Model = {
     phoneNumber:'',
     email:'',
     unitaccount:'',
-    token:''
+    token:'',
+    errorstate:'',
   },
   reducers: {
     // 存手机进state
@@ -43,27 +44,42 @@ const USER_MODEL:Model = {
       // state类型未定
       state.token = payload.token;
       return state;
+    },
+    // 修改errorstate,请求发送后的错误信息
+    modifyError(state: any, action: AnyAction): object {
+      const { error } = action;
+      state.errorstate = error;
+      return state;
     }
-  },
+   },
   effects: {
     // 验证手机验证码是否正确
     *checkCode(action: AnyAction, effect: EffectsCommandMap) {
       let phone:any = yield effect.select((state:any) => ({phoneNumber: state.user.phoneNumber}))
       var phoneInfo: {phonenumber:string, phonecode: string} = {phonenumber:phone.phoneNumber, phonecode: action.payload};
-      yield checkVerificationCode(phoneInfo)
+      let res:Response = {data:'',error:'',notice:''};
+      res = yield checkVerificationCode(phoneInfo)
       .then(function (res: Response) {
-        if ( res.data == "true" ) {
-          router.push('/login/register')
-        }
+        return res;
       })
       .catch(function (err: Response) {
-        console.log(err)
+        console.log(err);
+        return err;
       })
+      if (res.data === "true") {
+        router.push("/login/register");
+      }else {
+        yield effect.put({type: 'modifyError',error: res.error})
+      }
     },
     // 个人注册成功后，存进state
     *saveInfo(action: AnyAction, effect: EffectsCommandMap) {
       console.log(action.value);
       yield effect.put({type:'saveValue',value:action.value})
+    },
+    // 清除errorState
+    *clearError(action: AnyAction, effect: EffectsCommandMap) {
+      yield effect.put({type: 'modifyError', error:''})
     }
   }
 };

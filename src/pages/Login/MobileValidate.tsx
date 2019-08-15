@@ -1,20 +1,22 @@
 import * as React from 'react';
 // @ts-ignore
 import styles from './index.less';
-import { message, Row, Col, Button, Input, Card, Tabs, Icon } from 'antd';
+import { message, Row, Col, Button, Input, Card, Tabs, Icon, Statistic } from 'antd';
 import { connect } from 'dva';
+import { delay } from 'q';
 
 const { TabPane } = Tabs;
+const { Countdown } = Statistic;
 
 // Col 自适应
 const autoAdjust = {
   xs: { span: 20 }, sm: { span: 12 }, md: { span: 12 }, lg: { span: 8 }, xl: { span: 8 }, xxl: { span: 8 },
 };
 
-
 function MobileValidate(props: any) {
 
   const [ phone,setPhone ] = React.useState('');
+  const [ isSending,setIsSengding ] = React.useState(false);
   const [ code,setCode ] = React.useState('');
 
   // onChange 绑定手机号码
@@ -32,23 +34,47 @@ function MobileValidate(props: any) {
       message.error("手机号码不可为空！");
       return
     }
+    if (!(/^1(3|4|5|6|7|8|9)\d{9}$/.test(phone))) {
+      message.warning("请检查手机号码是否正确");
+      return
+    }
     props.dispatch({
       type: 'login/sendPhoneNumberForCode',
       payload: phone
     })
+    setIsSengding(true);
   }
   // 验证
-  function validateCode(event: React.MouseEvent<HTMLElement>) {
+  async function validateCode(event: React.MouseEvent<HTMLElement>) {
     if (code === "" || code === undefined) {
       message.error("验证码不可为空！");
+      return
+    }
+    if ( code.length !== 6 ) {
+      message.warning("请检查验证码格式是否正确！");
       return
     }
     props.dispatch({
       type: 'user/checkCode',
       payload: code
     })
-    // TODO 判断是否成功
+    // 延迟等待state修改
+    await delay(40);
+    if (props.userInfo.errorstate) {
+      message.error(props.userInfo.errorstate);
+    }  
+    props.dispatch({type: 'user/clearError'})
   }
+  function onFinish() {
+    setIsSengding(false);
+  }
+  // 倒计时时间
+  const deadline = Date.now()+ 10 * 60 * 25 * 4;
+  let timeCountDown:React.ReactNode = (
+    <div>
+      <Countdown prefix={<Icon type="loading" />} value={deadline} onFinish={onFinish} format="s秒" />
+    </div>
+  )
 
   // 标签页DOM
   let TabsDOM: React.ReactNode = (
@@ -56,10 +82,13 @@ function MobileValidate(props: any) {
       <TabPane tab={<strong>手机验证</strong>} key="1">
           <Input.Group compact={true} style={{width:"100%"}}  >
             <Input onChange={BindPhone} style={{width:"60%",height:40}} placeholder="请输入手机号码" prefix={<Icon type="mobile" />} />
+            {isSending === false ?
             <Button onClick={sendCode} style={{width:"40%",height:40}} type="primary" >发送验证码</Button>
+            :<Button type="primary" style={{width:"40%",height:40}} disabled={true} >{timeCountDown}</Button>
+            }
           </Input.Group>
           <Input onChange={BindCode} prefix={<Icon type="lock" />} style={{marginTop:"10%"}} placeholder="请输入验证码" size="large" />
-          <Button onClick={validateCode} type="primary" size="large" style={{marginTop:"10%",width:"100%"}} >验证</Button>
+          <Button onClick={validateCode} type="primary" size="large" style={{marginTop:"10%"}} block={true} >验证</Button>
       </TabPane>
     </Tabs>
   );
@@ -83,4 +112,8 @@ function MobileValidate(props: any) {
   );
 }
 
-export default connect()(MobileValidate);
+function userStateToProps(state: any) {
+  return { userInfo: state.user }
+}
+
+export default connect(userStateToProps)(MobileValidate);
