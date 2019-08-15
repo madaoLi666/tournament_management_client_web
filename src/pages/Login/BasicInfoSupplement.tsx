@@ -1,5 +1,5 @@
 import React,{ Component } from 'react';
-import { Form, Input, Row, Col, Select, DatePicker, Button } from 'antd';
+import { Form, Input, Row, Col, Select, DatePicker, Button, Card } from 'antd';
 import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
 import { ColProps } from 'antd/lib/grid';
 import { connect, DispatchProp } from 'dva';
@@ -185,9 +185,15 @@ function BasicInfoSupplement({dispatch}:DispatchProp) {
     <div className={styles['info-supplement-page']}>
       <Row type="flex" justify="center">
         <Col {...autoAdjust}>
-          <BISForm
-            emitData={submitInfoSupplementData}
-          />
+          <Card
+            style={{ width: '100%', height: '100%', borderRadius: '5px', boxShadow: '1px 1px 5px #111' }}
+            headStyle={{ color: '#2a8ff7' }}
+            title='请填写您的基本信息'
+          >
+            <BISForm
+              emitData={submitInfoSupplementData}
+            />
+          </Card>
         </Col>
       </Row>
     </div>

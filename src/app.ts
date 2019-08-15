@@ -1,7 +1,9 @@
 import { IRoute } from 'umi-types';
 import uRoutes, { MAIN_PATH } from '@/config/router';
+import { message } from 'antd';
 
-
+// @ts-ignore
+window.g_message = message;
 
 export const dva = {
   config: {

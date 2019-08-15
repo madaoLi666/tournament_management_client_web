@@ -29,3 +29,8 @@ export async function addAthleteInfo(data: object):Promise<any> {
 export async function setAthleteRole(): Promise<any> {
   return axiosInstance.post('/accountType/');
 }
+
+// 注册单位账号
+export async function registerUnitAccount(data: object):Promise<any> {
+  return axiosInstance.post('/unitdata/', data);
+}

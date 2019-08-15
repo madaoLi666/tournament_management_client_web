@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'dva';
-import { Button, Card, Col, Form, Input, Row, Tabs, Cascader } from 'antd';
+import { Button, Card, Col, Form, Input, Row, Tabs, Modal, message } from 'antd';
 import AddressInput from '@/components/AddressInput/AddressInput.tsx';
 import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
 import { ColProps } from 'antd/lib/grid';
 import { Dispatch } from 'redux';
 import { checkEmail, checkPhoneNumber } from '@/utils/regulars.ts';
-import { getQRCodeForUnitRegister } from '@/services/pay';
+import { getQRCodeForUnitRegister, checkUnitIsPay } from '@/services/pay';
 
 // @ts-ignore
 import styles from './index.less';
+import { async } from 'q';
 
 interface NewUnitFromProps extends FormComponentProps {
   emitData: (data: any) => void;
@@ -148,8 +149,17 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
             )}
           </Form.Item>
           <Form.Item label='地址'>
-            {getFieldDecorator('residence', {})(
+            {getFieldDecorator('residence', {
+              rules:[{required:true, message:'请输入你的地址信息'}]
+            })(
               <AddressInput/>,
+            )}
+          </Form.Item>
+          <Form.Item label='邮政编码'>
+            {getFieldDecorator('postalCode',{
+              rules:[{required:true, message:'请输入邮政编码'}]
+            })(
+              <Input placeholder='请输入邮政编码'/>
             )}
           </Form.Item>
           <Form.Item
@@ -222,24 +232,75 @@ class BindUnitForm extends React.Component<NewUnitFromProps, any>{
 }
 const BForm = Form.create<BindUnitFromProps>()(BindUnitForm);
 
+function BindUnit(props: { dispatch: Dispatch;}) {
 
-
-function BindUnit(props: { dispatch: Dispatch; phoneNumber: string}) {
+  // modal的visible
+  const [visible,setVisible] = useState(false);
+  // 图片
+  const [picUrl,setPicUrl] = useState('');
 
   // 传入 NewUnitForm 中，已提供外部的表单处理
   // 这里可以拿到表单的信息
-  function submitRegister(data: any): void {
-    const { dispatch, phoneNumber} = props;
-    // 返回为图片
-    getQRCodeForUnitRegister({phonenumber: phoneNumber})
-      .then(res => {})
-
-
-    dispatch({
-      type: 'register/checkoutUnitRegisterPayStatus'
-    })
+  async function submitRegister(data: any): Promise<any> {
+    const { dispatch } = props;
+    // 发起请求检查是否支付了费用
+    let isPay = await checkoutIsPay().then(res => (res));
+    if(!isPay) {
+      // 获取支付二维码
+      let pic = await getPayQRCodeUrl().then(res => (res));
+      if(pic) {
+        setPicUrl(pic);
+        openDialog();
+      }else{
+        message.error('获取支付二维码失败')
+      }
+    }else{
+      dispatch({type: 'register/registerUnitAccount', payload: {unitData: data} });
+    }
   }
-  //
+
+  // 判断是否已经支付费用
+  async function checkoutIsPay(): Promise<any> {
+    const { dispatch } = props;
+    let res = await checkUnitIsPay();
+    if(res.data === '' || res.data === undefined){
+      return false
+    }else{
+      await dispatch({type: 'register/modifyUnitRegisterPayCode', payload: {payCode: res.data}});
+      return true;
+    }
+  }
+  // 获取支付二维码图片
+  async function getPayQRCodeUrl(): Promise<any> {
+    let res = await getQRCodeForUnitRegister().then( res => (res));
+    if(res.data !== '' && res.error === ''){
+      return res.data;
+    }else{
+      return false;
+    }
+  }
+
+  // 打开dialog
+  function openDialog() {
+    // 打开modal展示图片同时进行轮询
+    setVisible(true);
+    let i = setInterval(() => {
+      checkoutIsPay().then(res => {
+        if(res) {
+          // 如果支付了
+          closeDialog();
+          clearInterval(i);
+          message.success('已成功支付单位注册费用，请再次点击注册');
+        }
+      });
+    },2000);
+  }
+  // 关闭dialog
+  function closeDialog() {
+    setVisible(false);
+  }
+
+  // 提供给教练员/领队做单位的绑定
   function submitBindUnitData(data: any): void{
     console.log(data);
   }
@@ -280,10 +341,23 @@ function BindUnit(props: { dispatch: Dispatch; phoneNumber: string}) {
           </Card>
         </Col>
       </Row>
+      <Modal
+        visible={visible}
+        style={{textAlign: 'center'}}
+        footer={null}
+        onCancel={closeDialog}
+      >
+        <div>
+          <img src={picUrl} alt=""/>
+        </div>
+        <div style={{marginTop: '20px'}}>
+          <h4>--&nbsp;&nbsp;请扫码支付相关注册费用&nbsp;&nbsp;--</h4>
+        </div>
+      </Modal>
     </div>
   );
 }
 
-export default connect(({user}:any) => ({
-  phoneNumber: user.phoneNumber
+export default connect(({register}:any) => ({
+  payCode: register.unitRegisterPayCode
 }))(BindUnit);

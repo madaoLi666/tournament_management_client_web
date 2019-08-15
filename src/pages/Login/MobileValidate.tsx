@@ -63,6 +63,7 @@ function MobileValidate(props: any) {
       payload: code
     })
   }
+
   function onFinish() {
     setIsSengding(false);
   }
@@ -72,7 +73,7 @@ function MobileValidate(props: any) {
     <div>
       <Countdown prefix={<Icon type="loading" />} value={deadline} onFinish={onFinish} format="s秒" />
     </div>
-  )
+  );
 
   // 标签页DOM
   let TabsDOM: React.ReactNode = (

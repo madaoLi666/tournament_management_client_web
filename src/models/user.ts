@@ -1,6 +1,7 @@
 import { Model, EffectsCommandMap } from 'dva'
 import { AnyAction } from 'redux';
 import { checkVerificationCode, Response } from '@/services/login.ts';
+import { message } from 'antd';
 import router from 'umi/router';
 
 const USER_MODEL:Model = {
@@ -8,7 +9,7 @@ const USER_MODEL:Model = {
   state: {
     username:'',
     userPassword:'',
-    phoneNumber:'',
+    phoneNumber:'13118875236',
     email:'',
     unitaccount:'',
     token:'',
@@ -55,6 +56,7 @@ const USER_MODEL:Model = {
   effects: {
     // 验证手机验证码是否正确
     *checkCode(action: AnyAction, effect: EffectsCommandMap) {
+      const { put } = effect;
       let phone:any = yield effect.select((state:any) => ({phoneNumber: state.user.phoneNumber}))
       var phoneInfo: {phonenumber:string, phonecode: string} = {phonenumber:phone.phoneNumber, phonecode: action.payload};
       let res = yield checkVerificationCode(phoneInfo);
