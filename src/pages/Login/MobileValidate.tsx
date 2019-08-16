@@ -86,8 +86,8 @@ function MobileValidate(props: any) {
             :<Button type="primary" style={{width:"40%",height:40,marginTop:"5%"}} disabled={true} >{timeCountDown}</Button>
             }
           </Input.Group>
-          <Input onChange={BindCode} prefix={<Icon type="lock" />} style={{marginTop:"15%"}} placeholder="请输入验证码" size="large" />
-          <Button onClick={validateCode} type="primary" size="large" style={{marginTop:"15%"}} block={true} >验证</Button>
+          <Input onChange={BindCode} prefix={<Icon type="lock" />} style={{marginTop:"10%"}} placeholder="请输入验证码" size="large" />
+          <Button onClick={validateCode} type="primary" size="large" style={{marginTop:"10%"}} block={true} >验证</Button>
       </TabPane>
     </Tabs>
   );
@@ -99,7 +99,7 @@ function MobileValidate(props: any) {
         <Col {...autoAdjust}>
           <div className={styles['validate-block']}>
             <Card
-              style={{ width: '100%', height: '120%', borderRadius: '5px', boxShadow: '1px 1px 5px #111' }}
+              style={{ width: '126%', height: '100%', borderRadius: '5px', boxShadow: '1px 1px 5px #111' }}
               headStyle={{ color: '#2a8ff7' }}
             >
               {TabsDOM}

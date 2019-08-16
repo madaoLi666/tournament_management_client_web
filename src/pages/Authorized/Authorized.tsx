@@ -25,14 +25,14 @@ class Authorized extends Component<any,any>{
         case '0':
           // 以完成所以的注册操作，不做任何事
           break;
-        case '3':
-          alert('未完成运动员信息补全操作');
-          router.push('/login/infoSupplement');
-          break;
-        case '4':
-          alert('此账号未选择身份角色');
-          router.push('/login/setRole');
-          break;
+        // case '3':
+        //   alert('未完成运动员信息补全操作');
+        //   router.push('/login/infoSupplement');
+        //   break;
+        // case '4':
+        //   alert('此账号未选择身份角色');
+        //   router.push('/login/setRole');
+        //   break;
       }
     }
   }
