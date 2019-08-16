@@ -3,7 +3,7 @@ import * as React from 'react';
 import styles from './index.less';
 import { message, Row, Col, Button, Input, Card, Tabs, Icon, Statistic } from 'antd';
 import { connect } from 'dva';
-import { delay } from 'q';
+import { checkPhoneNumber } from '@/utils/regulars';
 
 const { TabPane } = Tabs;
 const { Countdown } = Statistic;
@@ -34,7 +34,7 @@ function MobileValidate(props: any) {
       message.error("手机号码不可为空！");
       return
     }
-    if (!(/^1(3|4|5|6|7|8|9)\d{9}$/.test(phone))) {
+    if (!checkPhoneNumber.test(phone)) {
       message.warning("请检查手机号码是否正确");
       return
     }
@@ -45,21 +45,23 @@ function MobileValidate(props: any) {
     setIsSengding(true);
   }
   // 验证
-  async function validateCode(event: React.MouseEvent<HTMLElement>) {
+  function validateCode(event: React.MouseEvent<HTMLElement>) {
     if (code === "" || code === undefined) {
       message.error("验证码不可为空！");
       return
     }
-    if ( code.length !== 6 ) {
-      message.warning("请检查验证码格式是否正确！");
+    if (phone === "" || phone === undefined) {
+      message.error("手机号码不可为空！");
+      return
+    }
+    if (!checkPhoneNumber.test(phone)) {
+      message.warning("请检查手机号码是否正确");
       return
     }
     props.dispatch({
       type: 'user/checkCode',
       payload: code
-    });
-    // 延迟等待state修改
-    props.dispatch({type: 'user/clearError'})
+    })
   }
 
   function onFinish() {
@@ -78,14 +80,14 @@ function MobileValidate(props: any) {
     <Tabs>
       <TabPane tab={<strong>手机验证</strong>} key="1">
           <Input.Group compact={true} style={{width:"100%"}}  >
-            <Input onChange={BindPhone} style={{width:"60%",height:40}} placeholder="请输入手机号码" prefix={<Icon type="mobile" />} />
+            <Input onChange={BindPhone} style={{width:"60%",height:40,marginTop:"5%"}} placeholder="请输入手机号码" prefix={<Icon type="mobile" />} />
             {isSending === false ?
-            <Button onClick={sendCode} style={{width:"40%",height:40}} type="primary" >发送验证码</Button>
-            :<Button type="primary" style={{width:"40%",height:40}} disabled={true} >{timeCountDown}</Button>
+            <Button onClick={sendCode} style={{width:"40%",height:40,marginTop:"5%"}} type="primary" >发送验证码</Button>
+            :<Button type="primary" style={{width:"40%",height:40,marginTop:"5%"}} disabled={true} >{timeCountDown}</Button>
             }
           </Input.Group>
-          <Input onChange={BindCode} prefix={<Icon type="lock" />} style={{marginTop:"10%"}} placeholder="请输入验证码" size="large" />
-          <Button onClick={validateCode} type="primary" size="large" style={{marginTop:"10%"}} block={true} >验证</Button>
+          <Input onChange={BindCode} prefix={<Icon type="lock" />} style={{marginTop:"15%"}} placeholder="请输入验证码" size="large" />
+          <Button onClick={validateCode} type="primary" size="large" style={{marginTop:"15%"}} block={true} >验证</Button>
       </TabPane>
     </Tabs>
   );
@@ -93,11 +95,11 @@ function MobileValidate(props: any) {
 
   return (
     <div className={styles['validate-page']}>
-      <Row justify="center" type="flex">
+      <Row style={{height:"500px"}} justify="center" type="flex">
         <Col {...autoAdjust}>
           <div className={styles['validate-block']}>
             <Card
-              style={{ width: '100%', height: '100%', borderRadius: '5px', boxShadow: '1px 1px 5px #111' }}
+              style={{ width: '100%', height: '120%', borderRadius: '5px', boxShadow: '1px 1px 5px #111' }}
               headStyle={{ color: '#2a8ff7' }}
             >
               {TabsDOM}
