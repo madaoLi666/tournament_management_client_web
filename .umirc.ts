@@ -25,6 +25,12 @@ const config: IConfig =  {
       Routes: ['./src/layouts/BasicLayout.tsx','./src/pages/Authorized/Authorized.tsx'],
       routes: []
     },
+    // 主页
+    { path: '/home', exact: true, Routes: ['./src/layouts/HomeLayout.tsx'],
+      routes: [
+        { path: '/home', component: './Home/index.tsx', name: '主页' }
+      ]
+    }
   ],
   treeShaking: true,
   runtimePublicPath:true,
