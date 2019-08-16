@@ -13,7 +13,7 @@ const changeResidenceData2Option = (data: object): Array<CascaderOptionType>|und
       if (keyArr.length !== 0) {
         keyArr.forEach(v => {
           res.push({
-            label: v, value: v, key: `p-${v}`,
+            label: v, value: v, key: `${Math.random()}-${v}`,
             // @ts-ignore
             children: changeResidenceData2Option(data[v])
           });

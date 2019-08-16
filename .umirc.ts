@@ -17,14 +17,26 @@ const config: IConfig =  {
         { path: '/login/setRole', component: './Login/SetRole.tsx', name: '设置角色' }
       ],
     },
-    // 报名页面
-    { path: '/enroll', exact: true, routes: [{path: './', component: './Enroll/Main.tsx'},] },
+    // 报名模块
+    { path: '/enroll',
+      Routes: ['./src/layouts/EnrollLayout.tsx'],
+      routes: [
+        {path: '/enroll', component: './Enroll/Main.tsx'},
+        {path: '/enroll/editUnitInfo', component: './Enroll/EditUnitInfo.tsx'},
+      ]
+    },
     // 主用户界面 - 这个位置是动态设置的
     {
       path: '/user',
       Routes: ['./src/layouts/BasicLayout.tsx','./src/pages/Authorized/Authorized.tsx'],
       routes: []
     },
+    // 主页
+    { path: '/home', Routes: ['./src/layouts/HomeLayout.tsx'],
+      routes: [
+        { path: '/home', component: './Home/index.tsx', name: '主页' }
+      ]
+    }
   ],
   treeShaking: true,
   runtimePublicPath:true,
