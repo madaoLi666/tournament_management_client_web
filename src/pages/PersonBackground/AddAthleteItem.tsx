@@ -2,6 +2,7 @@ import * as React from 'react';
 import Upload, { RcFile, UploadChangeParam } from 'antd/lib/upload';
 import { message, Icon, Modal, Button, Input, Row, Col, Select, DatePicker } from 'antd';
 import { UploadFile } from 'antd/lib/upload/interface';
+import AddressInput from '@/components/AddressInput/AddressInput.tsx';
 import Form, { FormComponentProps } from 'antd/lib/form';
 // @ts-ignore
 import styles from './index.less';
@@ -108,9 +109,35 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
                         rules: [{type: 'object', required: true, message: '请选择时间！'}]
                     })(<DatePicker />)}
                 </Item>
-                
+                <Item label="联系电话">
+                    {getFieldDecorator('phone',{
+                        rules: [{required: true, message: '请输入联系电话！'},{pattern:/1[3578]\d{9}/, message:'请检查联系电话是否正确'}]
+                    })(<Input/>)}
+                </Item>
+                <Item label="邮箱">
+                    {getFieldDecorator('email',{
+                        rules: [{required: true, message: '请输入邮箱'},{type: 'email', message: '请输入正确的邮箱格式'}]
+                    })(<Input />)}
+                </Item>
+                <Form.Item label='地址'>
+                    {getFieldDecorator('residence', {
+                    rules:[{required:true, message:'请输入你的地址信息'}]
+                    })(
+                    <AddressInput/>,
+                    )}
+                </Form.Item>
+                <Item label="紧急联系人">
+                    {getFieldDecorator('emergencyContact',{
+                        rules: [{required: true, message: '请输入紧急联系人姓名'}]
+                    })(<Input/>)}
+                </Item>
+                <Item label="紧急联系人电话">
+                    {getFieldDecorator('emergencyContactPhone',{
+                        rules: [{required: true, message: '请输入紧急联系人联系电话！'},{pattern:/1[3578]\d{9}/, message:'请检查联系电话是否正确'}]
+                    })(<Input />)}
+                </Item>
                 <Item {...tailFormItemLayout}>
-                    <Button type="primary" htmlType="submit">注册绑定,并进入下一步操作</Button>
+                    <Button type="primary" htmlType="submit">确定</Button>
                 </Item>
             </Form>
         )
