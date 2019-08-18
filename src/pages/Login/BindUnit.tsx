@@ -6,16 +6,19 @@ import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
 import { ColProps } from 'antd/lib/grid';
 import { Dispatch } from 'redux';
 import { checkEmail, checkPhoneNumber } from '@/utils/regulars.ts';
-import { getQRCodeForUnitRegister, checkUnitIsPay } from '@/services/pay';
+import { getQRCodeForUnitRegister, checkUnitIsPay, } from '@/services/pay';
+import { newUnitAccount } from '@/services/register';
+
 const { Countdown } = Statistic;
 
 // @ts-ignore
 import styles from './index.less';
 import { async } from 'q';
+import { string } from 'prop-types';
 
 interface NewUnitFromProps extends FormComponentProps {
   emitData: (data: any) => void;
-  unitNameIsLegal: (unitName: string) => Promise<boolean>;
+  unitNameIsLegal: (unitName: string) => Promise<{data:string,error:string,notice:string}>;
 }
 interface BindUnitFromProps extends FormComponentProps {
   emitData: (data: any) => void;
@@ -49,6 +52,13 @@ const newUnitFormStyle: FormProps = {
 
 class NewUnitForm extends React.Component<NewUnitFromProps, any> {
 
+  constructor(props: NewUnitFromProps) {
+    super(props);
+    this.state = {
+      validStatus: ''
+    }
+  }
+
   componentDidMount(): void {}
 
   // ------------  类型暂时找不到 -------------------------//
@@ -72,17 +82,71 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
       callback();
     }
   };
-  // 检查单位名称是否和恶法
+  // 检查单位名称是否和合法
   checkUnitNameIsLegal = (rule: any, value: any, callback: Function) => {
+    const setSuccess = () => {
+      this.setState({
+        validStatus: 'success'
+      })
+    }
+    const setError = () => {
+      this.setState({
+        validStatus: 'error'
+      })
+    }
+    if (value === "" || value === null || value === undefined) {
+      callback();
+      this.setState({
+        validStatus: 'error'
+      })
+      return;
+    }
     const { unitNameIsLegal } = this.props;
     // 没有检查value是否为空 不知道会不会bug
-    unitNameIsLegal(value).then(res => {
-      if (res) {callback();
+    let res = unitNameIsLegal(value);
+    res.then(function (result:{data:string,error:string,notice:string}) {
+      if (result.data !== "true") { 
+        callback();
+        setSuccess();
+        return;
       } else {
         callback('已有相同的单位名称');
+        setError();
+        return;
       }
     });
   };
+
+  handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const setSuccess = () => {
+      this.setState({
+        validStatus: 'success'
+      })
+    }
+    const setError = () => {
+      this.setState({
+        validStatus: 'error'
+      })
+    }
+    const { unitNameIsLegal } = this.props;
+
+    if (e.currentTarget.value === "" || e.currentTarget.value === null || e.currentTarget.value === undefined) {
+      setError();
+      return;
+    }
+
+    let res = unitNameIsLegal(e.currentTarget.value);
+    res.then(function (result:{data:string,error:string,notice:string}) {
+      if (result.data !== "true") { 
+        setSuccess();
+        return;
+      } else {
+        setError();
+        return;
+      }
+    });
+  }
+
   // 提交信息
   handleSubmit = (e: React.FormEvent): void => {
     const { emitData } = this.props;
@@ -104,12 +168,12 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
           {...newUnitFormStyle}
           onSubmit={this.handleSubmit}
         >
-          <Form.Item label='单位名称'>
+          <Form.Item label='单位名称' hasFeedback={true} validateStatus={this.state.validStatus} >
             {getFieldDecorator('unitName', {
               rules: [{ required: true, message: '请输入单位名称' },{ validator: this.checkUnitNameIsLegal }],
               validateTrigger: 'onBlur',
             })(
-              <Input placeholder='请输入单位名称' autoComplete='off' />,
+              <Input onChange={this.handleChange} placeholder='请输入单位名称' autoComplete='off' />,
             )}
           </Form.Item>
           <Form.Item label='密码'>
@@ -382,14 +446,15 @@ function BindUnit(props: { dispatch: Dispatch;}) {
     })
   }
   // 这里做异步请求检查单位的名称是否存在
-  async function checkUnitNameIsLegal(unitName:string): Promise<boolean> {
-    return await fetch(`http://47.106.15.217:9090/mock/19/newUnitAccount/?name=${unitName}`, {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      method: 'GET',
-    })
-      .then(response => {
-        return response.ok;
-      });
+  async function checkUnitNameIsLegal(unitName:string): Promise<{data:string,error:string,notice:string}> {
+    return await newUnitAccount({name:unitName})
+    // return await fetch(`http://47.106.15.217:9090/mock/19/newUnitAccount/?name=${unitName}`, {
+    //   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    //   method: 'GET',
+    // })
+    //   .then(response => {
+    //     return response.ok;
+    //   });
   }
 
   const TabsDOM: React.ReactNode = (
