@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef } from 'react';
 import { connect } from 'dva';
-import { Button, Card, Col, Form, Input, Row, Tabs, Modal, message } from 'antd';
+import { Button, Card, Col, Form, Input, Row, Tabs, Modal, message, Icon, Statistic } from 'antd';
 import AddressInput from '@/components/AddressInput/AddressInput.tsx';
 import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
 import { ColProps } from 'antd/lib/grid';
 import { Dispatch } from 'redux';
 import { checkEmail, checkPhoneNumber } from '@/utils/regulars.ts';
 import { getQRCodeForUnitRegister, checkUnitIsPay } from '@/services/pay';
+const { Countdown } = Statistic;
 
 // @ts-ignore
 import styles from './index.less';
@@ -45,6 +46,7 @@ const newUnitFormStyle: FormProps = {
   colon: true,
   labelAlign: 'right',
 };
+
 class NewUnitForm extends React.Component<NewUnitFromProps, any> {
 
   componentDidMount(): void {}
@@ -167,7 +169,7 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
             wrapperCol={{ span: 24 }}
           >
             <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
-              Register
+              注册
             </Button>
           </Form.Item>
         </Form>
@@ -175,7 +177,43 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
     );
   }
 }
+
 const NUForm = Form.create<NewUnitFromProps>()(NewUnitForm);
+
+// 输入框Group类
+class CodeInput extends React.Component<any,any> {
+
+  constructor(props:any) {
+    super(props);
+
+    const value = props.value || {};
+
+    this.state = {
+      code:value.code
+    }
+  }
+
+  public triggerChange = (code: string) => {
+    const { onChange } = this.props;
+    if (onChange) {
+      onChange({code});
+    }
+  }
+
+  public handleCodeChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+    this.triggerChange(e.target.value);
+  }
+  
+  render() {
+
+    return (
+      <Input.Group compact={true} style={{width:"100%"}}>
+        <Input placeholder="请输入验证码" onChange={this.handleCodeChange} style={{width:"60%",textAlign:"left"}} />
+        <Button onClick={this.props.sendCode} style={{width:"40%"}} type="primary" >发送验证码</Button>
+      </Input.Group>
+    )
+  }
+}
 
 // 绑定单位表单
 class BindUnitForm extends React.Component<NewUnitFromProps, any>{
@@ -192,10 +230,30 @@ class BindUnitForm extends React.Component<NewUnitFromProps, any>{
     });
   };
 
+  checkPrice = (rule: any, value: {code:string}, callback: any) => {
+    if(value.code === undefined || value.code === null || value.code === "") {
+      callback('请输入验证码！');
+      return;
+    }
+    callback();
+    return;
+  };
+  
+  public sendCode = (event:React.MouseEvent<HTMLElement>) => {
+    // @ts-ignore
+    this.props.dispatch({
+      type:'register/bindUnitAccountAndSendCode',
+      payload: {
+        unitname:"",
+        password:"",
+        code:""
+      }
+    })
+  }
+
   render(): React.ReactNode {
 
     const { getFieldDecorator } = this.props.form;
-
 
     return (
       <Form
@@ -204,18 +262,25 @@ class BindUnitForm extends React.Component<NewUnitFromProps, any>{
       >
         <Form.Item label='用户名'>
           {getFieldDecorator('unitName',{
-            rules:[{required:true, message: '请输入用户名称'}],
+            rules:[{required:true, message: '请输入单位名称'}],
           })(
-            <Input placeholder='请输入用户名称' autoComplete='off' />,
+            <Input placeholder='请输入单位名称' autoComplete='off' />,
           )}
         </Form.Item>
 
         <Form.Item label='密码'>
           {getFieldDecorator('password',{
-            rules:[{required:true, message: '请输入用户名称'}],
+            rules:[{required:true, message: '请输入单位密码'}],
           })(
-            <Input placeholder='请输入账号密码' type='password' autoComplete='off' />,
+            <Input placeholder='请输入单位密码' type='password' autoComplete='off' />,
           )}
+        </Form.Item>
+
+        <Form.Item label="验证码" extra="ps:发送的手机号为该单位注册时登记的">
+          {getFieldDecorator('code',{
+            initialValue: {code:null},
+            rules: [{validator: this.checkPrice}]
+          })(<CodeInput sendCode={this.sendCode} />)}
         </Form.Item>
 
         <Form.Item
@@ -223,14 +288,15 @@ class BindUnitForm extends React.Component<NewUnitFromProps, any>{
           wrapperCol={{ span: 24 }}
         >
           <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
-            Register
+            绑定
           </Button>
         </Form.Item>
       </Form>
     );
   }
 }
-const BForm = Form.create<BindUnitFromProps>()(BindUnitForm);
+
+const BForm = connect()(Form.create<BindUnitFromProps>()(BindUnitForm));
 
 function BindUnit(props: { dispatch: Dispatch;}) {
 
@@ -301,8 +367,19 @@ function BindUnit(props: { dispatch: Dispatch;}) {
   }
 
   // 提供给教练员/领队做单位的绑定
-  function submitBindUnitData(data: any): void{
-    console.log(data);
+  function submitBindUnitData(data: any): void {
+    let myPayload = {
+      unitname:"",
+      password:"",
+      code:""
+    }
+    myPayload.code = data.code.code;
+    myPayload.password = data.password;
+    myPayload.unitname = data.unitName;
+    props.dispatch({
+      type: 'register/bindUnitAccountAndSendCode',
+      payload: myPayload
+    })
   }
   // 这里做异步请求检查单位的名称是否存在
   async function checkUnitNameIsLegal(unitName:string): Promise<boolean> {

@@ -1,8 +1,9 @@
 import { AnyAction } from 'redux';
 import { Model, EffectsCommandMap } from 'dva';
 import { sendVerification2Phone, Response } from '@/services/login.ts';
-import { sendEmailVerificationCode, addAthleteInfo, setAthleteRole, registerUnitAccount } from '@/services/register.ts';
+import { sendEmailVerificationCode, addAthleteInfo, setAthleteRole, registerUnitAccount, bindUnitAccount } from '@/services/register.ts';
 import router from 'umi/router';
+import { message } from 'antd';
 
 const RESISTER_MODEL: Model = {
   namespace: 'register',
@@ -87,6 +88,17 @@ const RESISTER_MODEL: Model = {
         window.g_message.success('成功注册单位账号')
       }else{
         //
+      }
+    },
+    // 绑定单位账号
+    * bindUnitAccountAndSendCode(action: AnyAction, effect: EffectsCommandMap) {
+      let res = yield bindUnitAccount(action.payload);
+      //689422
+      console.log(res);
+      if (res.data === 'true') {
+        message.info('aaaa')
+      }else {
+        message.error('bbb')
       }
     }
   },
