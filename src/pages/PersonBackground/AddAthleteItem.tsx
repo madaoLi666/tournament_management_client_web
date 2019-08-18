@@ -1,9 +1,9 @@
 import * as React from 'react';
-import Upload, { RcFile, UploadChangeParam } from 'antd/lib/upload';
-import { message, Icon, Modal, Button, Input, Row, Col, Select, DatePicker } from 'antd';
+import { RcFile, UploadChangeParam } from 'antd/lib/upload';
+import { Upload, Form, message, Icon, Modal, Button, Input, Row, Col, Select, DatePicker } from 'antd';
 import { UploadFile } from 'antd/lib/upload/interface';
 import AddressInput from '@/components/AddressInput/AddressInput.tsx';
-import Form, { FormComponentProps } from 'antd/lib/form';
+import { FormComponentProps } from 'antd/lib/form';
 // @ts-ignore
 import styles from './index.less';
 import { connect } from 'dva';
@@ -18,9 +18,9 @@ interface AddFormProps {
 const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
-      sm: { span: 8 },
-      md: { span: 6 },
-      lg: { span: 7 },
+      sm: { span: 7 },
+      md: { span: 5 },
+      lg: { span: 6 },
     },
     wrapperCol: {
       xs: { span: 24 },
@@ -63,25 +63,28 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
         })
     }
 
-  // 处理填写身份证事件
-  handleIDCardChange = (rule: any, value: any, callback: Function) => {
+    // 处理填写身份证事件
+    handleIDCardChange = (rule: any, value: any, callback: Function) => {
         const { isIDCard } = this.state;
         const { setFieldsValue } = this.props.form;
         // 证件类型为身份证
-        if(!isIDCard){
+        if(!isIDCard || value === undefined){
             callback();
+            return;
         }
         // 长度是否为18
-        if(value.length !== 18){
-            callback();
+        if(value !== undefined && value.length !== 18){
+            callback("请输入正确的证件号");
+            return;
         }
         if(checkIDCard.test(value) && isIDCard){
-        const birthday = `${value.slice(6,10)}${value.slice(10,12)}${value.slice(12,14)}`;
-        setFieldsValue({
-            sex: value.slice(-2,-1)%2 === 1 ? '男' : '女',
-            birthday: moment(birthday)
-        });
-        callback();
+            const birthday = `${value.slice(6,10)}${value.slice(10,12)}${value.slice(12,14)}`;
+            setFieldsValue({
+                sex: value.slice(-2,-1)%2 === 1 ? '男' : '女',
+                birthday: moment(birthday)
+            });
+            callback();
+            return;
         }
     };
     // 判断当前证件类型是否为身份证
@@ -120,24 +123,28 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
                 </Form.Item>
                 <Form.Item label="证件号">
                     {getFieldDecorator('identifyID',{
-                        rules: [{required: true, message: '请输入证件号！'},{validator: this.handleIDCardChange, message: '请填写正确的证件号'}],
+                        rules: [{required: true, message: '请输入证件号！'},{validator: this.handleIDCardChange}],
                         trigger: 'onChange'
                     })(<Input addonBefore={prefixSelector} style={{width:"100%"}} />)}
                 </Form.Item>
-                <Form.Item label="性别" hasFeedback={true}>
-                    {getFieldDecorator('sex', {
-                        rules: [{ required: true, message: '请选择性别！' }],
-                    })(
-                        <Select placeholder="请选择性别" disabled={isIDCard}>
-                        <Select.Option value="man">男</Select.Option>
-                        <Select.Option value="woman">女</Select.Option>
-                        </Select>
-                    )}
+                <Form.Item label="性别" >
+                    <Row>
+                        <Col span={9}>
+                            {getFieldDecorator('sex', {
+                                rules: [{ required: true, message: '请选择性别！' }],
+                            })(
+                                <Select placeholder="请选择性别" disabled={isIDCard}>
+                                <Select.Option value="man">男</Select.Option>
+                                <Select.Option value="woman">女</Select.Option>
+                                </Select>
+                            )}
+                        </Col>
+                    </Row>
                 </Form.Item>
-                <Form.Item label="出生年月">
+                <Form.Item label="出生年月日">
                     {getFieldDecorator('birthday',{
                         rules: [{type: 'object', required: true, message: '请选择时间！'}]
-                    })(<DatePicker disabled={isIDCard} />)}
+                    })(<DatePicker placeholder="请选择出生年月日" disabled={isIDCard} />)}
                 </Form.Item>
                 <Form.Item label="联系电话">
                     {getFieldDecorator('phone',{
@@ -153,7 +160,7 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
                     {getFieldDecorator('residence', {
                     rules:[{required:true, message:'请输入你的地址信息'}]
                     })(
-                    <AddressInput/>,
+                    <AddressInput />,
                     )}
                 </Form.Item>
                 <Form.Item label="紧急联系人">
@@ -167,7 +174,7 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
                     })(<Input />)}
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
-                    <Button type="primary" htmlType="submit">确定</Button>
+                    <Button style={{width:"100%"}} type="primary" htmlType="submit">确定</Button>
                 </Form.Item>
             </Form>
         )
@@ -190,11 +197,11 @@ function AddAthleteItem() {
     function beforeUpload(file: RcFile, FileList: RcFile[]) {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
         if (!isJpgOrPng) {
-          message.error('You can only upload JPG/PNG file!');
+          message.error('只可以上传JPG/PNG文件!');
         }
         const isLt2M = file.size / 1024 / 1024 < 2;
         if (!isLt2M) {
-          message.error('Image must smaller than 2MB!');
+          message.error('头像必须小于2MB!');
         }
         return isJpgOrPng && isLt2M;
     }

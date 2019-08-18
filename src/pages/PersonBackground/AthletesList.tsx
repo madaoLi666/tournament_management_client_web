@@ -1,13 +1,10 @@
 import * as React from 'react';
 // @ts-ignore
 import styles from './index.less';
-import { Select, Input, Button, Modal, Layout, Table, Popconfirm, Icon, Upload, message, Form, DatePicker } from 'antd';
+import { PageHeader, Input, Button, Modal, Layout, Table, Popconfirm, Icon, Upload, message, Form, DatePicker } from 'antd';
 import { ColumnProps, TableEventListeners, FilterDropdownProps } from 'antd/es/table';
-import { UploadFile, RcFile, UploadChangeParam } from 'antd/lib/upload/interface';
 import Highlighter from 'react-highlight-words';
 import AddAthleteItem from './AddAthleteItem';
-import { connect } from 'dva';
-import { FormComponentProps } from 'antd/lib/form';
 
 // 表格接口 key 是编号
 interface Athlete {
@@ -22,12 +19,6 @@ interface Athlete {
     // TODO 修改/删除 设置成Node
     action?: React.ReactNode;
 }
-
-const { Item } = Form;
-
-const addAthleteDOM:React.ReactNode = (
-    <Upload >a</Upload>
-)
 
 export default function AthletesList() {
     // 选择框state
@@ -135,7 +126,7 @@ export default function AthletesList() {
         ),
         // 自定义搜索图标
         filterIcon: (filtered: boolean) => (
-            <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+            <Icon type="search" style={{ color: filtered ? '#FF0000' : '#1890ff' }} />
         ),
         // 本地模式下，确定筛选的运行函数 value不确定是否是string
         onFilter: (value: string, record: any) => 
@@ -167,36 +158,15 @@ export default function AthletesList() {
     function handleModalCancel() {
         setModalVisible(false);
     }
+    let AddbuttonNode:React.ReactNode = (
+        <Button style={{float:"right"}} type="primary" icon="plus" onClick={addAthlete}><strong>添加新运动员</strong></Button>
+    )
 
     return (
         <Layout className={styles['AthletesList-page']}>
-            <Modal 
-                visible={modalVisible}
-                title="添加新运动员"
-                onOk={handleModalOK}
-                onCancel={handleModalCancel}
-                footer={[
-                    <Button key="back" onClick={handleModalCancel} >返回</Button>,
-                    <Button key="submit" type="primary" loading={modalLoading} onClick={handleModalOK} >提交</Button>
-                ]}
-            >
-                <AddAthleteItem />
-            </Modal>
-            <Layout.Header className={styles['AthletesList-header']}>
-                <Select size="large" defaultValue={defaultvalue} style={{width: 160}} onChange={handleSelectChange} >
-                    <Select.Option value="name" >姓名</Select.Option>
-                    <Select.Option value="id" >证件号</Select.Option>
-                </Select>
-                <Input.Search 
-                    enterButton="搜索"
-                    size="large"
-                    //onSearch={handleSearch}
-                />
-            </Layout.Header>
-            <hr/>
             <Layout.Content className={styles['AthletesList-content']}>
-                <Button type="primary" onClick={addAthlete}><strong>添加新运动员</strong></Button>
-                <br/><br/><br/>
+                <PageHeader style={{fontSize:16}} title="运动员列表" extra={AddbuttonNode} />
+                <br/>
                 <Table<Athlete> bordered={true} onRow={handleRow} dataSource={data} scroll={{x:1000}} >
                     <Table.Column<Athlete> key='key'  title='编号' dataIndex='key' align="center" />
                     <Table.Column<Athlete> key='name' title='姓名' dataIndex='name' align="center" {...getColmnSearchProps('name')} />
@@ -209,6 +179,18 @@ export default function AthletesList() {
                     <Table.Column<Athlete> key='action' title='操作' dataIndex='action' align="center" />
                 </Table>
             </Layout.Content>
+            <Modal 
+                    visible={modalVisible}
+                    title="添加新运动员"
+                    onOk={handleModalOK}
+                    onCancel={handleModalCancel}
+                    style={{top:0}}
+                    maskClosable={false}
+                    width={960}
+                    footer={null}
+            >
+                <AddAthleteItem />
+            </Modal>
         </Layout>
     );
 }

@@ -62,6 +62,7 @@ function AddressInput ({value = {}, onChange}:any, ref:any){
     <div ref={ref}>
       <Input.Group compact={true}>
         <Cascader
+          placeholder="请选择省份城市"
           options={r}
           style={{width: '30%'}}
           onChange={value => {
