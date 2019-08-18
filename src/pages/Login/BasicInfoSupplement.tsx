@@ -62,12 +62,13 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
     const { isIDCard } = this.state;
     const { setFieldsValue } = this.props.form;
     // 证件类型为身份证
-    if(!isIDCard){
-      callback();
+    if(!isIDCard || value === undefined){
+      console.log('a');
+      callback(); return;
     }
     // 长度是否为18
-    if(value.length !== 18){
-      callback();
+    if(value !== undefined && value.length !== 18) {
+      callback("请输入正确的大陆居民身份证"); return;
     }
     if(checkIDCard.test(value) && isIDCard){
       const birthday = `${value.slice(6,10)}${value.slice(10,12)}${value.slice(12,14)}`;
@@ -75,7 +76,7 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
         sex: value.slice(-2,-1)%2 === 1 ? '男' : '女',
         birthday: moment(birthday)
       });
-      callback();
+      callback(); return;
     }
 
   };

@@ -21,7 +21,6 @@ const config: IConfig =  {
     { path: '/enroll',
       Routes: ['./src/layouts/EnrollLayout.tsx'],
       routes: [
-        {path: '/enroll', component: './Enroll/Main.tsx'},
         {path: '/enroll/editUnitInfo', component: './Enroll/EditUnitInfo.tsx'},
       ]
     },
@@ -40,6 +39,10 @@ const config: IConfig =  {
   ],
   treeShaking: true,
   runtimePublicPath:true,
+  // lessLoaderOptions:{
+  //   test: /\.less$/,
+  //   use: [{loader: 'less-loader'}]
+  // },
   plugins: [
     // ref: https://umijs.org/plugin/umi-plugin-react.html
     ['umi-plugin-react', {
@@ -51,7 +54,6 @@ const config: IConfig =  {
       headScripts: [
         {src: 'https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js'}
       ],
-
     }],
   ]
 };

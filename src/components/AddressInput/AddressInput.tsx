@@ -27,7 +27,7 @@ const changeResidenceData2Option = (data: object): Array<CascaderOptionType>|und
       let cityArr: Array<CascaderOptionType> = [];
       // @ts-ignore
       data.forEach((v: any) => {
-        cityArr.push({ label: v, value: v, key: `c-${v}` });
+        cityArr.push({ label: v, value: v, key: `${Math.random()}-${v}` });
       });
       return cityArr;
     }

@@ -12,7 +12,7 @@ export default function SignUP(props: any) {
         <Header className={styles.header}>
           欢迎进入xxx赛事报名通道
         </Header>
-        <Content>
+        <Content className={styles.content}>
           {props.children}
         </Content>
         <Footer className={styles.footer}>
