@@ -1,12 +1,11 @@
 import * as React from 'react';
 // @ts-ignore
 import styles from './index.less';
-import { message, Row, Col, Button, Input, Card, Tabs, Icon, Statistic } from 'antd';
+import { message, Row, Col, Button, Input, Card, Tabs, Icon } from 'antd';
 import { connect } from 'dva';
 import { checkPhoneNumber } from '@/utils/regulars';
 
 const { TabPane } = Tabs;
-const { Countdown } = Statistic;
 
 // Col 自适应
 const autoAdjust = {
@@ -16,8 +15,8 @@ const autoAdjust = {
 function MobileValidate(props: any) {
 
   const [ phone,setPhone ] = React.useState('');
-  const [ isSending,setIsSengding ] = React.useState(false);
   const [ code,setCode ] = React.useState('');
+  const [timeInterval,setTimeInterval] = React.useState(0);
 
   // onChange 绑定手机号码
   function BindPhone(event: React.ChangeEvent<HTMLInputElement>) {
@@ -42,7 +41,17 @@ function MobileValidate(props: any) {
       type: 'login/sendPhoneNumberForCode',
       payload: phone
     })
-    setIsSengding(true);
+    const timeInterval:number = 60000;
+    setTimeInterval(timeInterval);
+    let counts = 0;
+    // 计时 用于防止用户多次发送验证码
+    let i = setInterval(() => {
+      setTimeInterval(timeInterval => timeInterval-1000);
+      counts++;
+      if(counts === 60) {
+        clearInterval(i);
+      }
+    },1000);
   }
   // 验证
   function validateCode(event: React.MouseEvent<HTMLElement>) {
@@ -64,26 +73,15 @@ function MobileValidate(props: any) {
     })
   }
 
-  function onFinish() {
-    setIsSengding(false);
-  }
-  // 倒计时时间
-  const deadline = Date.now()+ 10 * 60 * 25 * 4;
-  let timeCountDown:React.ReactNode = (
-    <div>
-      <Countdown prefix={<Icon type="loading" />} value={deadline} onFinish={onFinish} format="s秒" />
-    </div>
-  );
-
   // 标签页DOM
   let TabsDOM: React.ReactNode = (
     <Tabs>
       <TabPane tab={<strong>手机验证</strong>} key="1">
           <Input.Group compact={true} style={{width:"100%"}}  >
             <Input onChange={BindPhone} style={{width:"60%",height:40,marginTop:"5%"}} placeholder="请输入手机号码" prefix={<Icon type="mobile" />} />
-            {isSending === false ?
+            {timeInterval === 0 ?
             <Button onClick={sendCode} style={{width:"40%",height:40,marginTop:"5%"}} type="primary" >发送验证码</Button>
-            :<Button type="primary" style={{width:"40%",height:40,marginTop:"5%"}} disabled={true} >{timeCountDown}</Button>
+            :<Button type="primary" style={{width:"40%",height:40,marginTop:"5%"}} disabled={true} >{timeInterval/1000}秒</Button>
             }
           </Input.Group>
           <Input onChange={BindCode} prefix={<Icon type="lock" />} style={{marginTop:"10%"}} placeholder="请输入验证码" size="large" />

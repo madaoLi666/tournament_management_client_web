@@ -1,8 +1,16 @@
 import React from 'react';
 import styles from './index.css';
+import { connect, DispatchProp } from 'dva';
 
 
-export default function() {
+function UserIndex({dispatch}:DispatchProp) {
+
+  React.useEffect(() => {
+    dispatch({
+      type:'user/getAccountData'
+    })
+  })
+
   return (
     <div className={styles.normal}>
       <div className={styles.welcome} />
@@ -17,3 +25,5 @@ export default function() {
     </div>
   );
 }
+
+export default connect()(UserIndex);

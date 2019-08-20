@@ -1,15 +1,50 @@
 import { Model, EffectsCommandMap } from 'dva'
 import { AnyAction } from 'redux';
-import { checkVerificationCode, Response } from '@/services/login.ts';
+import { checkVerificationCode, accountdata } from '@/services/login.ts';
 import { message } from 'antd';
 import router from 'umi/router';
+
+// 单位账号的data
+interface UnitData {
+  address?: string | null
+  contactperson?: string | null
+  contactphone?: string | null
+  email?: string | null
+  id?: number
+  name?: string
+  postalcode?: string | null
+  province?: string | null
+  registerunitfee?: number | null
+}
+
+// 单位账号的运动员信息
+interface AthleteData {
+  address?: string | null
+  birthday?: string
+  emergencycontactpeople?: string | null
+  emergencycontactpeoplephone?: string | null
+  face?: string | null
+  idcard?: string
+  idcardtype?: string
+  name?: string
+  phonenumber?: string | null
+  province?: string | null
+  sex?: string
+  user?: number
+}
 
 const USER_MODEL:Model = {
   namespace: 'user',
   state: {
+    // 单位账号state
+    id:'',
+    unitData:<UnitData>[],
+    athleteData:<AthleteData>[],
+
+    // 个人账号state
     username:'',
     userPassword:'',
-    phoneNumber:'13118875236',
+    phonenumber:'',
     email:'',
     unitaccount:'',
     token:'',
@@ -51,6 +86,17 @@ const USER_MODEL:Model = {
       const { payload } = action;
       state.errorstate = payload;
       return state;
+    },
+    // 存储单位账号信息
+    saveUnitAccount(state: any, action: AnyAction): object {
+      const { payload } = action;
+      state.athleteData = payload.athlete;
+      state.unitData[0] = payload.unitdata[0];
+      state.email = payload.user.email;
+      state.username = payload.user.username;
+      state.id = payload.id;
+      state.phonenumber = payload.phonenumber;
+      return state;
     }
    },
   effects: {
@@ -69,13 +115,29 @@ const USER_MODEL:Model = {
       } 
     },
     // 个人注册成功后，存进state
-    *saveInfo(action: AnyAction, effect: EffectsCommandMap) {
+    * saveInfo(action: AnyAction, effect: EffectsCommandMap) {
       console.log(action.payload);
       yield effect.put({type:'saveValue',payload:action.payload})
     },
     // 清除errorState
-    *clearError(action: AnyAction, effect: EffectsCommandMap) {
+    * clearError(action: AnyAction, effect: EffectsCommandMap) {
       yield effect.put({type: 'modifyError', payload:''})
+    },
+    // 获取账号基本信息
+    * getAccountData(action: AnyAction, effect: EffectsCommandMap) {
+      let res = yield accountdata();
+      console.log(res);
+      if (res) {
+        if (res.data.unitaccount === 2) {
+          // ===2 代表是单位账号
+          yield effect.put({type: 'saveUnitAccount', payload: res.data})
+        }else {
+          // 代表是个人账号
+          
+        }
+      }else {
+        
+      }
     }
   }
 };

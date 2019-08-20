@@ -123,7 +123,7 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
             trigger: 'onChange'
           })(
             <Input
-              placeholder='请输入真实姓名'
+              placeholder='请填写证件号码'
               autoComplete='off'
             />
           )}

@@ -11,6 +11,13 @@ import PicturesWall from './pictureWall';
 
 interface AddFormProps {
     form?: FormComponentProps;
+    resetField?: boolean;
+    name?: string;
+    identifyID?: string;
+    sex?: string;
+    birthday?: moment.Moment;
+    phone?: string;
+    
 }
 
 // 表单layout
@@ -49,7 +56,7 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
     constructor(props: AddFormProps & FormComponentProps) {
         super(props);
         this.state = {
-            isIDCard: true
+            isIDCard: true,
         };
     }
     // 提交表单
@@ -96,10 +103,20 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
         }
         this.props.form.resetFields(['identifyID', 'sex', 'birthday']);
     };
+    componentWillUpdate = (nexProps: AddFormProps,nextState: any) => {
+        
+    }
+    // 重置表单与设置表单，对应取消跟修改
+    componentWillReceiveProps = (nextProps:AddFormProps) => {
+        // 重置表单
+        if(this.props.resetField){
+            this.props.form.resetFields();
+        }
+    }
 
     render() {
         const { getFieldDecorator } = this.props.form;
-        const { isIDCard } = this.state;
+        const { isIDCard } = this.state; 
         const prefixSelector = getFieldDecorator('prefix', {
             initialValue: 'identifyID',
             })(
@@ -115,6 +132,10 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
         
         return (
             <Form layout="horizontal" {...formItemLayout} onSubmit={this.handleSubmit}>
+                <Form.Item style={{marginLeft:"45%"}}>
+                    {getFieldDecorator('image',{
+                    })(<PicturesWall />)}
+                </Form.Item>
                 <Form.Item label="姓名">
                     {getFieldDecorator('name',{
                         rules: [{required: true, message: '请输入姓名'}]
@@ -147,29 +168,29 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
                 </Form.Item>
                 <Form.Item label="联系电话">
                     {getFieldDecorator('phone',{
-                        rules: [{required: true, message: '请输入联系电话！'},{pattern:/1[3578]\d{9}/, message:'请检查联系电话是否正确'}]
+                        rules: [{pattern:/1[3578]\d{9}/, message:'请检查联系电话是否正确'}]
                     })(<Input/>)}
                 </Form.Item>
                 <Form.Item label="邮箱">
                     {getFieldDecorator('email',{
-                        rules: [{required: true, message: '请输入邮箱'},{type: 'email', message: '请输入正确的邮箱格式'}]
+                        rules: [{type: 'email', message: '请输入正确的邮箱格式'}]
                     })(<Input />)}
                 </Form.Item>
                 <Form.Item label='地址'>
                     {getFieldDecorator('residence', {
-                    rules:[{required:true, message:'请输入你的地址信息'}]
+                    rules:[]
                     })(
                     <AddressInput />,
                     )}
                 </Form.Item>
                 <Form.Item label="紧急联系人">
                     {getFieldDecorator('emergencyContact',{
-                        rules: [{required: true, message: '请输入紧急联系人姓名'}]
+                        rules: []
                     })(<Input/>)}
                 </Form.Item>
                 <Form.Item label="紧急联系人电话">
                     {getFieldDecorator('emergencyContactPhone',{
-                        rules: [{required: true, message: '请输入紧急联系人联系电话！'},{pattern:/1[3578]\d{9}/, message:'请检查联系电话是否正确'}]
+                        rules: [{pattern:/1[3578]\d{9}/, message:'请检查联系电话是否正确'}]
                     })(<Input />)}
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
@@ -185,14 +206,13 @@ const AddAthleteForm = connect()(Form.create<AddFormProps & FormComponentProps>(
     name:'addAthlete'
 })(AddForm));
 
-function AddAthleteItem() {
-
+function AddAthleteItem(props:{judge: boolean}) {
     return (
         <div className={styles['addAthlete-item']}>
-            <div style={{marginLeft:"45%"}}>
+            {/* <div style={{marginLeft:"45%"}}>
                 <PicturesWall />
-            </div>
-            <AddAthleteForm />
+            </div> */}
+            <AddAthleteForm resetField={props.judge} />
         </div>
     )
 }
