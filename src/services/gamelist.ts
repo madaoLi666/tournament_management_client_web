@@ -1,5 +1,5 @@
-import axiosInstarnce from '@/utils/request';
+import axiosInstance from '@/utils/request';
 
 export async function getGameList() {
-  return axiosInstarnce.get('/matchdata/');
+  return axiosInstance.get('/getmatchdata/');
 }
