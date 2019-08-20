@@ -7,6 +7,10 @@ export interface Response {
   notice: string
 }
 
+// 获取账号基本信息   返回的status 1表示不是单位账号，2代表单位账号，会附带信息
+export async function accountdata(): Promise<any> {
+  return axiosInstance.get('/accountdata/')
+}
 
 export async function Login(data: object): Promise<any>{
   console.log(data);

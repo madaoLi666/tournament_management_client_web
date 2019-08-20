@@ -1,14 +1,12 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState } from 'react';
 import {
   Card, Button, Input, Icon, Row, Col, Tabs, message
 } from 'antd';
-
-import axios from 'axios';
-// @ts-ignore
-import styles from '@/pages/Login/index.less';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
 import { checkPhoneNumber } from '@/utils/regulars';
+// @ts-ignore
+import styles from '@/pages/Login/index.less';
 
 const { TabPane } = Tabs;
 
@@ -41,13 +39,11 @@ function Login(props: SendCodeProps) {
     setPhoneInfo({ phoneNumber: phone, verificationCode: '', });
   }
   // 发送验证码操作 类型不定
-  function sendCode(event: React.MouseEvent<HTMLElement>) {
+  function sendCode() {
     // 60秒可发送一次
-    const timeInterval:number = 3000;
+    const timeInterval:number = 60000;
     if(checkPhoneNumber.test(phoneInfo.phoneNumber)){
-
-      // props.dispatch({ type: 'login/sendPhoneNumberForCode', payload: phoneInfo.phoneNumber});
-
+      props.dispatch({ type: 'login/sendPhoneNumberForCode', payload: phoneInfo.phoneNumber});
       // 设置state中
       setTimeInterval(timeInterval);
       // 计时 用于防止用户多次发送验证码
@@ -111,22 +107,23 @@ function Login(props: SendCodeProps) {
       }
     }
   }
+
   // 获取微信二维码
-  useEffect(() => {
-    if(mode === '2'){
-      // @ts-ignore
-      new window.WxLogin({
-        self_redirect:true,
-        id:"login_container",
-        appid: "wx6cd193749f4c7e03",
-        scope: "snsapi_login",
-        redirect_uri: "https://www.gsta.top/wxLogin",
-        state: "abc",
-        style: "white",
-        href: ""
-      });
-    }
-  });
+  // useEffect(() => {
+  //   if(mode === '2'){
+  //     // @ts-ignore
+  //     new window.WxLogin({
+  //       self_redirect:true,
+  //       id:"login_container",
+  //       appid: "wx6cd193749f4c7e03",
+  //       scope: "snsapi_login",
+  //       redirect_uri: "https://www.gsta.top/wxLogin",
+  //       state: "abc",
+  //       style: "white",
+  //       href: ""
+  //     });
+  //   }
+  // });
 
   return (
     <div className={styles['login-page']}>
@@ -160,18 +157,22 @@ function Login(props: SendCodeProps) {
                     <Input onChange={BindPhoneVerificationCode} placeholder='请输入验证码' prefix={<Icon type="lock"/>} style={{ height: '40px' }} autoComplete='off' />
                   </div>
                 </TabPane>
-                <TabPane tab="微信扫码" key="2">
+                {/* <TabPane tab="微信扫码" key="2">
                   <div id='login_container' />
-                </TabPane>
+                </TabPane> */}
               </Tabs>
-              { mode!== '2' ? (
+              {/* { mode!== '2' ? (
                 <div className={styles['login-btn']}>
                   <Button onClick={() => login(mode)} style={{ width: '100%', height: '40px', position: 'relative', bottom: '0' }} type='primary' >
                     登陆
                   </Button>
                 </div>
-              ) : <h4>--&nbsp;&nbsp;请扫码登陆&nbsp;&nbsp;--</h4>}
-
+              ) : <h4>--&nbsp;&nbsp;请扫码登陆&nbsp;&nbsp;--</h4>} */}
+              <div className={styles['login-btn']}>
+                <Button onClick={() => login(mode)} style={{ width: '100%', height: '40px', position: 'relative', bottom: '0' }} type='primary' >
+                  登陆
+                </Button>
+              </div>
             </Card>
           </div>
         </Col>

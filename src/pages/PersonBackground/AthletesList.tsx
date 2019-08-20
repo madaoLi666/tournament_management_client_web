@@ -1,10 +1,12 @@
 import * as React from 'react';
 // @ts-ignore
 import styles from './index.less';
-import { PageHeader, Input, Button, Modal, Layout, Table, Popconfirm, Icon, Upload, message, Form, DatePicker } from 'antd';
+import { Popover, PageHeader, Input, Button, Modal, Layout, Table, Popconfirm, Icon } from 'antd';
 import { ColumnFilterItem, TableEventListeners, FilterDropdownProps, PaginationConfig, SorterResult } from 'antd/es/table';
 import Highlighter from 'react-highlight-words';
 import AddAthleteItem from './AddAthleteItem';
+import { timeout } from 'q';
+import { connect } from 'dva';
 
 // 表格接口 key 是编号
 interface Athlete {
@@ -20,9 +22,7 @@ interface Athlete {
     action?: React.ReactNode;
 }
 
-export default function AthletesList() {
-    // 选择框state
-    const [ selectValue,setSelectValue ] = React.useState('');
+function AthletesList() {
     // 表格属性key state
     const [ tableKey,setTableKey ] = React.useState('');
     // 添加运动员Modal
@@ -33,6 +33,8 @@ export default function AthletesList() {
     // 修改确认
     function changeConfirm(event?: React.MouseEvent<HTMLElement, MouseEvent>) {
         console.log(tableKey);
+        // 根据tablekey去store里面找相应的数据
+        setModalVisible(true);
     }
     // 删除确认
     function deleteConfirm(event?: React.MouseEvent<HTMLElement, MouseEvent>) {
@@ -43,7 +45,7 @@ export default function AthletesList() {
         return {
             onClick:(arg: React.SyntheticEvent):void => {
                 setTableKey(record.key);
-            }
+            },
         }
     }
     // 修改/删除Node
@@ -73,20 +75,6 @@ export default function AthletesList() {
     function handleSearch(selectedKeys: string[], confirm: Function) {
         confirm();
         setsearchText(selectedKeys[0]);
-        // if (selectValue == '') {
-        //     Modal.warning({
-        //         title: '搜索错误',
-        //         content: '请选择搜索条件'
-        //     })
-        //     return
-        // }
-        // if (value === null || value === "" || value === undefined) {
-        //     Modal.warning({
-        //         title: '搜索错误',
-        //         content: '搜索输入内容不能为空'
-        //     })
-        // }
-        // console.log(value);
     }
     function handleReset(clearFilters:Function) {
         clearFilters();
@@ -121,7 +109,9 @@ export default function AthletesList() {
         ),
         // 自定义搜索图标
         filterIcon: (filtered: boolean) => (
-            <Icon type="search" style={{ color: filtered ? '#FF0000' : '#1890ff' }} />
+            <Popover content={filtered ? "点击重置" : '点击搜索'}>
+                <Icon type="search" style={{ color: filtered ? '#FF0000' : '#1890ff' }} />
+            </Popover>
         ),
         // 本地模式下，确定筛选的运行函数 value不确定是否是string
         onFilter: (value: string, record: any) => 
@@ -147,15 +137,14 @@ export default function AthletesList() {
     function addAthlete() {
         setModalVisible(true);
     }
-    function handleModalOK() {
-        setModalLoading(true);
-        setTimeout(() => {
-            setModalVisible(false);
-            setModalLoading(false);
-          }, 1500);
-    }
+    // 点击右上角退出Modal
+    const [ judgeReset,setJudgeReset ] = React.useState(false);
     function handleModalCancel() {
         setModalVisible(false);
+        setJudgeReset(true);
+        setTimeout(() => {
+            setJudgeReset(false);
+        }, 50);
     }
     let AddbuttonNode:React.ReactNode = (
         <Button style={{float:"right"}} type="primary" icon="plus" onClick={addAthlete}><strong>添加新运动员</strong></Button>
@@ -176,7 +165,7 @@ export default function AthletesList() {
                 
                 <PageHeader style={{fontSize:16}} title="运动员列表" extra={AddbuttonNode} />
                 <br/>
-                <Table<Athlete> bordered={true} onChange={onChange} onRow={handleRow} dataSource={data} scroll={{x:1000}} >
+                <Table<Athlete> bordered={true} onChange={onChange} onRow={handleRow} dataSource={data} scroll={{x:1010}} >
                     <Table.Column<Athlete> key='key'  title='编号' dataIndex='key' align="center" />
                     <Table.Column<Athlete> key='name' title='姓名' dataIndex='name' align="center" {...getColmnSearchProps('name')} />
                     <Table.Column<Athlete> 
@@ -198,16 +187,16 @@ export default function AthletesList() {
             <Modal 
                     visible={modalVisible}
                     title="添加新运动员"
-                    onOk={handleModalOK}
                     onCancel={handleModalCancel}
                     style={{top:0}}
                     maskClosable={false}
                     width={960}
                     footer={null}
             >
-                <AddAthleteItem />
+                <AddAthleteItem judge={judgeReset} />
             </Modal>
         </Layout>
     );
 }
 
+export default connect()(AthletesList);

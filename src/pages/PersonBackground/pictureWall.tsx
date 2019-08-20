@@ -55,7 +55,9 @@ class PicturesWall extends React.Component<any,any> {
     const uploadButton = (
       <div>
         <Icon type="plus" />
-        <div className="ant-upload-text">上传头像</div>
+        <div className="ant-upload-text">
+          上传头像<br/>(可选项)
+        </div>
       </div>
     );
     return (
