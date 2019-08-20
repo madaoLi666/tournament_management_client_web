@@ -2,7 +2,7 @@ import * as React from 'react';
 // @ts-ignore
 import styles from './index.less';
 import { PageHeader, Input, Button, Modal, Layout, Table, Popconfirm, Icon, Upload, message, Form, DatePicker } from 'antd';
-import { ColumnProps, TableEventListeners, FilterDropdownProps } from 'antd/es/table';
+import { ColumnFilterItem, TableEventListeners, FilterDropdownProps, PaginationConfig, SorterResult } from 'antd/es/table';
 import Highlighter from 'react-highlight-words';
 import AddAthleteItem from './AddAthleteItem';
 
@@ -28,8 +28,8 @@ export default function AthletesList() {
     // 添加运动员Modal
     const [ modalVisible,setModalVisible ] = React.useState(false);
     const [ modalLoading,setModalLoading ] = React.useState(false);
-    // 选择框默认值
-    let defaultvalue:any = "请选择搜索条件";
+    const [searchText,setsearchText] = React.useState('');
+
     // 修改确认
     function changeConfirm(event?: React.MouseEvent<HTMLElement, MouseEvent>) {
         console.log(tableKey);
@@ -69,10 +69,6 @@ export default function AthletesList() {
         emergencyContactPhone: '15626466587',
         action: changeOrDelDOM
     }]
-    // 选择框改变触发的函数
-    function handleSelectChange(value: string) {
-        setSelectValue(value);
-    }
     // 搜索框 搜索点击的函数
     function handleSearch(selectedKeys: string[], confirm: Function) {
         confirm();
@@ -92,7 +88,6 @@ export default function AthletesList() {
         // }
         // console.log(value);
     }
-    const [searchText,setsearchText] = React.useState('');
     function handleReset(clearFilters:Function) {
         clearFilters();
         setsearchText('');
@@ -143,6 +138,10 @@ export default function AthletesList() {
             />
         )
     })
+    // onChange 表格筛选
+    function onChange(pagination: PaginationConfig, filters: Record<"sex",string[]>, sorter: SorterResult<any>) {
+        console.log('params',pagination,filters,sorter);
+    }
 
     // 添加运动员
     function addAthlete() {
@@ -161,16 +160,33 @@ export default function AthletesList() {
     let AddbuttonNode:React.ReactNode = (
         <Button style={{float:"right"}} type="primary" icon="plus" onClick={addAthlete}><strong>添加新运动员</strong></Button>
     )
+    let sexFilter:ColumnFilterItem[] = [
+        {
+            text:'男',
+            value:'男'
+        },{
+            text:'女',
+            value:'女'
+        }
+    ]
 
     return (
         <Layout className={styles['AthletesList-page']}>
             <Layout.Content className={styles['AthletesList-content']}>
+                
                 <PageHeader style={{fontSize:16}} title="运动员列表" extra={AddbuttonNode} />
                 <br/>
-                <Table<Athlete> bordered={true} onRow={handleRow} dataSource={data} scroll={{x:1000}} >
+                <Table<Athlete> bordered={true} onChange={onChange} onRow={handleRow} dataSource={data} scroll={{x:1000}} >
                     <Table.Column<Athlete> key='key'  title='编号' dataIndex='key' align="center" />
                     <Table.Column<Athlete> key='name' title='姓名' dataIndex='name' align="center" {...getColmnSearchProps('name')} />
-                    <Table.Column<Athlete> key='sex' title='性别' dataIndex='sex' align="center" />
+                    <Table.Column<Athlete> 
+                        key='sex'
+                        filters={sexFilter}
+                        onFilter={(value:any,record:Athlete) => record.sex.indexOf(value) === 0}
+                        title='性别'
+                        dataIndex='sex'
+                        align="center" 
+                    />
                     <Table.Column<Athlete> key='identifyID' title='证件号' dataIndex='identifyID' align="center" {...getColmnSearchProps('identifyID')} />
                     <Table.Column<Athlete> key='birthday' title='出生日期' dataIndex='birthday' align="center" />
                     <Table.Column<Athlete> key='phone' title='联系电话' dataIndex='phone' align="center" />

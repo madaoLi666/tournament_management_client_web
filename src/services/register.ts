@@ -34,3 +34,13 @@ export async function setAthleteRole(): Promise<any> {
 export async function registerUnitAccount(data: object):Promise<any> {
   return axiosInstance.post('/unitdata/', data);
 }
+
+// 绑定单位账号
+export async function bindUnitAccount(data: object): Promise<any> {
+  return axiosInstance.post('/bindUnitAccount/', data);
+}
+
+// 检索此单位是否可注册
+export async function newUnitAccount(data: object): Promise<any> {
+  return axiosInstance.get('/newUnitAccount/', { params: data ,headers:{ 'Content-Type': 'application/x-www-form-urlencoded' }})
+}

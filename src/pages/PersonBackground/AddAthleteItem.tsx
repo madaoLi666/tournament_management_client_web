@@ -1,7 +1,5 @@
 import * as React from 'react';
-import { RcFile, UploadChangeParam } from 'antd/lib/upload';
-import { Upload, Form, message, Icon, Modal, Button, Input, Row, Col, Select, DatePicker } from 'antd';
-import { UploadFile } from 'antd/lib/upload/interface';
+import {  Form, Button, Input, Row, Col, Select, DatePicker } from 'antd';
 import AddressInput from '@/components/AddressInput/AddressInput.tsx';
 import { FormComponentProps } from 'antd/lib/form';
 // @ts-ignore
@@ -9,6 +7,7 @@ import styles from './index.less';
 import { connect } from 'dva';
 import { checkIDCard } from '@/utils/regulars';
 import moment from 'moment'
+import PicturesWall from './pictureWall';
 
 interface AddFormProps {
     form?: FormComponentProps;
@@ -188,60 +187,11 @@ const AddAthleteForm = connect()(Form.create<AddFormProps & FormComponentProps>(
 
 function AddAthleteItem() {
 
-    function getBase64(img: any,callback: any) {
-        const reader = new FileReader();
-        reader.addEventListener('load',() => callback(reader.result));
-        reader.readAsDataURL(img);
-    }
-
-    function beforeUpload(file: RcFile, FileList: RcFile[]) {
-        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-        if (!isJpgOrPng) {
-          message.error('只可以上传JPG/PNG文件!');
-        }
-        const isLt2M = file.size / 1024 / 1024 < 2;
-        if (!isLt2M) {
-          message.error('头像必须小于2MB!');
-        }
-        return isJpgOrPng && isLt2M;
-    }
-
-    const [ loading,setLoading ] = React.useState(false);
-    const [ imageUrl,setimageUrl ] = React.useState('');
-    let handleChange = (info: UploadChangeParam<UploadFile>) => {
-        if (info.file.status === "uploading") {
-            setLoading(true);
-            return;
-        }
-        if (info.file.status === 'done') {
-            getBase64(info.file.originFileObj, (imageUrl:any) => {
-                setimageUrl(imageUrl);
-                setLoading(false);
-            })
-        }
-    }
-
-    const uploadButton = (
-        <div>
-            <span>大头照</span>
-            <Icon type={loading ? 'loading' : 'plus'} />
-            <div className="ant-upload-text" >添加图片</div>
-        </div>
-    )
-
     return (
         <div className={styles['addAthlete-item']}>
-            <Upload 
-                onChange={handleChange}
-                name="avatar"
-                listType="picture-card"
-                className={styles['avatar-uploader']}
-                showUploadList={false}
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                beforeUpload={beforeUpload}
-            >
-            {imageUrl ? <img src={imageUrl} alt="avatar" style={{width:"100%"}} /> : uploadButton}
-            </Upload>
+            <div style={{marginLeft:"45%"}}>
+                <PicturesWall />
+            </div>
             <AddAthleteForm />
         </div>
     )
