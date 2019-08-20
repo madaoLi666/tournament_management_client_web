@@ -1,11 +1,24 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
 import {
   Carousel, Row, Col
 } from 'antd';
+import { getGameList } from '@/services/gamelist';
+
 // @ts-ignore
 import styles from './index.less';
 
+
+
 function Home() {
+
+  const [gameList,setGameList] = useState([]);
+
+  useEffect(() => {
+    getGameList().then(res => {
+      if(res.data !== '' && res.data ) setGameList(res.data)
+    })
+  },[]);
+
   return (
     <div className={styles['home-page']}>
       {/* 走马灯 */}

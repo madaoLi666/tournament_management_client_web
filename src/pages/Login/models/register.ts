@@ -60,7 +60,7 @@ const RESISTER_MODEL: Model = {
     // 注册成为个人账号
     * setAthleteRole(action: AnyAction) {
       let res = yield setAthleteRole();
-      if(res && res.data === 'true') yield router.push('/');
+      if(res && res.data === 'true' && res.error === '') yield router.push('/user');
 
     },
     // 注册单位账号

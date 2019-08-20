@@ -2,6 +2,8 @@ import React from 'react';
 import {
   Layout, Row, Col, Input, Menu
 } from 'antd'
+import { connect } from 'dva';
+import router from 'umi/router';
 // @ts-ignore
 import styles from './index.less';
 
@@ -26,7 +28,7 @@ function HomeLayout(props: any) {
         <Header className={styles.header}>
           <Row type='flex' justify='start'>
             <Col span={2}><span>UseLessText</span></Col>
-            <Col span={2} offset={14}><span>你好，请登录</span></Col>
+            <Col span={2} offset={14}><a onClick={() => router.push('/login')} >你好，请登录</a></Col>
             <Col span={2}><span>个人中心</span></Col>
             <Col span={2}><span>主办方中心</span></Col>
             <Col span={2}><span>客服中心</span></Col>
@@ -64,5 +66,10 @@ function HomeLayout(props: any) {
     </div>
   )
 }
+
+/*
+*   通过connect 拿到modal(user.ts)中
+*   信息判断 是否有登陆 有 显示信息 无 原本页面
+* */
 
 export default HomeLayout;

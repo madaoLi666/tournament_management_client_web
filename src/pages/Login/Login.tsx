@@ -9,7 +9,6 @@ import styles from '@/pages/Login/index.less';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
 import { checkPhoneNumber } from '@/utils/regulars';
-import { async } from 'q';
 
 const { TabPane } = Tabs;
 
@@ -44,15 +43,26 @@ function Login(props: SendCodeProps) {
   // 发送验证码操作 类型不定
   function sendCode(event: React.MouseEvent<HTMLElement>) {
     // 60秒可发送一次
-    const timeInterval:number = 60000;
+    const timeInterval:number = 3000;
     if(checkPhoneNumber.test(phoneInfo.phoneNumber)){
-      props.dispatch({ type: 'login/sendPhoneNumberForCode', payload: phoneInfo.phoneNumber});
+
+      // props.dispatch({ type: 'login/sendPhoneNumberForCode', payload: phoneInfo.phoneNumber});
+
       // 设置state中
       setTimeInterval(timeInterval);
       // 计时 用于防止用户多次发送验证码
       let i = setInterval(() => {
-        setTimeInterval(timeInterval => (timeInterval-1000));
-        if(timeInterval === 0) clearInterval(i);
+        setTimeInterval(timeInterval => {
+          console.log(timeInterval);
+          if (timeInterval === 0) {
+            clearInterval(i);
+            return 0;
+          }
+          return timeInterval - 1000;
+        });
+        // if(timeInterval === 0) {
+        //   clearInterval(i);
+        // }
       },1000);
     }else {
       message.error('请输入正确的手机号码');

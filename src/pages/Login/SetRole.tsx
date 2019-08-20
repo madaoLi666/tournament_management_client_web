@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Row, Col, Button, Card
 } from 'antd';
+import router from 'umi/router';
 import { connect, DispatchProp } from 'dva';
 // @ts-ignore
 import styles from './index.less';
@@ -17,7 +18,7 @@ function SetRole({dispatch}:DispatchProp) {
     if(key === 1){
       dispatch({type: 'register/setAthleteRole'});
     }else if(key === 2){
-
+      router.push('/login/bindUnit');
     }
   }
 

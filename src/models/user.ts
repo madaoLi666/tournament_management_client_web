@@ -7,6 +7,7 @@ import router from 'umi/router';
 const USER_MODEL:Model = {
   namespace: 'user',
   state: {
+
     username:'',
     userPassword:'',
     phoneNumber:'13118875236',
@@ -66,7 +67,7 @@ const USER_MODEL:Model = {
         }else {
           yield effect.put({type: 'modifyError',payload: res.error})
         }
-      } 
+      }
     },
     // 个人注册成功后，存进state
     *saveInfo(action: AnyAction, effect: EffectsCommandMap) {
