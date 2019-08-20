@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Layout, Row, Col, Input, Menu
 } from 'antd'
@@ -12,48 +12,61 @@ const { Search } = Input;
 
 function HomeLayout(props: any) {
 
+
   let menuArr:Array<object> = [
     { name: '主页', key: 'home', path: ''},
     { name: '自由式轮滑', key: 'f', path: ''},
     { name: '速度轮滑', key: 's', path: ''},
     { name: '轮滑球', key: 'b', path: ''},
-    { name: '培训通知', key: 't', path: ''},
-    { name: '业余等级考试', key: 'a', path: ''},
-    { name: '小程序', key: 'p', path: ''},
   ];
+
+  const token = window.localStorage.getItem('TOKEN');
+
+  function exit() {
+    window.localStorage.clear();
+    router.push('/login');
+  }
 
   return (
     <div>
       <Layout className={styles['home-layout']}>
         <Header className={styles.header}>
-          <Row type='flex' justify='start'>
-            <Col span={2}><span>UseLessText</span></Col>
-            <Col span={2} offset={14}><a onClick={() => router.push('/login')} >你好，请登录</a></Col>
-            <Col span={2}><span>个人中心</span></Col>
-            <Col span={2}><span>主办方中心</span></Col>
-            <Col span={2}><span>客服中心</span></Col>
-          </Row>
+          <div>
+            <div style={{display: 'inline-block', float: 'left'}}>
+              <span style={{width: '120px'}}>广东省轮滑运动协会赛事报名系统</span>
+            </div>
+            <div style={{display: 'inline-block', float: 'right'}}>
+              {(token === null || token === undefined) ? (
+                <a onClick={() => router.push('/login')} >你好，请登录</a>
+              ) : (
+                <span>
+                  <a onClick={() => router.push('/user')}>个人中心</a>
+                  &nbsp;&nbsp;
+                  <a onClick={exit}>退出登陆</a>
+                </span>
+              )}
+            </div>
+          </div>
         </Header>
         <Content className={styles.content}>
           <Row>
             <Col span={4}><div className={styles.logo}>logo</div></Col>
-            <Col span={10} offset={10}>
-              <Search
-                placeholder="input search text"
-                onSearch={value => {}}
-              />
-            </Col>
+            {/*<Col span={10} offset={10}>*/}
+              {/*<Search*/}
+                {/*placeholder="input search text"*/}
+                {/*onSearch={value => {}}*/}
+              {/*/>*/}
+            {/*</Col>*/}
           </Row>
           <div className={styles.menu}>
-
-            <Menu mode="horizontal" >
-              {(menuArr.map(v => {
-                return (
-                  // @ts-ignore
-                  <Menu.Item key={v.key}>{v.name}</Menu.Item>
-                )
-              }))}
-            </Menu>
+            {/*<Menu mode="horizontal" >*/}
+              {/*{(menuArr.map(v => {*/}
+                {/*return (*/}
+                  {/*// @ts-ignore*/}
+                  {/*<Menu.Item key={v.key}>{v.name}</Menu.Item>*/}
+                {/*)*/}
+              {/*}))}*/}
+            {/*</Menu>*/}
           </div>
           <div>
             {props.children}
@@ -72,4 +85,4 @@ function HomeLayout(props: any) {
 *   信息判断 是否有登陆 有 显示信息 无 原本页面
 * */
 
-export default HomeLayout;
+export default connect()(HomeLayout);
