@@ -5,7 +5,7 @@ import { message } from 'antd';
 import router from 'umi/router';
 
 // 单位账号的data
-interface UnitData {
+export interface UnitData {
   address?: string | null
   contactperson?: string | null
   contactphone?: string | null
@@ -15,10 +15,11 @@ interface UnitData {
   postalcode?: string | null
   province?: string | null
   registerunitfee?: number | null
+  unitathlete?: AthleteData[] | null
 }
 
-// 单位账号的运动员信息
-interface AthleteData {
+// 运动员信息
+export interface AthleteData {
   address?: string | null
   birthday?: string
   emergencycontactpeople?: string | null
@@ -40,6 +41,8 @@ const USER_MODEL:Model = {
     id:'',
     unitData:<UnitData>[],
     athleteData:<AthleteData>[],
+    // 这个是判断个人账号与单位账号的，1代表个人，2代表单位
+    unitAccount:<number>1,
     // 个人账号state
     username:'',
     userPassword:'',
@@ -94,20 +97,52 @@ const USER_MODEL:Model = {
       state.email = payload.user.email;
       state.username = payload.user.username;
       state.id = payload.id;
+      state.unitAccount = payload.unitaccount;
       state.phonenumber = payload.phonenumber;
+      state.unitathlete = payload.unitdata[0].unitathlete;
+      return state;
+    },
+    // 存储个人账号信息
+    savePerson(state: any, action: AnyAction): object {
+      const { payload } = action;
+      state.athleteData = payload.athlete;
+      state.email = payload.user.email;
+      state.username = payload.user.username;
+      state.id = payload.id;
+      state.unitAccount = payload.unitaccount;
+      state.phonenumber = payload.phonenumber;
+      return state;
+    },
+    // 清除state
+    clearState(state: any, action: AnyAction): object {
+      state.id = ''
+      state.unitData = <UnitData>[]
+      state.athleteData = <AthleteData>[]
+      // 这个是判断个人账号与单位账号的，1代表个人，2代表单位
+      state.unitAccount = 1
+      // 个人账号state
+      state.username = ''
+      state.userPassword = ''
+      state.phonenumber = ''
+      state.email = ''
+      state.unitaccount = ''
+      state.token = ''
+      state.errorstate = ''
       return state;
     }
    },
   effects: {
     // 验证手机验证码是否正确
     *checkCode(action: AnyAction, effect: EffectsCommandMap) {
-      const { put } = effect;
       let phone:any = yield effect.select((state:any) => ({phoneNumber: state.user.phoneNumber}))
       var phoneInfo: {phonenumber:string, phonecode: string} = {phonenumber:phone.phoneNumber, phonecode: action.payload};
       let res = yield checkVerificationCode(phoneInfo);
       if (res) {
         if (res.data === "true") {
           router.push("/login/register");
+          // 本地存储token
+          yield  window.localStorage.setItem('TOKEN',res.data);
+          yield effect.put({type: 'modifyPhoneNumber', payload: action.payload})
         }else {
           yield effect.put({type: 'modifyError',payload: res.error})
         }
@@ -128,15 +163,20 @@ const USER_MODEL:Model = {
       console.log(res);
       if (res) {
         if (res.data.unitaccount === 2) {
-          // ===2 代表是单位账号
-          yield effect.put({type: 'saveUnitAccount', payload: res.data})
+          // ===2 代表是单位账号，还要多一项操作是调用获取单位账号下的运动员信息的接口
+          yield effect.put({type: 'saveUnitAccount', payload: res.data});
+          yield effect.put({type: 'athletes/getUnitAthletes', payload: null})
         }else {
           // 代表是个人账号
-
+          yield effect.put({type: 'savePerson', payload: res.data});
         }
       }else {
 
       }
+    },
+    // 清除state
+    * clearstate(action: AnyAction, effect: EffectsCommandMap) {
+      yield effect.put({type: 'clearState'})
     }
   }
 };

@@ -96,17 +96,13 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
       errorText:this.state.errorText,
       confirmLoading: true
     })
-    setTimeout(() => {
-      this.setState({
-        visible: false,
-        confirmLoading: false
-      });
-    },1000);
+    this.setState({
+      visible: false,
+    })
   }
-  // 对话框取消按钮
   public handleCancel = () => {
     this.setState({
-      visible: false
+      visible: false,
     })
   }
   // 验证密码onBlur 类型暂时不知道，暂定any
@@ -160,7 +156,7 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
             phonenumber: this.props.personInfo.phoneNumber
         };
         console.log(personInfo);
-        // 如果注册成功存进user state
+        // 如果注册成功存进user
         let saveState = (value: RightResponse) => {
           // @ts-ignore
           this.props.dispatch({
@@ -175,16 +171,18 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
             errorText: error
           })
         }
-        let res:any = personalAccountRegister(personInfo)
-        if (res) {
-          if (res.error !== "") {
-            console.log(res);
-            changeState(res.error);
-          }else {
-            console.log(res);
-            saveState(res.data);
+        let res = personalAccountRegister(personInfo);
+        res.then((resp) => {
+          if (resp) {
+            if (resp.error !== "") {
+              console.log(res);
+              changeState(resp.error);
+            }else {
+              console.log(res);
+              saveState(resp.data);
+            }
           }
-        }
+        })
       }
     });
   };
@@ -197,7 +195,15 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
 
     return (
       <div>
-        <Modal title="注册错误" onCancel={this.handleCancel} visible={visible} onOk={this.handleOK} confirmLoading={confirmLoading}><p>{errorText}</p></Modal>
+        <Modal 
+          title="注册错误" 
+          visible={visible} 
+          onOk={this.handleOK}
+          onCancel={this.handleCancel}
+          footer={<Button type="primary" onClick={this.handleOK} >确定</Button>}
+        >
+          <p>{errorText}</p>
+        </Modal>
         <Form {...formItemLayout} onSubmit={this.handleSubmit}>
           <Form.Item label='用户名'>
             {getFieldDecorator('userID', {

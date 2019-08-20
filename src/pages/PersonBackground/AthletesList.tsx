@@ -5,8 +5,8 @@ import { Popover, PageHeader, Input, Button, Modal, Layout, Table, Popconfirm, I
 import { ColumnFilterItem, TableEventListeners, FilterDropdownProps, PaginationConfig, SorterResult } from 'antd/es/table';
 import Highlighter from 'react-highlight-words';
 import AddAthleteItem from './AddAthleteItem';
-import { timeout } from 'q';
 import { connect } from 'dva';
+import { UnitData, AthleteData } from '@/models/user';
 
 // 表格接口 key 是编号
 interface Athlete {
@@ -22,12 +22,64 @@ interface Athlete {
     action?: React.ReactNode;
 }
 
-function AthletesList() {
+interface athletesProps {
+    id?: string
+    unitAccount?: number
+    athletes?: AthleteData[]
+    unitData?: UnitData[]
+}
+
+function AthletesList(props:athletesProps) {
+
+    // 修改/删除Node
+    let changeOrDelDOM:React.ReactNode = (
+        <div>
+            <Popconfirm title="确认修改吗？" onConfirm={changeConfirm} okText="确认" cancelText="取消" >
+                <a href="#">修改</a>
+            </Popconfirm>&nbsp;&nbsp;|
+            &nbsp;&nbsp;
+            <Popconfirm title="确认删除吗？" icon={<Icon type="question-circle-o" style={{ color: 'red' }} />} onConfirm={deleteConfirm} okText="确认" cancelText="取消" >
+                <a href="#">删除</a>
+            </Popconfirm>
+        </div>
+    )
+    // 表格data
+    let data: Athlete[] = [];
+    // 如果是个人账号
+    if (props.unitAccount === 1) {
+        props.athletes.forEach((item,index) => {
+            data.push({
+                key: (index+1).toString(),
+                name: item.name,
+                identifyID: item.idcard,
+                sex: item.sex,
+                birthday: item.birthday.substr(0,10)            ,
+                phone: item.phonenumber,
+                emergencyContact: item.emergencycontactpeople,
+                emergencyContactPhone: item.emergencycontactpeoplephone,
+                action: changeOrDelDOM
+            })
+        })
+    }else {
+        props.unitData[0].unitathlete.forEach((item,index) => {
+            data.push({
+                key: (index+1).toString(),
+                name: item.name,
+                identifyID: item.idcard,
+                sex: item.sex,
+                birthday: item.birthday.substr(0,10)            ,
+                phone: item.phonenumber,
+                emergencyContact: item.emergencycontactpeople,
+                emergencyContactPhone: item.emergencycontactpeoplephone,
+                action: changeOrDelDOM
+            })
+        })
+    }
+
     // 表格属性key state
     const [ tableKey,setTableKey ] = React.useState('');
     // 添加运动员Modal
     const [ modalVisible,setModalVisible ] = React.useState(false);
-    const [ modalLoading,setModalLoading ] = React.useState(false);
     const [searchText,setsearchText] = React.useState('');
 
     // 修改确认
@@ -48,29 +100,6 @@ function AthletesList() {
             },
         }
     }
-    // 修改/删除Node
-    let changeOrDelDOM:React.ReactNode = (
-        <div>
-            <Popconfirm title="确认修改吗？" onConfirm={changeConfirm} okText="确认" cancelText="取消" >
-                <a href="#">修改</a>
-            </Popconfirm>&nbsp;&nbsp;|
-            &nbsp;&nbsp;
-            <Popconfirm title="确认删除吗？" icon={<Icon type="question-circle-o" style={{ color: 'red' }} />} onConfirm={deleteConfirm} okText="确认" cancelText="取消" >
-                <a href="#">删除</a>
-            </Popconfirm>
-        </div>
-    )
-    const data: Athlete[] =[{
-        key: '1',
-        name: 'testName',
-        identifyID: 'testID',
-        sex: '男',
-        birthday: '1999-09-01',
-        phone: '15626466587',
-        emergencyContact: 'test',
-        emergencyContactPhone: '15626466587',
-        action: changeOrDelDOM
-    }]
     // 搜索框 搜索点击的函数
     function handleSearch(selectedKeys: string[], confirm: Function) {
         confirm();
@@ -147,7 +176,7 @@ function AthletesList() {
         }, 50);
     }
     let AddbuttonNode:React.ReactNode = (
-        <Button style={{float:"right"}} type="primary" icon="plus" onClick={addAthlete}><strong>添加新运动员</strong></Button>
+        props.unitAccount === 1 ? null : <Button style={{float:"right"}} type="primary" icon="plus" onClick={addAthlete}><strong>添加新运动员</strong></Button>
     )
     let sexFilter:ColumnFilterItem[] = [
         {
@@ -199,4 +228,14 @@ function AthletesList() {
     );
 }
 
-export default connect()(AthletesList);
+const mapStateToProps = ({user}:any) => {
+    let props:athletesProps = {
+        id: user.id,
+        unitAccount: user.unitAccount,
+        athletes: user.athleteData,
+        unitData: user.unitData
+    }
+    return props;
+}
+
+export default connect(mapStateToProps)(AthletesList);

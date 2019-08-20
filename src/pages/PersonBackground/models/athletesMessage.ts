@@ -1,9 +1,7 @@
 import { AnyAction } from 'redux';
 import { Model, EffectsCommandMap } from 'dva';
-
-export interface AthletesMessage {
-
-}
+import { addAthleteInfo } from '@/services/register';
+import { getUnitAthletesdata } from '@/services/athlete';
 
 const ATHLETES_MESSAGE_MODEL:Model = {
     namespace: 'athletes',
@@ -20,7 +18,14 @@ const ATHLETES_MESSAGE_MODEL:Model = {
         }
     },
     effects: {
-        // 获取运动员信息
+        // 获取单位账号下运动员信息
+        * getUnitAthletes(action: AnyAction, effect: EffectsCommandMap) {
+            console.log(action.payload);
+            let res = yield getUnitAthletesdata(action.payload);
+            if (res) {
+                console.log(res);
+            }
+        }
     }
 }
 

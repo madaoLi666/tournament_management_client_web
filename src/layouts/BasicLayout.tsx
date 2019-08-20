@@ -55,6 +55,17 @@ function BasicLayout(props: any) {
   // 默认不显示抽屉
   const [visible, setVisible] = React.useState(false);
   function showDrawer() {setVisible(!visible);}
+
+  function signout() {
+    // 清除TOKEN，并将store重新置空
+    window.localStorage.clear();
+    props.dispatch({
+      type: 'user/clearstate',
+      payload: null
+    })
+    router.push('/login')
+  }
+
   return (
     <Layout style={{ minHeight: '100vh' }} className={styles['basic-layout']}>
       <Drawer
@@ -73,11 +84,12 @@ function BasicLayout(props: any) {
         </div>
       </Drawer>
       <Header style={{ background: '#fff', padding: 0 }}>
-        <Button type="primary" onClick={showDrawer}>Open</Button>
+        <Button type="primary" onClick={showDrawer}>菜单</Button>
+        <Button type="link" onClick={signout} style={{float:"right",marginTop:"15px"}} >退出账号</Button>
       </Header>
       <Content style={{ margin: '0 16px' }}>
         <Breadcrumb style={{ margin: '16px 0' }}>
-          <Breadcrumb.Item>User</Breadcrumb.Item>
+          <Breadcrumb.Item>个人中心</Breadcrumb.Item>
         </Breadcrumb>
         <div style={{ padding: 24, background: '#fff', minHeight: 720 }}>
           {props.children}
