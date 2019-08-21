@@ -66,6 +66,12 @@ function BasicLayout(props: any) {
     router.push('/login')
   }
 
+  React.useEffect(() => {
+    props.dispatch({
+      type:'user/getAccountData'
+    })
+  })
+
   return (
     <Layout style={{ minHeight: '100vh' }} className={styles['basic-layout']}>
       <Drawer

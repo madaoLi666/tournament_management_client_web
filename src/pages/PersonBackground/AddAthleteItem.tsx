@@ -1,13 +1,15 @@
 import * as React from 'react';
-import {  Form, Button, Input, Row, Col, Select, DatePicker } from 'antd';
+import {  Form, Button, Input, Row, Col, Select, DatePicker, message } from 'antd';
 import AddressInput from '@/components/AddressInput/AddressInput.tsx';
 import { FormComponentProps } from 'antd/lib/form';
 // @ts-ignore
 import styles from './index.less';
-import { connect } from 'dva';
+import { connect, DispatchProp } from 'dva';
 import { checkIDCard } from '@/utils/regulars';
+import { addplayer } from '@/services/athlete';
 import moment from 'moment'
 import PicturesWall from './pictureWall';
+import { AthleteData } from '@/models/user';
 
 interface AddFormProps {
     form?: FormComponentProps;
@@ -17,7 +19,9 @@ interface AddFormProps {
     sex?: string;
     birthday?: moment.Moment;
     phone?: string;
-    
+    submit?: (values: any) => void;
+    modifyComfirm?: boolean;
+    tablekey?: string;
 }
 
 // 表单layout
@@ -64,7 +68,7 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
         event.preventDefault();
         this.props.form.validateFieldsAndScroll((err: Error,values: any) => {
             if(!err) {
-                console.log(values);
+                this.props.submit(values);
             }
         })
     }
@@ -103,8 +107,8 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
         }
         this.props.form.resetFields(['identifyID', 'sex', 'birthday']);
     };
-    componentWillUpdate = (nexProps: AddFormProps,nextState: any) => {
-        
+    componentDidUpdate = (nextProps: AddFormProps,nextState: any) => {
+        return true
     }
     // 重置表单与设置表单，对应取消跟修改
     componentWillReceiveProps = (nextProps:AddFormProps) => {
@@ -114,17 +118,20 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
         }
     }
 
+    componentWillMount() {
+    }
+
     render() {
         const { getFieldDecorator } = this.props.form;
         const { isIDCard } = this.state; 
         const prefixSelector = getFieldDecorator('prefix', {
-            initialValue: 'identifyID',
+            initialValue: '大陆身份证',
             })(
             <Select 
                 onChange={this.handlerCertificationTypeChange}
                 style={{ width: 130 }}
             >
-                <Select.Option value="identifyID" >居民身份证</Select.Option>
+                <Select.Option value="identifyID" >大陆身份证</Select.Option>
                 <Select.Option value="hkmt">港澳台回乡证</Select.Option>
                 <Select.Option value="passport">护照</Select.Option>
             </Select>,
@@ -134,6 +141,7 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
             <Form layout="horizontal" {...formItemLayout} onSubmit={this.handleSubmit}>
                 <Form.Item style={{marginLeft:"45%"}}>
                     {getFieldDecorator('image',{
+                        initialValue:null
                     })(<PicturesWall />)}
                 </Form.Item>
                 <Form.Item label="姓名">
@@ -168,28 +176,31 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
                 </Form.Item>
                 <Form.Item label="联系电话">
                     {getFieldDecorator('phone',{
+                        initialValue:null,
                         rules: [{pattern:/1[3578]\d{9}/, message:'请检查联系电话是否正确'}]
                     })(<Input/>)}
                 </Form.Item>
                 <Form.Item label="邮箱">
                     {getFieldDecorator('email',{
+                        initialValue:null,
                         rules: [{type: 'email', message: '请输入正确的邮箱格式'}]
                     })(<Input />)}
                 </Form.Item>
                 <Form.Item label='地址'>
                     {getFieldDecorator('residence', {
-                    rules:[]
                     })(
                     <AddressInput />,
                     )}
                 </Form.Item>
                 <Form.Item label="紧急联系人">
                     {getFieldDecorator('emergencyContact',{
+                        initialValue:null,
                         rules: []
                     })(<Input/>)}
                 </Form.Item>
                 <Form.Item label="紧急联系人电话">
                     {getFieldDecorator('emergencyContactPhone',{
+                        initialValue:null,
                         rules: [{pattern:/1[3578]\d{9}/, message:'请检查联系电话是否正确'}]
                     })(<Input />)}
                 </Form.Item>
@@ -201,20 +212,104 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
     }
 }
 
+//setmodifyInfo(props.unitData[0].unitathlete[Number(tableKey)-1].athlete);
+const formStateToProps = ({user}:any) => {
+    return { user: user };
+}
 
-const AddAthleteForm = connect()(Form.create<AddFormProps & FormComponentProps>({
-    name:'addAthlete'
+const AddAthleteForm = connect(formStateToProps)(Form.create<AddFormProps & FormComponentProps>({
+    mapPropsToFields(props: any) {
+        console.log(props);
+        if (props.tablekey !== "") {
+            return {
+                name: Form.createFormField({
+                    value: props.user.unitathlete[Number(props.tablekey)-1].athlete.name
+                }),
+                sex: Form.createFormField({
+                    value: props.user.unitathlete[Number(props.tablekey)-1].athlete.sex
+                }),
+                emergencyContact: Form.createFormField({
+                    value: props.user.unitathlete[Number(props.tablekey)-1].athlete.emergencycontactpeople
+                }),
+                emergencyContactPhone: Form.createFormField({
+                    value: props.user.unitathlete[Number(props.tablekey)-1].athlete.emergencycontactpeoplephone
+                }),
+                email: Form.createFormField({
+                    value: props.user.unitathlete[Number(props.tablekey)-1].athlete.email
+                }),
+                identifyID: Form.createFormField({
+                    value: props.user.unitathlete[Number(props.tablekey)-1].athlete.idcard
+                }),
+                phone: Form.createFormField({
+                    value: props.user.unitathlete[Number(props.tablekey)-1].athlete.phonenumber
+                }),
+            }   
+        }
+    }
 })(AddForm));
 
-function AddAthleteItem(props:{judge: boolean}) {
+function AddAthleteItem(props:{modifyConfirm: boolean,test:string ,judge: boolean, unitID?: number, dispatch: any, closeModal?: Function}) {
+    const [ reset,setReset ] = React.useState(false);
+    const [ modify,setModify ] = React.useState(false);
+
+    React.useEffect(() =>{
+        setReset(props.judge);
+    })
+
+    React.useEffect(() => {
+        setModify(props.modifyConfirm);
+        // setKey(props.key);
+    })
+
+    function close() {
+        props.closeModal();
+    }
+
+    function handleSubmit(values: any) {
+        event.preventDefault();
+        values.prefix = '大陆身份证';
+        let citys:string = '';
+        let myAddress:string = '';
+        let myImage:File = null;
+        if (values.residence) {
+            citys = values.residence.city.join("");
+            myAddress = values.residence.address
+        }else {
+            myAddress = null;
+            citys = null;
+        }
+        let payload = {
+            idcard: values.identifyID,
+            name: values.name,
+            idcardtype: values.prefix,
+            sex: values.sex,
+            birthday: values.birthday,
+            phonenumber: values.phone,
+            email: values.email,
+            province: citys,
+            address: myAddress,
+            emergencycontactpeople: values.emergencyContact,
+            emergencycontactpeoplephone: values.emergencyContactPhone,
+            face: myImage,
+            unitdata: props.unitID
+        }
+        let res = addplayer(payload);
+        res.then((resp) => {
+            if (resp && resp.data === "true") {
+                message.success('注册成功');
+                close();
+                setReset(true);
+            }else {
+                console.log(resp);
+            }
+        })
+    }
+
     return (
         <div className={styles['addAthlete-item']}>
-            {/* <div style={{marginLeft:"45%"}}>
-                <PicturesWall />
-            </div> */}
-            <AddAthleteForm resetField={props.judge} />
+            <AddAthleteForm tablekey={props.test} resetField={reset} modifyComfirm={modify} submit={handleSubmit} />
         </div>
     )
 }
 
-export default AddAthleteItem;
+export default connect()(AddAthleteItem);

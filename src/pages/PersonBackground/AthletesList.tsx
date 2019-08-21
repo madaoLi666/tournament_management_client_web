@@ -30,7 +30,6 @@ interface athletesProps {
 }
 
 function AthletesList(props:athletesProps) {
-
     // 修改/删除Node
     let changeOrDelDOM:React.ReactNode = (
         <div>
@@ -53,24 +52,24 @@ function AthletesList(props:athletesProps) {
                 name: item.name,
                 identifyID: item.idcard,
                 sex: item.sex,
-                birthday: item.birthday.substr(0,10)            ,
+                birthday: item.birthday,
                 phone: item.phonenumber,
                 emergencyContact: item.emergencycontactpeople,
                 emergencyContactPhone: item.emergencycontactpeoplephone,
                 action: changeOrDelDOM
             })
         })
-    }else {
+    }else if (props.unitData.length !== 0) {
         props.unitData[0].unitathlete.forEach((item,index) => {
             data.push({
                 key: (index+1).toString(),
-                name: item.name,
-                identifyID: item.idcard,
-                sex: item.sex,
-                birthday: item.birthday.substr(0,10)            ,
-                phone: item.phonenumber,
-                emergencyContact: item.emergencycontactpeople,
-                emergencyContactPhone: item.emergencycontactpeoplephone,
+                name: item.athlete.name,
+                identifyID: item.athlete.idcard,
+                sex: item.athlete.sex,
+                birthday: item.athlete.birthday.substr(0,10),
+                phone: item.athlete.phonenumber,
+                emergencyContact: item.athlete.emergencycontactpeople,
+                emergencyContactPhone: item.athlete.emergencycontactpeoplephone,
                 action: changeOrDelDOM
             })
         })
@@ -81,12 +80,17 @@ function AthletesList(props:athletesProps) {
     // 添加运动员Modal
     const [ modalVisible,setModalVisible ] = React.useState(false);
     const [searchText,setsearchText] = React.useState('');
-
+    const [ modifyConfirm,setmodifyConfirm ] = React.useState(false);
+    const [ key ,setkey] = React.useState('');
     // 修改确认
     function changeConfirm(event?: React.MouseEvent<HTMLElement, MouseEvent>) {
-        console.log(tableKey);
         // 根据tablekey去store里面找相应的数据
         setModalVisible(true);
+        setmodifyConfirm(true);
+        setkey(tableKey);
+        // setTimeout(() => {
+        //     setmodifyConfirm(false);
+        // }, 50);
     }
     // 删除确认
     function deleteConfirm(event?: React.MouseEvent<HTMLElement, MouseEvent>) {
@@ -188,6 +192,10 @@ function AthletesList(props:athletesProps) {
         }
     ]
 
+    function closemodal() {
+        setModalVisible(false);
+    }
+
     return (
         <Layout className={styles['AthletesList-page']}>
             <Layout.Content className={styles['AthletesList-content']}>
@@ -222,7 +230,7 @@ function AthletesList(props:athletesProps) {
                     width={960}
                     footer={null}
             >
-                <AddAthleteItem judge={judgeReset} />
+                <AddAthleteItem closeModal={closemodal} test={key} modifyConfirm={modifyConfirm} judge={judgeReset} unitID={props.unitData[0] === undefined ? 0 : props.unitData[0].id} />
             </Modal>
         </Layout>
     );
