@@ -120,30 +120,35 @@ const USER_MODEL:Model = {
       state.unitData = <UnitData>[]
       state.athleteData = <AthleteData>[]
       // 这个是判断个人账号与单位账号的，1代表个人，2代表单位
-      state.unitAccount = 1
+      state.unitAccount = 1;
       // 个人账号state
-      state.username = ''
-      state.userPassword = ''
-      state.phonenumber = ''
-      state.email = ''
-      state.unitaccount = ''
-      state.token = ''
-      state.errorstate = ''
+      state.username = '';
+      state.userPassword = '';
+      state.phonenumber = '';
+      state.email = '';
+      state.unitaccount = '';
+      state.token = '';
+      state.errorstate = '';
       return state;
     }
    },
   effects: {
+    // 修改手机号码state
+    * savePhone(action: AnyAction, effect: EffectsCommandMap) {
+      yield effect.put({type:'modifyPhoneNumber',payload:action.payload.phonenumber})
+    },
     // 验证手机验证码是否正确
     *checkCode(action: AnyAction, effect: EffectsCommandMap) {
-      let phone:any = yield effect.select((state:any) => ({phoneNumber: state.user.phoneNumber}))
-      var phoneInfo: {phonenumber:string, phonecode: string} = {phonenumber:phone.phoneNumber, phonecode: action.payload};
+      let phone:any = yield effect.select((state:any) => ({phoneNumber: state.user.phoneNumber}));
+      let phoneInfo: {phonenumber:string, phonecode: string} = {phonenumber:phone.phoneNumber, phonecode: action.payload};
+      // 验证手机号码与验证码
       let res = yield checkVerificationCode(phoneInfo);
       if (res) {
         if (res.data === "true") {
           router.push("/login/register");
-          // 本地存储token
-          yield  window.localStorage.setItem('TOKEN',res.data);
-          yield effect.put({type: 'modifyPhoneNumber', payload: action.payload})
+          yield console.log(action.payload);
+          yield effect.put({type: 'modifyPhoneNumber', payload: phone.phoneNumber})
+
         }else {
           yield effect.put({type: 'modifyError',payload: res.error})
         }

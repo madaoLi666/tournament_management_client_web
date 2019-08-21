@@ -1,4 +1,5 @@
 import React from 'react';
+import router from 'umi/router';
 // @ts-ignore
 import styles from './index.less';
 import { Row, Col, Card, Tabs, Form, Input, Button, Modal } from 'antd';
@@ -144,6 +145,8 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
   };
   // 提交表单
   public handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    //@ts-ignore
+    const { dispatch} = this.props;
     event.preventDefault();
     this.props.form.validateFieldsAndScroll((err: any, values: any) => {
       if (!err) {
@@ -179,7 +182,9 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
               changeState(resp.error);
             }else {
               console.log(res);
+              dispatch({type: 'login/modifyUserId', payload: {userId: resp.data.user}});
               saveState(resp.data);
+              router.push('/login/infoSupplement')
             }
           }
         })
@@ -195,9 +200,9 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
 
     return (
       <div>
-        <Modal 
-          title="注册错误" 
-          visible={visible} 
+        <Modal
+          title="注册错误"
+          visible={visible}
           onOk={this.handleOK}
           onCancel={this.handleCancel}
           footer={<Button type="primary" onClick={this.handleOK} >确定</Button>}
@@ -306,7 +311,6 @@ const OldUserFormInfo = connect()(Form.create<OldUserFormProps & FormComponentPr
   name: 'oldUser',
 })(OldUserForm));
 
-
 class Register extends React.Component<any, any> {
   // 标签页state,默认第一页
   constructor(props: any) {
@@ -367,6 +371,5 @@ class Register extends React.Component<any, any> {
     );
   }
 }
-
 
 export default connect()(Register);

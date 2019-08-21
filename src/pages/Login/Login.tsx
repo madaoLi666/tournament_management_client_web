@@ -37,6 +37,7 @@ function Login(props: SendCodeProps) {
     let phone:string | undefined = event.currentTarget.value;
     // 手机号码
     setPhoneInfo({ phoneNumber: phone, verificationCode: '', });
+    props.dispatch({type:'user/savePhone',payload:{phonenumber:phone}})
   }
   // 发送验证码操作 类型不定
   function sendCode() {
@@ -49,7 +50,6 @@ function Login(props: SendCodeProps) {
       // 计时 用于防止用户多次发送验证码
       let i = setInterval(() => {
         setTimeInterval(timeInterval => {
-          console.log(timeInterval);
           if (timeInterval === 0) {
             clearInterval(i);
             return 0;

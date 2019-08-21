@@ -52,6 +52,7 @@ const RESISTER_MODEL: Model = {
         sex: payload.sex,
         birthday: payload.birthday,
         name: payload.name,
+        user: payload.user
       };
       let res = yield addAthleteInfo(requestData);
       //设置成功 跳转至角色设置中
@@ -79,15 +80,18 @@ const RESISTER_MODEL: Model = {
         postalcode: unitData.postalCode,
         province: unitData.residence.city[0]+unitData.residence.city[1]+unitData.residence.city[2],
         address: unitData.residence.address,
-        password: unitData.password
+        password: unitData.password,
+        user:unitData.userId
       };
       let res = yield registerUnitAccount(requestData);
       if(res.data === 'true'){
         // 修改user中的数据
         // @ts-ignore
-        window.g_message.success('成功注册单位账号')
+        message.success('成功注册单位账号');
+        router.push('/user');
       }else{
         //
+        message.error('注册单位失败，请检查网络状况与付款状况');
       }
     },
     // 绑定单位账号

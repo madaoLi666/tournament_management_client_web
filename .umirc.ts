@@ -33,7 +33,8 @@ const config: IConfig =  {
     // 主页
     { path: '/home', Routes: ['./src/layouts/HomeLayout.tsx'],
       routes: [
-        { path: '/home', component: './Home/index.tsx', name: '主页' }
+        { path: '/home', component: './Home/index.tsx', name: '主页' },
+        { path: '/home/introduction', component: './Home/Introduction.tsx', name: '赛事介绍页面' },
       ]
     }
   ],
