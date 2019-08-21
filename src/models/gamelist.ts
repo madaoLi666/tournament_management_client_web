@@ -5,7 +5,7 @@ import { getGameList } from '@/services/gamelist';
 const GAMELIST_INTRODUCTION:Model = {
   namespace: 'gameList',
   state: {
-    gameList: []
+    gameList: [],
   },
   reducers: {
     modifyGameList(state: any,action: AnyAction) {

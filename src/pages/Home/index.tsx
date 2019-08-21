@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Carousel, Row, Col
 } from 'antd';
+import router from 'umi/router';
 import { connect } from 'dva';
 import { ColProps } from 'antd/lib/grid';
 
@@ -41,10 +42,10 @@ class Home extends React.Component<any,any>{
               <img src={v.image} alt=""/>
             </div>
             <div className={styles['text-block']}>
-              <div><b>举办地点</b><span>：{v.rpaddress}</span></div>
-              <div><b>举办时间</b><span>：{v.rpstarttime.slice(0,10).replace(/-/g,"/")}~{v.rpendtime.slice(0,10).replace(/-/g,"/")}</span></div>
+              <div><b>赛事名称</b>:{v.name}</div>
+              <div><b>举办时间</b><span>:{v.rpstarttime.slice(0,10).replace(/-/g,"/")}~{v.rpendtime.slice(0,10).replace(/-/g,"/")}</span></div>
             </div>
-            <a href=''>进入赛事</a>
+            <a onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)}>进入赛事</a>
           </div>
         </Col>
       )

@@ -62,7 +62,7 @@ function BasicLayout(props: any) {
     props.dispatch({
       type: 'user/clearstate',
       payload: null
-    })
+    });
     router.push('/login')
   }
 

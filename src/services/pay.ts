@@ -2,10 +2,10 @@ import axiosInstance from '@/utils/request.ts';
 
 
 // 都是依照token
-export async function getQRCodeForUnitRegister(): Promise<any>{
-  return axiosInstance.post('/newUnitAccount/');
+export async function getQRCodeForUnitRegister(data: object): Promise<any>{
+  return axiosInstance.post('/newUnitAccount/', data);
 }
 
-export async function checkUnitIsPay(): Promise<any>{
-  return axiosInstance.post('/checkUnitRegisterPay/');
+export async function checkUnitIsPay(data: object): Promise<any>{
+  return axiosInstance.post('/checkUnitRegisterPay/',data);
 }

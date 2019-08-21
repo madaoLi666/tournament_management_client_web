@@ -13,8 +13,6 @@ const { Countdown } = Statistic;
 
 // @ts-ignore
 import styles from './index.less';
-import { async } from 'q';
-import { string } from 'prop-types';
 
 interface NewUnitFromProps extends FormComponentProps {
   emitData: (data: any) => void;
@@ -105,7 +103,7 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
     // 没有检查value是否为空 不知道会不会bug
     let res = unitNameIsLegal(value);
     res.then(function (result:{data:string,error:string,notice:string}) {
-      if (result.data !== "true") { 
+      if (result.data !== "true") {
         callback();
         setSuccess();
         return;
@@ -137,7 +135,7 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
 
     let res = unitNameIsLegal(e.currentTarget.value);
     res.then(function (result:{data:string,error:string,notice:string}) {
-      if (result.data !== "true") { 
+      if (result.data !== "true") {
         setSuccess();
         return;
       } else {
@@ -267,7 +265,7 @@ class CodeInput extends React.Component<any,any> {
   public handleCodeChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     this.triggerChange(e.target.value);
   }
-  
+
   render() {
 
     return (
@@ -302,7 +300,7 @@ class BindUnitForm extends React.Component<NewUnitFromProps, any>{
     callback();
     return;
   };
-  
+
   public sendCode = (event:React.MouseEvent<HTMLElement>) => {
     // @ts-ignore
     this.props.dispatch({
@@ -362,7 +360,7 @@ class BindUnitForm extends React.Component<NewUnitFromProps, any>{
 
 const BForm = connect()(Form.create<BindUnitFromProps>()(BindUnitForm));
 
-function BindUnit(props: { dispatch: Dispatch;}) {
+function BindUnit(props: { dispatch: Dispatch; userId: number}) {
 
   // modal的visible
   const [visible,setVisible] = useState(false);
@@ -372,12 +370,14 @@ function BindUnit(props: { dispatch: Dispatch;}) {
   // 传入 NewUnitForm 中，已提供外部的表单处理
   // 这里可以拿到表单的信息
   async function submitRegister(data: any): Promise<any> {
-    const { dispatch } = props;
+    const { dispatch , userId} = props;
     // 发起请求检查是否支付了费用
     let isPay = await checkoutIsPay().then(res => (res));
+    console.log(isPay);
     if(!isPay) {
       // 获取支付二维码
       let pic = await getPayQRCodeUrl().then(res => (res));
+      //
       if(pic) {
         setPicUrl(pic);
         openDialog();
@@ -385,16 +385,16 @@ function BindUnit(props: { dispatch: Dispatch;}) {
         message.error('获取支付二维码失败')
       }
     }else{
-      dispatch({type: 'register/registerUnitAccount', payload: {unitData: data} });
+      dispatch({type: 'register/registerUnitAccount', payload: {unitData: {userId: userId,...data}} });
     }
   }
 
   // 判断是否已经支付费用
   async function checkoutIsPay(): Promise<any> {
-    const { dispatch } = props;
-    let res = await checkUnitIsPay();
+    const { dispatch,userId } = props;
+    let res = await checkUnitIsPay({user:userId});
     if(res.data === '' || res.data === undefined){
-      return false
+      return false;
     }else{
       await dispatch({type: 'register/modifyUnitRegisterPayCode', payload: {payCode: res.data}});
       return true;
@@ -402,7 +402,9 @@ function BindUnit(props: { dispatch: Dispatch;}) {
   }
   // 获取支付二维码图片
   async function getPayQRCodeUrl(): Promise<any> {
-    let res = await getQRCodeForUnitRegister().then( res => (res));
+    const { userId } = props;
+    let res = await getQRCodeForUnitRegister({user:userId}).then( res => (res));
+    console.log(res);
     if(res.data !== '' && res.error === ''){
       return res.data;
     }else{
@@ -436,7 +438,7 @@ function BindUnit(props: { dispatch: Dispatch;}) {
       unitname:"",
       password:"",
       code:""
-    }
+    };
     myPayload.code = data.code.code;
     myPayload.password = data.password;
     myPayload.unitname = data.unitName;
@@ -500,6 +502,7 @@ function BindUnit(props: { dispatch: Dispatch;}) {
   );
 }
 
-export default connect(({register}:any) => ({
-  payCode: register.unitRegisterPayCode
+export default connect(({register,login}:any) => ({
+  payCode: register.unitRegisterPayCode,
+  userId: login.userId
 }))(BindUnit);

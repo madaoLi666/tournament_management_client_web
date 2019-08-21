@@ -12,7 +12,6 @@ const { Search } = Input;
 
 function HomeLayout(props: any) {
 
-
   let menuArr:Array<object> = [
     { name: '主页', key: 'home', path: ''},
     { name: '自由式轮滑', key: 'f', path: ''},
@@ -48,16 +47,18 @@ function HomeLayout(props: any) {
             </div>
           </div>
         </Header>
+
         <Content className={styles.content}>
-          <Row>
-            <Col span={4}><div className={styles.logo}>logo</div></Col>
+            <div className={styles.logo}>
+              <img src={require('@/assets/logo.png')} alt=""/>
+              <span><b>广东省轮滑运动协会赛事报名系统</b></span>
+            </div>
             {/*<Col span={10} offset={10}>*/}
               {/*<Search*/}
                 {/*placeholder="input search text"*/}
                 {/*onSearch={value => {}}*/}
               {/*/>*/}
             {/*</Col>*/}
-          </Row>
           <div className={styles.menu}>
             {/*<Menu mode="horizontal" >*/}
               {/*{(menuArr.map(v => {*/}
