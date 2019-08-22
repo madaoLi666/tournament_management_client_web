@@ -87,8 +87,8 @@ const RESISTER_MODEL: Model = {
       if(res.data === 'true'){
         // 修改user中的数据
         // @ts-ignore
-        message.success('成功注册单位账号');
-        router.push('/user');
+        message.success('成功注册单位账号，请重新登陆');
+        router.push('/login');
       }else{
         //
         message.error('注册单位失败，请检查网络状况与付款状况');

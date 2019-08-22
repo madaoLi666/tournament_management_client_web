@@ -32,7 +32,7 @@ export default function LoginLayout(props: any) {
       </Content>
 
       <Footer className={styles.footer}>
-        This is a footer
+        <span>广州青苔科技有限公司 版权所有  粤ICP备19028504号</span>
       </Footer>
     </Layout>
   );

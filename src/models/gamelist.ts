@@ -19,7 +19,6 @@ const GAMELIST_INTRODUCTION:Model = {
       const { put } = effect;
       let res = yield getGameList();
       if(res.data !== '' && res.data ) {
-        console.log(res);
         yield put({
           type: 'modifyGameList',
           payload: {gameList: res.data}

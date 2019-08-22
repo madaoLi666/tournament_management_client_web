@@ -26,6 +26,11 @@ function HomeLayout(props: any) {
     router.push('/login');
   }
 
+  useEffect(() => {
+    const { dispatch } = props;
+    dispatch({type: 'gameList/getGameList'});
+  });
+
   return (
     <div>
       <Layout className={styles['home-layout']}>
@@ -50,8 +55,14 @@ function HomeLayout(props: any) {
 
         <Content className={styles.content}>
             <div className={styles.logo}>
-              <img src={require('@/assets/logo.png')} alt=""/>
-              <span><b>广东省轮滑运动协会赛事报名系统</b></span>
+              <div>
+                <img src={require('@/assets/logo1.png')} alt=""/>
+                <span><b>广东省轮滑运动协会</b></span>
+              </div>
+              <div>
+                <img src={require('@/assets/logo.png')} alt=""/>
+                <span><b>赛事辅助系统平台</b></span>
+              </div>
             </div>
             {/*<Col span={10} offset={10}>*/}
               {/*<Search*/}
@@ -74,7 +85,7 @@ function HomeLayout(props: any) {
           </div>
         </Content>
         <Footer className={styles.footer}>
-          The is Footer
+          <span>广州青苔科技有限公司 版权所有  粤ICP备19028504号</span>
         </Footer>
       </Layout>
     </div>

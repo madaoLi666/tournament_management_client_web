@@ -3,7 +3,7 @@ import * as React from 'react';
 import styles from './index.less';
 import { Popover, PageHeader, Input, Button, Modal, Layout, Table, Popconfirm, Icon } from 'antd';
 import { ColumnFilterItem, TableEventListeners, FilterDropdownProps, PaginationConfig, SorterResult } from 'antd/es/table';
-import Highlighter from 'react-highlight-words';
+
 import AddAthleteItem from './AddAthleteItem';
 import { connect } from 'dva';
 import { UnitData, AthleteData } from '@/models/user';
@@ -143,18 +143,14 @@ function AthletesList(props:athletesProps) {
             </Popover>
         ),
         // 本地模式下，确定筛选的运行函数 value不确定是否是string
-        onFilter: (value: string, record: any) => 
+        onFilter: (value: string, record: any) =>
             record[dataIndex]
                 .toString()
                 .toLowerCase()
                 .includes(value.toLowerCase()),
         render: (text:any) => (
-            <Highlighter
-                highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-                searchWords={[searchText]}
-                autoEscape={true}
-                textToHighlight={text.toString()}
-            />
+          <span>{text}</span>
+
         )
     })
     // onChange 表格筛选
@@ -191,19 +187,19 @@ function AthletesList(props:athletesProps) {
     return (
         <Layout className={styles['AthletesList-page']}>
             <Layout.Content className={styles['AthletesList-content']}>
-                
+
                 <PageHeader style={{fontSize:16}} title="运动员列表" extra={AddbuttonNode} />
                 <br/>
                 <Table<Athlete> bordered={true} onChange={onChange} onRow={handleRow} dataSource={data} scroll={{x:1010}} >
                     <Table.Column<Athlete> key='key'  title='编号' dataIndex='key' align="center" />
                     <Table.Column<Athlete> key='name' title='姓名' dataIndex='name' align="center" {...getColmnSearchProps('name')} />
-                    <Table.Column<Athlete> 
+                    <Table.Column<Athlete>
                         key='sex'
                         filters={sexFilter}
                         onFilter={(value:any,record:Athlete) => record.sex.indexOf(value) === 0}
                         title='性别'
                         dataIndex='sex'
-                        align="center" 
+                        align="center"
                     />
                     <Table.Column<Athlete> key='identifyID' title='证件号' dataIndex='identifyID' align="center" {...getColmnSearchProps('identifyID')} />
                     <Table.Column<Athlete> key='birthday' title='出生日期' dataIndex='birthday' align="center" />
@@ -213,7 +209,7 @@ function AthletesList(props:athletesProps) {
                     <Table.Column<Athlete> key='action' title='操作' dataIndex='action' align="center" />
                 </Table>
             </Layout.Content>
-            <Modal 
+            <Modal
                     visible={modalVisible}
                     title="添加新运动员"
                     onCancel={handleModalCancel}
