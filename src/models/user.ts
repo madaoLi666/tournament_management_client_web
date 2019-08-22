@@ -3,6 +3,7 @@ import { AnyAction } from 'redux';
 import { checkVerificationCode, accountdata } from '@/services/login.ts';
 import { message } from 'antd';
 import router from 'umi/router';
+import { addplayer } from '@/services/athlete';
 
 // 单位账号的data
 export interface UnitData {
@@ -15,7 +16,7 @@ export interface UnitData {
   postalcode?: string | null
   province?: string | null
   registerunitfee?: number | null
-  unitathlete?: AthleteData[] | null
+  unitathlete?: {athlete:AthleteData, id: number, starttime: string, status: number, unitdata: number}[] | null
 }
 
 // 运动员信息
@@ -170,7 +171,6 @@ const USER_MODEL:Model = {
         if (res.data.unitaccount === 2) {
           // ===2 代表是单位账号，还要多一项操作是调用获取单位账号下的运动员信息的接口
           yield effect.put({type: 'saveUnitAccount', payload: res.data});
-          yield effect.put({type: 'athletes/getUnitAthletes', payload: null})
         }else {
           // 代表是个人账号
           yield effect.put({type: 'savePerson', payload: res.data});
@@ -182,6 +182,10 @@ const USER_MODEL:Model = {
     // 清除state
     * clearstate(action: AnyAction, effect: EffectsCommandMap) {
       yield effect.put({type: 'clearState'})
+    },
+    // 删除运动员信息
+    * deleteAthlete(action: AnyAction, effect: EffectsCommandMap) {
+      yield console.log(action.payload);
     }
   }
 };

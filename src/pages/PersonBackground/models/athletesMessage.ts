@@ -1,13 +1,12 @@
 import { AnyAction } from 'redux';
 import { Model, EffectsCommandMap } from 'dva';
 import { addAthleteInfo } from '@/services/register';
-import { getUnitAthletesdata } from '@/services/athlete';
+import { getUnitAthletesdata, addplayer } from '@/services/athlete';
 
-const ATHLETES_MESSAGE_MODEL:Model = {
+const ATHLETES_MODEL:Model = {
     namespace: 'athletes',
     state: {
-        // 运动员信息state
-        message:[]
+      
     },
     reducers: {
         // 存储信息
@@ -25,8 +24,12 @@ const ATHLETES_MESSAGE_MODEL:Model = {
             if (res) {
                 console.log(res);
             }
+        },
+        //  添加运动员信息
+        * addAthletes(action: AnyAction, effect: EffectsCommandMap) {
+            yield console.log(action);
         }
     }
 }
 
-export default ATHLETES_MESSAGE_MODEL;
+export default ATHLETES_MODEL;

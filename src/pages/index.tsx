@@ -5,12 +5,6 @@ import { connect, DispatchProp } from 'dva';
 
 function UserIndex({dispatch}:DispatchProp) {
 
-  React.useEffect(() => {
-    dispatch({
-      type:'user/getAccountData'
-    })
-  })
-
   return (
     <div className={styles.normal}>
       <div className={styles.welcome} />
