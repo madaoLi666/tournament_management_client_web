@@ -9,3 +9,8 @@ export async function getUnitAthletesdata(data: object): Promise<any> {
 export async function addplayer(data: object): Promise<any> {
   return axiosInstance.post('/unitathlete/',data);
 }
+
+// 修改运动员信息
+export async function updatePlayer(data: object): Promise<any> {
+  return axiosInstance.post('/updateathletedata/', data);
+}

@@ -11,17 +11,40 @@ import moment from 'moment'
 import PicturesWall from './pictureWall';
 import { AthleteData } from '@/models/user';
 
+// 表单State
+interface State {
+    isIDCard: boolean;
+}
+
+// 表单Props
 interface AddFormProps {
     form?: FormComponentProps;
+    // 重置表单boolean  传入true代表重置，重置方法在componentWillReceiveProps
     resetField?: boolean;
-    name?: string;
-    identifyID?: string;
-    sex?: string;
-    birthday?: moment.Moment;
-    phone?: string;
-    submit?: (values: any) => void;
-    modifyComfirm?: boolean;
+    // 表单提交方法,todo 来区别是注册还是修改
+    submit: (values: any, todo: string) => void;
+    // 表格的key
     tablekey?: string;
+
+    modifyComfirm?: boolean;
+}
+
+// 表单的属性名
+export interface formFields {
+    image?: File | undefined | null
+    name?: string
+    identifyID?: string
+    idCardType?: string
+    sex?: string
+    birthday?: string
+    phone?: string | undefined | null
+    email?: string | undefined | null
+    residence?: {
+        city: string[] | undefined | null,
+        address: string | undefined | null
+    }
+    emergencyContact?: string | undefined | null
+    emergencyContactPhone?: string | undefined | null
 }
 
 // 表单layout
@@ -38,7 +61,8 @@ const formItemLayout = {
       md: { span: 16 },
       lg: { span: 14 },
     },
-  };
+};
+
 // 最后提交按钮的layout
 const tailFormItemLayout = {
     wrapperCol: {
@@ -53,10 +77,9 @@ const tailFormItemLayout = {
       md: { span: 15, offset: 4 },
       lg: { span: 16, offset: 4 },
     },
-  };
-
+};
   
-class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
+class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
     constructor(props: AddFormProps & FormComponentProps) {
         super(props);
         this.state = {
@@ -68,7 +91,12 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
         event.preventDefault();
         this.props.form.validateFieldsAndScroll((err: Error,values: any) => {
             if(!err) {
-                this.props.submit(values);
+                // 如果没有表格的key，代表是从添加运动员按钮进来的
+                if (this.props.tablekey === '') {
+                    this.props.submit(values,'register');
+                } else {
+                    this.props.submit(values, 'update');
+                }
             }
         })
     }
@@ -97,6 +125,7 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
             return;
         }
     };
+
     // 判断当前证件类型是否为身份证
     handlerCertificationTypeChange = (value: string) => {
         const ID_CARD_TEST = 'identifyID';
@@ -107,9 +136,7 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
         }
         this.props.form.resetFields(['identifyID', 'sex', 'birthday']);
     };
-    componentDidUpdate = (nextProps: AddFormProps,nextState: any) => {
-        return true
-    }
+
     // 重置表单与设置表单，对应取消跟修改
     componentWillReceiveProps = (nextProps:AddFormProps) => {
         // 重置表单
@@ -118,13 +145,13 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
     }
 
     render() {
         const { getFieldDecorator } = this.props.form;
         const { isIDCard } = this.state; 
-        const prefixSelector = getFieldDecorator('prefix', {
+        const prefixSelector = getFieldDecorator('idCardType', {
             initialValue: '大陆身份证',
             })(
             <Select 
@@ -153,7 +180,7 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,any> {
                     {getFieldDecorator('identifyID',{
                         rules: [{required: true, message: '请输入证件号！'},{validator: this.handleIDCardChange}],
                         trigger: 'onChange'
-                    })(<Input addonBefore={prefixSelector} style={{width:"100%"}} />)}
+                    })(<Input disabled={this.props.tablekey === '' ? false : true} addonBefore={prefixSelector} style={{width:"100%"}} />)}
                 </Form.Item>
                 <Form.Item label="性别" >
                     <Row>
@@ -219,8 +246,11 @@ const formStateToProps = ({user}:any) => {
 
 const AddAthleteForm = connect(formStateToProps)(Form.create<AddFormProps & FormComponentProps>({
     mapPropsToFields(props: any) {
-        console.log(props);
-        if (props.tablekey !== "") {
+        if (props.tablekey !== '') {
+            // 生日，re是正则匹配，用于替换，处理数据库中的birth字符串
+            let birth = props.user.unitathlete[Number(props.tablekey)-1].athlete.birthday as string;
+            let re = /-/gi;
+
             return {
                 name: Form.createFormField({
                     value: props.user.unitathlete[Number(props.tablekey)-1].athlete.name
@@ -243,73 +273,12 @@ const AddAthleteForm = connect(formStateToProps)(Form.create<AddFormProps & Form
                 phone: Form.createFormField({
                     value: props.user.unitathlete[Number(props.tablekey)-1].athlete.phonenumber
                 }),
-            }   
+                birthday: Form.createFormField({
+                    value: moment(birth.substr(0,10).replace(re,''))
+                })
+            }
         }
     }
 })(AddForm));
 
-function AddAthleteItem(props:{modifyConfirm: boolean,test:string ,judge: boolean, unitID?: number, dispatch: any, closeModal?: Function}) {
-    const [ reset,setReset ] = React.useState(false);
-    const [ modify,setModify ] = React.useState(false);
-
-    React.useEffect(() =>{
-        setReset(props.judge);
-    })
-
-    React.useEffect(() => {
-        setModify(props.modifyConfirm);
-        // setKey(props.key);
-    })
-
-    function close() {
-        props.closeModal();
-    }
-
-    function handleSubmit(values: any) {
-        event.preventDefault();
-        values.prefix = '大陆身份证';
-        let citys:string = '';
-        let myAddress:string = '';
-        let myImage:File = null;
-        if (values.residence) {
-            citys = values.residence.city.join("");
-            myAddress = values.residence.address
-        }else {
-            myAddress = null;
-            citys = null;
-        }
-        let payload = {
-            idcard: values.identifyID,
-            name: values.name,
-            idcardtype: values.prefix,
-            sex: values.sex,
-            birthday: values.birthday,
-            phonenumber: values.phone,
-            email: values.email,
-            province: citys,
-            address: myAddress,
-            emergencycontactpeople: values.emergencyContact,
-            emergencycontactpeoplephone: values.emergencyContactPhone,
-            face: myImage,
-            unitdata: props.unitID
-        }
-        let res = addplayer(payload);
-        res.then((resp) => {
-            if (resp && resp.data === "true") {
-                message.success('注册成功');
-                close();
-                setReset(true);
-            }else {
-                console.log(resp);
-            }
-        })
-    }
-
-    return (
-        <div className={styles['addAthlete-item']}>
-            <AddAthleteForm tablekey={props.test} resetField={reset} modifyComfirm={modify} submit={handleSubmit} />
-        </div>
-    )
-}
-
-export default connect()(AddAthleteItem);
+export default connect()(AddAthleteForm);

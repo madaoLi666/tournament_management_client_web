@@ -183,6 +183,10 @@ const USER_MODEL:Model = {
     * clearstate(action: AnyAction, effect: EffectsCommandMap) {
       yield effect.put({type: 'clearState'})
     },
+    // 删除运动员信息
+    * deleteAthlete(action: AnyAction, effect: EffectsCommandMap) {
+      yield console.log(action.payload);
+    }
   }
 };
 
