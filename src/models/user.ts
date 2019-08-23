@@ -50,8 +50,9 @@ const USER_MODEL:Model = {
     phonenumber:'',
     email:'',
     unitaccount:'',
-    token:'',
     errorstate:'',
+
+    token:'',
   },
   reducers: {
     // 存手机进state

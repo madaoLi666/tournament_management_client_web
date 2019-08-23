@@ -1,7 +1,7 @@
 import axios,{ AxiosRequestConfig, AxiosResponse } from 'axios';
 
 const BASE_URL:string = 'https://www.gsta.top/v3';
-const TIMEOUT:number = 1000;
+const TIMEOUT:number = 6000;
 
 
 let axiosInstance = axios.create({

@@ -1,5 +1,6 @@
 import React,{ Component } from 'react';
-import { Form, Input, Select, Button, Upload, Icon, message } from 'antd'
+import { Form, Input, Select, Button, Upload,  message, Card } from 'antd'
+import { FaCloudUploadAlt } from 'react-icons/fa';
 import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
 import { UploadProps, RcFile, UploadChangeParam } from 'antd/lib/upload';
 import { checkPhoneNumber, checkEmail } from '@/utils/regulars';
@@ -165,7 +166,7 @@ class UnitInfoForm extends Component<UnitInfoFormProps,any>{
         <Form.Item label='上传自愿责任书'>
           <Upload {...uploadProps} >
             <Button>
-              <Icon type="upload" /> Upload
+              <FaCloudUploadAlt/>&nbsp;Upload
             </Button>
           </Upload>
         </Form.Item>

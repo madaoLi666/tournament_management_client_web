@@ -16,7 +16,7 @@ export default function SignUP(props: any) {
           {props.children}
         </Content>
         <Footer className={styles.footer}>
-          This is Footer
+          <span>广州青苔科技有限公司 版权所有  粤ICP备19028504号</span>
         </Footer>
       </Layout>
     </div>

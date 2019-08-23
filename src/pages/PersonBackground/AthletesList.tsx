@@ -9,7 +9,7 @@ import {
   PaginationConfig,
   SorterResult,
 } from 'antd/es/table';
-import Highlighter from 'react-highlight-words';
+
 import AddAthleteForm, { formFields } from './AddAthleteItem';
 import { connect } from 'dva';
 import { UnitData, AthleteData } from '@/models/user';
@@ -53,7 +53,10 @@ function AthletesList(props: athletesProps) {
   // 表格data
   let data: Athlete[] = [];
 
-  // 如果是个人账号
+  /* 如果是个人账号
+  * 1 - 个人
+  * 2 - 单位
+  * */
   if (props.unitAccount === 1) {
     props.athletes.forEach((item, index) => {
       data.push({
@@ -69,7 +72,7 @@ function AthletesList(props: athletesProps) {
       });
     });
     // 是单位账号
-  } else if (props.unitData.length !== 0) {
+  } else if (props.unitData.length !== 0 && props.unitData !== undefined) {
     props.unitData[0].unitathlete.forEach((item: any, index) => {
       data.push({
         key: (index + 1).toString(),
@@ -168,12 +171,7 @@ function AthletesList(props: athletesProps) {
         .toLowerCase()
         .includes(value.toLowerCase()),
     render: (text: any) => (
-      <Highlighter
-        searchWords={[searchText]}
-        textToHighlight={text.toString()}
-        autoEscape={true}
-        highlightStyle={{ backgroundColor: '#fcc069', padding: '0' }}
-      />
+      <span>{text}</span>
     ),
   });
 

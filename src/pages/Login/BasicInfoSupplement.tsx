@@ -131,7 +131,7 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
         </Form.Item>
         <Form.Item label='性别'>
           {getFieldDecorator('sex',{
-            rules:[{required:true, message: '请填写证件号码'}]
+            rules:[{required:true, message: '请选择你的性别'}]
           })(
             <Select disabled={isIDCard}>
               <Option value='男'>男</Option>
@@ -141,7 +141,7 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
         </Form.Item>
         <Form.Item label='出生年月日'>
           {getFieldDecorator('birthday',{
-            rules:[{required:true, message: '请填写证件号码'}]
+            rules:[{required:true, message: '请填写出生年月日'}]
           })(
             <DatePicker
               style={{width: '100%'}}

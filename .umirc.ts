@@ -1,7 +1,7 @@
 import { IConfig } from 'umi-types';
 import * as webpack from 'webpack';
 import * as IWebpackChainConfig from 'webpack-chain'
-const ImageminPlugin = require('imagemin-webpack-plugin').default;
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 
 // ref: https://umijs.org/config/
 const config: IConfig =  {
@@ -31,7 +31,8 @@ const config: IConfig =  {
     { path: '/enroll',
       Routes: ['./src/layouts/EnrollLayout.tsx'],
       routes: [
-        {path: '/enroll/editUnitInfo', component: './Enroll/EditUnitInfo.tsx'},
+        { path: '/enroll/editUnitInfo', component: './Enroll/EditUnitInfo.tsx', name: '参赛单位信息'},
+        { path: '/enroll/participants', component: './Enroll/ParticipantsAthleteList.tsx', name: '编辑参赛运动员信息'}
       ]
     },
     // 主用户界面 - 这个位置是动态设置的
@@ -44,63 +45,62 @@ const config: IConfig =  {
   ],
   treeShaking: true,
   chainWebpack(config: any) {
-    if(process.env.NODE_ENV !== 'development'){
-      config.optimization.splitChunks({
-        chunks: 'async',
-        minSize: 3000,
-        maxSize: 0,
-        minChunks: 1,
-        maxAsyncRequests: 5,
-        maxInitialRequests: 3,
-        automaticNameDelimiter: '~',
-        name: true,
-        cacheGroups: {
-          vendors: {
-            name: 'vendors',
-            chunks: 'all',
-            test: /[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|lodash|lodash-decorators|redux-saga|re-select|dva|moment)[\\/]/,
-            priority: -11,
-          },
-          antdesigns: {
-            name: 'antdesigns',
-            chunks: 'all',
-            test: /[\\/]node_modules[\\/]antd[\\/]/,
-            priority: -10,
-          },
-          icons: {
-            name: 'icons',
-            chunks: 'all',
-            test: /[\\/]node_modules[\\/]@ant-design[\\/]/,
-            priority: -9,
-          },
-        },
-      });
-      config.plugin('ignore')
-        .use(webpack.IgnorePlugin,[/^\.\/locale$/,/moment$/]);
-      // config.plugin('image')
-      //   .use(ImageminPlugin,[{
-      //     disable: process.env.NODE_ENV === 'development',
-      //     test: /\.(jpe?g|png|svg|gif)$/i,
-      //     optipng: {
-      //       optimizationLevel: 9
-      //     }
-      //   }]);
-      config.module
-        .rule('compile')
-        .test(/\.(js|jsx)$/)
-        .include
-        .add('/src')
-        .end()
-        .use('babel')
-        .loader('babel-loader')
-        .options({
-          presets: ["react","typescript","env"],
-          plugins: [
-            ["import", [{libraryName: "antd", style: true}]]
-          ],
-          // "customName": require('path').resolve(__dirname, './customName.js')
-        })
-    }
+    // if(process.env.NODE_ENV !== 'development'){
+    //   config.optimization.splitChunks({
+    //     chunks: 'async',
+    //     minSize: 3000,
+    //     maxSize: 0,
+    //     minChunks: 1,
+    //     maxAsyncRequests: 5,
+    //     maxInitialRequests: 3,
+    //     automaticNameDelimiter: '~',
+    //     name: true,
+    //     cacheGroups: {
+    //       antdesigns: {
+    //         name: 'antdesigns',
+    //         chunks: 'all',
+    //         test: /[\\/]node_modules[\\/]antd[\\/]/,
+    //         priority: -9,
+    //       },
+    //       icons: {
+    //         name: 'icons',
+    //         chunks: 'all',
+    //         test: /[\\/]node_modules[\\/]@ant-design[\\/]/,
+    //         priority: -8,
+    //       }
+    //     },
+    //   });
+    //   config.plugin('ignore')
+    //     .use(webpack.IgnorePlugin,[/^\.\/locale$/,/moment$/]);
+    //   config.plugin('replaceDodash')
+    //     .use(LodashModuleReplacementPlugin,[{
+    //       'collections': true,
+    //       'paths': true
+    //     }]);
+    //   // config.plugin('image')
+    //   //   .use(ImageminPlugin,[{
+    //   //     disable: process.env.NODE_ENV === 'development',
+    //   //     test: /\.(jpe?g|png|svg|gif)$/i,
+    //   //     optipng: {
+    //   //       optimizationLevel: 9
+    //   //     }
+    //   //   }]);
+    //   config.module
+    //     .rule('compile')
+    //     .test(/\.(js|jsx)$/)
+    //     .include
+    //     .add('/src')
+    //     .end()
+    //     .use('babel')
+    //     .loader('babel-loader')
+    //     .options({
+    //       presets: ["react","typescript","env"],
+    //       plugins: [
+    //         ["import", [{libraryName: "antd", style: true}]]
+    //       ],
+    //       // "customName": require('path').resolve(__dirname, './customName.js')
+    //     })
+    // }
 
   },
   plugins: [
@@ -111,7 +111,7 @@ const config: IConfig =  {
       dynamicImport: { webpackChunkName: true },
       title: 'userEntryPage',
       dll: true,
-      // chunks: ['vendors','antdesigns','icons','umi'],
+      // chunks: ['antdesigns', 'icons','umi'],
       routes: {
         exclude: [
           /models\//,

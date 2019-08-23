@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   Carousel, Row, Col
 } from 'antd';
@@ -33,7 +33,7 @@ class Home extends React.Component<any,any>{
     getHomePic().then(res => {
       console.log(res);
       if(res.data.length !== 0 && res.error === "") {
-        this.setState({homePicArr: res.data.map((v:any) => (v.file))});
+        this.setState({homePicArr: res.data.filter((m:any) => (m.id < 10)).map((v:any) => (v.file))});
       }else {
         console.log('图片获取失败');
       }

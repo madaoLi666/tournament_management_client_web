@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Tabs, Button, Col, Row } from 'antd';
+import React from 'react';
+import { Tabs, Button, Col, Row, message } from 'antd';
 import StaticHtmlPage from '@/components/StaticHtmlPage/StaticHtmlPage'
 import { connect } from 'dva';
 import router from 'umi/router';
@@ -35,6 +35,7 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
   }
 
   enterEnrollChannel = () => {
+    // message.warn('尚未到报名时段');
     const { dispatch } = this.props;
     const { currentGameData } = this.state;
     if(currentGameData.id !== undefined && currentGameData.id !== -1) {
@@ -48,7 +49,6 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
   render() {
     // 渲染
     const { currentGameData } = this.state;
-    console.log(currentGameData);
     let IMG_DOM:React.ReactNode = <div>image</div>;
     let ENROLL_DOM:React.ReactNode = <div>image</div>;
     let TAB_DOM = <TabPane tab='联系人' key="联系人" />;

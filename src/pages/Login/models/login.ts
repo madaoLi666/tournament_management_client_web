@@ -24,11 +24,12 @@ const LOGIN_MODEL:Model = {
       if(res && res.notice === '' && res.data !== ""){
         // 本地存储token
         yield window.localStorage.setItem('TOKEN',res.data);
+        // 获取本账号的基本信息
+        yield put({type: 'user/getAccountData'});
         yield put({type:'user/modifyUserInfo',payload: action.payload});
         yield router.push('/home');
       }else if(res.notice !== ""){
         const { msg, user } = res.notice;
-        console.log('a');
         if(msg === "3") {
           // 未补全运动员信息
           yield router.push('/login/infoSupplement');

@@ -1,6 +1,6 @@
 import React, { useState, forwardRef } from 'react';
 import { connect } from 'dva';
-import { Button, Card, Col, Form, Input, Row, Tabs, Modal, message, Icon, Statistic } from 'antd';
+import { Button, Card, Col, Form, Input, Row, Tabs, Modal, message } from 'antd';
 import AddressInput from '@/components/AddressInput/AddressInput.tsx';
 import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
 import { ColProps } from 'antd/lib/grid';
@@ -9,7 +9,6 @@ import { checkEmail, checkPhoneNumber } from '@/utils/regulars.ts';
 import { getQRCodeForUnitRegister, checkUnitIsPay, } from '@/services/pay';
 import { newUnitAccount } from '@/services/register';
 
-const { Countdown } = Statistic;
 
 // @ts-ignore
 import styles from './index.less';
@@ -86,17 +85,17 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
       this.setState({
         validStatus: 'success'
       })
-    }
+    };
     const setError = () => {
       this.setState({
         validStatus: 'error'
       })
-    }
+    };
     if (value === "" || value === null || value === undefined) {
       callback();
       this.setState({
         validStatus: 'error'
-      })
+      });
       return;
     }
     const { unitNameIsLegal } = this.props;
