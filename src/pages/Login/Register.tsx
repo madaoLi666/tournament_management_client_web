@@ -20,7 +20,7 @@ interface RightResponse {
 // 注册新用户表单项的接口
 interface UserFormProps {
   sendCode?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  sendEmailCode?: (event: React.MouseEvent<HTMLButtonElement>, email: string) => void;
+  sendEmailCode?: (email: string) => void;
   form?: FormComponentProps;
 }
 
@@ -34,13 +34,17 @@ const { TabPane } = Tabs;
 
 // Col 自适应
 const autoAdjust = {
-  xs: { span: 20 }, sm: { span: 12 }, md: { span: 12 }, lg: { span: 8 }, xl: { span: 8 }, xxl: { span: 8 },
+  xs: { span: 16 },
+   sm: { span: 12,offset:3 },
+    md: { span: 12, offset:4 }, 
+    lg: { span: 8, offset:6 }, 
+    xl: { span: 8, offset:6 },
 };
 // 表单layout
 const formItemLayout = {
   labelCol: {
     xs: { span: 12 },
-    sm: { span: 8 },
+    sm: { span: 6 },
     md: { span: 6 },
     lg: { span: 7 },
   },
@@ -81,7 +85,8 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
       // 注册失败对话框 state
       errorText:'error of register',
       visible: false,
-      confirmLoading: false
+      confirmLoading: false,
+      timeInterval:0
     };
   }
 
@@ -139,9 +144,21 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
     })
   }
   // 给上层组件传email，然后根据email调用接口
-  public toParent = (event:React.MouseEvent<HTMLElement>) => {
-    // @ts-ignore
-    this.props.sendEmailCode(event, this.state.email);
+  public toParent = () => {
+    this.props.sendEmailCode(this.state.email);
+    const myTimeInterval:number = 60000;
+    this.setState({
+      timeInterval:myTimeInterval
+    });
+    let counts = 0;
+    // 计时 用于防止用户多次发送验证码
+    let i = setInterval(() => {
+      this.setState({timeInterval: this.state.timeInterval-1000});
+      counts++;
+      if(counts === 60) {
+        clearInterval(i);
+      }
+    },1000);
   };
   // 提交表单
   public handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -232,8 +249,11 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
                   rules: [{ required: true, message: '请输入邮箱！' }, { type: 'email', message: '请输入正确的邮箱格式！' }],
                 })(<Input  onChange={this.BindEmail} />)}
               </Col>
-              <Col span={12}>
-                <Button onClick={this.toParent} type="primary">发送邮箱验证码</Button>
+              <Col span={4}>
+              {this.state.timeInterval === 0 ?
+              <Button onClick={this.toParent} style={{width:166,height:32}} type="primary" >发送验证码</Button>
+              :<Button type="primary" style={{width:166,height:32}} disabled={true} >{this.state.timeInterval/1000}秒</Button>
+              }
               </Col>
             </Row>
           </Form.Item>
@@ -330,7 +350,7 @@ class Register extends React.Component<any, any> {
     )
   }
   // 获取邮箱验证码
-  public sendEmail = (event: React.MouseEvent<HTMLButtonElement>, email: string) => {
+  public sendEmail = (email: string) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'register/sendEmailCode',
@@ -355,11 +375,11 @@ class Register extends React.Component<any, any> {
 
     return (
       <div className={styles['register-page']}>
-        <Row justify="center" type="flex">
+        <Row type="flex">
           <Col {...autoAdjust}>
             <div className={styles['register-block']}>
               <Card
-                style={{ width: '100%' ,height: '100%', borderRadius: '5px', boxShadow: '1px 1px 5px #111' }}
+                style={{ width: '150%' ,height: '100%', borderRadius: '5px', boxShadow: '1px 1px 5px #111' }}
                 headStyle={{ color: '#2a8ff7' }}
               >
                 {TabsDOM}

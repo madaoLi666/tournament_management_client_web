@@ -9,7 +9,11 @@ const { TabPane } = Tabs;
 
 // Col 自适应
 const autoAdjust = {
-  xs: { span: 20 }, sm: { span: 12 }, md: { span: 12 }, lg: { span: 8 }, xl: { span: 8 }, xxl: { span: 8 },
+  xs: { span: 16,offset:2 },
+   sm: { span: 12,offset:5 },
+    md: { span: 12, offset:5 }, 
+    lg: { span: 8, offset:7 }, 
+    xl: { span: 8, offset:7 },
 };
 
 function MobileValidate(props: any) {
@@ -93,7 +97,7 @@ function MobileValidate(props: any) {
 
   return (
     <div className={styles['validate-page']}>
-      <Row style={{height:"500px"}} justify="center" type="flex">
+      <Row style={{height:"500px"}} type="flex">
         <Col {...autoAdjust}>
           <div className={styles['validate-block']}>
             <Card

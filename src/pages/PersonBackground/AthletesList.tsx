@@ -1,7 +1,6 @@
 import React,{ useEffect, useState } from 'react';
 import { Popover, PageHeader, Input, Button, Modal, Layout, Table, Popconfirm, Icon, message } from 'antd';
 import { ColumnFilterItem, TableEventListeners, FilterDropdownProps, PaginationConfig, SorterResult } from 'antd/es/table';
-import Highlighter from 'react-highlight-words';
 import AddAthleteForm,{ formFields } from './AddAthleteItem';
 import { connect } from 'dva';
 import { UnitData, AthleteData } from '@/models/user';
@@ -67,7 +66,7 @@ function AthletesList(props:athletesProps) {
             })
         })
     // 是单位账号
-    }else if (unitData.length !== 0) {
+    }else if (unitData.length !== 0 || unitData !== undefined || unitData !== null) {
         unitData[0].unitathlete.forEach((item,index) => {
             data.push({
                 key: (index+1).toString(),
@@ -108,6 +107,7 @@ function AthletesList(props:athletesProps) {
             cancelText:'取消'
         })
     }
+
     // 给修改与删除提供 key
     function handleRow(record:Athlete, indexnumber: number):TableEventListeners {
         return {
@@ -134,6 +134,7 @@ function AthletesList(props:athletesProps) {
         clearFilters();
         setsearchText('');
     }
+
     // Table 内嵌搜索框
     let getColmnSearchProps:any = (dataIndex: string) => ({
         // 可以自定义筛选菜单，此函数只负责渲染图层，需要自行编写各种交互
@@ -174,12 +175,7 @@ function AthletesList(props:athletesProps) {
                 .toLowerCase()
                 .includes(value.toLowerCase()),
         render: (text:any) => (
-            <Highlighter
-                highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-                searchWords={[searchText]}
-                autoEscape={true}
-                textToHighlight={text.toString()}
-            />
+            <>{text}</>
         )
     })
     // onChange 表格筛选
