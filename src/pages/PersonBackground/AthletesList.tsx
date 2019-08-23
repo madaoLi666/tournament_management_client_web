@@ -1,10 +1,11 @@
 import React,{ useEffect, useState } from 'react';
-import { Popover, PageHeader, Input, Button, Modal, Layout, Table, Popconfirm, Icon, message } from 'antd';
+import { Popover, PageHeader, Input, Button, Modal, Layout, Table, message } from 'antd';
 import { ColumnFilterItem, TableEventListeners, FilterDropdownProps, PaginationConfig, SorterResult } from 'antd/es/table';
 import AddAthleteForm,{ formFields } from './AddAthleteItem';
 import { connect } from 'dva';
 import { UnitData, AthleteData } from '@/models/user';
 import { addplayer, updatePlayer } from '@/services/athlete';
+import { FaSearch } from 'react-icons/fa'
 // @ts-ignore
 import styles from './index.less';
 
@@ -32,7 +33,7 @@ interface athletesProps {
 
 function AthletesList(props:athletesProps) {
     // @ts-ignore
-    const { dispatch, unitAccount, unitData, id, athletes } = props;
+    const { dispatch, unitAccount, unitData, athletes } = props;
     let isDelete: boolean = false;
     let isChange: boolean = false;
 
@@ -165,7 +166,8 @@ function AthletesList(props:athletesProps) {
         // 自定义搜索图标
         filterIcon: (filtered: boolean) => (
             <Popover content={filtered ? "点击重置" : '点击搜索'}>
-                <Icon type="search" style={{ color: filtered ? '#FF0000' : '#1890ff' }} />
+                {/* <Icon type="search" style={{ color: filtered ? '#FF0000' : '#1890ff' }} /> */}
+                <FaSearch style={{width:16,color: filtered ? '#FF0000' : '#1890ff',marginRight:5}}  />
             </Popover>
         ),
         // 本地模式下，确定筛选的运行函数 value不确定是否是string

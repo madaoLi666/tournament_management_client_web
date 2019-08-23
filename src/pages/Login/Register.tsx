@@ -2,10 +2,11 @@ import React from 'react';
 import router from 'umi/router';
 // @ts-ignore
 import styles from './index.less';
-import { Row, Col, Card, Tabs, Form, Input, Button, Modal } from 'antd';
+import { Row, Col, Card, Tabs, Form, Input, Button, Modal, message } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
 import { personalAccountRegister,PersonInfo } from '@/services/register.ts';
+import { checkEmail, checkPhoneNumber } from '@/utils/regulars';
 
 
 
@@ -27,6 +28,7 @@ interface UserFormProps {
 // 已有账户表单项的接口，暂时不知道要写什么
 interface OldUserFormProps {
   form?: FormComponentProps;
+  sendCode?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 // 标签页
@@ -45,8 +47,8 @@ const formItemLayout = {
   labelCol: {
     xs: { span: 12 },
     sm: { span: 6 },
-    md: { span: 6 },
-    lg: { span: 7 },
+    md: { span: 5 },
+    lg: { span: 6 },
   },
   wrapperCol: {
     xs: { span: 12 },
@@ -63,11 +65,11 @@ const tailFormItemLayout = {
       offset: 0,
     },
     sm: {
-      span: 10,
-      offset: 1,
+      span: 16,
+      offset: 4,
     },
-    md: { span: 15, offset: 4 },
-    lg: { span: 16, offset: 4 },
+    md: { span: 20,offset: 3 },
+    lg: { span: 20,offset: 3 },
   },
 };
 // 标签页tab文字DOM
@@ -145,6 +147,10 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
   }
   // 给上层组件传email，然后根据email调用接口
   public toParent = () => {
+    if(!checkEmail.test(this.state.email)) {
+      message.error('请输入正确的邮箱');
+      return;
+    }
     this.props.sendEmailCode(this.state.email);
     const myTimeInterval:number = 60000;
     this.setState({
@@ -263,7 +269,7 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
             })(<Input/>)}
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit">注册绑定,并进入下一步操作</Button>
+            <Button type="primary" style={{width:"80%"}} htmlType="submit">注册绑定,并进入下一步操作</Button>
           </Form.Item>
         </Form>
       </div>
@@ -282,7 +288,10 @@ const RegisterForm = connect(phoneStateToProps)(Form.create<UserFormProps & Form
 class OldUserForm extends React.Component<OldUserFormProps & FormComponentProps, any> {
   constructor(props: UserFormProps & FormComponentProps) {
     super(props);
-    this.state = {};
+    this.state = {
+      timeInterval:0,
+      code:''
+    };
   }
 
   public handleSubmit = (e: any) => {
@@ -293,6 +302,24 @@ class OldUserForm extends React.Component<OldUserFormProps & FormComponentProps,
       }
     });
   };
+
+  public toParent = () => {
+    this.props.sendCode(this.state.code);
+    const myTimeInterval:number = 60000;
+    this.setState({
+      timeInterval:myTimeInterval
+    });
+    let counts = 0;
+    // 计时 用于防止用户多次发送验证码
+    let i = setInterval(() => {
+      this.setState({timeInterval: this.state.timeInterval-1000});
+      counts++;
+      if(counts === 60) {
+        clearInterval(i);
+      }
+    },1000);
+  }
+
 
   render() {
     const { getFieldDecorator } = this.props.form;
@@ -313,9 +340,15 @@ class OldUserForm extends React.Component<OldUserFormProps & FormComponentProps,
           <Row>
             <Col span={12}>
               {getFieldDecorator('oldVerificationCode', {
-                rules: [{ required: true, message: '请输入右边的验证码！' }],
+                rules: [{ required: true, message: '请输入验证码！' }],
               })(<Input/>)}
-            </Col>
+              </Col>
+              <Col span={4}>
+              {this.state.timeInterval === 0 ?
+              <Button onClick={this.toParent} style={{width:166,height:32}} type="primary" >发送验证码</Button>
+              :<Button type="primary" style={{width:166,height:32}} disabled={true} >{this.state.timeInterval/1000}秒</Button>
+              }
+              </Col>
           </Row>
         </Form.Item>
         <p style={{ marginTop: 40 }}>可用单位账号密码登陆,进行取消单位授权操作</p>
@@ -367,9 +400,9 @@ class Register extends React.Component<any, any> {
         <TabPane tab={TabsTitle1} key="1">
           <RegisterForm sendCode={this.sendCode} sendEmailCode={this.sendEmail} />
         </TabPane>
-        <TabPane tab={TabsTitle2} key="2">
-          <OldUserFormInfo/>
-        </TabPane>
+        {/* <TabPane tab={TabsTitle2} key="2">
+          <OldUserFormInfo sendCode={this.sendCode} />
+        </TabPane> */}
       </Tabs>
     );
 

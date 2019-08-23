@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import {
-  Card, Button, Input, Icon, Row, Col, Tabs, message
+  Card, Button, Input, Row, Col, Tabs, message
 } from 'antd';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
 import { checkPhoneNumber } from '@/utils/regulars';
 // @ts-ignore
 import styles from '@/pages/Login/index.less';
+import { FaLock, FaUser, FaMobileAlt } from 'react-icons/fa';
 
 const { TabPane } = Tabs;
 
@@ -137,14 +138,14 @@ function Login(props: SendCodeProps) {
               <Tabs onChange={(key:string) => setMode(key)}>
                 <TabPane tab="用户登陆" key="0">
                   <div className={styles['form-input-block']}>
-                    <Input onChange={BindUserInfoUserName} placeholder='请输入账号/手机号码/电子邮箱' prefix={<Icon type="user"/>} style={{height: '40px'}} autoComplete='off' />
-                    <Input.Password onChange={BindUserInfoPassword} placeholder='请输入密码'  prefix={<Icon type="lock"/>} style={{height: '40px'}} />
+                    <Input onChange={BindUserInfoUserName} placeholder='请输入账号/手机号码/电子邮箱' prefix={<FaUser />} style={{height: '40px'}} autoComplete='off' />
+                    <Input.Password onChange={BindUserInfoPassword} placeholder='请输入密码'  prefix={<FaLock />} style={{height: '40px'}} />
                   </div>
                 </TabPane>
                 <TabPane tab="手机验证登陆" key="1">
                   <div className={styles['form-input-block']}>
                     <Input.Group compact={true}>
-                      <Input id="phoneNumber" onChange={BindPhoneNumber} placeholder='请输入手机号码' prefix={<Icon type="mobile"/>} style={{ height: '40px', width: '70%' }} autoComplete='off' />
+                      <Input id="phoneNumber" onChange={BindPhoneNumber} placeholder='请输入手机号码' prefix={<FaMobileAlt type="mobile"/>} style={{ height: '40px', width: '70%' }} autoComplete='off' />
                       <Button
                         type="primary"
                         onClick={sendCode}
@@ -154,7 +155,7 @@ function Login(props: SendCodeProps) {
                         {timeInterval === 0 ? <span>发送验证码</span> : <span>{timeInterval/1000}秒</span>}
                       </Button>
                     </Input.Group>
-                    <Input onChange={BindPhoneVerificationCode} placeholder='请输入验证码' prefix={<Icon type="lock"/>} style={{ height: '40px' }} autoComplete='off' />
+                    <Input onChange={BindPhoneVerificationCode} placeholder='请输入验证码' prefix={<FaLock type="lock"/>} style={{ height: '40px' }} autoComplete='off' />
                   </div>
                 </TabPane>
                 {/* <TabPane tab="微信扫码" key="2">

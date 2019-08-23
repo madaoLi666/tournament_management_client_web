@@ -1,9 +1,10 @@
 import * as React from 'react';
 // @ts-ignore
 import styles from './index.less';
-import { message, Row, Col, Button, Input, Card, Tabs, Icon } from 'antd';
+import { message, Row, Col, Button, Input, Card, Tabs } from 'antd';
 import { connect } from 'dva';
 import { checkPhoneNumber } from '@/utils/regulars';
+import { FaMobile, FaLock } from 'react-icons/fa';
 
 const { TabPane } = Tabs;
 
@@ -82,13 +83,13 @@ function MobileValidate(props: any) {
     <Tabs>
       <TabPane tab={<strong>手机验证</strong>} key="1">
           <Input.Group compact={true} style={{width:"100%"}}  >
-            <Input onChange={BindPhone} style={{width:"60%",height:40,marginTop:"5%"}} placeholder="请输入手机号码" prefix={<Icon type="mobile" />} />
+            <Input onChange={BindPhone} style={{width:"60%",height:40,marginTop:"5%"}} placeholder="请输入手机号码" prefix={<FaMobile type="mobile" />} />
             {timeInterval === 0 ?
             <Button onClick={sendCode} style={{width:"40%",height:40,marginTop:"5%"}} type="primary" >发送验证码</Button>
             :<Button type="primary" style={{width:"40%",height:40,marginTop:"5%"}} disabled={true} >{timeInterval/1000}秒</Button>
             }
           </Input.Group>
-          <Input onChange={BindCode} prefix={<Icon type="lock" />} style={{marginTop:"10%"}} placeholder="请输入验证码" size="large" />
+          <Input onChange={BindCode} prefix={<FaLock type="lock" />} style={{marginTop:"10%"}} placeholder="请输入验证码" size="large" />
           <Button onClick={validateCode} type="primary" size="large" style={{marginTop:"10%"}} block={true} >验证</Button>
       </TabPane>
     </Tabs>
