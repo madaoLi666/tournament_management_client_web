@@ -1,9 +1,9 @@
 import { Model, EffectsCommandMap } from 'dva'
 import { AnyAction } from 'redux';
 import { checkVerificationCode, accountdata } from '@/services/login.ts';
-import { message } from 'antd';
 import router from 'umi/router';
-import { addplayer } from '@/services/athlete';
+import { addplayer, deletePlayer } from '@/services/athlete';
+import { message } from 'antd';
 
 // 单位账号的data
 export interface UnitData {
@@ -33,6 +33,7 @@ export interface AthleteData {
   province?: string | null
   sex?: string
   user?: number
+  id?: number
 }
 
 const USER_MODEL:Model = {
@@ -185,7 +186,17 @@ const USER_MODEL:Model = {
     },
     // 删除运动员信息
     * deleteAthlete(action: AnyAction, effect: EffectsCommandMap) {
-      yield console.log(action.payload);
+      let unitadata:UnitData = yield effect.select((state:any) => (state.user.unitData[0]));
+      let res = yield deletePlayer({
+        unitdata: String(unitadata.id),
+        athlete: String(unitadata.unitathlete[action.payload].athlete.id)
+      });
+      if(res && res.error === '') {
+        message.success('删除成功');
+        yield effect.put({type:'getAccountData'});
+      }else {
+        message.error(res.error);
+    }
     }
   }
 };

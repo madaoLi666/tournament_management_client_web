@@ -1,6 +1,4 @@
-import React,{ useEffect } from 'react';
-// @ts-ignore
-import styles from './index.less';
+import React,{ useEffect, useState } from 'react';
 import { Popover, PageHeader, Input, Button, Modal, Layout, Table, Popconfirm, Icon, message } from 'antd';
 import { ColumnFilterItem, TableEventListeners, FilterDropdownProps, PaginationConfig, SorterResult } from 'antd/es/table';
 import Highlighter from 'react-highlight-words';
@@ -8,6 +6,10 @@ import AddAthleteForm,{ formFields } from './AddAthleteItem';
 import { connect } from 'dva';
 import { UnitData, AthleteData } from '@/models/user';
 import { addplayer, updatePlayer } from '@/services/athlete';
+// @ts-ignore
+import styles from './index.less';
+
+const { confirm } = Modal;
 
 // 表格接口 key 是编号
 interface Athlete {
@@ -31,24 +33,29 @@ interface athletesProps {
 }
 
 function AthletesList(props:athletesProps) {
+    // @ts-ignore
+    const { dispatch, unitAccount, unitData, id, athletes } = props;
+    let isDelete: boolean = false;
+    let isChange: boolean = false;
+
     // 修改/删除Node
-    let changeOrDelDOM:React.ReactNode = (
-        <div>
-            <Popconfirm title="确认修改吗？" onConfirm={changeConfirm} okText="确认" cancelText="取消" >
-                <a href="#">修改</a>
-            </Popconfirm>&nbsp;&nbsp;|
-            &nbsp;&nbsp;
-            <Popconfirm title="确认删除吗？" icon={<Icon type="question-circle-o" style={{ color: 'red' }} />} onConfirm={deleteConfirm} okText="确认" cancelText="取消" >
-                <a href="#">删除</a>
-            </Popconfirm>
-        </div>
-    )
+    let changeOrDelDOM = (text: any, record: Athlete, index: number) => {
+        let myEvent:React.MouseEvent<HTMLAnchorElement, MouseEvent>;
+        return (
+            <div>
+                <a href="#" onClick={changeConfirm} >修改</a>
+                &nbsp;&nbsp;|
+                &nbsp;&nbsp;
+                <a href="#"  onClick={deleteConfirm.bind(myEvent,index)} >删除</a>
+            </div>
+        )
+    }
     // 表格data
     let data: Athlete[] = [];
 
     // 如果是个人账号
-    if (props.unitAccount === 1) {
-        props.athletes.forEach((item,index) => {
+    if (unitAccount === 1) {
+        athletes.forEach((item,index) => {
             data.push({
                 key: (index+1).toString(),
                 name: item.name,
@@ -58,12 +65,11 @@ function AthletesList(props:athletesProps) {
                 phone: item.phonenumber,
                 emergencyContact: item.emergencycontactpeople,
                 emergencyContactPhone: item.emergencycontactpeoplephone,
-                action: changeOrDelDOM
             })
         })
     // 是单位账号
-    }else if (props.unitData.length !== 0) {
-        props.unitData[0].unitathlete.forEach((item,index) => {
+    }else if (unitData.length !== 0) {
+        unitData[0].unitathlete.forEach((item,index) => {
             data.push({
                 key: (index+1).toString(),
                 name: item.athlete.name,
@@ -73,36 +79,50 @@ function AthletesList(props:athletesProps) {
                 phone: item.athlete.phonenumber,
                 emergencyContact: item.athlete.emergencycontactpeople,
                 emergencyContactPhone: item.athlete.emergencycontactpeoplephone,
-                action: changeOrDelDOM
             })
         })
     }
-
-
     // 添加运动员Modal
-    const [ modalVisible,setModalVisible ] = React.useState(false);
-    const [searchText,setsearchText] = React.useState('');
-
+    const [ modalVisible,setModalVisible ] = useState(false);
+    const [searchText,setsearchText] = useState('');
     // 表格属性key
-    const [ key ,setkey] = React.useState('');
+    const [ key ,setkey] = useState('');
     // 修改确认
     function changeConfirm() {
         // 根据key去store里面找相应的数据
+        isChange = true;
         setModalVisible(true);
     }
     // 删除确认
-    function deleteConfirm() {
-        // @ts-ignore
-        props.dispatch({
-            type: 'user/deleteAthlete',
-            payload: key
+    function deleteConfirm(index: number,event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
+        isDelete = true;
+        confirm({
+            title:'确认删除吗?',
+            onOk() {
+                dispatch({
+                    type: 'user/deleteAthlete',
+                    payload: index
+                })
+            },
+            onCancel() {},
+            okText:'确认',
+            cancelText:'取消'
         })
     }
     // 给修改与删除提供 key
     function handleRow(record:Athlete, indexnumber: number):TableEventListeners {
         return {
             onClick:(arg: React.SyntheticEvent):void => {
-                setkey(record.key);
+                // 如果点击的是删除按钮
+                if(!isDelete) {
+                    isDelete = false;
+                }
+                // 点击的是修改按钮，设置这些是因为table的onRow函数，点击表格行也会触发的
+                if(isChange) {
+                    setkey(record.key);
+                    isChange = false;
+                    return;
+                }
             },
         }
     }
@@ -173,7 +193,7 @@ function AthletesList(props:athletesProps) {
         setModalVisible(true);
     }
     // 点击右上角退出Modal
-    const [ judgeReset,setJudgeReset ] = React.useState(false);
+    const [ judgeReset,setJudgeReset ] = useState(false);
     function handleModalCancel() {
         setModalVisible(false);
         setJudgeReset(true);
@@ -187,7 +207,7 @@ function AthletesList(props:athletesProps) {
         }
     }
     let AddbuttonNode:React.ReactNode = (
-        props.unitAccount === 1 ? null : <Button style={{float:"right"}} type="primary" icon="plus" onClick={addAthlete}><strong>添加新运动员</strong></Button>
+        unitAccount === 1 ? null : <Button style={{float:"right"}} type="primary" icon="plus" onClick={addAthlete}><strong>添加新运动员</strong></Button>
     )
     let sexFilter:ColumnFilterItem[] = [
         {
@@ -205,8 +225,6 @@ function AthletesList(props:athletesProps) {
 
     // 表单提交方法
     let handleSubmit = (values: formFields, todo: string) => {
-        event.preventDefault();
-
         let citys:string = '';
         let myAddress:string = '';
         // TODO image暂时传null，还没完成该功能
@@ -235,7 +253,7 @@ function AthletesList(props:athletesProps) {
             emergencycontactpeople: values.emergencyContact,
             emergencycontactpeoplephone: values.emergencyContactPhone,
             face: myImage,
-            unitdata: props.unitData[0] === undefined ? 0 : props.unitData[0].id
+            unitdata: unitData[0] === undefined ? 0 : unitData[0].id
         }
 
         let res: Promise<any>;
@@ -259,21 +277,19 @@ function AthletesList(props:athletesProps) {
                 }
             }else if (Object.prototype.toString.call(resp.error) === '[object String]') {
                 message.error(resp.error);
-            }else if (Object.prototype.toString.call(resp.error) === '[object Array]') {
-                resp.error.forEach((item: any,index: any) => {
-                    message.error(item);
-                })
+            }else if (Object.prototype.toString.call(resp.error) === '[object Object]') {
+                message.warning('请检查是否输入了空的字符');
             }else {
                 message.warning('请填入所有的表单项');
             }
         })
 
     }
+    // let test:object = {address: ["该字段不能为空。"], emergencycontactpeople: ["该字段不能为空。"]};
 
     // 当judgeReset改变时，重新渲染一次
     useEffect(() => {
-        // @ts-ignore
-        props.dispatch({
+        dispatch({
             type:'user/getAccountData'
         })
     },[judgeReset]);
@@ -300,7 +316,7 @@ function AthletesList(props:athletesProps) {
                     <Table.Column<Athlete> key='phone' title='联系电话' dataIndex='phone' align="center" />
                     <Table.Column<Athlete> key='emergencyContact' title='紧急联系人' dataIndex='emergencyContact' align="center" />
                     <Table.Column<Athlete> key='emergencyContactPhone' title='紧急联系电话' dataIndex='emergencyContactPhone' align="center" />
-                    <Table.Column<Athlete> key='action' title='操作' dataIndex='action' align="center" />
+                    <Table.Column<Athlete> key='action' title='操作' dataIndex='action' align="center" render={changeOrDelDOM} />
                 </Table>
             </Layout.Content>
             <Modal
@@ -312,7 +328,6 @@ function AthletesList(props:athletesProps) {
                     width={960}
                     footer={null}
             >
-                {/* <AddAthleteForm closeModal={closemodal} test={key} modifyConfirm={modifyConfirm} judge={judgeReset} unitID={props.unitData[0] === undefined ? 0 : props.unitData[0].id} /> */}
                 <AddAthleteForm resetField={judgeReset} tablekey={key} submit={handleSubmit} />
             </Modal>
         </Layout>
