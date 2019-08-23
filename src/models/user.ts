@@ -1,9 +1,9 @@
 import { Model, EffectsCommandMap } from 'dva'
 import { AnyAction } from 'redux';
 import { checkVerificationCode, accountdata } from '@/services/login.ts';
-import { message } from 'antd';
 import router from 'umi/router';
-import { addplayer } from '@/services/athlete';
+import { addplayer, deletePlayer } from '@/services/athlete';
+import { message } from 'antd';
 
 // 单位账号的data
 export interface UnitData {
@@ -33,6 +33,7 @@ export interface AthleteData {
   province?: string | null
   sex?: string
   user?: number
+  id?: number
 }
 
 const USER_MODEL:Model = {
@@ -52,7 +53,7 @@ const USER_MODEL:Model = {
     unitaccount:'',
     errorstate:'',
 
-    token:'',
+
   },
   reducers: {
     // 存手机进state
@@ -76,13 +77,6 @@ const USER_MODEL:Model = {
       state.username = action.payload.username;
       state.email = action.payload.email;
       state.unitaccount = action.payload.unitaccount;
-      return state;
-    },
-    // 将本地的token设置到store中
-    setStoreByLocal(state: any, action: AnyAction): object {
-      const { payload } = action;
-      // state类型未定
-      state.token = payload.token;
       return state;
     },
     // 修改errorstate,请求发送后的错误信息
@@ -128,7 +122,6 @@ const USER_MODEL:Model = {
       state.phonenumber = '';
       state.email = '';
       state.unitaccount = '';
-      state.token = '';
       state.errorstate = '';
       return state;
     }
@@ -166,12 +159,15 @@ const USER_MODEL:Model = {
     },
     // 获取账号基本信息
     * getAccountData(action: AnyAction, effect: EffectsCommandMap) {
+      const { put } = effect;
       let res = yield accountdata();
       console.log(res);
       if (res) {
         if (res.data.unitaccount === 2) {
           // ===2 代表是单位账号，还要多一项操作是调用获取单位账号下的运动员信息的接口
           yield effect.put({type: 'saveUnitAccount', payload: res.data});
+          // 将unitData 设置
+          yield put({type: 'enroll/modifyUnitData',payload: {unitData: res.data.unitdata[0]}})
         }else {
           // 代表是个人账号
           yield effect.put({type: 'savePerson', payload: res.data});
@@ -186,7 +182,17 @@ const USER_MODEL:Model = {
     },
     // 删除运动员信息
     * deleteAthlete(action: AnyAction, effect: EffectsCommandMap) {
-      yield console.log(action.payload);
+      let unitadata:UnitData = yield effect.select((state:any) => (state.user.unitData[0]));
+      let res = yield deletePlayer({
+        unitdata: String(unitadata.id),
+        athlete: String(unitadata.unitathlete[action.payload].athlete.id)
+      });
+      if(res && res.error === '') {
+        message.success('删除成功');
+        yield effect.put({type:'getAccountData'});
+      }else {
+        message.error(res.error);
+    }
     }
   }
 };

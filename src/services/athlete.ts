@@ -14,3 +14,8 @@ export async function addplayer(data: object): Promise<any> {
 export async function updatePlayer(data: object): Promise<any> {
   return axiosInstance.post('/updateathletedata/', data);
 }
+
+// 删除运动员信息
+export async function deletePlayer(data: object): Promise<any> {
+  return axiosInstance.delete('/unitathlete/', { data: data } );
+}

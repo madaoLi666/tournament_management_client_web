@@ -74,6 +74,7 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
 
     // @ts-ignore
     // @ts-ignore
+    // @ts-ignore
     return (
       <div className={styles['introduction-page']}>
         <div className={styles['pic-block']}>

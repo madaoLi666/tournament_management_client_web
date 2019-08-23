@@ -29,6 +29,10 @@ function HomeLayout(props: any) {
   useEffect(() => {
     const { dispatch } = props;
     dispatch({type: 'gameList/getGameList'});
+    const token = window.localStorage.getItem('TOKEN');
+    if(token !== null){
+      dispatch({type: 'user/getAccountData'});
+    }
   });
 
   return (

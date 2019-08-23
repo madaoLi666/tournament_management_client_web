@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'dva';
 import { Button, Card, Col, Form, Input, Row, Tabs, Modal, message } from 'antd';
 import AddressInput from '@/components/AddressInput/AddressInput.tsx';
@@ -119,12 +119,12 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
       this.setState({
         validStatus: 'success'
       })
-    }
+    };
     const setError = () => {
       this.setState({
         validStatus: 'error'
       })
-    }
+    };
     const { unitNameIsLegal } = this.props;
 
     if (e.currentTarget.value === "" || e.currentTarget.value === null || e.currentTarget.value === undefined) {

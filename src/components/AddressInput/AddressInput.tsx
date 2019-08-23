@@ -45,7 +45,7 @@ const changeResidenceData2Option = (data: object): Array<CascaderOptionType>|und
 * onChange: Function
 *
 * */
-function AddressInput ({value = {}, onChange}:any, ref:any){
+function AddressInput ({value = {}, onChange}:any, ref:any,){
 
   const [city, setCity] = useState(value.city || []);
   const [address, setAddress] = useState(value.address || '');
@@ -69,6 +69,7 @@ function AddressInput ({value = {}, onChange}:any, ref:any){
             setCity(value);
             triggerChange({city: value})
           }}
+          // defaultValue={props.defaultResidence}
         />
         <Input
           style={{width: '70%'}}

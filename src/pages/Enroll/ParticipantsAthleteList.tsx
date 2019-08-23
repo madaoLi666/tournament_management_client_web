@@ -28,7 +28,6 @@ interface AthleteInfoFormProps extends FormComponentProps{
   emitData:(data:object) => void
 }
 
-
 // 转base64
 function getBase64 (file: any) {
   return new Promise((resolve, reject) => {
@@ -88,11 +87,11 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
     this.props.form.resetFields(['certificationNumber', 'sex', 'certificationNumber']);
   };
 
-  vaildateEmail = (rule: any, value: any, callback: Function) => {
+  validateEmail = (rule: any, value: any, callback: Function) => {
     return (value === '' || checkEmail.test(value)) ? callback() : callback('请填写正确的邮箱地址');
   };
 
-  vaildatePhoneNumber = (rule: any, value: any, callback: Function) => {
+  validatePhoneNumber = (rule: any, value: any, callback: Function) => {
     return (value === '' || checkPhoneNumber.test(value)) ? callback() : callback('请填写正确的手机号码');
   };
 
@@ -225,14 +224,14 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
           </Item>
           <Item label='联系电话'>
             {getFieldDecorator('phone',{
-              rules: [{validator: this.vaildatePhoneNumber}]
+              rules: [{validator: this.validatePhoneNumber}]
             })(
               <Input/>
             )}
           </Item>
           <Item label='邮箱'>
             {getFieldDecorator('email',{
-              rules: [{validator: this.vaildateEmail}]
+              rules: [{validator: this.validateEmail}]
             })(
               <Input/>
             )}

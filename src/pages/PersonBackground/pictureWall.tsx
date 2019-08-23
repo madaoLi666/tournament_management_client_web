@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Upload, Icon, Modal, message } from 'antd';
+import { Upload, Modal, message } from 'antd';
 import {  UploadChangeParam, RcFile } from 'antd/lib/upload/interface';
+import { FaPlus } from 'react-icons/fa';
 
 function getBase64(file:any) {
   return new Promise((resolve, reject) => {
@@ -54,7 +55,7 @@ class PicturesWall extends React.Component<any,any> {
     const { previewVisible, previewImage, fileList } = this.state;
     const uploadButton = (
       <div>
-        <Icon type="plus" />
+        <FaPlus type="plus" />
         <div className="ant-upload-text">
           上传头像<br/>(可选项)
         </div>

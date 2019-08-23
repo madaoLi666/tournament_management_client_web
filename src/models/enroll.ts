@@ -14,6 +14,19 @@ const ENROLL_MODEL: Model = {
       const { matchId } = action.payload;
       state.currentMatchId = matchId;
       return state;
+    },
+    modifyUnitData(state: any, action: AnyAction){
+      const { unitData } = action.payload;
+      state.unitData = {
+        id: unitData.id,
+        unitName: unitData.name,
+        province: unitData.province,
+        address: unitData.address,
+        email: unitData.email,
+        contactPerson: unitData.contactperson,
+        contactPhone: unitData.contactphone,
+      };
+      return state;
     }
   },
   effects: {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import {  Form, Button, Input, Row, Col, Select, DatePicker, message } from 'antd';
 import AddressInput from '@/components/AddressInput/AddressInput.tsx';
 import { FormComponentProps } from 'antd/lib/form';
-import { connect, DispatchProp } from 'dva';
+import { connect } from 'dva';
 import { checkIDCard } from '@/utils/regulars';
 import moment from 'moment'
 import PicturesWall from './pictureWall';
@@ -86,6 +86,10 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
     public handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         this.props.form.validateFieldsAndScroll((err: Error,values: any) => {
+            if(values.birthday === undefined) {
+                message.error('请确认出生年月日是否已填');
+                return;
+            }
             if(!err) {
                 // 如果没有表格的key，代表是从添加运动员按钮进来的
                 if (this.props.tablekey === '') {
@@ -194,13 +198,12 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
                 </Form.Item>
                 <Form.Item label="出生年月日">
                     {getFieldDecorator('birthday',{
-                        rules: [{type: 'object', required: true, message: '请选择时间！'}]
                     })(<DatePicker placeholder="请选择出生年月日" disabled={isIDCard} />)}
                 </Form.Item>
                 <Form.Item label="联系电话">
                     {getFieldDecorator('phone',{
                         initialValue:null,
-                        rules: [{pattern:/1[3578]\d{9}/, message:'请检查联系电话是否正确'}]
+                        rules: [{pattern:/^1[3578]\d{9}$/, message:'请检查联系电话是否正确'}]
                     })(<Input/>)}
                 </Form.Item>
                 <Form.Item label="邮箱">
@@ -224,7 +227,7 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
                 <Form.Item label="紧急联系人电话">
                     {getFieldDecorator('emergencyContactPhone',{
                         initialValue:null,
-                        rules: [{pattern:/1[3578]\d{9}/, message:'请检查联系电话是否正确'}]
+                        rules: [{pattern:/^1[3578]\d{9}$/, message:'请检查联系电话是否正确'}]
                     })(<Input />)}
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
