@@ -10,7 +10,6 @@ import { addplayer, updatePlayer } from '@/services/athlete';
 import styles from './index.less';
 
 const { confirm } = Modal;
-
 // 表格接口 key 是编号
 interface Athlete {
     key: string;

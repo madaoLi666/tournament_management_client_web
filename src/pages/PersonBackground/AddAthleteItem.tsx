@@ -74,7 +74,7 @@ const tailFormItemLayout = {
       lg: { span: 16, offset: 4 },
     },
 };
-  
+
 class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
     constructor(props: AddFormProps & FormComponentProps) {
         super(props);
@@ -150,11 +150,11 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
 
     render() {
         const { getFieldDecorator } = this.props.form;
-        const { isIDCard } = this.state; 
+        const { isIDCard } = this.state;
         const prefixSelector = getFieldDecorator('idCardType', {
             initialValue: '大陆身份证',
             })(
-            <Select 
+            <Select
                 onChange={this.handlerCertificationTypeChange}
                 style={{ width: 130 }}
             >
@@ -163,7 +163,7 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
                 <Select.Option value="passport">护照</Select.Option>
             </Select>,
             );
-        
+
         return (
             <Form layout="horizontal" {...formItemLayout} onSubmit={this.handleSubmit}>
                 <Form.Item style={{marginLeft:"45%"}}>

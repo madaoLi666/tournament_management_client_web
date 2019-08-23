@@ -6,7 +6,18 @@ import { checkPhoneNumber, checkEmail } from '@/utils/regulars';
 // @ts-ignore
 import styles from './index.less';
 
-
+interface UnitInfo {
+  // 单位id
+  unitdata:number;
+  // 赛事id
+  matchdata:number;
+  // 本场赛事单位id
+  name:number;
+  leader:string; leaderphonenumber:string;
+  coachone?:string; coachonephonenumber?:string;
+  coachtwo?:string; coachotwophonenumber?:string;
+  dutybook: File
+}
 
 const { Option } = Select;
 

@@ -1,9 +1,19 @@
 import { IConfig } from 'umi-types';
+import * as webpack from 'webpack';
+import * as IWebpackChainConfig from 'webpack-chain'
+const ImageminPlugin = require('imagemin-webpack-plugin').default;
 
 // ref: https://umijs.org/config/
 const config: IConfig =  {
   //
   routes:[
+    // 主页
+    { path: '/home', Routes: ['./src/layouts/HomeLayout.tsx'],
+      routes: [
+        { path: '/home', component: './Home/index.tsx', name: '主页' },
+        { path: '/home/introduction', component: './Home/Introduction.tsx', name: '赛事介绍页面' },
+      ]
+    },
     // 登陆页面
     {
       path: '/login', name: '登陆模块',
@@ -30,20 +40,69 @@ const config: IConfig =  {
       Routes: ['./src/layouts/BasicLayout.tsx','./src/pages/Authorized/Authorized.tsx'],
       routes: []
     },
-    // 主页
-    { path: '/home', Routes: ['./src/layouts/HomeLayout.tsx'],
-      routes: [
-        { path: '/home', component: './Home/index.tsx', name: '主页' },
-        { path: '/home/introduction', component: './Home/Introduction.tsx', name: '赛事介绍页面' },
-      ]
-    }
+    { path: '/', redirect: '/home' }
   ],
   treeShaking: true,
-  runtimePublicPath:true,
-  // lessLoaderOptions:{
-  //   test: /\.less$/,
-  //   use: [{loader: 'less-loader'}]
-  // },
+  chainWebpack(config: any) {
+    if(process.env.NODE_ENV !== 'development'){
+      config.optimization.splitChunks({
+        chunks: 'async',
+        minSize: 3000,
+        maxSize: 0,
+        minChunks: 1,
+        maxAsyncRequests: 5,
+        maxInitialRequests: 3,
+        automaticNameDelimiter: '~',
+        name: true,
+        cacheGroups: {
+          vendors: {
+            name: 'vendors',
+            chunks: 'all',
+            test: /[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|lodash|lodash-decorators|redux-saga|re-select|dva|moment)[\\/]/,
+            priority: -11,
+          },
+          antdesigns: {
+            name: 'antdesigns',
+            chunks: 'all',
+            test: /[\\/]node_modules[\\/]antd[\\/]/,
+            priority: -10,
+          },
+          icons: {
+            name: 'icons',
+            chunks: 'all',
+            test: /[\\/]node_modules[\\/]@ant-design[\\/]/,
+            priority: -9,
+          },
+        },
+      });
+      config.plugin('ignore')
+        .use(webpack.IgnorePlugin,[/^\.\/locale$/,/moment$/]);
+      // config.plugin('image')
+      //   .use(ImageminPlugin,[{
+      //     disable: process.env.NODE_ENV === 'development',
+      //     test: /\.(jpe?g|png|svg|gif)$/i,
+      //     optipng: {
+      //       optimizationLevel: 9
+      //     }
+      //   }]);
+      config.module
+        .rule('compile')
+        .test(/\.(js|jsx)$/)
+        .include
+        .add('/src')
+        .end()
+        .use('babel')
+        .loader('babel-loader')
+        .options({
+          presets: ["react","typescript","env"],
+          plugins: [
+            ["import", [{libraryName: "antd", style: true}]]
+          ],
+          // "customName": require('path').resolve(__dirname, './customName.js')
+        })
+    }
+
+  },
   plugins: [
     // ref: https://umijs.org/plugin/umi-plugin-react.html
     ['umi-plugin-react', {
@@ -52,10 +111,17 @@ const config: IConfig =  {
       dynamicImport: { webpackChunkName: true },
       title: 'userEntryPage',
       dll: true,
-      headScripts: [
-        {src: 'https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js'}
-      ],
-    }],
+      // chunks: ['vendors','antdesigns','icons','umi'],
+      routes: {
+        exclude: [
+          /models\//,
+          /services\//,
+          /model\.(t|j)sx?$/,
+          /service\.(t|j)sx?$/,
+          /components\//,
+        ],
+      },
+    }]
   ]
 };
 

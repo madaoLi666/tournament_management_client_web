@@ -181,6 +181,4 @@ function Login(props: SendCodeProps) {
   );
 }
 // 手机验证码登陆的 connect
-export default connect((state: any): object => {
-    return{}
-})(Login);
+export default connect()(Login);

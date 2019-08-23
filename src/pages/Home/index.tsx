@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Carousel, Row, Col
 } from 'antd';
+import { getHomePic } from '@/services/gamelist.ts';
 import router from 'umi/router';
 import { connect } from 'dva';
 import { ColProps } from 'antd/lib/grid';
@@ -21,17 +22,27 @@ const adjustCol: ColProps = {
 
 
 class Home extends React.Component<any,any>{
-
-
-  componentDidMount(): void {
-    const { dispatch } = this.props;
-    dispatch({type: 'gameList/getGameList'});
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      homePicArr: []
+    };
   }
 
-
+  componentDidMount(): void {
+    getHomePic().then(res => {
+      console.log(res);
+      if(res.data.length !== 0 && res.error === "") {
+        this.setState({homePicArr: res.data.map((v:any) => (v.file))});
+      }else {
+        console.log('图片获取失败');
+      }
+    })
+  }
 
   render():React.ReactNode {
     const { gameList } = this.props;
+    const { homePicArr } = this.state;
     let gameListDOM: React.ReactNode = [];
     gameList.forEach((v:any) => {
       // @ts-ignore
@@ -51,20 +62,21 @@ class Home extends React.Component<any,any>{
       )
     });
 
+    let carouselDOM: React.ReactNode = [];
+    if(homePicArr.length !== 0){
+      carouselDOM = homePicArr.map((v:string) => (
+        <div className={styles['carousel-item']} key={v.slice(-13,-5)}>
+          <img src={v} alt=""/>
+        </div>
+      ));
+    }
+
     return (
       <div className={styles['home-page']}>
         {/* 走马灯 */}
         <div>
           <Carousel autoplay={true} afterChange={() => {}} className={styles.carousel}>
-            <div className={styles['carousel-item']}>
-              <img src={require("@/assets/homepic1.jpg")} alt=""/>
-            </div>
-            <div className={styles['carousel-item']} >
-              <img src={require("@/assets/homepic2.jpg")} alt=""/>
-            </div>
-            <div className={styles['carousel-item']} >
-              <img src={require("@/assets/homepic3.jpg")} alt=""/>
-            </div>
+            {carouselDOM}
           </Carousel>
         </div>
         {/* 赛事列表 */}

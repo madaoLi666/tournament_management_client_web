@@ -101,7 +101,9 @@ function BasicLayout(props: any) {
           {props.children}
         </div>
       </Content>
-      <Footer style={{ textAlign: 'center' }}>This is a Footer</Footer>
+      <Footer style={{ textAlign: 'center' }}>
+        <span>广州青苔科技有限公司 版权所有  粤ICP备19028504号</span>
+      </Footer>
     </Layout>
   );
 }

@@ -367,6 +367,8 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
   // 图片
   const [picUrl,setPicUrl] = useState('');
 
+  const [currentUnitData,setCurrentUnitData] = useState({});
+
   // 传入 NewUnitForm 中，已提供外部的表单处理
   // 这里可以拿到表单的信息
   async function submitRegister(data: any): Promise<any> {
@@ -384,6 +386,8 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
       }else{
         message.error('获取支付二维码失败')
       }
+      // edo
+      setCurrentUnitData({userId: userId, ...data});
     }else{
       dispatch({type: 'register/registerUnitAccount', payload: {unitData: {userId: userId,...data}} });
     }
@@ -414,6 +418,7 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
 
   // 打开dialog
   function openDialog() {
+    const { dispatch } = props;
     // 打开modal展示图片同时进行轮询
     setVisible(true);
     let i = setInterval(() => {
@@ -422,6 +427,9 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
           // 如果支付了
           closeDialog();
           clearInterval(i);
+          // edo
+          dispatch({type: 'register/registerUnitAccount', payload: currentUnitData });
+
           message.success('已成功支付单位注册费用，请再次点击注册');
         }
       });
