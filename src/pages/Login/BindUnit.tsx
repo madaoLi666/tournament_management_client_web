@@ -1,6 +1,6 @@
-import React, { useState, forwardRef } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'dva';
-import { Button, Card, Col, Form, Input, Row, Tabs, Modal, message, Statistic } from 'antd';
+import { Button, Card, Col, Form, Input, Row, Tabs, Modal, message } from 'antd';
 import AddressInput from '@/components/AddressInput/AddressInput.tsx';
 import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
 import { ColProps } from 'antd/lib/grid';
@@ -8,8 +8,6 @@ import { Dispatch } from 'redux';
 import { checkEmail, checkPhoneNumber } from '@/utils/regulars.ts';
 import { getQRCodeForUnitRegister, checkUnitIsPay, } from '@/services/pay';
 import { newUnitAccount } from '@/services/register';
-
-const { Countdown } = Statistic;
 
 // @ts-ignore
 import styles from './index.less';
