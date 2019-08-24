@@ -2,10 +2,10 @@ import React from 'react';
 import { Tabs, Button, Col, Row, message } from 'antd';
 import StaticHtmlPage from '@/components/StaticHtmlPage/StaticHtmlPage'
 import { connect } from 'dva';
+import { Dispatch } from 'redux';
 import router from 'umi/router';
 // @ts-ignore
 import styles from './index.less';
-import { Dispatch } from 'redux';
 
 const { TabPane } = Tabs;
 
@@ -36,9 +36,12 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
 
   enterEnrollChannel = () => {
     // message.warn('尚未到报名时段');
-    const { dispatch } = this.props;
+    const { dispatch, unitId } = this.props;
     const { currentGameData } = this.state;
     if(currentGameData.id !== undefined && currentGameData.id !== -1) {
+
+      // 把matchId存入本地
+      window.localStorage.setItem('MATCH_ID',currentGameData.id);
       dispatch({type: 'enroll/modifyCurrentMatchId', payload: {matchId: currentGameData.id}});
       router.push('/enroll/editUnitInfo');
     }else{
@@ -116,6 +119,9 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
 }
 
 
-export default connect(({gameList}:any) => {
-  return {gameList: gameList.gameList};
+export default connect(({gameList, enroll}:any) => {
+  return {
+    gameList: gameList.gameList,
+    unitId: enroll.unitInfo.id
+  };
 })(IntroductionPage)

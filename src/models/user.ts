@@ -161,13 +161,12 @@ const USER_MODEL:Model = {
     * getAccountData(action: AnyAction, effect: EffectsCommandMap) {
       const { put } = effect;
       let res = yield accountdata();
-      console.log(res);
       if (res) {
         if (res.data.unitaccount === 2) {
           // ===2 代表是单位账号，还要多一项操作是调用获取单位账号下的运动员信息的接口
           yield effect.put({type: 'saveUnitAccount', payload: res.data});
           // 将unitData 设置
-          yield put({type: 'enroll/modifyUnitData',payload: {unitData: res.data.unitdata[0]}})
+          yield put({type: 'enroll/modifyUnitInfo',payload: {unitInfo: res.data.unitdata[0]}})
         }else {
           // 代表是个人账号
           yield effect.put({type: 'savePerson', payload: res.data});

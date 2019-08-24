@@ -6,7 +6,7 @@ import { Row, Col, Card, Tabs, Form, Input, Button, Modal, message } from 'antd'
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
 import { personalAccountRegister,PersonInfo } from '@/services/register.ts';
-import { checkEmail, checkPhoneNumber } from '@/utils/regulars';
+import { checkEmail } from '@/utils/regulars';
 
 
 

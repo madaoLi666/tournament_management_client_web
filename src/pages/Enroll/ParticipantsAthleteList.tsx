@@ -3,16 +3,20 @@ import { Form, Upload, Table, Input, Button, Modal, message, Select, DatePicker 
 import moment from 'moment';
 import { FaPlus } from 'react-icons/fa';
 import AddressInput from '@/components/AddressInput/AddressInput';
+import { connect } from 'dva';
 
 import { UploadChangeParam } from 'antd/lib/upload';
 import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
 import { ModalProps } from 'antd/lib/modal';
 import { ColumnProps } from 'antd/lib/table';
 
+import { newUnitAthlete } from '@/services/enroll.ts';
+
 import { checkPhoneNumber, checkEmail, checkIDCard } from '@/utils/regulars';
 
 // @ts-ignore
 import styles from './index.less';
+import { Dispatch } from 'redux';
 const { Option } = Select;
 const { Item } = Form;
 // 样式
@@ -86,15 +90,14 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
     }
     this.props.form.resetFields(['certificationNumber', 'sex', 'certificationNumber']);
   };
-
+  // 邮箱验证
   validateEmail = (rule: any, value: any, callback: Function) => {
-    return (value === '' || checkEmail.test(value)) ? callback() : callback('请填写正确的邮箱地址');
+    return (value === undefined || value === '' || checkEmail.test(value)) ? callback() : callback('请填写正确的邮箱地址');
   };
-
+  // 手机验证
   validatePhoneNumber = (rule: any, value: any, callback: Function) => {
-    return (value === '' || checkPhoneNumber.test(value)) ? callback() : callback('请填写正确的手机号码');
+    return (value === undefined || value === '' || checkPhoneNumber.test(value)) ? callback() : callback('请填写正确的手机号码');
   };
-
 
   // 处理表单提交
   // 只会有一个文件
@@ -257,7 +260,9 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
 
 const AIForm = Form.create<AthleteInfoFormProps>()(AthleteInfoForm);
 
-function ParticipantsAthleteList() {
+function ParticipantsAthleteList(props:{matchId: number, unitId: number , dispatch: Dispatch}) {
+
+  const { matchId, unitId } = props;
 
   const [visible, setVisible] = useState(false);
 
@@ -271,8 +276,34 @@ function ParticipantsAthleteList() {
     onCancel: () => setVisible(false)
   };
 
-  function submitNewAthleteData(data: object) {
-    console.log(data);
+  function submitAthleteData(data: any) {
+    const { dispatch } = props;
+
+    let formData = new FormData();
+    formData.append('idcard',data.identifyNumber);
+    formData.append('name',data.name);
+    formData.append('idcardtype',data.idCardType);
+    formData.append('sex',data.sex);
+    formData.append('birthday',data.birthday.format('YYYY-MM-DD hh:mm:ss'));
+    formData.append('phonenumber',data.phone !== undefined ? data.phone : "");
+    formData.append('email',data.email !== undefined ? data.email : "" );
+    formData.append('province',data.residence.city !== undefined ? data.residence.city.join('-') : "" );
+    formData.append('address',data.residence.address !== undefined ? data.residence.address : "" );
+    formData.append('face',data.image.originFileObj);
+    formData.append('unitdata', unitId.toString());
+
+    newUnitAthlete(formData,{headers:{"Content-Type": "multipart/form-data"}})
+      .then(res => {
+        console.log(res);
+        // 判断
+        if(res.error === "" && res.notice === "") {
+          dispatch({
+            type: "checkIsEnrollAndGetAthleteLIST",
+            payload: { unitId, matchId }
+          })
+        }
+      });
+
   }
 
   return (
@@ -280,11 +311,25 @@ function ParticipantsAthleteList() {
       <Button onClick={() => {setVisible(true)}}>open</Button>
       <Modal {...modalProps}>
         <AIForm
-          emitData={submitNewAthleteData}
+          emitData={submitAthleteData}
         />
       </Modal>
     </div>
   );
 }
 
-export default ParticipantsAthleteList;
+export default connect(({enroll}:any) => {
+  // console.log(enroll);
+  return {
+    matchId: enroll.currentMatchId,
+    unitId: enroll.unitInfo.id
+  };
+  // const { unitData } = enroll;
+  // console.log(unitData);
+  // if(Object.keys(unitData) === 0){
+  //   return {unitName:false}
+  // }
+  // return {
+  //  unitName: unitData.unitName
+  // }
+})(ParticipantsAthleteList);

@@ -4,12 +4,14 @@ import AddressInput from '@/components/AddressInput/AddressInput.tsx';
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
 import { checkIDCard } from '@/utils/regulars';
-import moment from 'moment'
+import moment,{ Moment } from 'moment'
 import PicturesWall from './pictureWall';
+import { UploadFile } from 'antd/lib/upload/interface';
 
 // 表单State
 interface State {
     isIDCard: boolean;
+    file?: any;
 }
 
 // 表单Props
@@ -27,12 +29,12 @@ interface AddFormProps {
 
 // 表单的属性名
 export interface formFields {
-    image?: File | undefined | null
+    image?: UploadFile | undefined | null
     name?: string
     identifyID?: string
     idCardType?: string
     sex?: string
-    birthday?: string
+    birthday?: Moment
     phone?: string | undefined | null
     email?: string | undefined | null
     residence?: {
@@ -80,17 +82,26 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
         super(props);
         this.state = {
             isIDCard: true,
+            file:{}
         };
     }
     // 提交表单
     public handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         this.props.form.validateFieldsAndScroll((err: Error,values: any) => {
-            if(values.birthday === undefined) {
-                message.error('请确认出生年月日是否已填');
-                return;
-            }
             if(!err) {
+                if(this.state.file) {
+                    values.image = this.state.file;
+                }
+                if(values.birthday === undefined) {
+                    message.error('请确认出生年月日是否已填');
+                    return;
+                }
+                if(values.residence) {
+                    for(let i = 0; i < 3; i++) {
+                        values.residence.city[i] += '-'
+                    }
+                }
                 // 如果没有表格的key，代表是从添加运动员按钮进来的
                 if (this.props.tablekey === '') {
                     this.props.submit(values,'register');
@@ -148,6 +159,12 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
     componentDidMount() {
     }
 
+    getFile = (file: UploadFile) => {
+        this.setState({
+            file: file.originFileObj
+        })
+    }
+
     render() {
         const { getFieldDecorator } = this.props.form;
         const { isIDCard } = this.state;
@@ -168,8 +185,8 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
             <Form layout="horizontal" {...formItemLayout} onSubmit={this.handleSubmit}>
                 <Form.Item style={{marginLeft:"45%"}}>
                     {getFieldDecorator('image',{
-                        initialValue:null
-                    })(<PicturesWall />)}
+                        initialValue:''
+                    })(<PicturesWall getFile={this.getFile} />)}
                 </Form.Item>
                 <Form.Item label="姓名">
                     {getFieldDecorator('name',{
@@ -202,13 +219,13 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
                 </Form.Item>
                 <Form.Item label="联系电话">
                     {getFieldDecorator('phone',{
-                        initialValue:null,
+                        initialValue:'',
                         rules: [{pattern:/^1[3578]\d{9}$/, message:'请检查联系电话是否正确'}]
                     })(<Input/>)}
                 </Form.Item>
                 <Form.Item label="邮箱">
                     {getFieldDecorator('email',{
-                        initialValue:null,
+                        initialValue:'',
                         rules: [{type: 'email', message: '请输入正确的邮箱格式'}]
                     })(<Input />)}
                 </Form.Item>
@@ -220,13 +237,13 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
                 </Form.Item>
                 <Form.Item label="紧急联系人">
                     {getFieldDecorator('emergencyContact',{
-                        initialValue:null,
+                        initialValue:'',
                         rules: []
                     })(<Input/>)}
                 </Form.Item>
                 <Form.Item label="紧急联系人电话">
                     {getFieldDecorator('emergencyContactPhone',{
-                        initialValue:null,
+                        initialValue:'',
                         rules: [{pattern:/^1[3578]\d{9}$/, message:'请检查联系电话是否正确'}]
                     })(<Input />)}
                 </Form.Item>
@@ -249,6 +266,11 @@ const AddAthleteForm = connect(formStateToProps)(Form.create<AddFormProps & Form
             // 生日，re是正则匹配，用于替换，处理数据库中的birth字符串
             let birth = props.user.unitathlete[Number(props.tablekey)-1].athlete.birthday as string;
             let re = /-/gi;
+            let city = props.user.unitathlete[Number(props.tablekey)-1].athlete.province as string;
+            let citys:string[];
+            if (city !== null) {
+                citys = city.split('-',3);
+            }
 
             return {
                 name: Form.createFormField({
@@ -274,6 +296,12 @@ const AddAthleteForm = connect(formStateToProps)(Form.create<AddFormProps & Form
                 }),
                 birthday: Form.createFormField({
                     value: moment(birth.substr(0,10).replace(re,''))
+                }),
+                residence: Form.createFormField({
+                    value:{
+                        address: props.user.unitathlete[Number(props.tablekey)-1].athlete.address,
+                        city: citys
+                    }
                 })
             }
         }

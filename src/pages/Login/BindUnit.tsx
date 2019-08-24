@@ -8,8 +8,6 @@ import { Dispatch } from 'redux';
 import { checkEmail, checkPhoneNumber } from '@/utils/regulars.ts';
 import { getQRCodeForUnitRegister, checkUnitIsPay, } from '@/services/pay';
 import { newUnitAccount } from '@/services/register';
-
-
 // @ts-ignore
 import styles from './index.less';
 

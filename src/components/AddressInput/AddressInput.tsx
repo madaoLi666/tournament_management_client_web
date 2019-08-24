@@ -50,7 +50,7 @@ function AddressInput ({value = {}, onChange}:any, ref:any,){
   const [city, setCity] = useState(value.city || []);
   const [address, setAddress] = useState(value.address || '');
 
-  const r = changeResidenceData2Option(RESIDENCE_DATA);
+  let r = changeResidenceData2Option(RESIDENCE_DATA);
 
   function triggerChange(changeValue:any):void{
     if(onChange){
@@ -65,6 +65,7 @@ function AddressInput ({value = {}, onChange}:any, ref:any,){
           placeholder="请选择省份城市"
           options={r}
           style={{width: '30%'}}
+          value={"city" in value ? value.city : city}
           onChange={value => {
             setCity(value);
             triggerChange({city: value})
@@ -78,6 +79,7 @@ function AddressInput ({value = {}, onChange}:any, ref:any,){
             setAddress(address);
             triggerChange({address})
           }}
+          value={"address" in value ? value.address : address}
         />
       </Input.Group>
     </div>

@@ -1,5 +1,5 @@
 import React,{ useEffect, useState } from 'react';
-import { Popover, PageHeader, Input, Button, Modal, Layout, Table, message } from 'antd';
+import { Popover, PageHeader, Input, Button, Modal, Layout, Table, message, Form } from 'antd';
 import { ColumnFilterItem, TableEventListeners, FilterDropdownProps, PaginationConfig, SorterResult } from 'antd/es/table';
 import AddAthleteForm,{ formFields } from './AddAthleteItem';
 import { connect } from 'dva';
@@ -8,6 +8,7 @@ import { addplayer, updatePlayer } from '@/services/athlete';
 import { FaSearch } from 'react-icons/fa'
 // @ts-ignore
 import styles from './index.less';
+import { UploadFile } from 'antd/lib/upload/interface';
 
 const { confirm } = Modal;
 // 表格接口 key 是编号
@@ -222,19 +223,22 @@ function AthletesList(props:athletesProps) {
 
     // 表单提交方法
     let handleSubmit = (values: formFields, todo: string) => {
+        var formData = new FormData();
+
         let citys:string = '';
         let myAddress:string = '';
-        // TODO image暂时传null，还没完成该功能
-        let myImage:File = null;
-
         // 如果用户填写了地址，那么将该地址转换成字符串
         if (values.residence) {
             citys = values.residence.city.join("");
             myAddress = values.residence.address
         }else {
-            myAddress = null;
-            citys = null;
+            myAddress = '';
+            citys = '';
         }
+
+        // if (Object.keys(values.image).length === 0) {
+        //     values.image = '';
+        // }
 
         // 传过去的data
         let data = {
@@ -249,16 +253,31 @@ function AthletesList(props:athletesProps) {
             address: myAddress,
             emergencycontactpeople: values.emergencyContact,
             emergencycontactpeoplephone: values.emergencyContactPhone,
-            face: myImage,
+            // face: values.image,
             unitdata: unitData[0] === undefined ? 0 : unitData[0].id
         }
+
+        formData.append('idcard',data.idcard);
+        formData.append('name',data.name);
+        formData.append('idcardtype',data.idcardtype);
+        formData.append('sex',data.sex);
+        formData.append('birthday',data.birthday.format('YYYY-MM-DD') + ' 00:00:00');
+        formData.append('phonenumber',data.phonenumber);
+        formData.append('email',data.email);
+        formData.append('province',data.province);
+        formData.append('address',data.address);
+        formData.append('emergencycontactpeople',data.emergencycontactpeople);
+        formData.append('emergencycontactpeoplephone',data.emergencycontactpeoplephone);
+        // @ts-ignore
+        // formData.append('face',data.face);
+        formData.append('unitdata', String(data.unitdata));
 
         let res: Promise<any>;
 
         if (todo === 'register') {
-            res = addplayer(data)
+            res = addplayer(formData)
         } else if (todo === 'update') {
-            res = updatePlayer(data);
+            res = updatePlayer(formData);
         }
 
         res.then((resp) => {

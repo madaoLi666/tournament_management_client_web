@@ -1,10 +1,33 @@
-import * as React from 'react';
-import { Layout } from 'antd';
+import React,{ useEffect } from 'react';
+import { Layout, message } from 'antd';
+import { connect } from 'dva';
+import router from 'umi/router';
+import { Dispatch } from 'redux';
 // @ts-ignore
 import styles from './index.less';
+
 const { Header, Content, Footer } = Layout;
 
-export default function SignUP(props: any) {
+function EnrollLayout(props: {dispatch: Dispatch, children: React.ReactNode}) {
+
+
+  useEffect(() => {
+    const { dispatch } = props;
+    const token = window.localStorage.getItem('TOKEN');
+    const matchId = window.localStorage.getItem('MATCH_ID');
+    if(token !== null){
+      dispatch({type: 'user/getAccountData'});
+      if(matchId !== null) {
+        dispatch({type: 'enroll/modifyCurrentMatchId', payload: {matchId: matchId}});
+      }else {
+        message.error('请选择赛事');
+        router.push('/home');
+      }
+    }else {
+      message.error('登陆过期，请重新登陆');
+      router.push('/login');
+    }
+  });
 
   return (
     <div className={styles['enroll-layout']}>
@@ -22,3 +45,5 @@ export default function SignUP(props: any) {
     </div>
   );
 }
+
+export default connect()(EnrollLayout);
