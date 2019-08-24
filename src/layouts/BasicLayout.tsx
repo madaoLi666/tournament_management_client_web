@@ -4,16 +4,31 @@ import { connect } from 'dva';
 import router from 'umi/router';
 import uRoutes from '@/config/router';
 
-import { Layout, Menu, Breadcrumb, Drawer, Button, Avatar } from 'antd';
+import { Layout, Menu, Breadcrumb, Drawer, Button, Avatar, Typography, Row, Col } from 'antd';
 import { FaList, FaSearch, FaRegBell } from 'react-icons/fa';
 // @ts-ignore
 import styles from './index.less';
-import { Dispatch } from 'redux';
 
 const { Header, Content, Footer } = Layout;
+const { Text, Title } = Typography;
 const { SubMenu } = Menu;
 const drawerStyle = {
   padding: '0px'
+};
+
+// Col 自适应
+const autoAdjust1 = {
+  xs: { span: 24 },
+  sm: { span: 14 },
+  md: { span: 10 }, 
+  lg: { span: 10 }, 
+};
+
+const autoAdjust2 = {
+  xs: { span: 24 },
+  sm: { span: 6,offset:4 },
+  md: { span: 4,offset:10 }, 
+  lg: { span: 4,offset:10 }, 
 };
 
 // 初始化菜单栏的Function 内部方法
@@ -52,15 +67,22 @@ function initialMenuDOM(routes: IRoute): ReactNode{
   return menuDOM;
 }
 
-interface BasicProps {
-  leaderName?: string
-  unitName?: string
-  athleteNumber?: number | null
-  dispatch?: Dispatch
-  children?: JSX.Element;
-}
+function BasicLayout(props: any) {
+  useEffect(() => {
+    props.dispatch({
+      type:'user/getAccountData'
+    })
+  })
+  
+  let leaderName:string;
+  let unitName:string;
+  let athleteNumber: number;
+  if(props.userInfo) {
+    leaderName = props.userInfo.athleteData[0].name;
+    unitName = props.userInfo.unitData[0].name;
+    athleteNumber = props.userInfo.unitathlete.length;
+  }
 
-function BasicLayout(props: BasicProps) {
   // 默认不显示抽屉
   const [visible, setVisible] = React.useState(false);
   function showDrawer() {setVisible(!visible);}
@@ -74,12 +96,6 @@ function BasicLayout(props: BasicProps) {
     });
     router.push('/login')
   }
-
-  useEffect(() => {
-    props.dispatch({
-      type:'user/getAccountData'
-    })
-  })
 
   return (
     <Layout style={{ minHeight: '100vh' }} className={styles['basic-layout']}>
@@ -98,17 +114,32 @@ function BasicLayout(props: BasicProps) {
           </Menu>
         </div>
       </Drawer>
-      <Header style={{ background: '#fff', padding: 0 , height: 250}}>
+      <Header style={{ background: '#fff', padding: 0 , height: "100%"}}>
         <div>
         <FaList className={styles['falist']} onClick={showDrawer} style={{width:28,height:28,marginLeft:16,marginTop:16}} />
         <Button type="link" onClick={signout} style={{float:"right",marginTop:"15px"}} >退出账号</Button>
         <FaRegBell className={styles['falist']} style={{float:"right",marginTop:"22px",width:20,height:20}} />
         <FaSearch className={styles['falist']} style={{marginRight:28,float:"right",marginTop:"22px",width:20,height:20}} />
         </div>
-        <div>
-          <Avatar style={{ backgroundColor: '#87d068' }} size={84} icon="user" />
-          <p>早安，{}，祝你工作顺利</p>
-        </div>
+        <Row>
+          <Col {...autoAdjust1}>
+            <div>
+              <div className={styles['headerMessage']} style={{display:"flex",marginLeft:10}} >
+                <Avatar style={{ backgroundColor: '#87d068',marginTop:20 }} size={84} icon="user" />
+                <div style={{display:"flex",flexWrap:"wrap",width:300,marginLeft:20}}>
+                  <p style={{fontSize:18,marginTop:8}} >早安，{leaderName === undefined ? null : leaderName}，祝你工作顺利</p>
+                  <p><strong>赛事职务：{unitName === undefined ? null : unitName}&nbsp;领队</strong></p>
+                </div>
+              </div>
+            </div>
+          </Col>
+          <Col {...autoAdjust2}>
+              <div style={{marginLeft:30}}>
+                <Text type="secondary">在册运动员</Text>
+                <Title style={{margin:0}} level={1} >{athleteNumber === undefined ? null : athleteNumber}</Title>
+              </div>
+          </Col>
+        </Row>
       </Header>
       <Content style={{ margin: '0 16px' }}>
         <Breadcrumb style={{ margin: '16px 0' }}>
@@ -125,15 +156,12 @@ function BasicLayout(props: BasicProps) {
   );
 }
 
-const mapStateToProps = ({user}:any) => {
-  let personMessage:BasicProps = {
-    // leaderName: user.
+const mapStateToProps = (state:any) => {
+  if(state.user.id !== ''){
+    return { userInfo: state.user};
   }
+  return {}
 }
 
-export default connect((store) => {
-  return {
-    // @ts-ignore
+export default connect(mapStateToProps)(BasicLayout);
 
-  }
-})(BasicLayout)
