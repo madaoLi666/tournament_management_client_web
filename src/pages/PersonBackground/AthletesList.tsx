@@ -227,18 +227,15 @@ function AthletesList(props:athletesProps) {
 
         let citys:string = '';
         let myAddress:string = '';
+        let myImage : UploadFile | File | string;
         // 如果用户填写了地址，那么将该地址转换成字符串
-        if (values.residence) {
+        if (values.residence !== undefined && values.residence.address !== ('' || null)) {
             citys = values.residence.city.join("");
             myAddress = values.residence.address
         }else {
             myAddress = '';
             citys = '';
         }
-
-        // if (Object.keys(values.image).length === 0) {
-        //     values.image = '';
-        // }
 
         // 传过去的data
         let data = {
@@ -253,8 +250,15 @@ function AthletesList(props:athletesProps) {
             address: myAddress,
             emergencycontactpeople: values.emergencyContact,
             emergencycontactpeoplephone: values.emergencyContactPhone,
-            // face: values.image,
+            face: values.image,
             unitdata: unitData[0] === undefined ? 0 : unitData[0].id
+        }
+
+        // 通过这个来判断空对象
+        if(!data.face.name) {
+            myImage = '';
+        }else {
+            myImage = data.face;
         }
 
         formData.append('idcard',data.idcard);
@@ -269,7 +273,7 @@ function AthletesList(props:athletesProps) {
         formData.append('emergencycontactpeople',data.emergencycontactpeople);
         formData.append('emergencycontactpeoplephone',data.emergencycontactpeoplephone);
         // @ts-ignore
-        // formData.append('face',data.face);
+        formData.append('face',myImage);
         formData.append('unitdata', String(data.unitdata));
 
         let res: Promise<any>;

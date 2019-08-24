@@ -55,12 +55,6 @@ const config: IConfig =  {
         automaticNameDelimiter: '~',
         name: true,
         cacheGroups: {
-          vendors: {
-            name: 'vendors',
-            chunks: 'all',
-            test: /[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|lodash|lodash-decorators|redux-saga|re-select|dva|moment)[\\/]/,
-            priority: -11,
-          },
           antdesigns: {
             name: 'antdesigns',
             chunks: 'all',
@@ -111,7 +105,7 @@ const config: IConfig =  {
       dynamicImport: { webpackChunkName: true },
       title: 'userEntryPage',
       dll: true,
-      // chunks: ['vendors','antdesigns','icons','umi'],
+      //chunks: ['antdesigns','icons','umi'],
       routes: {
         exclude: [
           /models\//,

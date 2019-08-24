@@ -4,9 +4,11 @@ import { connect } from 'dva';
 import router from 'umi/router';
 import uRoutes from '@/config/router';
 
-import { Layout, Menu, Breadcrumb, Drawer, Button } from 'antd';
+import { Layout, Menu, Breadcrumb, Drawer, Button, Avatar } from 'antd';
+import { FaList, FaSearch, FaRegBell } from 'react-icons/fa';
 // @ts-ignore
 import styles from './index.less';
+import { Dispatch } from 'redux';
 
 const { Header, Content, Footer } = Layout;
 const { SubMenu } = Menu;
@@ -50,8 +52,15 @@ function initialMenuDOM(routes: IRoute): ReactNode{
   return menuDOM;
 }
 
-// 这里的props还没找到类型 暂时使用any
-function BasicLayout(props: any) {
+interface BasicProps {
+  leaderName?: string
+  unitName?: string
+  athleteNumber?: number | null
+  dispatch?: Dispatch
+  children?: JSX.Element;
+}
+
+function BasicLayout(props: BasicProps) {
   // 默认不显示抽屉
   const [visible, setVisible] = React.useState(false);
   function showDrawer() {setVisible(!visible);}
@@ -66,7 +75,7 @@ function BasicLayout(props: any) {
     router.push('/login')
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     props.dispatch({
       type:'user/getAccountData'
     })
@@ -89,9 +98,17 @@ function BasicLayout(props: any) {
           </Menu>
         </div>
       </Drawer>
-      <Header style={{ background: '#fff', padding: 0 }}>
-        <Button type="primary" onClick={showDrawer}>菜单</Button>
+      <Header style={{ background: '#fff', padding: 0 , height: 250}}>
+        <div>
+        <FaList className={styles['falist']} onClick={showDrawer} style={{width:28,height:28,marginLeft:16,marginTop:16}} />
         <Button type="link" onClick={signout} style={{float:"right",marginTop:"15px"}} >退出账号</Button>
+        <FaRegBell className={styles['falist']} style={{float:"right",marginTop:"22px",width:20,height:20}} />
+        <FaSearch className={styles['falist']} style={{marginRight:28,float:"right",marginTop:"22px",width:20,height:20}} />
+        </div>
+        <div>
+          <Avatar style={{ backgroundColor: '#87d068' }} size={84} icon="user" />
+          <p>早安，{}，祝你工作顺利</p>
+        </div>
       </Header>
       <Content style={{ margin: '0 16px' }}>
         <Breadcrumb style={{ margin: '16px 0' }}>
@@ -106,6 +123,12 @@ function BasicLayout(props: any) {
       </Footer>
     </Layout>
   );
+}
+
+const mapStateToProps = ({user}:any) => {
+  let personMessage:BasicProps = {
+    // leaderName: user.
+  }
 }
 
 export default connect((store) => {
