@@ -45,63 +45,57 @@ const config: IConfig =  {
   ],
   treeShaking: true,
   chainWebpack(config: any) {
-    // if(process.env.NODE_ENV !== 'development'){
-    //   config.optimization.splitChunks({
-    //     chunks: 'async',
-    //     minSize: 3000,
-    //     maxSize: 0,
-    //     minChunks: 1,
-    //     maxAsyncRequests: 5,
-    //     maxInitialRequests: 3,
-    //     automaticNameDelimiter: '~',
-    //     name: true,
-    //     cacheGroups: {
-    //       antdesigns: {
-    //         name: 'antdesigns',
-    //         chunks: 'all',
-    //         test: /[\\/]node_modules[\\/]antd[\\/]/,
-    //         priority: -9,
-    //       },
-    //       icons: {
-    //         name: 'icons',
-    //         chunks: 'all',
-    //         test: /[\\/]node_modules[\\/]@ant-design[\\/]/,
-    //         priority: -8,
-    //       }
-    //     },
-    //   });
-    //   config.plugin('ignore')
-    //     .use(webpack.IgnorePlugin,[/^\.\/locale$/,/moment$/]);
-    //   config.plugin('replaceDodash')
-    //     .use(LodashModuleReplacementPlugin,[{
-    //       'collections': true,
-    //       'paths': true
-    //     }]);
-    //   // config.plugin('image')
-    //   //   .use(ImageminPlugin,[{
-    //   //     disable: process.env.NODE_ENV === 'development',
-    //   //     test: /\.(jpe?g|png|svg|gif)$/i,
-    //   //     optipng: {
-    //   //       optimizationLevel: 9
-    //   //     }
-    //   //   }]);
-    //   config.module
-    //     .rule('compile')
-    //     .test(/\.(js|jsx)$/)
-    //     .include
-    //     .add('/src')
-    //     .end()
-    //     .use('babel')
-    //     .loader('babel-loader')
-    //     .options({
-    //       presets: ["react","typescript","env"],
-    //       plugins: [
-    //         ["import", [{libraryName: "antd", style: true}]]
-    //       ],
-    //       // "customName": require('path').resolve(__dirname, './customName.js')
-    //     })
-    // }
-
+    if(process.env.NODE_ENV !== 'development'){
+      config.optimization.splitChunks({
+        chunks: 'async',
+        minSize: 3000,
+        maxSize: 0,
+        minChunks: 1,
+        maxAsyncRequests: 5,
+        maxInitialRequests: 3,
+        automaticNameDelimiter: '~',
+        name: true,
+        cacheGroups: {
+          antdesigns: {
+            name: 'antdesigns',
+            chunks: 'all',
+            test: /[\\/]node_modules[\\/]antd[\\/]/,
+            priority: -10,
+          },
+          icons: {
+            name: 'icons',
+            chunks: 'all',
+            test: /[\\/]node_modules[\\/]@ant-design[\\/]/,
+            priority: -9,
+          },
+        },
+      });
+      config.plugin('ignore')
+        .use(webpack.IgnorePlugin,[/^\.\/locale$/,/moment$/]);
+      // config.plugin('image')
+      //   .use(ImageminPlugin,[{
+      //     disable: process.env.NODE_ENV === 'development',
+      //     test: /\.(jpe?g|png|svg|gif)$/i,
+      //     optipng: {
+      //       optimizationLevel: 9
+      //     }
+      //   }]);
+      config.module
+        .rule('compile')
+        .test(/\.(js|jsx)$/)
+        .include
+        .add('/src')
+        .end()
+        .use('babel')
+        .loader('babel-loader')
+        .options({
+          presets: ["react","typescript","env"],
+          plugins: [
+            ["import", [{libraryName: "antd", style: true}]]
+          ],
+          // "customName": require('path').resolve(__dirname, './customName.js')
+        })
+    }
   },
   plugins: [
     // ref: https://umijs.org/plugin/umi-plugin-react.html

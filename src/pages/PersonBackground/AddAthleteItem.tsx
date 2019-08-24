@@ -82,7 +82,7 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
         super(props);
         this.state = {
             isIDCard: true,
-            file:{}
+            file:{},
         };
     }
     // 提交表单
@@ -97,12 +97,12 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
                     message.error('请确认出生年月日是否已填');
                     return;
                 }
-                if(values.residence) {
+                if(values.residence !== undefined) {
                     for(let i = 0; i < 3; i++) {
                         values.residence.city[i] += '-'
                     }
                 }
-                // 如果没有表格的key，代表是从添加运动员按钮进来的
+                //如果没有表格的key，代表是从添加运动员按钮进来的
                 if (this.props.tablekey === '') {
                     this.props.submit(values,'register');
                 } else {
@@ -156,7 +156,10 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
         }
     }
 
-    componentDidMount() {
+    componentDidUpdate() {
+        if(this.props.resetField){
+            // console.log('2');
+        }
     }
 
     getFile = (file: UploadFile) => {
@@ -185,7 +188,6 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
             <Form layout="horizontal" {...formItemLayout} onSubmit={this.handleSubmit}>
                 <Form.Item style={{marginLeft:"45%"}}>
                     {getFieldDecorator('image',{
-                        initialValue:''
                     })(<PicturesWall getFile={this.getFile} />)}
                 </Form.Item>
                 <Form.Item label="姓名">
@@ -271,6 +273,7 @@ const AddAthleteForm = connect(formStateToProps)(Form.create<AddFormProps & Form
             if (city !== null) {
                 citys = city.split('-',3);
             }
+            let imageUrl = props.user.unitathlete[Number(props.tablekey)-1].athlete.face as string;
 
             return {
                 name: Form.createFormField({
@@ -302,6 +305,9 @@ const AddAthleteForm = connect(formStateToProps)(Form.create<AddFormProps & Form
                         address: props.user.unitathlete[Number(props.tablekey)-1].athlete.address,
                         city: citys
                     }
+                }),
+                image: Form.createFormField({
+                    value:  imageUrl
                 })
             }
         }

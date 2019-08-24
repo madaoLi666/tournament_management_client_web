@@ -12,8 +12,7 @@ function getBase64(file:any) {
   });
 }
 
-class PicturesWall extends React.Component<any,any> {
-
+class PicturesWall extends React.Component<{getFile:Function, value?:string,onChange?: any},any> {
    constructor(props:any) {
        super(props);
        this.state = {
@@ -22,6 +21,25 @@ class PicturesWall extends React.Component<any,any> {
         fileList: [
         ],
       };
+   }
+
+   componentDidUpdate(prevProps: any, prevState: any, snapshot: any) {
+    if(prevProps.value !== this.props.value) {
+      if(this.props.value !== '' && this.props.value !== undefined && this.props.value !== null) {
+        this.setState({
+          fileList:[
+            {
+              uid:'-1',
+              url:this.props.value
+            }
+          ],
+        })
+     }else {
+      this.setState({
+        fileList:[]
+      })
+     }
+    }
    }
 
    public beforeUpload(file: RcFile, FileList: RcFile[]) {
@@ -34,7 +52,7 @@ class PicturesWall extends React.Component<any,any> {
       message.error('头像必须小于2MB!');
     }
     return isJpgOrPng && isLt2M;
-}
+   }
 
   handleCancel = () => this.setState({ previewVisible: false });
 
