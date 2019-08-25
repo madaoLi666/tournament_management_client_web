@@ -32,6 +32,12 @@ interface athletesProps {
     unitData?: UnitData[]
 }
 
+enum resName {
+    province = '省份地名',
+    address = '地址',
+    emergencycontactpeople = '紧急联系人'
+}
+
 function AthletesList(props:athletesProps) {
     // @ts-ignore
     const { dispatch, unitAccount, unitData, athletes } = props;
@@ -298,7 +304,13 @@ function AthletesList(props:athletesProps) {
             }else if (Object.prototype.toString.call(resp.error) === '[object String]') {
                 message.error(resp.error);
             }else if (Object.prototype.toString.call(resp.error) === '[object Object]') {
-                message.warning('请检查是否输入了空的字符');
+                for(const key of Object.keys(resp.error)) {
+                    if(resp.error.hasOwnProperty(key)) {
+                        // @ts-ignore
+                        let mykey = resName[key];
+                        message.warning(mykey+resp.error[key]);
+                    }
+                }
             }else {
                 message.warning('请填入所有的表单项');
             }

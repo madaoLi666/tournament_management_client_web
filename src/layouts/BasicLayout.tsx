@@ -121,10 +121,10 @@ function BasicLayout(props: any) {
         <FaRegBell className={styles['falist']} style={{float:"right",marginTop:"22px",width:20,height:20}} />
         <FaSearch className={styles['falist']} style={{marginRight:28,float:"right",marginTop:"22px",width:20,height:20}} />
         </div>
-        <Row>
+        <Row style={{height:130}}>
           <Col {...autoAdjust1}>
-            <div>
-              <div className={styles['headerMessage']} style={{display:"flex",marginLeft:10}} >
+            <div style={{marginBlock:0}}>
+              <div className={styles['headerMessage']} style={{display:"flex",marginLeft:16}} >
                 <Avatar style={{ backgroundColor: '#87d068',marginTop:20 }} size={84} icon="user" />
                 <div style={{display:"flex",flexWrap:"wrap",width:300,marginLeft:20}}>
                   <p style={{fontSize:18,marginTop:8}} >早安，{leaderName === undefined ? null : leaderName}，祝你工作顺利</p>
