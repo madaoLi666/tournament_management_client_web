@@ -9,8 +9,10 @@ import { FaSearch } from 'react-icons/fa'
 // @ts-ignore
 import styles from './index.less';
 import { UploadFile } from 'antd/lib/upload/interface';
+import Test from './Test';
 
 const { confirm } = Modal;
+
 // 表格接口 key 是编号
 interface Athlete {
     key: string;
@@ -30,6 +32,12 @@ interface athletesProps {
     unitAccount?: number
     athletes?: AthleteData[]
     unitData?: UnitData[]
+}
+// 这个枚举类型是用来更换 当接口返回错误对象时，更改单词变成中文的，比如
+enum resName {
+    province = '省份地名',
+    address = '地址',
+    emergencycontactpeople = '紧急联系人'
 }
 
 function AthletesList(props:athletesProps) {
@@ -298,14 +306,19 @@ function AthletesList(props:athletesProps) {
             }else if (Object.prototype.toString.call(resp.error) === '[object String]') {
                 message.error(resp.error);
             }else if (Object.prototype.toString.call(resp.error) === '[object Object]') {
-                message.warning('请检查是否输入了空的字符');
+                for(const key of Object.keys(resp.error)) {
+                    if(resp.error.hasOwnProperty(key)) {
+                        // @ts-ignore
+                        let mykey = resName[key];
+                        message.warning(mykey+resp.error[key]);
+                    }
+                }
             }else {
                 message.warning('请填入所有的表单项');
             }
         })
 
     }
-    // let test:object = {address: ["该字段不能为空。"], emergencycontactpeople: ["该字段不能为空。"]};
 
     // 当judgeReset改变时，重新渲染一次
     useEffect(() => {
@@ -316,6 +329,14 @@ function AthletesList(props:athletesProps) {
 
     return (
         <Layout className={styles['AthletesList-page']}>
+            <Test />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
             <Layout.Content className={styles['AthletesList-content']}>
 
                 <PageHeader style={{fontSize:16}} title="运动员列表" extra={AddbuttonNode} />
