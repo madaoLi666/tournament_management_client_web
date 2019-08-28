@@ -1,6 +1,7 @@
 import React, { Component, useEffect } from 'react';
 import { Form, Input, Button, Upload, message} from 'antd';
 import { FaCloudUploadAlt } from 'react-icons/fa';
+import router from 'umi/router';
 import { connect } from 'dva';
 import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
 import { UploadProps, UploadChangeParam } from 'antd/lib/upload';
@@ -62,7 +63,6 @@ class UnitInfoForm extends Component<UnitInfoFormProps, any> {
       this.setState({url: guaranteePic});
     }
   }
-
   // 对 教练（选填项）电话号码判别
   checkOptionalPhone = (rule: any, value: any, callback: Function) => {
     if (value === '' || value === undefined) {
@@ -86,7 +86,7 @@ class UnitInfoForm extends Component<UnitInfoFormProps, any> {
         // 判断用户是否上传了承诺书图片
         if (guaranteePic || url !== '') {
           // 合并在此提交出 父组件 上一层
-          let formRes = { guaranteePic: guaranteePic ? guaranteePic : url , ...values };
+          let formRes = { guaranteePic: guaranteePic ? guaranteePic : "" , ...values };
           emitData(formRes);
         } else {
           message.error('请上传承诺书图片后再提交单位信息');
@@ -259,7 +259,7 @@ function EditUnitInfo(props: { unitData: any, matchId: number, dispatch: Dispatc
       formData.append('dutybook', data.guaranteePic);
 
       participativeUnit(formData,{headers: {"Content-Type": "multipart/form-data"}})
-        .then(res => {
+        .then(async (res) => {
           // 判断请求状况
           if(res.error === "" && res.notice === "" && res.data !== "") {
             const { data } = res;
@@ -267,6 +267,7 @@ function EditUnitInfo(props: { unitData: any, matchId: number, dispatch: Dispatc
               id: data.id,
               leaderName: data.leader,
               leaderPhone: data.leaderphonenumber,
+              leaderEmail: data.email,
               coach1Name: data.coachone,
               coach1Phone: data.coachonephonenumber,
               coach2Name: data.coachtwo,
@@ -277,7 +278,8 @@ function EditUnitInfo(props: { unitData: any, matchId: number, dispatch: Dispatc
             dispatch({
               type: 'enroll/modifyUnitData',
               payload: { unitData: uD}
-            })
+            });
+            router.push('/enroll/participants');
           }
         })
     }

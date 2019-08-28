@@ -1,17 +1,17 @@
-import  React, { useState} from 'react';
-import { Form, Upload, Table, Input, Button, Modal, message, Select, DatePicker } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Form, Upload, Table, Input, Button, Modal, message, Select, DatePicker, Checkbox } from 'antd';
 import moment from 'moment';
 import { FaPlus } from 'react-icons/fa';
 import AddressInput from '@/components/AddressInput/AddressInput';
 import { connect } from 'dva';
+import router from 'umi/router';
 
 import { UploadChangeParam } from 'antd/lib/upload';
 import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
 import { ModalProps } from 'antd/lib/modal';
-import { ColumnProps } from 'antd/lib/table';
 
-import { newUnitAthlete } from '@/services/enroll.ts';
-
+import { newUnitAthlete, deleteAthlete, addParticipantsAthlete, deleteParticipantsAthlete } from '@/services/enroll.ts';
+import { updatePlayer} from '@/services/athlete';
 import { checkPhoneNumber, checkEmail, checkIDCard } from '@/utils/regulars';
 
 // @ts-ignore
@@ -29,7 +29,9 @@ const formStyle: FormProps = {
 };
 //
 interface AthleteInfoFormProps extends FormComponentProps{
-  emitData:(data:object) => void
+  emitData:(data:object) => void;
+  // 暂时定为any
+  currentAthleteData: any;
 }
 
 // 转base64
@@ -54,6 +56,18 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
       previewVisible: false,
       // 是否 选中使用身份证
       isIDCard:false
+    }
+  }
+
+  componentDidUpdate(prevProps: Readonly<AthleteInfoFormProps>, prevState: Readonly<any>, snapshot?: any): void {
+    const { athlete } = this.props.currentAthleteData;
+    const prevAthleteData = prevProps.currentAthleteData;
+    if(athlete) {
+      if(athlete.face === null && prevAthleteData.athlete.face !== null){
+        this.setState({fileList: []});
+      }else if(athlete.face !== prevAthleteData.athlete.face) {
+        this.setState({fileList: [{uid: -1, url: athlete.face}]});
+      }
     }
   }
 
@@ -108,6 +122,7 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err: ValidateCallback<any>, values: any) => {
       if (!err) {
+        console.log(fileList);
         // 检查是否进行了图片上传
         if(fileList.length !== 0) {
           emitData({
@@ -258,14 +273,40 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
   }
 }
 
-const AIForm = Form.create<AthleteInfoFormProps>()(AthleteInfoForm);
+const AIForm = Form.create<AthleteInfoFormProps>({
+  mapPropsToFields:(props) => {
+    const { currentAthleteData } = props;
+    if(props.currentAthleteData){
+      const { createFormField } = Form;
+      const { athlete } = currentAthleteData;
 
-function ParticipantsAthleteList(props:{matchId: number, unitId: number , dispatch: Dispatch}) {
+      let residence = {
+        city: athlete.province !== null ? athlete.province.split('-').slice(0,3) : [],
+        address: athlete.address !== null ? athlete.address : ""
+      };
+      return {
+        name: createFormField({value: athlete.name}),
+        idCardType: createFormField({value: athlete.idcardtype}),
+        identifyNumber: createFormField({value: athlete.idcard}),
+        sex: createFormField({value: athlete.sex}),
+        birthday: createFormField({value: moment(athlete.birthday)}),
+        phone: createFormField({value: athlete.phonenumber === null ? "" : athlete.phonenumber }),
+        email: createFormField({value: athlete.email  === null ? "" : athlete.email  }),
+        residence: createFormField({value: residence}),
+      }
+    }else if(!props){
+      return {};
+    }
 
-  const { matchId, unitId } = props;
 
+  }
+})(AthleteInfoForm);
+
+function ParticipantsAthleteList(props:{matchId: number, unitId: number , athleteList: Array<any>, dispatch: Dispatch}) {
+
+  const { matchId, unitId, dispatch, athleteList } = props;
+  // modal
   const [visible, setVisible] = useState(false);
-
   const modalProps: ModalProps = {
     title: '新建/修改赛事',
     visible: visible,
@@ -276,6 +317,66 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , dispat
     onCancel: () => setVisible(false)
   };
 
+  const [currentAthleteData, setCurrentAthleteData] = useState({});
+  const [isFirstCreate, setIsFirstCreate] = useState(true);
+  // table
+  // 类型暂时保留
+  const tableColumns = [
+    {
+      title: '是否参赛', dataIndex: 'active', key: 'active',
+      render:(text:number, record: any) =>
+        <Checkbox defaultChecked={!!text} onChange={(e) => handleSelect(e.target.checked,record,e)}/>
+    },
+    { title: '单位运动员ID', dataIndex: 'id', key: 'unitAthleteId'},
+    { title: '单位ID', dataIndex: 'unitdata', key: 'unitData'},
+    { title: '运动员姓名', key: 'name', render:(text:any,record:any) => (<span>{record.athlete.name}</span>)},
+    { title: '运动员个人ID', key: 'athleteId', render:(text:any,record:any) => (<span>{record.athlete.id}</span>)},
+    { title: '出生年月日', key: 'birthday', render:(text:any,record:any) => ( <span>{record.athlete.birthday.slice(0,10)}</span>)},
+    { title: '操作', key: 'handle',
+      render:(text:any, record:any) => (
+        <div>
+          {/* 使用外层 - 单位运动员id */}
+          <a onClick={() => {editAthleteData(record)}}>修改</a>
+          &nbsp;|&nbsp;
+          {/* 删除使用内层id 运动员id */}
+          <a onClick={() => {handlerDelete(record.athlete.id)}}>删除</a>
+        </div>
+      )
+    }
+  ];
+  // 选中运动员是否参赛
+  function handleSelect(checked: boolean, record: any, e: any ) {
+    console.log(record);
+    const { birthday, id } = record.athlete;
+    if(checked) {
+      // 选中
+      let reqData = {
+        matchdata: matchId,
+        contestant: unitId,
+        unitathlete: record.id,
+        birthday: birthday.slice(0,10),
+        athlete: id
+      };
+      addParticipantsAthlete(reqData)
+        .then(res => {
+          if(res.data !== "true") {
+            console.log(res.error);
+            e.target.checked = !checked;
+          }
+        })
+    }else{
+      deleteParticipantsAthlete({matchdata: matchId, athlete: id, contestant: unitId})
+        .then(res => {
+          if(res.data !== "true") {
+            console.log(res.error);
+            e.target.checked = !checked;
+          }
+        })
+    }
+  }
+
+
+  // 传入表单中
   function submitAthleteData(data: any) {
     const { dispatch } = props;
 
@@ -291,36 +392,104 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , dispat
     formData.append('address',data.residence.address !== undefined ? data.residence.address : "" );
     formData.append('face',data.image.originFileObj);
     formData.append('unitdata', unitId.toString());
+    if(isFirstCreate) {
+      newUnitAthlete(formData,{headers:{"Content-Type": "multipart/form-data"}})
+        .then(res => {
+          console.log(res);
+          // 判断
+          if(res.error === "" && res.notice === "") {
+            dispatch({
+              type: "checkIsEnrollAndGetAthleteLIST",
+              payload: { unitId, matchId }
+            });
+            setVisible(false);
+          }
+        });
+    }else if(!isFirstCreate) {
+      updatePlayer(formData)
+        .then(res => {
+          console.log(res);
+          if(res.error === "" && res.notice === "") {
+            dispatch({
+              type: "checkIsEnrollAndGetAthleteLIST",
+              payload: { unitId, matchId }
+            });
+            setVisible(false);
+          }
+        })
+    }
 
-    newUnitAthlete(formData,{headers:{"Content-Type": "multipart/form-data"}})
+  }
+  //
+  function editAthleteData(record: object) {
+    setCurrentAthleteData(record);
+    setVisible(true);
+    setIsFirstCreate(false);
+  }
+  function handlerDelete(id: number|string) {
+    deleteAthlete({athlete:id, unitdata: unitId})
       .then(res => {
-        console.log(res);
-        // 判断
-        if(res.error === "" && res.notice === "") {
+        if(res.data === 'true') {
           dispatch({
-            type: "checkIsEnrollAndGetAthleteLIST",
-            payload: { unitId, matchId }
+            type: 'enroll/checkIsEnrollAndGetAthleteLIST',
+            payload:{ matchId, unitId }
           })
         }
       });
-
   }
+
+  function openDialog() {
+
+    setVisible(true);
+    setIsFirstCreate(true);
+    setCurrentAthleteData({});
+  }
+  /*
+  *  首次渲染的 unitId 为undefined
+  *  会导致刷新页面不执行
+  */
+  useEffect(() => {
+    if(matchId&&unitId) {
+      dispatch({
+        type: 'enroll/checkIsEnrollAndGetAthleteLIST',
+        payload:{ matchId, unitId }
+      })
+    }
+  },[unitId,matchId]);
 
   return (
     <div className={styles['participants-athlete-list']}>
-      <Button onClick={() => {setVisible(true)}}>open</Button>
+      <div>
+        <Button onClick={() => openDialog()}>添加运动员</Button>
+      </div>
       <Modal {...modalProps}>
         <AIForm
           emitData={submitAthleteData}
+          currentAthleteData={Object.keys(currentAthleteData).length === 0 ? false : currentAthleteData}
         />
       </Modal>
+      <div>
+        <Table
+          columns={tableColumns}
+          dataSource={athleteList}
+          rowKey={record => record.id}
+        />
+      </div>
+      <div>
+        <Button
+          type='primary'
+          onClick={() => router.push('/enroll/individual')}
+        >
+          确认运动员名单，进入个人报名通道
+        </Button>
+      </div>
     </div>
   );
 }
 
 export default connect(({enroll}:any) => {
-  // console.log(enroll);
   return {
+    athleteList: enroll.unit.athleteList,
     matchId: enroll.currentMatchId,
     unitId: enroll.unitInfo.id
   };

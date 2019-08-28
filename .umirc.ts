@@ -32,7 +32,8 @@ const config: IConfig =  {
       Routes: ['./src/layouts/EnrollLayout.tsx'],
       routes: [
         { path: '/enroll/editUnitInfo', component: './Enroll/EditUnitInfo.tsx', name: '参赛单位信息'},
-        { path: '/enroll/participants', component: './Enroll/ParticipantsAthleteList.tsx', name: '编辑参赛运动员信息'}
+        { path: '/enroll/participants', component: './Enroll/ParticipantsAthleteList.tsx', name: '编辑参赛运动员信息'},
+        { path: '/enroll/individual', component: './Enroll/IndividualEnroll.tsx', name: '运动员个人报名'}
       ]
     },
     // 主用户界面 - 这个位置是动态设置的

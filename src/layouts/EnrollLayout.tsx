@@ -8,17 +8,27 @@ import styles from './index.less';
 
 const { Header, Content, Footer } = Layout;
 
-function EnrollLayout(props: {dispatch: Dispatch, children: React.ReactNode}) {
+function EnrollLayout(props: {dispatch: Dispatch, currentGameData: any,children: React.ReactNode}) {
+
+  const { currentGameData } = props;
+
 
 
   useEffect(() => {
     const { dispatch } = props;
     const token = window.localStorage.getItem('TOKEN');
-    const matchId = window.localStorage.getItem('MATCH_ID');
+    const matchId = Number(window.localStorage.getItem('MATCH_ID'));
     if(token !== null){
+      // 获取账号信息
       dispatch({type: 'user/getAccountData'});
       if(matchId !== null) {
+        // 修改model中赛事id
         dispatch({type: 'enroll/modifyCurrentMatchId', payload: {matchId: matchId}});
+        // 获取赛事规则
+        dispatch({type: 'enroll/getIndividualLimitation',payload: {matchId: matchId}});
+        dispatch({type: 'enroll/getAllItemInfo',payload: {matchId: matchId}});
+        // 获取gameList 拿本场赛事信息
+        dispatch({type: 'gameList/getGameList'});
       }else {
         message.error('请选择赛事');
         router.push('/home');
@@ -27,13 +37,15 @@ function EnrollLayout(props: {dispatch: Dispatch, children: React.ReactNode}) {
       message.error('登陆过期，请重新登陆');
       router.push('/login');
     }
-  });
+  },[]);
 
   return (
     <div className={styles['enroll-layout']}>
       <Layout>
         <Header className={styles.header}>
-          欢迎进入xxx赛事报名通道
+          <span>
+            {currentGameData !== undefined ? currentGameData.name : null}
+          </span>
         </Header>
         <Content className={styles.content}>
           {props.children}
@@ -46,4 +58,11 @@ function EnrollLayout(props: {dispatch: Dispatch, children: React.ReactNode}) {
   );
 }
 
-export default connect()(EnrollLayout);
+export default connect(({enroll, gameList}:any) => {
+  const { currentMatchId } = enroll;
+  if(gameList.gameList.length !== 0) {
+    return {currentGameData:gameList.gameList.filter((v:any) => (v.id ===currentMatchId))[0]};
+  }else {
+    return {};
+  }
+})(EnrollLayout);

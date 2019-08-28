@@ -16,7 +16,32 @@ export async function newUnitAthlete(data: FormData, opt: object):Promise<any>{
     return axiosInstance.post('/unitathlete/',data, opt);
 }
 
+// 删除运动员
+export async function deleteAthlete(data: object):Promise<any>{
+    return axiosInstance.delete('/unitathlete/', {data:data});
+}
+
 // 检查单位是否有本次比赛参赛信息
 export async function checkISEnroll(data: object):Promise<any>{
     return axiosInstance.post('/checkisenroll/',data);
 }
+
+// 添加参赛运动员
+export async function addParticipantsAthlete(data: object):Promise<any>{
+    return axiosInstance.post('/player/', data);
+}
+
+// 删除参赛运动员
+export async function deleteParticipantsAthlete(data: object):Promise<any>{
+    return axiosInstance.delete('/player/', {data: data});
+}
+
+// 个人报名
+export async function individualEnroll(data: object):Promise<any>{
+    return axiosInstance.post('/personalprojectenroll/', data);
+}
+
+export async function deleteIndividualEnroll(data: object):Promise<any>{
+    return axiosInstance.delete('/personalprojectenroll/', {data});
+}
+
