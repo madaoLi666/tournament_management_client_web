@@ -41,7 +41,7 @@ function EnrollLayout(props: {dispatch: Dispatch, currentGameData: any,children:
 
   return (
     <div className={styles['enroll-layout']}>
-      <Layout>
+      <Layout style={{height: '100%'}}>
         <Header className={styles.header}>
           <span>
             {currentGameData !== undefined ? currentGameData.name : null}

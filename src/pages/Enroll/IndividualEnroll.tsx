@@ -1,14 +1,15 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Modal, Table, Select, Row, Col, TreeSelect, message, Button, Tag} from 'antd';
+import router from 'umi/router';
+import { Modal, Table, Select, message, Button, Tag} from 'antd';
 import { ModalProps } from 'antd/lib/modal';
+import { ColumnProps } from 'antd/lib/table';
 import { getListByKey, getGroupsByAge, getLegalSexList } from '@/utils/enroll';
-import { deleteIndividualEnroll } from '@/services/enroll';
+import { deleteIndividualEnroll, individualEnroll } from '@/services/enroll';
 // @ts-ignore
 import styles from './index.less';
 
 const { Option } = Select;
-const { TreeNode } = TreeSelect;
 
 /*
  * 1。前端不检查 项目下 单位 可报名 人（队） 限制
@@ -19,26 +20,32 @@ class IndividualEnroll extends React.Component<any,any>{
     super(props);
     this.state = {
       modalVisible: false,
+      // 运动员信息
       currentAthleteData: {},
+      // 筛选的列表
       groupList: [],
-      sexList: []
+      sexList: [],
+      itemGroupSexID:-1,
+      groupValue: undefined,
+      sexValue: undefined,
+      itemValue: undefined
     }
   }
 
-  componentDidMount(): void {}
-
+  componentDidMount(): void {
+    const { matchId, unitId, dispatch } = this.props;
+    if(matchId && unitId){
+      dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId } })
+    }
+  }
+  // 更新时重新获取
   componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
     const { matchId, unitId, dispatch } = this.props;
-    console.log(matchId, unitId);
     if( matchId && unitId && (unitId !== prevProps.unitId || matchId !== prevProps.matchId) ) {
       //
-      dispatch({
-        type: 'enroll/checkIsEnrollAndGetAthleteLIST',
-        payload: { matchId, unitId }
-      })
+      dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId } })
     }
   }
-
 
   // 选中运动员进行报名
   selectIndividualEnroll = (record:any) => {
@@ -50,23 +57,42 @@ class IndividualEnroll extends React.Component<any,any>{
   };
   // 个人报名
   handleIndividualEnroll = (athleteData: any, id: number) => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'enroll/individualEnroll',
-      payload: {
-        enrollData:{
-          player:athleteData.player,
-          openprojectgroupsex:id
-        }
-      }
-    })
-  };
+    const { dispatch, matchId, unitId } = this.props;
+    if(id !== -1) {
+      // 加多一个前端的个人报名判断
+      /*
+      * 1、检查是否存在相同的项目
+      * */
 
+      let enrollData = { player:athleteData.player, openprojectgroupsex:id };
+      individualEnroll(enrollData).then((res:any) => {
+        if(res.error === "") {
+          dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload:{matchId,unitId}});
+          message.success('报名成功');
+          this.setState({
+            modalVisible:false,
+            groupList:[], sexList: [], itemGroupSexID: -1,
+            groupValue:undefined, sexValue:undefined, itemValue:undefined
+          })
+        }else{
+          message.error(res.error);
+        }
+      })
+    }
+  };
+  // 删除个人报名
   handleCloseEnroll = (id:number) => {
     console.log(id);
+    const { dispatch,matchId,unitId } = this.props;
     deleteIndividualEnroll({personalprojectenroll:id})
       .then(res => {
         console.log(res);
+        if(res.data === 'true') {
+          dispatch({
+            type: 'enroll/checkIsEnrollAndGetAthleteLIST',
+            payload: { matchId, unitId }
+          })
+        }
       })
   };
 
@@ -79,7 +105,10 @@ class IndividualEnroll extends React.Component<any,any>{
   * limitation - 限制条件
   * */
   getGroupByItem = (athleteData:any, itemList: Array<any>, itemId: number, limitation:any) => {
+    this.setState({itemValue:itemId});
     if(itemId) {
+      // 清空下面的设置
+      this.setState({groupValue: undefined, sexValue: undefined,sexList: [], itemGroupSexID: -1});
       // 拿出运动员出生日期
       const birthday = athleteData.athlete.birthday.slice(0,10);
       // 若没有相应组别 则返回false
@@ -87,105 +116,80 @@ class IndividualEnroll extends React.Component<any,any>{
       // 存在可用组别信息
       if(groupList) {
         const { upGroupNumber } = limitation;
-        //
+        // 通过 年龄+组别列表+可升组数量 得到可选组别列表
         let r = getGroupsByAge(birthday,groupList,upGroupNumber);
+        // 设置组别列表
         this.setState({groupList: r});
       }else {
         message.warn('此项目没有适合该名运动员的组别');
+        this.setState({groupList: []});
       }
     }else{
-      this.setState({groupList: []});
+      this.setState({groupList: [], sexList: [], itemGroupSexID: -1});
     }
   };
   // 选中组别后 判别
+  /*
+  * athleteData - 运动员信息
+  * groupList - 当前可选组别列表
+  * groupId   - 选中组别列表
+  * */
   getSexByGroup = (athleteData:any, groupList: Array<any>, groupId: number) => {
     const { sex } = athleteData.athlete;
     let sexList = getListByKey(groupList, groupId, 'groupId') ? getListByKey(groupList, groupId, 'groupId').sexData : false ;
     if(sexList && sexList.length !== 0) {
       let r = getLegalSexList(sex,sexList);
-      this.setState({sexList:r});
+      this.setState({sexList:r, groupValue:groupId, itemGroupSexID:-1});
     }else {
-      this.setState({sexList: []});
+      message.warn('没有开设符合您的性别组别');
+      this.setState({sexList: [], itemGroupSexID: -1});
     }
   };
-  /*============================ TreeSelect ============================================*/
-  //
-  handleTreeSelectChange = (value: any, label: any, extra: any) => {
-    console.log(value);
-    console.log(label);
-    console.log(extra);
-  };
-  // 初始化树桩选择器dom
-  initialTreeDOM = (item:Array<any>):React.ReactNode => {
-    let res:Array<React.ReactNode> = [];
-    if(item) {
-      for(let i:number = item.length - 1 ; i >= 0 ; i--) {
-        let groupDOM: Array<React.ReactNode> = [];
-        const group = item[i].groupData;
-        for(let j:number = group.length - 1 ; j >= 0 ; j--) {
-          const sex = group[i].sexData;
-          let sexDOM:Array<React.ReactNode> = [];
-          for(let k:number = sex.length - 1 ; k >= 0 ; k--) {
-            sexDOM.push(
-              <TreeNode
-                title={`${item[i].name}-${group[j].name}-${sex[k].name}`}
-                value={`${item[i].itemId}-${group[j].groupId}-${sex[k].sexId}`}
-                key={`sex-${sex[k].sexId}`}
-              />)
-          }
-          groupDOM.push(
-            <TreeNode title={group[j].name} value={`group-${group[j].groupId}`} key={`group-${group[j].groupId}`} selectable={false}>
-              {sexDOM}
-            </TreeNode>
-          )
-        }
-        res.push(
-          <TreeNode title={item[i].name} value={`item-${item[i].itemId}`} key={`item-${item[i].itemId}`} selectable={false}>
-            {groupDOM}
-          </TreeNode>
-        )
-      }
-    }else{
-      res.push(<TreeNode title='error' key='error' />);
-    }
-    return res;
-  };
+
 
   render(): React.ReactNode {
-    const { modalVisible, currentAthleteData , groupList, sexList, itemGroupSexID } = this.state;
+    const { modalVisible, currentAthleteData , groupList, sexList, itemGroupSexID, groupValue, sexValue, itemValue } = this.state;
     const { enrollAthleteList, individualItemList, individualLimitation } = this.props;
-
+    console.log(enrollAthleteList);
     const modalProps: ModalProps = {
       visible: modalVisible,
       title: '添加个人报名信息',
-      onCancel:() => this.setState({modalVisible: false}),
-      footer:false
+      onCancel:() => this.setState({modalVisible: false, groupList:[], sexList: [], itemGroupSexID: -1, groupValue: undefined, sexValue: undefined,itemValue:undefined}),
+      footer:false,
+      width: '500px'
     };
-    const tableColumns = [
-      { title: '姓名', key: 'name', render:(_:any,record:any) => (<span>{record.athlete.name}</span>)},
-      { title: '证件号', key: 'identifyNumber', render:(_:any,record:any) => (<span>{record.athlete.idcard}</span>)},
-      { title: '出生日期', key: 'birthday', render:(_:any,record:any) => (<span>{record.athlete.birthday.slice(0,10)}</span>)},
-      { title: '所属组别', key: 'group', dataIndex: 'groupage'},
+    const tableColumns: Array<ColumnProps<any>> = [
+      { title: '姓名', key: 'name', render:(_:any,record:any) => (<span>{record.athlete.name}</span>),align: 'center'},
+      { title: '证件号', key: 'identifyNumber', render:(_:any,record:any) => (<span>{record.athlete.idcard}</span>),align: 'center'},
+      { title: '出生日期', key: 'birthday', render:(_:any,record:any) => (<span>{record.athlete.birthday.slice(0,10)}</span>),align: 'center'},
+      { title: '所属组别', key: 'group', dataIndex: 'groupage',align: 'center'},
       {
-        title: '已报项目', key: 'enrolledItem', dataIndex: 'project',
+        title: '未升组项目', key: 'enrolledItem', dataIndex: 'project',align: 'center',
         render:(text:any):React.ReactNode => {
-          const { personaldata, upgrouppersonaldata } = text;
+          const { personaldata } = text;
           return (
             <div style={{fontSize: '10px'}}>
-              <p><span>未升组项目:</span>{personaldata.length !== 0 ? personaldata.map((v:any) => (<span key={v.id}>{v.name}</span>)) : <span>尚未有报名项目</span>}</p>
-              <p><span>升组项目:</span>{upgrouppersonaldata.length !== 0 ?upgrouppersonaldata.map((v:any) => (<span key={v.id}>{v.name}</span>)) : <span>尚未有报名项目</span>}</p>
+              {personaldata.length !== 0 ? personaldata.map((v:any) => (<p key={v.id}><span>{v.name}</span></p>)) : <span key={Math.random()}>--</span>}
             </div>
           )
         }
       },
       {
-        title: '操作', key: 'h',
+        title: '升组项目', key: 'enrolledUploadItem', dataIndex: 'project',align: 'center',
+        render:(text:any):React.ReactNode => {
+          const { upgrouppersonaldata } = text;
+          return (
+            <div style={{fontSize: '10px'}}>
+              {upgrouppersonaldata.length !== 0 ?upgrouppersonaldata.map((v:any) => (<p key={v.id}><span>{v.name}</span></p>)) : <span key={Math.random()}>--</span>}
+            </div>
+          )
+        }
+      },
+      {
+        title: '操作', key: 'h',align: 'center',
         render: (_: any, record: any): React.ReactNode => (<a onClick={() => this.selectIndividualEnroll(record)}>报名</a>)
       },
     ];
-
-    // 生成树的dom
-    // let TREE_DOM:React.ReactNode = this.initialTreeDOM(individualItemList);
 
     return (
       <div className={styles['individual-enroll']}>
@@ -196,53 +200,43 @@ class IndividualEnroll extends React.Component<any,any>{
         </div>
         <Modal {...modalProps}>
           <div className={styles['enroll-block']}>
-            {/* 项目 */}
-            <Row>
-              <Col span={6}>请选择项目:</Col>
-              <Col span={18}>
-                <Select style={{width: '80%'}} onChange={(value:number) => this.getGroupByItem(currentAthleteData, individualItemList, value, individualLimitation)}>
-                  {individualItemList.map((v:any) => {
-                    return <Option key={`item-${v.itemId}`} value={v.itemId}>{v.name}</Option>
-                  })}
-                </Select>
-              </Col>
-            </Row>
-            {/* 组别 */}
-            <Row>
-              <Col span={6}>请选择组别:</Col>
-              <Col span={18}>
-                <Select
-                  style={{width: '80%'}}
-                  onChange={(value:number) => this.getSexByGroup(currentAthleteData, groupList, value)}
-                  disabled={groupList.length===0}
-                >
-                  {
-                    groupList.length === 0 ? null :
-                      groupList.map((v:any) => {
-                        return <Option value={v.groupId} key={v.groupId}>{v.name}</Option>
-                      })
-                  }
-                </Select>
-              </Col>
-            </Row>
-            {/* 性别 */}
-            <Row>
-              <Col span={6}>请选择性别组别:</Col>
-              <Col span={18}>
-                <Select
-                  style={{width: '80%'}}
-                  onChange={(value) => this.setState({itemGroupSexID:value})}
-                  disabled={sexList.length===0}
-                >
-                  {
-                    sexList.length === 0 ? null :
-                      sexList.map((v:any) => {
-                        return <Option value={v.sexId} key={v.sexId}>{v.name}</Option>
-                      })
-                  }
-                </Select>
-              </Col>
-            </Row>
+            <Select
+              style={{width: '100%', marginBottom: '10px'}}
+              onChange={(value:number) => this.getGroupByItem(currentAthleteData, individualItemList, value, individualLimitation)}
+              placeholder='请选择项目'
+              value={itemValue}
+            >
+              {individualItemList.map((v:any) => (<Option key={`item-${v.itemId}`} value={v.itemId}>{v.name}</Option>))}
+            </Select>
+
+            <Select
+              style={{width: '100%', marginBottom: '10px'}}
+              onChange={(value:number) => this.getSexByGroup(currentAthleteData, groupList, value)}
+              disabled={groupList.length===0}
+              placeholder='请选择组别'
+              value={groupValue}
+            >
+              {
+                groupList.length === 0
+                ? null
+                : groupList.map((v:any) => (<Option value={v.groupId} key={v.groupId}>{v.name}</Option>))
+              }
+            </Select>
+
+            <Select
+              style={{width: '100%', marginBottom: '10px'}}
+              onChange={(value) => this.setState({sexValue:value,itemGroupSexID:value})}
+              disabled={sexList.length===0}
+              placeholder='请选择性别组别'
+              value={sexValue}
+            >
+              {
+                sexList.length === 0
+                ? null
+                : sexList.map((v:any) => (<Option value={v.sexId} key={v.sexId}>{v.name}</Option>))
+              }
+            </Select>
+
             <Button
               type='primary'
               onClick={() => this.handleIndividualEnroll(currentAthleteData, itemGroupSexID)}
@@ -276,6 +270,15 @@ class IndividualEnroll extends React.Component<any,any>{
             }
           </div>
         </Modal>
+        <div>
+          <Button
+            onClick={() => router.push('/enroll/team')}
+            type='primary'
+            style={{width: '160px'}}
+          >
+            进入团队报名
+          </Button>
+        </div>
       </div>
     )
   }

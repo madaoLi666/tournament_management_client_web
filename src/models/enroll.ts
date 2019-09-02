@@ -11,7 +11,8 @@ const ENROLL_MODEL: Model = {
     currentMatchId: -1,
     unitInfo: {},
     unit: {
-      unitData: {},
+      unitData:{},
+      contestantUnitData: {},
       athleteList: [],
       singleEnrollList: [],
       teamEnrollList: []
@@ -61,9 +62,20 @@ const ENROLL_MODEL: Model = {
       state.individualItem = iI;
       state.teamItem = tI;
       return state;
+    },
+    modifyContestantUnitData(state: any, action: AnyAction){
+      const { contestantUnitData } = action.payload;
+      state.unit.contestantUnitData = contestantUnitData;
+      return state;
+    },
+    modifyTeamEnroll(state:any, action: AnyAction) {
+      const { teamEnrollData } = action.payload;
+      state.unit.teamEnrollList = teamEnrollData;
+      return state;
     }
   },
   effects: {
+    // 获取参赛单位信息
     * getContestantUnitData (action: AnyAction, effect: EffectsCommandMap) {
       const { put } = effect;
       const { unitId, matchId } = action.payload;
@@ -87,6 +99,7 @@ const ENROLL_MODEL: Model = {
         })
       }
     },
+    // 检查是否有报名信息，并获取运动员列表
     * checkIsEnrollAndGetAthleteLIST  (action: AnyAction, effect: EffectsCommandMap) {
       const { put } = effect;
       const { matchId, unitId } = action.payload;
@@ -95,16 +108,33 @@ const ENROLL_MODEL: Model = {
       if(res.error === "" && res.notice === "" && res.data !== "") {
         // 是否已经进行了报名
         if(res.data.isEnroll === 'Y') {
+          // 参赛单位信息
+          let contestantUnitData = res.data.contestant;
+          yield put({ type: 'modifyContestantUnitData', payload: { contestantUnitData } });
+          // 运动员列表
           let athleteList = res.data.unitathlete;
-          console.log(athleteList);
-          // 修改
-          yield put({
-            type: 'modifyAthleteList',
-            payload: { athleteList }
-          })
+          yield put({ type: 'modifyAthleteList', payload: { athleteList } });
+          // 团队报名列表
+          let teamEnroll = res.data.teamenrolldata;
+          let teamEnrollData:Array<any> = [];
+          for(let i:number = 0 ; i < teamEnroll.length ; i++) {
+            if(Object.prototype.toString.call(teamEnroll[i].groupprojectenroll) === '[object Array]') {
+              for(let j:number = 0 ; j < teamEnroll[i].groupprojectenroll.length ; j++) {
+                teamEnrollData.push({
+                  itemGroupSexName: teamEnroll[i].groupprojectenroll[j].name,
+                  // 用于删除项目
+                  id: teamEnroll[i].groupprojectenroll[j].id,
+                  teamName: teamEnroll[i].name,
+                  member: teamEnroll[i].teammember
+                });
+              }
+            }
+          }
+          yield put({ type: 'modifyTeamEnroll', payload: {teamEnrollData}});
         }
       }
     },
+    // 得到个人项目限制
     * getIndividualLimitation ({payload}: AnyAction, {put}: EffectsCommandMap) {
       const { matchId } = payload;
       let res = yield getIndividualEnrollLimit({matchdata: matchId});
@@ -122,6 +152,7 @@ const ENROLL_MODEL: Model = {
         })
       }
     },
+    //获取所有项目
     * getAllItemInfo ({payload}: AnyAction, {put}: EffectsCommandMap) {
       const { matchId } = payload;
       let res = yield getAllItem({matchdata: matchId});
@@ -141,15 +172,12 @@ const ENROLL_MODEL: Model = {
         yield put({
           type: 'checkIsEnrollAndGetAthleteLIST',
           payload:{
-            unitId:select((state:any) => state.unitInfo.id),
-            matchId:select((state:any) => state.currentMatchId)
+            unitId: yield select((state:any) => state.enroll.unitInfo.id),
+            matchId: yield select((state:any) => state.enroll.currentMatchId)
           }
         })
       }
-    },
-    // * t (action: AnyAction, {select}: EffectsCommandMap) {
-    //   yield console.log
-    // }
+    }
   }
 };
 

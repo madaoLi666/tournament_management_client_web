@@ -31,6 +31,9 @@ interface SexData {
   // 是否计入个人报名项目数量
   eachenrollnumberenable:boolean
 
+  // 队伍限制数量
+  teamnumberlimit:string;
+
   number:number
 }
 
@@ -64,6 +67,7 @@ interface ItemData {
   matchdata: number,
   // 总人数限制
   number: 999,
+  roletype:object;
   // group
   openprojectgroup:Array<GroupData>
 
@@ -108,7 +112,9 @@ export function convertItemData(itemList: Array<ItemData>):any {
           unitMaxEnrollNumber: sex.unitmostnumber,
           sex:groupSex,
           scale: sex.scale,
-          name:sexName
+          name:sexName,
+          minTeamNumberLimitation: Number(sex.teamnumberlimit.split('-')[0]),
+          maxTeamNumberLimitation: Number(sex.teamnumberlimit.split('-')[1])
         })
       }
       groupData.push({
@@ -125,20 +131,21 @@ export function convertItemData(itemList: Array<ItemData>):any {
         itemId: item.id,
         name: item.cn_name,
         eName: item.en_name,
-        groupData
+        groupData,
+        roleTypeList: item.roletype
       })
     }else {
       tI.push({
-        id: item.id,
+        itemId: item.id,
         name: item.cn_name,
         eName: item.en_name,
-        groupData
+        groupData,
+        roleTypeList: item.roletype
       })
     }
   }
   return { iI,tI }
 }
-
 
 // 获取列表方式
 /*
@@ -180,7 +187,7 @@ export function getGroupsByAge(birthday:string, groupList:Array<any>, upGroupNum
       return groupList.slice(0,1);
     }else if(index - upGroupNumber < 0){
       // 溢出
-      return groupList.slice(0,index);
+      return groupList.slice(0,index+1);
     }else {
       // 将可升组别与原组别返回
       return groupList.slice(index-upGroupNumber,index+1);
@@ -202,3 +209,167 @@ export function getLegalSexList(sex: string, sexList: Array<any>) {
     return false;
   }
 }
+
+interface FilterRule {
+  itemName:string;
+  startTime:string;
+  endTime:string;
+  unitMinEnrollNumber:number;
+  unitMaxEnrollNumber:number;
+  sexType:number;
+  scale:string;
+  isIncludeEnrollLimitation:boolean;
+  isCrossGroup:boolean;
+  upGroupNumber:number;
+  itemLimitation:number;
+
+  minTeamNumberLimitation:number;
+  maxTeamNumberLimitation:number;
+  // 为该项目下的groupData
+  groupList:Array<any>
+}
+
+// 过滤不符合的运动员
+/*
+* athleteList - 运动员列表
+* rule
+* */
+export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
+  // 整理rule中的groupList 做排序
+  qSort(rule.groupList);
+
+  // 整理 将 已报项目数量整理处理
+  athleteList.forEach((m:any) => {
+    m.itemNumber = (m.project.hasOwnProperty('personaldata')) ? m.project.personaldata.length : 0;
+    m.upGroupItemNumber = (m.project.hasOwnProperty('upgrouppersonaldata')) ? m.project.upgrouppersonaldata.length : 0;
+    m.groupFlag = false;
+  });
+  console.log(athleteList);
+  console.log(rule);
+  const { sexType } = rule;
+  /* 1、性别
+  *  2、个人限报项目数量
+  *  3、是否已有本团体项目的报名
+  *  4、依照 是否可跨组参赛/是否可以升组/组别列表 判断是否合法
+  * */
+  // 1 性别判断
+  if(sexType === 1){
+    athleteList = athleteList.filter((v:any) => (v.athlete.sex === '男'));
+  }else if(sexType === 2){
+    athleteList = athleteList.filter((v:any) => (v.athlete.sex === '女'));
+  }
+  // 2 个人限报数量
+  const { itemLimitation } = rule;
+  if(itemLimitation !== 0) {
+    athleteList = athleteList.filter((v:any) => {
+      //
+      return ((v.itemNumber + v.upGroupItemNumber) < itemLimitation)
+    })
+  }else{
+    console.log('itemLimitation is 0');
+  }
+  // 3是否已报本项目
+  const { itemName } = rule;
+  if(itemName !== "" && itemName) {
+    athleteList = athleteList.filter((v:any) => {
+      let isEnrollSameItem = false;
+      if(v.itemNumber !== 0) v.project.personaldata.forEach((m:any) => {
+          if(m.name === itemName) {
+            isEnrollSameItem = true;
+          }
+        });
+      if(v.upGroupItemNumber !== 0)v.project.upgrouppersonaldata.forEach((m:any) => {
+          if(m.name === itemName) {
+            isEnrollSameItem = true;
+          }
+        });
+      return !isEnrollSameItem;
+    })
+  }else {
+    console.log('itemName is lost');
+  }
+  // 这个暂时没有办法取做校验 2019-08-29
+
+  /*============================== 4 升组逻辑判断 ==============================*/
+  /*
+  *  1）判别运动员组别是否高于开设项目组别 - 使用生日判别 ->2）
+  *  2）是否可以跨组参赛   否->3） 是->6）
+  *  3）是否有已报项目     否->4)  是->5）
+  *  4）向下取组 -> null
+  *  5）根据已报项目得到组别，检查合法性 -> null
+  *  6）根据groupList取判别原本组别，并获取可报组别列表 ->7）
+  *  7）判别开设组别是否被其列表包含 -> null
+  * */
+  // 1
+  const { startTime } = rule;
+  athleteList = athleteList.filter((v:any) => (v.athlete.birthday.substr(0,10) > startTime));
+  // 2
+  const { upGroupNumber , groupList } = rule;
+  if(!rule.isCrossGroup) {
+    for(let i = athleteList.length - 1 ; i >= 0 ; i--) {
+      // 3
+      if(athleteList[i].itemNumber === 0 && athleteList[i].upGroupItemNumber === 0) {
+        // 4
+        // 以组别列表筛选出适合的
+        let index = -1,tarGroupList;
+        for(let j:number = groupList.length -1 ; j > 0 ; j--) {
+          if(rule.startTime === groupList[j].startTime) {index = j;break;}
+        }
+        if(index !== -1) {
+          // 这个位置可能有bug
+          if(index + upGroupNumber > groupList.length) {
+            // 向下取组到底部 全取
+            tarGroupList = groupList.slice(index,groupList.length -1);
+          }else {
+            tarGroupList = groupList.slice(index,index + upGroupNumber);
+          }
+          tarGroupList.forEach((v:any) => {
+            if(v.startTime < athleteList[i].birthday.substr(0,10) && v.endTime >  athleteList[i].birthday.substr(0,10) ) {
+             v.groupFlag = true;
+            }
+          })
+        }
+      }else {
+        // 5 根据已报项目确定组别 暂时没办法做
+        // 在 personaldata 和 upgouppersonaldata 中 仅仅会用一个有值
+        let cGroup;
+      }
+    }
+  }else if(rule.isCrossGroup) {
+    //  可以跨组参赛  不需要理会是否有报名项目， 只需要向下取出groupList判别合法即可
+    // 6  与 4 判断相同
+    // 以组别列表筛选出适合的
+    for(let i = athleteList.length - 1 ; i >= 0 ; i--) {
+      let index = -1, tarGroupList;
+      for (let j: number = groupList.length - 1; j >= 0; j--) {
+        if (rule.startTime === groupList[j].startTime) {
+          index = j;
+          break;
+        }
+      }
+      if (index !== -1) {
+        // 这个位置可能有bug
+        if (index + upGroupNumber > groupList.length) {
+          // 向下取组到底部 全取
+          tarGroupList = groupList.slice(index, groupList.length - 1);
+        } else {
+          tarGroupList = groupList.slice(index, index + upGroupNumber);
+        }
+        tarGroupList.forEach((v: any) => {
+          if (v.startTime < athleteList[i].athlete.birthday.substr(0, 10) && v.endTime > athleteList[i].athlete.birthday.substr(0, 10)) {
+            athleteList[i].groupFlag = true;
+          }
+        })
+      }
+    }
+  }else{
+    console.log('isCrossGroup is illegal');
+  }
+
+  return athleteList.filter((v:any) => v.groupFlag);
+}
+
+// 判断报名人员性别是否符合要求
+/*
+* athlete
+* */

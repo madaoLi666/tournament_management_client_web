@@ -70,7 +70,8 @@ const RESISTER_MODEL: Model = {
       let payCode = yield select(({register}:any) => {
         return register.unitRegisterPayCode;
       });
-      yield console.log(payCode);
+      // yield console.log(payCode);
+      yield console.log(unitData);
       let requestData =  yield {
         unitname: payCode,
         name: unitData.unitName,

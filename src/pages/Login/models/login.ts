@@ -30,10 +30,12 @@ const LOGIN_MODEL:Model = {
         const { msg, user } = res.notice;
         if(msg === "3") {
           // 未补全运动员信息
+          yield window.localStorage.setItem('USER', user);
           yield router.push('/login/infoSupplement');
           yield put({type: 'modifyUserId',payload: {userId: user}});
         }else if(msg === "4") {
           // 未设置运动员角色
+          yield window.localStorage.setItem('USER', user);
           yield router.push('/login/setRole');
           yield put({type: 'modifyUserId',payload: {userId: user}});
         }

@@ -40,8 +40,16 @@ export async function deleteParticipantsAthlete(data: object):Promise<any>{
 export async function individualEnroll(data: object):Promise<any>{
     return axiosInstance.post('/personalprojectenroll/', data);
 }
-
 export async function deleteIndividualEnroll(data: object):Promise<any>{
     return axiosInstance.delete('/personalprojectenroll/', {data});
 }
+// 团队报名
+export async function teamEnroll(data:object):Promise<any>{
+    return axiosInstance.post('/teamenroll/',data);
+}
+// 删除队伍参赛项目
+export async function deleteTeamEnrollItem(data:object):Promise<any>{
+    return axiosInstance.delete('/groupprojectenroll/',{data});
+}
+
 

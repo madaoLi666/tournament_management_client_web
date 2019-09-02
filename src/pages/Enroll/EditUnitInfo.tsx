@@ -242,8 +242,6 @@ function EditUnitInfo(props: { unitData: any, matchId: number, dispatch: Dispatc
 
   function submitData(data: any) {
     if(unitData){
-      console.log(data);
-      console.log(unitData);
       // 数据装载
       let formData = new FormData();
       formData.append('unitdata', unitData.unitId);
@@ -312,24 +310,18 @@ export default connect(({ enroll }: any) => {
     unitId: unitInfo.id,
     unitName: unitInfo.unitName,
     unitNameAlias: '',
-    leaderName: '',
-    leaderPhone: '',
-    coach1Name: '',
-    coach1Phone: '',
-    coach2Name: '',
-    coach2Phone: '',
+    leaderName: '', leaderPhone: '',
+    coach1Name: '', coach1Phone: '',
+    coach2Name: '', coach2Phone: '',
     guaranteePic: '',
   };
   // 有报名信息
   if(Object.keys(unitData).length !== 0){
-    targetUnitData = {
-      unitId: unitInfo.id,
-      unitName: unitInfo.unitName,
-      ...unitData
-    };
+    targetUnitData = { unitId: unitInfo.id, unitName: unitInfo.unitName, ...unitData };
   }else {
     targetUnitData.unitNameAlias = unitInfo.unitName;
   }
 
   return { unitData: targetUnitData, matchId:currentMatchId };
 })(EditUnitInfo);
+

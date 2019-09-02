@@ -204,7 +204,9 @@ function BasicInfoSupplement(props:any) {
   )
 }
 
-export default connect(({login}:any) => ({
-  userId: login.userId
-}))(BasicInfoSupplement);
+export default connect(({login}:any) => {
+  let userId:number = login.userId;
+  if(userId === -1) userId = Number(window.localStorage.getItem('USER'));
+  return { userId: userId }
+})(BasicInfoSupplement);
 

@@ -61,6 +61,8 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
   compareToConfirmPassword = (rule: any, value: any, callback: Function) => {
     const { form } = this.props;
     const confirmPassword = form.getFieldValue('confirmPassword');
+    console.log(value);
+    if ( value.length < 10 ) callback('请输入10位或以上的密码');
     if (value && confirmPassword && value !== confirmPassword) {
       // 去验证 confirmPassword
       form.validateFields(['confirmPassword'], { force: true });
@@ -71,6 +73,7 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
   // 与password比较
   compareToFirstPassword = (rule: any, value: any, callback: Function) => {
     const { form } = this.props;
+    if ( value.length < 10 ) callback('请输入10位或以上的密码');
     if (value && value !== form.getFieldValue('password')) {
       callback('两次输入的密码不相同');
     } else {
@@ -140,7 +143,7 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
         return;
       }
     });
-  }
+  };
 
   // 提交信息
   handleSubmit = (e: React.FormEvent): void => {
@@ -175,7 +178,7 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
             {getFieldDecorator('password', {
               rules: [{ required: true, message: '请输入密码' }, { validator: this.compareToConfirmPassword }],
             })(
-              <Input type='password' placeholder='请输入密码' autoComplete='off'/>,
+              <Input type='password' placeholder='请输入密码（至少10位）' autoComplete='off'/>,
             )}
           </Form.Item>
           <Form.Item label='确认密码'>
@@ -257,11 +260,11 @@ class CodeInput extends React.Component<any,any> {
     if (onChange) {
       onChange({code});
     }
-  }
+  };
 
   public handleCodeChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     this.triggerChange(e.target.value);
-  }
+  };
 
   render() {
 
@@ -308,7 +311,7 @@ class BindUnitForm extends React.Component<NewUnitFromProps, any>{
         code:""
       }
     })
-  }
+  };
 
   render(): React.ReactNode {
 
@@ -370,21 +373,22 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
   // 这里可以拿到表单的信息
   async function submitRegister(data: any): Promise<any> {
     const { dispatch , userId} = props;
+    // edo
+    console.log(data);
+    console.log(userId);
+
     // 发起请求检查是否支付了费用
     let isPay = await checkoutIsPay().then(res => (res));
-    console.log(isPay);
     if(!isPay) {
       // 获取支付二维码
       let pic = await getPayQRCodeUrl().then(res => (res));
       //
       if(pic) {
         setPicUrl(pic);
-        openDialog();
+        openDialog({userId: userId, ...data});
       }else{
         message.error('获取支付二维码失败')
       }
-      // edo
-      setCurrentUnitData({userId: userId, ...data});
     }else{
       dispatch({type: 'register/registerUnitAccount', payload: {unitData: {userId: userId,...data}} });
     }
@@ -414,8 +418,9 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
   }
 
   // 打开dialog
-  function openDialog() {
+  function openDialog(unitData:any) {
     const { dispatch } = props;
+
     // 打开modal展示图片同时进行轮询
     setVisible(true);
     let i = setInterval(() => {
@@ -425,9 +430,10 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
           closeDialog();
           clearInterval(i);
           // edo
-          dispatch({type: 'register/registerUnitAccount', payload: currentUnitData });
+          console.log(unitData);
+          dispatch({type: 'register/registerUnitAccount', payload: {unitData: unitData}});
 
-          message.success('已成功支付单位注册费用，请再次点击注册');
+          // message.success('已成功支付单位注册费用，请再次点击注册');
         }
       });
     },2000);
@@ -436,7 +442,6 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
   function closeDialog() {
     setVisible(false);
   }
-
   // 提供给教练员/领队做单位的绑定
   function submitBindUnitData(data: any): void {
     let myPayload = {
@@ -453,15 +458,10 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
     })
   }
   // 这里做异步请求检查单位的名称是否存在
+  // 暂时废弃
   async function checkUnitNameIsLegal(unitName:string): Promise<{data:string,error:string,notice:string}> {
     return await newUnitAccount({name:unitName})
-    // return await fetch(`http://47.106.15.217:9090/mock/19/newUnitAccount/?name=${unitName}`, {
-    //   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    //   method: 'GET',
-    // })
-    //   .then(response => {
-    //     return response.ok;
-    //   });
+    // 暂时不进行校验  2019-09-02
   }
 
   const TabsDOM: React.ReactNode = (
@@ -507,7 +507,11 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
   );
 }
 
-export default connect(({register,login}:any) => ({
-  payCode: register.unitRegisterPayCode,
-  userId: login.userId
-}))(BindUnit);
+export default connect(({register,login}:any) => {
+  let userId:number = login.userId;
+  if(userId === -1) userId = Number(window.localStorage.getItem('USER'));
+  return {
+    payCode: register.unitRegisterPayCode,
+    userId: userId
+  }
+})(BindUnit);
