@@ -251,7 +251,8 @@ class CodeInput extends React.Component<any,any> {
     const value = props.value || {};
 
     this.state = {
-      code:value.code
+      code:value.code,
+      timeInterval:0
     }
   }
 
@@ -266,13 +267,41 @@ class CodeInput extends React.Component<any,any> {
     this.triggerChange(e.target.value);
   };
 
+  public sendCode = () => {
+    // 60秒可发送一次
+    const timeInterval:number = 60000;
+    // 设置state中
+    this.setState({
+      timeInterval: timeInterval
+    });
+    this.props.sendCode();
+    // 计时 用于防止用户多次发送验证码
+    let i = setInterval(() => {
+      this.setState((timeInterval: any) => {
+          if (timeInterval === 0) {
+            clearInterval(i);
+            return 0;
+          }
+          return timeInterval - 1000;
+        });
+    },1000);
+  }
+
   render() {
+    const { timeInterval } = this.state;
 
     return (
-      <Input.Group compact={true} style={{width:"100%"}}>
-        <Input placeholder="请输入验证码" onChange={this.handleCodeChange} style={{width:"60%",textAlign:"left"}} />
-        <Button onClick={this.props.sendCode} style={{width:"40%"}} type="primary" >发送验证码</Button>
-      </Input.Group>
+      <Input.Group compact={true}>
+      <Input id="phoneNumber" onChange={this.handleCodeChange} placeholder='请输入验证码' style={{  width: '70%' }} autoComplete='off' />
+      <Button
+        type="primary"
+        onClick={this.sendCode}
+        style={{  width: '30%' }}
+        disabled={timeInterval !== 0}
+      >
+        {timeInterval === 0 ? <span>发送验证码</span> : <span>{timeInterval/1000}秒</span>}
+      </Button>
+    </Input.Group>
     )
   }
 }
@@ -302,15 +331,16 @@ class BindUnitForm extends React.Component<NewUnitFromProps, any>{
   };
 
   public sendCode = (event:React.MouseEvent<HTMLElement>) => {
+    console.log('aaa');
     // @ts-ignore
-    this.props.dispatch({
-      type:'register/bindUnitAccountAndSendCode',
-      payload: {
-        unitname:"",
-        password:"",
-        code:""
-      }
-    })
+    // this.props.dispatch({
+    //   type:'register/bindUnitAccountAndSendCode',
+    //   payload: {
+    //     unitname:"",
+    //     password:"",
+    //     code:""
+    //   }
+    // })
   };
 
   render(): React.ReactNode {
@@ -338,10 +368,10 @@ class BindUnitForm extends React.Component<NewUnitFromProps, any>{
           )}
         </Form.Item>
 
-        <Form.Item label="验证码" extra="ps:发送的手机号为该单位注册时登记的">
+        <Form.Item label="验证码" extra={<p style={{width:'60%',float:'left'}}>ps:发送的手机号为该单位注册时登记的</p>}>
           {getFieldDecorator('code',{
             initialValue: {code:null},
-            rules: [{validator: this.checkPrice}]
+            rules: [{validator: this.checkPrice},{required: true}]
           })(<CodeInput sendCode={this.sendCode} />)}
         </Form.Item>
 
@@ -444,6 +474,7 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
   }
   // 提供给教练员/领队做单位的绑定
   function submitBindUnitData(data: any): void {
+    console.log(data);
     let myPayload = {
       unitname:"",
       password:"",

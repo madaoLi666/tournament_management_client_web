@@ -2,7 +2,7 @@ import { Model, EffectsCommandMap } from 'dva'
 import { AnyAction } from 'redux';
 import { checkVerificationCode, accountdata } from '@/services/login.ts';
 import router from 'umi/router';
-import { addplayer, deletePlayer } from '@/services/athlete';
+import { deletePlayer } from '@/services/athlete';
 import { message } from 'antd';
 
 // 单位账号的data
@@ -52,7 +52,6 @@ const USER_MODEL:Model = {
     email:'',
     unitaccount:'',
     errorstate:'',
-
 
   },
   reducers: {
@@ -161,6 +160,7 @@ const USER_MODEL:Model = {
     * getAccountData(action: AnyAction, effect: EffectsCommandMap) {
       const { put } = effect;
       let res = yield accountdata();
+      console.log(res);
       if (res) {
         if (res.data.unitaccount === 2) {
           // ===2 代表是单位账号，还要多一项操作是调用获取单位账号下的运动员信息的接口

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import {
-  Layout, Row, Col, Input, Menu
+  Layout, Row, Col, Input, Menu, message
 } from 'antd'
 import { connect } from 'dva';
 import router from 'umi/router';
@@ -23,7 +23,8 @@ function HomeLayout(props: any) {
 
   function exit() {
     window.localStorage.clear();
-    router.push('/login');
+    router.push('/home');
+    message.info('退出登陆成功');
   }
 
   useEffect(() => {

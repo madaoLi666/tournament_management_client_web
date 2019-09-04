@@ -9,7 +9,6 @@ import { FaSearch } from 'react-icons/fa'
 // @ts-ignore
 import styles from './index.less';
 import { UploadFile } from 'antd/lib/upload/interface';
-import Test from './Test';
 
 const { confirm } = Modal;
 
@@ -329,14 +328,6 @@ function AthletesList(props:athletesProps) {
 
     return (
         <Layout className={styles['AthletesList-page']}>
-            <Test />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
             <Layout.Content className={styles['AthletesList-content']}>
 
                 <PageHeader style={{fontSize:16}} title="运动员列表" extra={AddbuttonNode} />

@@ -36,7 +36,7 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
 
   enterEnrollChannel = () => {
     // message.warn('尚未到报名时段');
-    const { dispatch, unitId } = this.props;
+    const { dispatch } = this.props;
     const { currentGameData } = this.state;
     if(currentGameData.id !== undefined && currentGameData.id !== -1) {
 
@@ -103,6 +103,7 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
             {TAB_DOM}
             <TabPane tab='赛事章程' key='rules'>
               <div>
+                // @ts-ignore
                 <StaticHtmlPage index={currentGameData.id} />
               </div>
             </TabPane>
