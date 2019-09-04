@@ -1,5 +1,5 @@
 import axios,{ AxiosRequestConfig, AxiosResponse } from 'axios';
-
+import { message } from 'antd';
 const BASE_URL:string = 'https://www.gsta.top/v3';
 const TIMEOUT:number = 6000;
 
@@ -39,9 +39,11 @@ axiosInstance.interceptors.request.use((config:AxiosRequestConfig):AxiosRequestC
 axiosInstance.interceptors.response.use((response:AxiosResponse):any => {
   // 对response的状况进行修改
   const { status } = response;
+  const { data } = response;
+  console.log(status);
 
   if(status < 200 || status > 301) {
-    alert('请求失败');
+    message.error('请求失败，请检查网络状况');
     return false;
   }
   // 没有权限
@@ -53,6 +55,9 @@ axiosInstance.interceptors.response.use((response:AxiosResponse):any => {
 
 
   return response.data;
+},(error) => {
+  console.log(error);
+  return false;
 });
 
 export default axiosInstance;

@@ -307,9 +307,9 @@ const AIForm = Form.create<AthleteInfoFormProps>({
   }
 })(AthleteInfoForm);
 
-function ParticipantsAthleteList(props:{matchId: number, unitId: number , athleteList: Array<any>, dispatch: Dispatch}) {
+function ParticipantsAthleteList(props:{matchId: number, unitId: number , athleteList: Array<any>, contestantId:number , dispatch: Dispatch}) {
 
-  const { matchId, unitId, dispatch, athleteList } = props;
+  const { matchId, unitId, dispatch, athleteList, contestantId } = props;
   // modal
   const [visible, setVisible] = useState(false);
   const modalProps: ModalProps = {
@@ -357,7 +357,7 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
       // 选中
       let reqData = {
         matchdata: matchId,
-        contestant: unitId,
+        contestant: contestantId,
         unitathlete: record.id,
         birthday: birthday.slice(0,10),
         athlete: id
@@ -370,7 +370,7 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
           }
         })
     }else{
-      deleteParticipantsAthlete({matchdata: matchId, athlete: id, contestant: unitId})
+      deleteParticipantsAthlete({matchdata: matchId, athlete: id, contestant: contestantId})
         .then(res => {
           if(res.data !== "true") {
             console.log(res.error);
@@ -498,14 +498,7 @@ export default connect(({enroll}:any) => {
   return {
     athleteList: enroll.unit.athleteList,
     matchId: enroll.currentMatchId,
-    unitId: enroll.unitInfo.id
+    unitId: enroll.unitInfo.id,
+    contestantId: enroll.unit.contestantUnitData.id
   };
-  // const { unitData } = enroll;
-  // console.log(unitData);
-  // if(Object.keys(unitData) === 0){
-  //   return {unitName:false}
-  // }
-  // return {
-  //  unitName: unitData.unitName
-  // }
 })(ParticipantsAthleteList);
