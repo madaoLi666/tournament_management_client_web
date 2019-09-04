@@ -8,9 +8,8 @@ import router from 'umi/router';
 import styles from './index.less';
 
 const { Header, Content, Footer } = Layout;
-const { Search } = Input;
 
-function HomeLayout(props: any) {
+function StaticLayout(props: any) {
 
   let menuArr:Array<object> = [
     { name: '主页', key: 'home', path: ''},
@@ -46,7 +45,7 @@ function HomeLayout(props: any) {
             </div>
             <div style={{display: 'inline-block', float: 'right'}}>
               {(token === null || token === undefined) ? (
-                <a onClick={() => router.push('/login')} >你好，请登录</a>
+                <a onClick={() => router.push('/login')} ></a>
               ) : (
                 <span>
                   <a onClick={() => router.push('/user')}>个人中心</a>
@@ -102,4 +101,4 @@ function HomeLayout(props: any) {
 *   信息判断 是否有登陆 有 显示信息 无 原本页面
 * */
 
-export default connect()(HomeLayout);
+export default connect()(StaticLayout);
