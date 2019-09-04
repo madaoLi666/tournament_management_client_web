@@ -1,4 +1,5 @@
 import axiosInstance from '@/utils/request.ts';
+import { message } from 'antd';
 
 // 接口返回数据格式
 export interface Response {
@@ -13,8 +14,9 @@ export async function accountdata(): Promise<any> {
 }
 
 export async function Login(data: object): Promise<any>{
-  console.log(data);
-  return axiosInstance.post('/api-token-auth/',data);
+  return axiosInstance.post('/api-token-auth/',data).catch(() => {
+    message.error('请检查帐号密码是否正确！');
+  });
 }
 
 // 请求发送手机验证码
@@ -29,7 +31,6 @@ export async function getVerificationPic(): Promise<any> {
 
 // 校验手机验证码
 export async function checkVerificationCode(data: object): Promise<any> {
-  console.log(data);
   return axiosInstance.post('/phoneCode/',data);
 }
 

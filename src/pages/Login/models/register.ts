@@ -100,10 +100,15 @@ const RESISTER_MODEL: Model = {
       let res = yield bindUnitAccount(action.payload);
       //689422
       console.log(res);
-      if (res.data === 'true') {
-        message.info('aaaa')
-      }else {
-        message.error('bbb')
+      if (res.data === 'true' && res.notice === '') {
+        message.info('绑定单位成功');
+        router.push('/home');
+      }else if(res.notice !== '' && res.data === 'true') {
+        // 发送手机验证码，空操作
+        ;
+      }
+      else {
+        message.error(res.error);
       }
     }
   },

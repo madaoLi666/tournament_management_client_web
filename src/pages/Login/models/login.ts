@@ -2,6 +2,7 @@ import { AnyAction } from 'redux';
 import { Model, EffectsCommandMap } from 'dva';
 import { sendVerification2Phone, Response, Login } from '@/services/login.ts';
 import router from 'umi/router';
+import { message } from 'antd';
 
 const LOGIN_MODEL:Model = {
   namespace: 'login',
@@ -21,11 +22,13 @@ const LOGIN_MODEL:Model = {
     *sendLoginRequest(action: AnyAction, effect: EffectsCommandMap) {
       const { payload } = action; const { put } = effect;
       let res = yield Login(payload);
+      console.log(res);
       if(res && res.notice === '' && res.data !== ""){
         // 本地存储token
         yield window.localStorage.setItem('TOKEN',res.data);
         yield put({type:'user/modifyUserInfo',payload: action.payload});
-        yield router.push('/home');
+        message.success('登录成功！');
+        yield router.goBack();
       }else if(res.notice !== ""){
         const { msg, user } = res.notice;
         if(msg === "3") {
