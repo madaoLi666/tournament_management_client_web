@@ -7,11 +7,6 @@ const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const config: IConfig =  {
   //
   routes:[
-    { path: '/homeStatic' , Routes: ['./src/layouts/StaticLayout.tsx'],
-      routes: [
-        { path: '/homeStatic', component: './Home/Static.tsx', name: '主页' },
-      ]
-    },
     // 主页
     { path: '/home', Routes: ['./src/layouts/HomeLayout.tsx'],
       routes: [
@@ -48,7 +43,7 @@ const config: IConfig =  {
       Routes: ['./src/layouts/BasicLayout.tsx','./src/pages/Authorized/Authorized.tsx'],
       routes: []
     },
-    { path: '/', redirect: '/homeStatic' }
+    { path: '/', redirect: '/home' }
   ],
   treeShaking: true,
   chainWebpack(config: any) {
