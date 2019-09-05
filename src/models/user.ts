@@ -162,8 +162,14 @@ const USER_MODEL:Model = {
       let res = yield accountdata();
       console.log(res);
       if (res) {
+        // ===2 代表是单位账号，还要多一项操作是调用获取单位账号下的运动员信息的接口
         if (res.data.unitaccount === 2) {
-          // ===2 代表是单位账号，还要多一项操作是调用获取单位账号下的运动员信息的接口
+          // 判断是否有单位账号信息
+          if(res.data.unitdata.length === 0 || res.data.unitdata ===  undefined || res.data.unitdata === null) {
+            message.warning('您的账号中没有单位信息，请重新填写');
+            router.push('/login/bindUnit');
+            return;
+          }
           yield effect.put({type: 'saveUnitAccount', payload: res.data});
           // 将unitData 设置
           yield put({type: 'enroll/modifyUnitInfo',payload: {unitInfo: res.data.unitdata[0]}})

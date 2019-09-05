@@ -541,6 +541,8 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
 export default connect(({register,login}:any) => {
   let userId:number = login.userId;
   if(userId === -1) userId = Number(window.localStorage.getItem('USER'));
+  console.log(userId);
+  // TODO 查看state中这里是什么
   return {
     payCode: register.unitRegisterPayCode,
     userId: userId
