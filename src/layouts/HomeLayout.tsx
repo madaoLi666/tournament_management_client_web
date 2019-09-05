@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import {
-  Layout, Row, Col, Input, Menu, message
+  Layout, Input, message
 } from 'antd'
 import { connect } from 'dva';
 import router from 'umi/router';

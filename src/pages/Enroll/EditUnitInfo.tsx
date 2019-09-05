@@ -257,11 +257,9 @@ function EditUnitInfo(props: { unitData: any, matchId: number, dispatch: Dispatc
       formData.append('dutybook', data.guaranteePic);
 
       participativeUnit(formData,{headers: {"Content-Type": "multipart/form-data"}})
-        .then(async (res) => {
+        .then(async (data) => {
           // 判断请求状况
-          console.log(res);
-          if(res.error === "" && res.notice === "" && res.data !== "") {
-            const { data } = res;
+          if(data) {
             let uD = {
               id: data.id,
               leaderName: data.leader,
@@ -274,10 +272,7 @@ function EditUnitInfo(props: { unitData: any, matchId: number, dispatch: Dispatc
               guaranteePic: data.dutybook
             };
             // 修改unitData
-            dispatch({
-              type: 'enroll/modifyUnitData',
-              payload: { unitData: uD}
-            });
+            dispatch({ type: 'enroll/modifyUnitData', payload: { unitData: uD} });
             router.push('/enroll/participants');
           }
         })

@@ -54,15 +54,14 @@ const RESISTER_MODEL: Model = {
         name: payload.name,
         user: payload.user
       };
-      let res = yield addAthleteInfo(requestData);
+      let data = yield addAthleteInfo(requestData);
       //设置成功 跳转至角色设置中
-      if (res && res.data === 'true') yield router.push('/login/setRole');
+      if(data) yield router.push('/login/setRole');
     },
     // 注册成为个人账号
     * setAthleteRole(action: AnyAction) {
-      let res = yield setAthleteRole();
-      if(res && res.data === 'true' && res.error === '') yield router.push('/user');
-
+      let data = yield setAthleteRole();
+      if(data) yield router.push('/user');
     },
     // 注册单位账号
     * registerUnitAccount(action: AnyAction, effect: EffectsCommandMap) {
@@ -84,31 +83,21 @@ const RESISTER_MODEL: Model = {
         password: unitData.password,
         user:unitData.userId
       };
-      let res = yield registerUnitAccount(requestData);
-      if(res.data === 'true'){
-        // 修改user中的数据
-        // @ts-ignore
+      let data = yield registerUnitAccount(requestData);
+      if(data) {
         message.success('成功注册单位账号，请重新登陆');
         router.push('/login');
-      }else{
-        //
+      }else {
         message.error('注册单位失败，请检查网络状况与付款状况');
       }
     },
     // 绑定单位账号
     * bindUnitAccountAndSendCode(action: AnyAction, effect: EffectsCommandMap) {
-      let res = yield bindUnitAccount(action.payload);
+      let data = yield bindUnitAccount(action.payload);
       //689422
-      console.log(res);
-      if (res.data === 'true' && res.notice === '') {
+      if(data) {
         message.info('绑定单位成功');
         router.push('/home');
-      }else if(res.notice !== '' && res.data === 'true') {
-        // 发送手机验证码，空操作
-        ;
-      }
-      else {
-        message.error(res.error);
       }
     }
   },

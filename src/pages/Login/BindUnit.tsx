@@ -81,28 +81,24 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
     }
   };
   // 检查单位名称是否和合法
+  // TODO 这个位置是否需要统一提示仍待商榷
   checkUnitNameIsLegal = (rule: any, value: any, callback: Function) => {
     const setSuccess = () => {
-      this.setState({
-        validStatus: 'success'
-      })
+      this.setState({ validStatus: 'success' })
     };
     const setError = () => {
-      this.setState({
-        validStatus: 'error'
-      })
+      this.setState({ validStatus: 'error' })
     };
     if (value === "" || value === null || value === undefined) {
       callback();
-      this.setState({
-        validStatus: 'error'
-      });
+      this.setState({ validStatus: 'error' });
       return;
     }
     const { unitNameIsLegal } = this.props;
     // 没有检查value是否为空 不知道会不会bug
     let res = unitNameIsLegal(value);
     res.then(function (result:{data:string,error:string,notice:string}) {
+      console.log(result);
       if (result.data !== "true") {
         callback();
         setSuccess();
@@ -171,7 +167,7 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
               rules: [{ required: true, message: '请输入单位名称' },{ validator: this.checkUnitNameIsLegal }],
               validateTrigger: 'onBlur',
             })(
-              <Input onChange={this.handleChange} placeholder='请输入单位名称' autoComplete='off' />,
+              <Input placeholder='请输入单位名称' autoComplete='off' />,
             )}
           </Form.Item>
           <Form.Item label='密码'>
@@ -355,6 +351,7 @@ class BindUnitForm extends React.Component<NewUnitFromProps, any>{
         <Form.Item label='用户名'>
           {getFieldDecorator('unitName',{
             rules:[{required:true, message: '请输入单位名称'}],
+            validateTrigger: 'onBlur'
           })(
             <Input placeholder='请输入单位名称' autoComplete='off' />,
           )}
@@ -408,6 +405,7 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
     console.log(userId);
 
     // 发起请求检查是否支付了费用
+    // TODO 这个位置要再改改
     let isPay = await checkoutIsPay().then(res => (res));
     if(!isPay) {
       // 获取支付二维码
@@ -489,7 +487,6 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
     })
   }
   // 这里做异步请求检查单位的名称是否存在
-  // 暂时废弃
   async function checkUnitNameIsLegal(unitName:string): Promise<{data:string,error:string,notice:string}> {
     return await newUnitAccount({name:unitName})
     // 暂时不进行校验  2019-09-02
@@ -541,6 +538,8 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
 export default connect(({register,login}:any) => {
   let userId:number = login.userId;
   if(userId === -1) userId = Number(window.localStorage.getItem('USER'));
+  console.log(userId);
+  // TODO 查看state中这里是什么
   return {
     payCode: register.unitRegisterPayCode,
     userId: userId

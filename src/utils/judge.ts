@@ -108,6 +108,5 @@ export function isIllegal(type: number, value: any, key?: string | Array<string>
       flag = false;
       break;
   }
-
   return flag;
 }

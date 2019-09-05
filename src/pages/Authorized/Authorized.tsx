@@ -1,7 +1,6 @@
 import React,{Component} from 'react';
 import router from 'umi/router';
 import { connect } from 'dva';
-import { checkAccountState } from '@/services/login';
 
 class Authorized extends Component<any,any>{
   constructor(props:any){super(props);}

@@ -132,10 +132,9 @@ const ENROLL_MODEL: Model = {
     // 得到个人项目限制
     * getIndividualLimitation ({payload}: AnyAction, {put}: EffectsCommandMap) {
       const { matchId } = payload;
-      let res = yield getIndividualEnrollLimit({matchdata: matchId});
-      //
-      if(res.error === "" && res.notice === "" && res.data) {
-        const { indivdualentrylimit } = res.data;
+      let data = yield getIndividualEnrollLimit({matchdata: matchId});
+      if(data) {
+        const { indivdualentrylimit } = data;
         let r = {
           isCrossGroup: indivdualentrylimit[0].crossgroup === "True",
           upGroupNumber: indivdualentrylimit[0].upgroupnumber,
@@ -150,9 +149,8 @@ const ENROLL_MODEL: Model = {
     //获取所有项目
     * getAllItemInfo ({payload}: AnyAction, {put}: EffectsCommandMap) {
       const { matchId } = payload;
-      let res = yield getAllItem({matchdata: matchId});
-      if(res.error === "" && res.notice === "" && res.data) {
-        const { data } = res;
+      let data = yield getAllItem({matchdata: matchId});
+      if( data ) {
         let r = convertItemData(data);
         yield put({
           type: 'modifyItem',
@@ -162,8 +160,8 @@ const ENROLL_MODEL: Model = {
     },
     * individualEnroll ({payload}: AnyAction, {put, select}: EffectsCommandMap) {
       const { enrollData } = payload;
-      let res = yield individualEnroll(enrollData);
-      if(res.error === "" && res.notice === "" && res.data === "true") {
+      let data = yield individualEnroll(enrollData);
+      if(data) {
         yield put({
           type: 'checkIsEnrollAndGetAthleteLIST',
           payload:{

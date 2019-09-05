@@ -351,7 +351,6 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
   ];
   // 选中运动员是否参赛
   function handleSelect(checked: boolean, record: any, e: any ) {
-    console.log(record);
     const { birthday, id } = record.athlete;
     if(checked) {
       // 选中
@@ -363,20 +362,12 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
         athlete: id
       };
       addParticipantsAthlete(reqData)
-        .then(res => {
-          if(res.data !== "true") {
-            console.log(res.error);
-            e.target.checked = !checked;
-          }
+        .then(data => {
+          if(!data) {e.target.checked = !checked; }
         })
     }else{
       deleteParticipantsAthlete({matchdata: matchId, athlete: id, contestant: contestantId})
-        .then(res => {
-          if(res.data !== "true") {
-            console.log(res.error);
-            e.target.checked = !checked;
-          }
-        })
+        .then(data => {if(!data) {e.target.checked = !checked;}})
     }
   }
   // 传入表单中

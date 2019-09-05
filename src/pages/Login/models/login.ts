@@ -20,6 +20,7 @@ const LOGIN_MODEL:Model = {
   effects: {
     // 账号密码登陆的请求
     *sendLoginRequest(action: AnyAction, effect: EffectsCommandMap) {
+      //  因为登陆的特殊性，没有替换为统一的提示
       const { payload } = action; const { put } = effect;
       let res = yield Login(payload);
       console.log(res);
@@ -48,6 +49,7 @@ const LOGIN_MODEL:Model = {
     *sendPhoneNumberForCode(action: AnyAction, effect: EffectsCommandMap) {
       let data:{phonenumber: string} = {phonenumber: action.payload};
       let res = yield sendVerification2Phone(data);
+      // 是否需要替换
       if (res) {
         if (res.data === "true") {
           // TODO

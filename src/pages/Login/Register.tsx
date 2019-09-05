@@ -38,8 +38,8 @@ const { TabPane } = Tabs;
 const autoAdjust = {
   xs: { span: 16 },
    sm: { span: 12,offset:3 },
-    md: { span: 12, offset:4 }, 
-    lg: { span: 8, offset:6 }, 
+    md: { span: 12, offset:4 },
+    lg: { span: 8, offset:6 },
     xl: { span: 8, offset:6 },
 };
 // 表单layout
@@ -196,7 +196,8 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
             visible: true,
             errorText: error
           })
-        }
+        };
+        // TODO 这个位置要改改 EDO
         let res = personalAccountRegister(personInfo);
         res.then((resp) => {
           if (resp) {

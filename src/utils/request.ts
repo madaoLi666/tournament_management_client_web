@@ -52,7 +52,8 @@ axiosInstance.interceptors.response.use((response:AxiosResponse):any => {
   // 对response的状况进行修改
   const { data } = response;
   // 判断data中是否有值
-  if(!isIllegal(1,data,['error','notice'])) {
+  if(!isIllegal(1,data,'notice') && !isIllegal(1,data,'error')) {
+    console.log(isIllegal(1,data,['error','notice']));
     return data.data;
   } else if(isIllegal(0,data.error)) {
     message.error(data.error);

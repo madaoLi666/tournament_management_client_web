@@ -65,8 +65,8 @@ class IndividualEnroll extends React.Component<any,any>{
       * */
 
       let enrollData = { player:athleteData.player, openprojectgroupsex:id };
-      individualEnroll(enrollData).then((res:any) => {
-        if(res.error === "") {
+      individualEnroll(enrollData).then(data => {
+        if(data) {
           dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload:{matchId,unitId}});
           message.success('报名成功');
           this.setState({
@@ -74,8 +74,6 @@ class IndividualEnroll extends React.Component<any,any>{
             groupList:[], sexList: [], itemGroupSexID: -1,
             groupValue:undefined, sexValue:undefined, itemValue:undefined
           })
-        }else{
-          message.error(res.error);
         }
       })
     }
@@ -85,13 +83,9 @@ class IndividualEnroll extends React.Component<any,any>{
     console.log(id);
     const { dispatch,matchId,unitId } = this.props;
     deleteIndividualEnroll({personalprojectenroll:id})
-      .then(res => {
-        console.log(res);
-        if(res.data === 'true') {
-          dispatch({
-            type: 'enroll/checkIsEnrollAndGetAthleteLIST',
-            payload: { matchId, unitId }
-          })
+      .then(data => {
+        if(data) {
+          dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId } })
         }
       })
   };
@@ -150,7 +144,6 @@ class IndividualEnroll extends React.Component<any,any>{
   render(): React.ReactNode {
     const { modalVisible, currentAthleteData , groupList, sexList, itemGroupSexID, groupValue, sexValue, itemValue } = this.state;
     const { enrollAthleteList, individualItemList, individualLimitation } = this.props;
-    console.log(enrollAthleteList);
     const modalProps: ModalProps = {
       visible: modalVisible,
       title: '添加个人报名信息',

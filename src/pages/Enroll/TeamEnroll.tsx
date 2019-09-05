@@ -290,10 +290,8 @@ class TeamEnroll extends React.Component<any,any>{
   // 删除
   handleDeleteTeamEnroll = (id:number) => {
     const { matchId, unitId, dispatch } = this.props;
-    deleteTeamEnrollItem({groupprojectenroll: id}).then(res => {
-      if(res.error !== "") {
-        dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId } });
-      }
+    deleteTeamEnrollItem({groupprojectenroll: id}).then(data => {
+      if(data) {dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId } });}
     })
   };
 

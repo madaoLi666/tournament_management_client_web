@@ -135,16 +135,11 @@ const USER_MODEL:Model = {
       let phone:any = yield effect.select((state:any) => ({phoneNumber: state.user.phoneNumber}));
       let phoneInfo: {phonenumber:string, phonecode: string} = {phonenumber:phone.phoneNumber, phonecode: action.payload};
       // 验证手机号码与验证码
-      let res = yield checkVerificationCode(phoneInfo);
-      if (res) {
-        if (res.data === "true") {
-          router.push("/login/register");
-          yield console.log(action.payload);
-          yield effect.put({type: 'modifyPhoneNumber', payload: phone.phoneNumber})
-
-        }else {
-          yield effect.put({type: 'modifyError',payload: res.error})
-        }
+      let data = yield checkVerificationCode(phoneInfo);
+      if (data) {
+        router.push("/login/register");
+        yield console.log(action.payload);
+        yield effect.put({type: 'modifyPhoneNumber', payload: phone.phoneNumber})
       }
     },
     // 个人注册成功后，存进state
@@ -161,8 +156,14 @@ const USER_MODEL:Model = {
       const { put } = effect;
       let data = yield accountdata();
       if (data) {
+        // ===2 代表是单位账号，还要多一项操作是调用获取单位账号下的运动员信息的接口
         if (data.unitaccount === 2) {
-          // ===2 代表是单位账号，还要多一项操作是调用获取单位账号下的运动员信息的接口
+          // 判断是否有单位账号信息
+          if(data.unitdata.length === 0 || data.unitdata ===  undefined || data.unitdata === null) {
+            message.warning('您的账号中没有单位信息，请重新填写');
+            router.push('/login/bindUnit');
+            return;
+          }
           yield effect.put({type: 'saveUnitAccount', payload: data});
           // 将unitData 设置
           yield put({type: 'enroll/modifyUnitInfo',payload: {unitInfo: data.unitdata[0]}})

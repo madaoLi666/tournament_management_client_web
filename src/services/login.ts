@@ -1,4 +1,5 @@
 import axiosInstance from '@/utils/request.ts';
+import axios from 'axios';
 import { message } from 'antd';
 
 // 接口返回数据格式
@@ -14,7 +15,9 @@ export async function accountdata(): Promise<any> {
 }
 
 export async function Login(data: object): Promise<any>{
-  return axiosInstance.post('/api-token-auth/',data).catch(() => {
+  return axios.post('https://www.gsta.top/v3/api-token-auth/',data).
+    then((res) => (res.data))
+    .catch(() => {
     message.error('请检查帐号密码是否正确！');
   });
 }
