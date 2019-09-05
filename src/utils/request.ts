@@ -1,5 +1,6 @@
-import axios,{ AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios,{ AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import { message } from 'antd';
+import { isIllegal } from '@/utils/judge';
 const BASE_URL:string = 'https://www.gsta.top/v3';
 const TIMEOUT:number = 6000;
 
@@ -9,6 +10,19 @@ let axiosInstance = axios.create({
   timeout: TIMEOUT,
   headers: {
 
+  },
+  validateStatus:(status: number): boolean => {
+    if( status === 401 ) {
+      message.error('请重新登陆');
+      //@ts-ignore
+      window.g_app.router.push('/login');
+      return false;
+    }
+    if(status < 200 || status > 301) {
+      message.error('请求失败');
+      return false;
+    }
+    return true;
   }
 });
 
@@ -31,32 +45,20 @@ axiosInstance.interceptors.request.use((config:AxiosRequestConfig):AxiosRequestC
   // 检查header中是否有Authorization的key
   // 为config赋值
   config.headers.Authorization = window.localStorage.getItem('TOKEN') === null ? '' : `jwt ${window.localStorage.getItem('TOKEN')}`;
-
-
   return config;
 });
 
 axiosInstance.interceptors.response.use((response:AxiosResponse):any => {
   // 对response的状况进行修改
-  const { status } = response;
   const { data } = response;
-  console.log(status);
-
-  if(status < 200 || status > 301) {
-    message.error('请求失败，请检查网络状况');
-    return false;
+  // 判断data中是否有值
+  if(!isIllegal(1,data,['error','notice'])) {
+    return data.data;
+  } else if(isIllegal(0,data.error)) {
+    message.error(data.error);
+  } else if(isIllegal(0,data.notice)) {
+    message.error(data.notice);
   }
-  // 没有权限
-  if( status === 401 ) {
-    //@ts-ignore
-    window.g_app.router.push('/login');
-    return false;
-  }
-
-
-  return response.data;
-},(error) => {
-  console.log(error);
   return false;
 });
 

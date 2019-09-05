@@ -259,6 +259,7 @@ function EditUnitInfo(props: { unitData: any, matchId: number, dispatch: Dispatc
       participativeUnit(formData,{headers: {"Content-Type": "multipart/form-data"}})
         .then(async (res) => {
           // 判断请求状况
+          console.log(res);
           if(res.error === "" && res.notice === "" && res.data !== "") {
             const { data } = res;
             let uD = {

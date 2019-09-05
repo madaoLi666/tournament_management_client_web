@@ -159,17 +159,16 @@ const USER_MODEL:Model = {
     // 获取账号基本信息
     * getAccountData(action: AnyAction, effect: EffectsCommandMap) {
       const { put } = effect;
-      let res = yield accountdata();
-      console.log(res);
-      if (res) {
-        if (res.data.unitaccount === 2) {
+      let data = yield accountdata();
+      if (data) {
+        if (data.unitaccount === 2) {
           // ===2 代表是单位账号，还要多一项操作是调用获取单位账号下的运动员信息的接口
-          yield effect.put({type: 'saveUnitAccount', payload: res.data});
+          yield effect.put({type: 'saveUnitAccount', payload: data});
           // 将unitData 设置
-          yield put({type: 'enroll/modifyUnitInfo',payload: {unitInfo: res.data.unitdata[0]}})
+          yield put({type: 'enroll/modifyUnitInfo',payload: {unitInfo: data.unitdata[0]}})
         }else {
           // 代表是个人账号
-          yield effect.put({type: 'savePerson', payload: res.data});
+          yield effect.put({type: 'savePerson', payload: data});
         }
       }else {
 
@@ -182,16 +181,14 @@ const USER_MODEL:Model = {
     // 删除运动员信息
     * deleteAthlete(action: AnyAction, effect: EffectsCommandMap) {
       let unitadata:UnitData = yield effect.select((state:any) => (state.user.unitData[0]));
-      let res = yield deletePlayer({
+      let data = yield deletePlayer({
         unitdata: String(unitadata.id),
         athlete: String(unitadata.unitathlete[action.payload].athlete.id)
       });
-      if(res && res.error === '') {
+      if(data) {
         message.success('删除成功');
         yield effect.put({type:'getAccountData'});
-      }else {
-        message.error(res.error);
-    }
+      }
     }
   }
 };

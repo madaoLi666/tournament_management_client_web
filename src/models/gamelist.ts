@@ -17,11 +17,11 @@ const GAMELIST_INTRODUCTION:Model = {
   effects: {
     *getGameList(action: AnyAction, effect: EffectsCommandMap ){
       const { put } = effect;
-      let res = yield getGameList();
-      if(res.data !== '' && res.data ) {
+      let data = yield getGameList();
+      if(data) {
         yield put({
           type: 'modifyGameList',
-          payload: {gameList: res.data}
+          payload: {gameList: data}
         })
       }
     }

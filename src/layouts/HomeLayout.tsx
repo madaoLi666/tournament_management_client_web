@@ -8,7 +8,6 @@ import router from 'umi/router';
 import styles from './index.less';
 
 const { Header, Content, Footer } = Layout;
-const { Search } = Input;
 
 function HomeLayout(props: any) {
 

@@ -79,9 +79,8 @@ const ENROLL_MODEL: Model = {
     * getContestantUnitData (action: AnyAction, effect: EffectsCommandMap) {
       const { put } = effect;
       const { unitId, matchId } = action.payload;
-      let res = yield getContestantUnitData({matchdata: matchId, unitdata: unitId});
-      if(res.error === "" && res.notice === "" && res.data !== "") {
-        const { data } = yield res;
+      let data = yield getContestantUnitData({matchdata: matchId, unitdata: unitId});
+      if(data) {
         let uD = {
           id: data.id,
           leaderName: data.leader,
@@ -93,29 +92,25 @@ const ENROLL_MODEL: Model = {
           coach2Phone: data.coachtwophonenumber,
           guaranteePic: data.dutybook
         };
-        yield put({
-          type: "modifyUnitData",
-          payload: { unitData: uD}
-        })
+        yield put({ type: "modifyUnitData", payload: { unitData: uD} })
       }
     },
     // 检查是否有报名信息，并获取运动员列表
     * checkIsEnrollAndGetAthleteLIST  (action: AnyAction, effect: EffectsCommandMap) {
       const { put } = effect;
       const { matchId, unitId } = action.payload;
-      let res = yield checkISEnroll({unitdata: unitId, matchdata: matchId});
+      let data = yield checkISEnroll({unitdata: unitId, matchdata: matchId});
       // 判断数据是否存在
-      if(res.error === "" && res.notice === "" && res.data !== "") {
-        // 是否已经进行了报名
-        if(res.data.isEnroll === 'Y') {
+      if(data) {
+        if(data.isEnroll === 'Y') {
           // 参赛单位信息
-          let contestantUnitData = res.data.contestant;
+          let contestantUnitData = data.contestant;
           yield put({ type: 'modifyContestantUnitData', payload: { contestantUnitData } });
           // 运动员列表
-          let athleteList = res.data.unitathlete;
+          let athleteList = data.unitathlete;
           yield put({ type: 'modifyAthleteList', payload: { athleteList } });
           // 团队报名列表
-          let teamEnroll = res.data.teamenrolldata;
+          let teamEnroll = data.teamenrolldata;
           let teamEnrollData:Array<any> = [];
           for(let i:number = 0 ; i < teamEnroll.length ; i++) {
             if(Object.prototype.toString.call(teamEnroll[i].groupprojectenroll) === '[object Array]') {

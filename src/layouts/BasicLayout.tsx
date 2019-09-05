@@ -20,15 +20,15 @@ const drawerStyle = {
 const autoAdjust1 = {
   xs: { span: 24 },
   sm: { span: 14 },
-  md: { span: 10 }, 
-  lg: { span: 10 }, 
+  md: { span: 10 },
+  lg: { span: 10 },
 };
 
 const autoAdjust2 = {
   xs: { span: 24 },
   sm: { span: 6,offset:4 },
-  md: { span: 4,offset:10 }, 
-  lg: { span: 4,offset:10 }, 
+  md: { span: 4,offset:10 },
+  lg: { span: 4,offset:10 },
 };
 
 // 初始化菜单栏的Function 内部方法
@@ -73,7 +73,7 @@ function BasicLayout(props: any) {
       type:'user/getAccountData'
     })
   })
-  
+
   let leaderName:string;
   let unitName:string;
   let athleteNumber: number;
@@ -161,7 +161,7 @@ const mapStateToProps = (state:any) => {
     return { userInfo: state.user};
   }
   return {}
-}
+};
 
 export default connect(mapStateToProps)(BasicLayout);
 

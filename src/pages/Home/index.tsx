@@ -19,8 +19,6 @@ const adjustCol: ColProps = {
   xs: {span: 24},
 };
 
-
-
 class Home extends React.Component<any,any>{
   constructor(props: any) {
     super(props);
@@ -30,10 +28,10 @@ class Home extends React.Component<any,any>{
   }
 
   componentDidMount(): void {
-    getHomePic().then(res => {
-      console.log(res);
-      if(res.data.length !== 0 && res.error === "") {
-        this.setState({homePicArr: res.data.filter((m:any) => (m.id < 10)).map((v:any) => (v.file))});
+    getHomePic().then(data => {
+      console.log();
+      if(data) {
+        this.setState({homePicArr: data.filter((m:any) => (m.id < 10)).map((v:any) => (v.file))});
       }else {
         console.log('图片获取失败');
       }
