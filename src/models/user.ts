@@ -51,8 +51,6 @@ const USER_MODEL:Model = {
     phonenumber:'',
     email:'',
     unitaccount:'',
-    errorstate:'',
-
   },
   reducers: {
     // 存手机进state
@@ -62,6 +60,7 @@ const USER_MODEL:Model = {
     },
     // 账号密码登陆校验
     modifyUserInfo(state:any, action: AnyAction) {
+      console.log(action.payload);
       state.username = action.payload.username;
       state.userPassword = action.payload.password;
       return state;
@@ -76,12 +75,6 @@ const USER_MODEL:Model = {
       state.username = action.payload.username;
       state.email = action.payload.email;
       state.unitaccount = action.payload.unitaccount;
-      return state;
-    },
-    // 修改errorstate,请求发送后的错误信息
-    modifyError(state: any, action: AnyAction): object {
-      const { payload } = action;
-      state.errorstate = payload;
       return state;
     },
     // 存储单位账号信息
@@ -121,7 +114,6 @@ const USER_MODEL:Model = {
       state.phonenumber = '';
       state.email = '';
       state.unitaccount = '';
-      state.errorstate = '';
       return state;
     }
    },
@@ -146,10 +138,6 @@ const USER_MODEL:Model = {
     * saveInfo(action: AnyAction, effect: EffectsCommandMap) {
       console.log(action.payload);
       yield effect.put({type:'saveValue',payload:action.payload})
-    },
-    // 清除errorState
-    * clearError(action: AnyAction, effect: EffectsCommandMap) {
-      yield effect.put({type: 'modifyError', payload:''})
     },
     // 获取账号基本信息
     * getAccountData(action: AnyAction, effect: EffectsCommandMap) {

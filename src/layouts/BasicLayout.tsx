@@ -4,7 +4,7 @@ import { connect } from 'dva';
 import router from 'umi/router';
 import uRoutes from '@/config/router';
 
-import { Layout, Menu, Breadcrumb, Drawer, Button, Avatar, Typography, Row, Col } from 'antd';
+import { Layout, Menu, Breadcrumb, Drawer, Button, Avatar, Typography, Row, Col, message } from 'antd';
 import { FaList, FaSearch, FaRegBell } from 'react-icons/fa';
 // @ts-ignore
 import styles from './index.less';
@@ -94,7 +94,8 @@ function BasicLayout(props: any) {
       type: 'user/clearstate',
       payload: null
     });
-    router.push('/login')
+    message.info('退出成功');
+    router.push('/home')
   }
 
   return (

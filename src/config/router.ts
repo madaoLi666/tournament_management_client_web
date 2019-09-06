@@ -20,6 +20,7 @@ import { IRoute } from 'umi-types';
 
 const uRoutes:Array<IRoute> = [
   // TODO 这个应写进运动员信息管理
+  { path: '/home', component: require('../pages/Home/index.tsx').default, isRender:true, name: '主页' },
   { path: '/user/athletesList', component: require('../pages/PersonBackground/AthletesList.tsx').default, isRender: true, name: '添加运动员' },
   { path: '/user', component: require('../pages/index.tsx').default, isRender: false, name: '' },
 ];

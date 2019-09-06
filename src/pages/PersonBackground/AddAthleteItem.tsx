@@ -89,7 +89,12 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
     public handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         this.props.form.validateFieldsAndScroll((err: Error,values: any) => {
+            let isBirthdayValid = values.birthday as Moment;
             if(!err) {
+                if(!isBirthdayValid.isValid()) {
+                    message.error('请确认身份证的出生日期是否正确!');
+                    return;
+                }
                 if(this.state.file) {
                     values.image = this.state.file;
                 }
@@ -128,6 +133,7 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
         }
         if(checkIDCard.test(value) && isIDCard){
             const birthday = `${value.slice(6,10)}${value.slice(10,12)}${value.slice(12,14)}`;
+            console.log(birthday);
             setFieldsValue({
                 sex: value.slice(-2,-1)%2 === 1 ? '男' : '女',
                 birthday: moment(birthday)
@@ -135,6 +141,8 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
             callback();
             return;
         }
+        callback('请输入正确的身份证号');
+        return;
     };
 
     // 判断当前证件类型是否为身份证

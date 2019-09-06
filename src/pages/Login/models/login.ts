@@ -23,7 +23,6 @@ const LOGIN_MODEL:Model = {
       //  因为登陆的特殊性，没有替换为统一的提示
       const { payload } = action; const { put } = effect;
       let res = yield Login(payload);
-      console.log(res);
       if(res && res.notice === '' && res.data !== ""){
         // 本地存储token
         yield window.localStorage.setItem('TOKEN',res.data);

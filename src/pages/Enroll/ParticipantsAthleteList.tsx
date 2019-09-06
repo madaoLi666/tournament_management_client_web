@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Upload, Table, Input, Button, Modal, message, Select, DatePicker, Checkbox } from 'antd';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import { FaPlus } from 'react-icons/fa';
 import AddressInput from '@/components/AddressInput/AddressInput';
 import { connect } from 'dva';
@@ -84,7 +84,7 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
     }
     // 长度是否为18
     if(value.length !== 18) {
-      callback("请输入正确的大陆居民身份证"); return;
+      callback("请输入正确的身份证号"); return;
     }
     if(checkIDCard.test(value) && isIDCard){
       const birthday = `${value.slice(6,10)}${value.slice(10,12)}${value.slice(12,14)}`;
@@ -92,8 +92,11 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
         sex: value.slice(-2,-1)%2 === 1 ? '男' : '女',
         birthday: moment(birthday)
       });
+      console.log(1);
       callback(); return;
     }
+    callback('请输入正确的身份证号');
+    return;
   };
   // 判断当前证件类型是否为身份证
   handlerCertificationTypeChange = (value: string) => {
@@ -124,6 +127,11 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
     this.props.form.validateFieldsAndScroll((err: ValidateCallback<any>, values: any) => {
       if (!err) {
         console.log(fileList);
+        let isBirthdayValid = values.birthday as Moment;
+        if(!isBirthdayValid.isValid()) {
+          message.error('请确认身份证的出生日期是否正确!');
+          return;
+        }
         // 检查是否进行了图片上传
         if(fileList.length !== 0) {
           emitData({
