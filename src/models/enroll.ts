@@ -3,7 +3,7 @@ import { Model, EffectsCommandMap } from 'dva';
 import { AnyAction } from 'redux';
 import { getContestantUnitData , checkISEnroll, individualEnroll} from '@/services/enroll.ts';
 import { getIndividualEnrollLimit, getAllItem } from '@/services/rules';
-import { convertItemData } from '@/utils/enroll';
+import { convertItemData, convertAthleteList} from '@/utils/enroll';
 
 const ENROLL_MODEL: Model = {
   namespace: 'enroll',
@@ -107,10 +107,12 @@ const ENROLL_MODEL: Model = {
           let contestantUnitData = data.contestant;
           yield put({ type: 'modifyContestantUnitData', payload: { contestantUnitData } });
           // 运动员列表
+          convertAthleteList(data.unitathlete,data.teamenrolldata);
           let athleteList = data.unitathlete;
           yield put({ type: 'modifyAthleteList', payload: { athleteList } });
           // 团队报名列表
           let teamEnroll = data.teamenrolldata;
+
           let teamEnrollData:Array<any> = [];
           for(let i:number = 0 ; i < teamEnroll.length ; i++) {
             if(Object.prototype.toString.call(teamEnroll[i].groupprojectenroll) === '[object Array]') {

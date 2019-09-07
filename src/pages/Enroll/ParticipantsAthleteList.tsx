@@ -19,6 +19,7 @@ import styles from './index.less';
 import { Dispatch } from 'redux';
 const { Option } = Select;
 const { Item } = Form;
+
 // 样式
 const formStyle: FormProps = {
   layout: 'horizontal',
@@ -62,14 +63,20 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
   componentDidUpdate(prevProps: Readonly<AthleteInfoFormProps>, prevState: Readonly<any>, snapshot?: any): void {
     const pC =  prevProps.currentAthleteData;
     const tC = this.props.currentAthleteData;
-    if(pC && !tC) {
-      console.log('a');
-      this.setState({fileList:[]});
-    }else if(!pC && tC && tC.athlete.face !== null && tC.athlete.face !== undefined ) {
-      console.log(tC);
-      this.setState({fileList:[{uid: -1,url:tC.athlete.face}]});
-    }
 
+    // 两次都是新建，在不增加传承的情况下暂时无法情况upload
+
+    if(pC && !tC) {
+      // 上-有运动员信息 现-没有运动员信息
+      this.setState({fileList:[]});
+    }else if(!pC && tC) {
+      // 上-没有运动员信息 现-有&&运动员信息中已经上传了图片
+      if(tC.athlete.face !== null && tC.athlete.face !== undefined) {
+        this.setState({fileList:[{uid: -1,url:tC.athlete.face}]});
+      }else {
+        this.setState({fileList:[]});
+      }
+    }
   }
 
   /* =====================表单动态修改=========================== */
@@ -126,15 +133,13 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
         console.log(fileList);
         // 检查是否进行了图片上传
         if(fileList.length !== 0) {
-          emitData({
-            image:fileList[0] ,...values
-          });
-        }else if(fileList[0].uid === -1) {
-          emitData({
-            image:'' ,...values
-          });
-        }else {
-          message.error('请先进行图片上传');
+          if(fileList[0].hasOwnProperty('uid') && fileList[0].uid === -1) {
+            emitData({ image:'' ,...values });
+          } else {
+            emitData({ image:fileList[0] ,...values });
+          }
+        } else {
+          emitData({ image:'' ,...values });
         }
       }
     });
@@ -167,6 +172,7 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
   };
 
   render(): React.ReactNode {
+    const { currentAthleteData } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { fileList, previewImage, previewVisible, isIDCard } = this.state;
     // 最大上传限制
@@ -180,6 +186,7 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
         </div>
       </div>
     );
+
     return (
       <div>
         <Modal visible={previewVisible} footer={null} onCancel={() => this.setState({previewVisible: false})}>
@@ -326,6 +333,7 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
   const [isFirstCreate, setIsFirstCreate] = useState(true);
   // table
   // 类型暂时保留
+  //
   const tableColumns = [
     {
       title: '是否参赛', dataIndex: 'active', key: 'active',
@@ -352,6 +360,7 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
   // 选中运动员是否参赛
   function handleSelect(checked: boolean, record: any, e: any ) {
     const { birthday, id } = record.athlete;
+    console.log(e.target);
     if(checked) {
       // 选中
       let reqData = {
@@ -363,7 +372,9 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
       };
       addParticipantsAthlete(reqData)
         .then(data => {
-          if(!data) {e.target.checked = !checked; }
+          console.log(data);
+          // 无法通过 e 设置checked的值
+          if(!data) {console.warn('a');e.target.checked = !checked; }
         })
     }else{
       deleteParticipantsAthlete({matchdata: matchId, athlete: id, contestant: contestantId})
@@ -390,27 +401,20 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
     formData.append('face',data.image.originFileObj !== undefined ? data.image.originFileObj : '');
     formData.append('unitdata', unitId.toString());
     if(isFirstCreate) {
-      newUnitAthlete(formData,{headers:{"Content-Type": "multipart/form-data"}}).then(res => {
-        // 判断
-        if(res.error === "" && res.notice === "") {
+      newUnitAthlete(formData,{headers:{"Content-Type": "multipart/form-data"}}).then(data => {
+        if(data) {
           // 没有重新渲染
           dispatch({ type: "enroll/checkIsEnrollAndGetAthleteLIST", payload: { unitId, matchId } });
           message.success('注册成功');
           setVisible(false);
           setCurrentAthleteData({});
-        }else{
-          message.error('注册失败，请检查网络或联系相关工作人员');
         }
       });
     }else if(!isFirstCreate) {
       updatePlayer(formData)
-        .then(res => {
-          console.log(res);
-          if(res.error === "" && res.notice === "") {
-            dispatch({
-              type: "enroll/checkIsEnrollAndGetAthleteLIST",
-              payload: { unitId, matchId }
-            });
+        .then(data => {
+          if(data) {
+            dispatch({ type: "enroll/checkIsEnrollAndGetAthleteLIST", payload: { unitId, matchId } });
             setVisible(false);
           }
         })

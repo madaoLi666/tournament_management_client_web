@@ -1,4 +1,4 @@
-import { qSort } from '@/utils/sort';
+import { qSort, hSearch } from '@/utils/sort';
 
 interface SexData {
   openprojectgroup:number,
@@ -73,7 +73,7 @@ interface ItemData {
 
 }
 
-// 整合来自服务器的数据，使数据更加简单明了
+// 整合来自服务器的 项目-组别-性别 数据，使数据更加简单明了
 export function convertItemData(itemList: Array<ItemData>):any {
   // 个人 双人 团队
   let iI = [], tI = [];
@@ -147,6 +147,23 @@ export function convertItemData(itemList: Array<ItemData>):any {
   return { iI,tI }
 }
 
+// 整合来源于服务区的运动员列表数据
+export function convertAthleteList(athleteList: Array<any>,teamEnrollList: Array<any>): any {
+  console.log(teamEnrollList);
+  qSort(athleteList,0,athleteList.length - 1,'player');
+  console.log(athleteList);
+
+  for(let i:number = teamEnrollList.length - 1 ; i >= 0; i--) {
+    for(let k:number = teamEnrollList[i].teammember.length - 1  ; k >= 0 ; k--) {
+      let index:number = -1;
+      console.log(teamEnrollList[i].teammember[k].player);
+      index = hSearch(athleteList,'player',teamEnrollList[i].teammember[k].player);
+      console.log(index);
+    }
+  }
+}
+
+
 // 获取列表方式
 /*
 * obj 需要获取的数组对象
@@ -180,6 +197,7 @@ export function getGroupsByAge(birthday:string, groupList:Array<any>, upGroupNum
     }
   }
   if(index === -1) {
+    // 没有符合组别
     return [];
   }else {
     if(index === 0) {

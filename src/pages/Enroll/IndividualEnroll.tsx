@@ -1,16 +1,19 @@
 import React from 'react';
 import { connect } from 'dva';
 import router from 'umi/router';
-import { Modal, Table, Select, message, Button, Tag} from 'antd';
+import { Modal, Table, Select, message, Button, Tag, Checkbox} from 'antd';
 import { ModalProps } from 'antd/lib/modal';
 import { ColumnProps } from 'antd/lib/table';
 import { getListByKey, getGroupsByAge, getLegalSexList } from '@/utils/enroll';
 import { deleteIndividualEnroll, individualEnroll } from '@/services/enroll';
+import { isIllegal } from '@/utils/judge';
 // @ts-ignore
 import styles from './index.less';
 
 const { Option } = Select;
-
+const autoAdjust = {
+  xs: { span: 20 }, sm: { span: 20 }, md: { span: 14 }, lg: { span: 12 }, xl: { span: 10 }, xxl: { span: 10 },
+};
 /*
  * 1。前端不检查 项目下 单位 可报名 人（队） 限制
  */
@@ -28,7 +31,8 @@ class IndividualEnroll extends React.Component<any,any>{
       itemGroupSexID:-1,
       groupValue: undefined,
       sexValue: undefined,
-      itemValue: undefined
+      itemValue: undefined,
+      isUpGroup: false
     }
   }
 
@@ -99,6 +103,7 @@ class IndividualEnroll extends React.Component<any,any>{
   * limitation - 限制条件
   * */
   getGroupByItem = (athleteData:any, itemList: Array<any>, itemId: number, limitation:any) => {
+    const { isCrossGroup, upGroupNumber } = this.props.individualLimitation;
     this.setState({itemValue:itemId});
     if(itemId) {
       // 清空下面的设置
@@ -112,7 +117,34 @@ class IndividualEnroll extends React.Component<any,any>{
         const { upGroupNumber } = limitation;
         // 通过 年龄+组别列表+可升组数量 得到可选组别列表
         let r = getGroupsByAge(birthday,groupList,upGroupNumber);
+
+        // 判断是否可以跨组别参赛
+        if(isCrossGroup) {
+          // 可以跨组
+          // 将其原组别设置（位于数组最后一个）进入itemValue，但禁用选择框
+          this.setState({groupList: r, groupValue:r[r.length - 1].groupId });
+
+        }else {
+          // 不可以跨组
+          console.log(athleteData);
+          if(athleteData.project.upgrouppersonaldata !== 0) {
+            // 已报名升组项目
+            // 将前一个组别设置
+            this.setState({groupList: r, groupValue:r[r.length - 2].groupId });
+            this.getSexByGroup(athleteData,r,r[r.length - 2].groupId);
+          }else if(athleteData.project.personaldata !== 0) {
+            // 已报名原本组别项目
+            this.setState({groupList: r, groupValue:r[r.length - 1].groupId });
+            this.getSexByGroup(athleteData,r,r[r.length - 1].groupId);
+          }
+          //
+        }
+
+
+
+        console.log(r);
         // 设置组别列表
+        // TODO 这里需要获取团队报名的信息才可以进行判断
         this.setState({groupList: r});
       }else {
         message.warn('此项目没有适合该名运动员的组别');
@@ -139,20 +171,28 @@ class IndividualEnroll extends React.Component<any,any>{
       this.setState({sexList: [], itemGroupSexID: -1});
     }
   };
+  // 选中升组
+  handleIsUpGroup = (e: any) => {
+    const { checked } = e.target;
+    if(checked) {
+      // 如果选中，筛选组别信息
+    }else {
 
+    }
+  };
 
   render(): React.ReactNode {
-    const { modalVisible, currentAthleteData , groupList, sexList, itemGroupSexID, groupValue, sexValue, itemValue } = this.state;
+    const { modalVisible, currentAthleteData , groupList, sexList, itemGroupSexID, groupValue, sexValue, itemValue, isUpGroup } = this.state;
     const { enrollAthleteList, individualItemList, individualLimitation } = this.props;
     const modalProps: ModalProps = {
       visible: modalVisible,
       title: '添加个人报名信息',
       onCancel:() => this.setState({modalVisible: false, groupList:[], sexList: [], itemGroupSexID: -1, groupValue: undefined, sexValue: undefined,itemValue:undefined}),
       footer:false,
-      width: '500px'
+      width: '100%'
     };
     const tableColumns: Array<ColumnProps<any>> = [
-      { title: '姓名', key: 'name', render:(_:any,record:any) => (<span>{record.athlete.name}</span>),align: 'center'},
+      { title: '姓名', key: 'name', render:(_:any,record:any) => (<span>{record.athlete.name}</span>),align: 'center', fixed: 'left',width: 100},
       { title: '证件号', key: 'identifyNumber', render:(_:any,record:any) => (<span>{record.athlete.idcard}</span>),align: 'center'},
       { title: '出生日期', key: 'birthday', render:(_:any,record:any) => (<span>{record.athlete.birthday.slice(0,10)}</span>),align: 'center'},
       { title: '所属组别', key: 'group', dataIndex: 'groupage',align: 'center'},
@@ -168,7 +208,7 @@ class IndividualEnroll extends React.Component<any,any>{
         }
       },
       {
-        title: '升组项目', key: 'enrolledUploadItem', dataIndex: 'project',align: 'center',
+        title: '升组项目', key: 'enrolledUploadItem', dataIndex: 'project',align: 'center',width: 200,
         render:(text:any):React.ReactNode => {
           const { upgrouppersonaldata } = text;
           return (
@@ -179,7 +219,7 @@ class IndividualEnroll extends React.Component<any,any>{
         }
       },
       {
-        title: '操作', key: 'h',align: 'center',
+        title: '操作', key: 'h',align: 'center',fixed: 'right',width: 100,
         render: (_: any, record: any): React.ReactNode => (<a onClick={() => this.selectIndividualEnroll(record)}>报名</a>)
       },
     ];
@@ -189,47 +229,61 @@ class IndividualEnroll extends React.Component<any,any>{
         {/* rule-block */}
         <div className={styles['rule-block']} />
         <div className={styles['table-block']}>
-          <Table dataSource={enrollAthleteList} columns={tableColumns} rowKey={record => record.id}/>
+          <Table dataSource={enrollAthleteList} columns={tableColumns} rowKey={record => record.id} scroll={{ x: 1000}} />
         </div>
-        <Modal {...modalProps}>
+        <Modal {...modalProps} style={{top: '0'}}>
           <div className={styles['enroll-block']}>
-            <Select
-              style={{width: '100%', marginBottom: '10px'}}
-              onChange={(value:number) => this.getGroupByItem(currentAthleteData, individualItemList, value, individualLimitation)}
-              placeholder='请选择项目'
-              value={itemValue}
-            >
-              {individualItemList.map((v:any) => (<Option key={`item-${v.itemId}`} value={v.itemId}>{v.name}</Option>))}
-            </Select>
+            <div className={styles['r']}>
+              <Select
+                onChange={(value:number) => this.getGroupByItem(currentAthleteData, individualItemList, value, individualLimitation)}
+                placeholder='请选择项目'
+                value={itemValue}
+              >
+                {individualItemList.map((v:any) => (<Option key={`item-${v.itemId}`} value={v.itemId}>{v.name}</Option>))}
+              </Select>
+              <div>
+                <span>升组请勾选</span>
+                <Checkbox
+                  checked={isUpGroup}
+                  onChange={this.handleIsUpGroup}
+                  // 禁用升组选择
+                  /*
+                  * 1、升组数量为0
+                  * 2、未选中item
+                  * 3、没有任何符合组别
+                  * */
+                  disabled={individualLimitation.upGroupNumber === 0 || itemValue === undefined || groupList.length ===0}
+                />
+              </div>
+            </div>
 
-            <Select
-              style={{width: '100%', marginBottom: '10px'}}
-              onChange={(value:number) => this.getSexByGroup(currentAthleteData, groupList, value)}
-              disabled={groupList.length===0}
-              placeholder='请选择组别'
-              value={groupValue}
-            >
-              {
-                groupList.length === 0
-                ? null
-                : groupList.map((v:any) => (<Option value={v.groupId} key={v.groupId}>{v.name}</Option>))
-              }
-            </Select>
-
-            <Select
-              style={{width: '100%', marginBottom: '10px'}}
-              onChange={(value) => this.setState({sexValue:value,itemGroupSexID:value})}
-              disabled={sexList.length===0}
-              placeholder='请选择性别组别'
-              value={sexValue}
-            >
-              {
-                sexList.length === 0
-                ? null
-                : sexList.map((v:any) => (<Option value={v.sexId} key={v.sexId}>{v.name}</Option>))
-              }
-            </Select>
-
+            <div className={styles.r}>
+              <Select
+                onChange={(value:number) => this.getSexByGroup(currentAthleteData, groupList, value)}
+                // 只有升组可升两组才可以选择
+                disabled={individualLimitation.upGroupNumber <= 1}
+                placeholder='请选择组别'
+                value={groupValue}
+              >
+                {
+                  groupList.length === 0
+                  ? null
+                  : groupList.map((v:any) => (<Option value={v.groupId} key={v.groupId}>{v.name}</Option>))
+                }
+              </Select>
+              <Select
+                onChange={(value) => this.setState({sexValue:value,itemGroupSexID:value})}
+                disabled={sexList.length===0}
+                placeholder='请选择性别组别'
+                value={sexValue}
+              >
+                {
+                  sexList.length === 0
+                  ? null
+                  : sexList.map((v:any) => (<Option value={v.sexId} key={v.sexId}>{v.name}</Option>))
+                }
+              </Select>
+            </div>
             <Button
               type='primary'
               onClick={() => this.handleIndividualEnroll(currentAthleteData, itemGroupSexID)}

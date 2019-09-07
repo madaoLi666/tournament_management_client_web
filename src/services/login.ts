@@ -18,7 +18,7 @@ export async function Login(data: object): Promise<any>{
   return axios.post('https://www.gsta.top/v3/api-token-auth/',data).
     then((res) => (res.data))
     .catch(() => {
-    message.error('请检查帐号密码是否正确！');
+      message.error('请检查帐号密码是否正确！');
   });
 }
 
