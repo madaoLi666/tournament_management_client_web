@@ -55,7 +55,7 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
       previewImage: '',
       previewVisible: false,
       // 是否 选中使用身份证
-      isIDCard:false
+      isIDCard:true
     }
   }
 
@@ -92,7 +92,6 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
         sex: value.slice(-2,-1)%2 === 1 ? '男' : '女',
         birthday: moment(birthday)
       });
-      console.log(1);
       callback(); return;
     }
     callback('请输入正确的身份证号');
@@ -125,24 +124,31 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
     // 阻止冒泡
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err: ValidateCallback<any>, values: any) => {
+      console.log(err);
       if (!err) {
-        console.log(fileList);
         let isBirthdayValid = values.birthday as Moment;
         if(!isBirthdayValid.isValid()) {
           message.error('请确认身份证的出生日期是否正确!');
           return;
         }
+        if(values.birthday === undefined) {
+          message.error('请确认出生年月日是否已填');
+        }
         // 检查是否进行了图片上传
         if(fileList.length !== 0) {
-          emitData({
-            image:fileList[0] ,...values
-          });
-        }else if(fileList[0].uid === -1) {
+          if(fileList[0].uid === -1) {
+            emitData({
+              image:'' ,...values
+            });
+          }else {
+            emitData({
+              image:fileList[0] ,...values
+            });
+          }
+        }else {
           emitData({
             image:'' ,...values
           });
-        }else {
-          message.error('请先进行图片上传');
         }
       }
     });
@@ -246,7 +252,6 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
           </Item>
           <Item label='出生年月日'>
             {getFieldDecorator('birthday',{
-              rules: [{required:true,message:'请输入你的姓名'}],
             })(
               <DatePicker
                 style={{width: '100%'}}
@@ -399,27 +404,28 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
     formData.append('face',data.image.originFileObj !== undefined ? data.image.originFileObj : '');
     formData.append('unitdata', unitId.toString());
     if(isFirstCreate) {
+      console.log(isFirstCreate);
       newUnitAthlete(formData,{headers:{"Content-Type": "multipart/form-data"}}).then(res => {
         // 判断
-        if(res.error === "" && res.notice === "") {
+        console.log(res);
+        if(res !== "" && res !== false) {
           // 没有重新渲染
           dispatch({ type: "enroll/checkIsEnrollAndGetAthleteLIST", payload: { unitId, matchId } });
           message.success('注册成功');
           setVisible(false);
           setCurrentAthleteData({});
-        }else{
-          message.error('注册失败，请检查网络或联系相关工作人员');
         }
       });
     }else if(!isFirstCreate) {
       updatePlayer(formData)
         .then(res => {
-          console.log(res);
-          if(res.error === "" && res.notice === "") {
+          if(res !== "") {
             dispatch({
               type: "enroll/checkIsEnrollAndGetAthleteLIST",
               payload: { unitId, matchId }
             });
+            message.success('修改成功！');
+            setCurrentAthleteData({})
             setVisible(false);
           }
         })
@@ -436,11 +442,12 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
   function handlerDelete(id: number|string) {
     deleteAthlete({athlete:id, unitdata: unitId})
       .then(res => {
-        if(res.data === 'true') {
+        if(res && res !== '') {
           dispatch({
             type: 'enroll/checkIsEnrollAndGetAthleteLIST',
             payload:{ matchId, unitId }
           })
+          message.success('删除成功!');
         }
       });
   }
@@ -450,6 +457,11 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
     setVisible(true);
     setIsFirstCreate(true);
     setCurrentAthleteData({});
+  }
+  // 判断选中的运动员名单是否为空
+  function judgeAthlete() {
+    
+    router.push('/enroll/individual')
   }
   /*
   *  首次渲染的 unitId 为undefined
@@ -485,7 +497,7 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
       <div>
         <Button
           type='primary'
-          onClick={() => router.push('/enroll/individual')}
+          onClick={judgeAthlete}
         >
           确认运动员名单，进入个人报名通道
         </Button>

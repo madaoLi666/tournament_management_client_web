@@ -43,7 +43,7 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
   constructor(props: BasicInfoSupplementFormProps){
     super(props);
     this.state = {
-      isIDCard:false
+      isIDCard:true
     }
   }
   // 提交信息

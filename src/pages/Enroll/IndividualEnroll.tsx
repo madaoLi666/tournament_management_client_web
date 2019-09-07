@@ -218,7 +218,7 @@ class IndividualEnroll extends React.Component<any,any>{
 
             <Select
               style={{width: '100%', marginBottom: '10px'}}
-              onChange={(value) => this.setState({sexValue:value,itemGroupSexID:value})}
+              onChange={(value: any) => this.setState({sexValue:value,itemGroupSexID:value})}
               disabled={sexList.length===0}
               placeholder='请选择性别组别'
               value={sexValue}

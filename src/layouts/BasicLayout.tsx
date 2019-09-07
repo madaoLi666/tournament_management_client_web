@@ -79,11 +79,6 @@ function BasicLayout(props: any) {
   let athleteNumber: number;
   if(props.userInfo) {
     // 判断是否有单位账号信息
-    if(props.userInfo.unitdata ===  undefined || props.userInfo.unitdata === null || props.userInfo.unitdata.length === 0) {
-      message.warning('此页面未找到，如有疑问请联系本公司');
-      router.push('/notFound');
-      return;
-    }
     leaderName = props.userInfo.athleteData[0].name;
     unitName = props.userInfo.unitData[0].name;
     athleteNumber = props.userInfo.unitathlete.length;
@@ -164,6 +159,11 @@ function BasicLayout(props: any) {
 }
 
 const mapStateToProps = (state:any) => {
+  if(state.user.unitData !== undefined) {
+    if (state.user.unitData.length === 0) {
+      return {};
+    }
+  }
   if(state.user.id !== ''){
     return { userInfo: state.user};
   }
@@ -171,4 +171,3 @@ const mapStateToProps = (state:any) => {
 };
 
 export default connect(mapStateToProps)(BasicLayout);
-
