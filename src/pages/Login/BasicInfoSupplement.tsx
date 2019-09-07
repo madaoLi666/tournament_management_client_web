@@ -117,6 +117,7 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
         </Form.Item>
         <Form.Item label='证件类型'>
           {getFieldDecorator('certificationType',{
+            initialValue:'身份证',
             rules:[{required:true, message: '请选证件类型'}]
           })(
             <Select placeholder='请选择证件类型' onChange={this.handlerCertificationTypeChange}>

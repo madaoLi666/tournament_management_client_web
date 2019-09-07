@@ -218,6 +218,7 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
           </Item>
           <Item label='证件类型'>
             {getFieldDecorator('idCardType',{
+              initialValue:'身份证',
               rules: [{required:true,message:'请选择你的证件号码类型'}],
             })(
               <Select placeholder='请选择证件类型' onChange={this.handlerCertificationTypeChange}>

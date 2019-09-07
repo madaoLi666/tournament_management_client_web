@@ -264,22 +264,19 @@ class CodeInput extends React.Component<any,any> {
   };
 
   public sendCode = () => {
-    // 60秒可发送一次
-    const timeInterval:number = 60000;
-    // 设置state中
-    this.setState({
-      timeInterval: timeInterval
-    });
     this.props.sendCode();
+    const myTimeInterval:number = 60000;
+    this.setState({
+      timeInterval:myTimeInterval
+    });
+    let counts = 0;
     // 计时 用于防止用户多次发送验证码
     let i = setInterval(() => {
-      this.setState((timeInterval: any) => {
-          if (timeInterval === 0) {
-            clearInterval(i);
-            return 0;
-          }
-          return timeInterval - 1000;
-        });
+      this.setState({timeInterval: this.state.timeInterval-1000});
+      counts++;
+      if(counts === 60) {
+        clearInterval(i);
+      }
     },1000);
   }
 
@@ -288,11 +285,11 @@ class CodeInput extends React.Component<any,any> {
 
     return (
       <Input.Group compact={true}>
-      <Input id="phoneNumber" onChange={this.handleCodeChange} placeholder='请输入验证码' style={{  width: '70%' }} autoComplete='off' />
+      <Input id="phoneNumber" onChange={this.handleCodeChange} placeholder='请输入验证码' style={{  width: '60%' }} autoComplete='off' />
       <Button
         type="primary"
         onClick={this.sendCode}
-        style={{  width: '30%' }}
+        style={{  width: '40%' }}
         disabled={timeInterval !== 0}
       >
         {timeInterval === 0 ? <span>发送验证码</span> : <span>{timeInterval/1000}秒</span>}
@@ -327,16 +324,15 @@ class BindUnitForm extends React.Component<NewUnitFromProps, any>{
   };
 
   public sendCode = (event:React.MouseEvent<HTMLElement>) => {
-    console.log('aaa');
     // @ts-ignore
-    // this.props.dispatch({
-    //   type:'register/bindUnitAccountAndSendCode',
-    //   payload: {
-    //     unitname:"",
-    //     password:"",
-    //     code:""
-    //   }
-    // })
+    this.props.dispatch({
+      type:'register/bindUnitAccountAndSendCode',
+      payload: {
+        unitname:"",
+        password:"",
+        code:""
+      }
+    })
   };
 
   render(): React.ReactNode {

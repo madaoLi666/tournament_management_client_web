@@ -30,7 +30,7 @@ import { Dispatch } from 'redux';
 interface UnitInfoFormProps extends FormComponentProps {
   emitData: (data: object) => void;
   // 类型未定
-  unitData: any
+  unitData: any;
 }
 
 const UnitInfoFormStyle: FormProps = {
@@ -181,13 +181,13 @@ class UnitInfoForm extends Component<UnitInfoFormProps, any> {
             <Input placeholder='选填'/>,
           )}
         </Form.Item>
-        <Form.Item label='上传自愿责任书'>
+        <Form.Item className={styles['require']} label='上传自愿责任书'>
 
           <Upload {...uploadProps} >
             {
               (guaranteePic===false && url!=="") ? (
                 <div>
-                  <img src={url} alt=""/>
+                  <img style={{width:"100%",height:"auto"}} src={url} alt=""/>
                 </div>
               ) : (
                 <div>
@@ -299,9 +299,10 @@ function EditUnitInfo(props: { unitData: any, matchId: number, dispatch: Dispatc
   );
 }
 
-export default connect(({ enroll }: any) => {
+export default connect(({ enroll,user }: any) => {
   const { unitInfo,currentMatchId } = enroll;
   const { unitData } = enroll.unit;
+  const { athleteData } = user;
   let targetUnitData = {
     unitId: unitInfo.id,
     unitName: unitInfo.unitName,
@@ -309,8 +310,15 @@ export default connect(({ enroll }: any) => {
     leaderName: '', leaderPhone: '',
     coach1Name: '', coach1Phone: '',
     coach2Name: '', coach2Phone: '',
+    leaderEmail:'',
     guaranteePic: '',
   };
+  // 有账号信息
+  if(athleteData !== undefined && athleteData !== null && athleteData.length !== 0 && user.email !== null && user.email !== undefined && user.email !=='') {
+    targetUnitData.leaderName = athleteData[0].name;
+    targetUnitData.leaderPhone = athleteData[0].phonenumber;
+    targetUnitData.leaderEmail = user.email;
+  }
   // 有报名信息
   if(Object.keys(unitData).length !== 0){
     targetUnitData = { unitId: unitInfo.id, unitName: unitInfo.unitName, ...unitData };
