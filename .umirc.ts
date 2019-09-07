@@ -43,6 +43,13 @@ const config: IConfig =  {
       Routes: ['./src/layouts/BasicLayout.tsx','./src/pages/Authorized/Authorized.tsx'],
       routes: []
     },
+    // 404等页面
+    {
+      path: '/notFound',
+      routes:[
+        { path: '/notFound', component: './Result/NotFound.tsx', name:'此页面未找到' }
+      ]
+    },
     { path: '/', redirect: '/home' }
   ],
   treeShaking: true,

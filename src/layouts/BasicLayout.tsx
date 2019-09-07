@@ -78,6 +78,12 @@ function BasicLayout(props: any) {
   let unitName:string;
   let athleteNumber: number;
   if(props.userInfo) {
+    // 判断是否有单位账号信息
+    if(props.userInfo.unitdata ===  undefined || props.userInfo.unitdata === null || props.userInfo.unitdata.length === 0) {
+      message.warning('此页面未找到，如有疑问请联系本公司');
+      router.push('/notFound');
+      return;
+    }
     leaderName = props.userInfo.athleteData[0].name;
     unitName = props.userInfo.unitData[0].name;
     athleteNumber = props.userInfo.unitathlete.length;
