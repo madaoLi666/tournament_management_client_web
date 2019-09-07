@@ -38,7 +38,7 @@ export interface formFields {
     phone?: string | undefined | null
     email?: string | undefined | null
     residence?: {
-        city: string[] | undefined | null,
+        city: string[] | undefined | null ,
         address: string | undefined | null
     }
     emergencyContact?: string | undefined | null
@@ -102,7 +102,19 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
                     message.error('请确认出生年月日是否已填');
                     return;
                 }
-                if(values.residence !== undefined) {
+                // 如果地址项什么都没有输入
+                console.log(values.residence);
+                if(values.residence.city === undefined && values.residence.address === null) {
+                    values.residence.city = '';
+                    values.residence.address = '';
+                } else if(values.residence.city === undefined && values.residence.address !== null) {
+                    message.error('请检查地址项是否正确！');
+                    return;
+                }else if(values.residence.city.length === 0 && values.residence.address !== (null || '')) {
+                    message.error('请检查地址项是否正确！');
+                    return;
+                }
+                else {
                     for(let i = 0; i < 3; i++) {
                         values.residence.city[i] += '-'
                     }
@@ -133,7 +145,6 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
         }
         if(checkIDCard.test(value) && isIDCard){
             const birthday = `${value.slice(6,10)}${value.slice(10,12)}${value.slice(12,14)}`;
-            console.log(birthday);
             setFieldsValue({
                 sex: value.slice(-2,-1)%2 === 1 ? '男' : '女',
                 birthday: moment(birthday)
@@ -281,6 +292,7 @@ const AddAthleteForm = connect(formStateToProps)(Form.create<AddFormProps & Form
             if (city !== null) {
                 citys = city.split('-',3);
             }
+            console.log(city);
             let imageUrl = props.user.unitathlete[Number(props.tablekey)-1].athlete.face as string;
 
             return {
