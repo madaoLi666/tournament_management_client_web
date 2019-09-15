@@ -251,14 +251,14 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
           </Form.Item>
           <Form.Item label='邮箱'>
             <Row>
-              <Col span={12}>
+              <Col span={14}>
                 {getFieldDecorator('email', {
                   rules: [{ required: true, message: '请输入邮箱！' }, { type: 'email', message: '请输入正确的邮箱格式！' }],
-                })(<Input  onChange={this.BindEmail} />)}
+                })(<Input style={{width:'100%'}}  onChange={this.BindEmail} />)}
               </Col>
-              <Col span={4}>
+              <Col span={10}>
               {this.state.timeInterval === 0 ?
-              <Button onClick={this.toParent} style={{width:166,height:32}} type="primary" >发送验证码</Button>
+              <Button onClick={this.toParent} style={{width:'100%',height:32}} type="primary" >发送验证码</Button>
               :<Button type="primary" style={{width:166,height:32}} disabled={true} >{this.state.timeInterval/1000}秒</Button>
               }
               </Col>

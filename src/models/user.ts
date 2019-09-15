@@ -133,6 +133,8 @@ const USER_MODEL:Model = {
         router.push("/login/register");
         yield console.log(action.payload);
         yield effect.put({type: 'modifyPhoneNumber', payload: phone.phoneNumber})
+      }else {
+        message.warning('如果您收到的验证码是5位数，请再次点击发送验证码');
       }
     },
     // 个人注册成功后，存进state

@@ -139,7 +139,7 @@ function Login(props: SendCodeProps) {
                 <TabPane tab="用户登陆" key="0">
                   <div className={styles['form-input-block']}>
                     <Input onChange={BindUserInfoUserName} placeholder='请输入账号/手机号码/电子邮箱' prefix={<FaUser />} style={{height: '40px'}} autoComplete='off' />
-                    <Input.Password onChange={BindUserInfoPassword} placeholder='请输入密码'  prefix={<FaLock />} style={{height: '40px'}} />
+                    <Input.Password onChange={BindUserInfoPassword} onKeyDown={(event: React.KeyboardEvent<any>) => {if(event.keyCode===13){login(mode)}}} placeholder='请输入密码'  prefix={<FaLock />} style={{height: '40px'}} />
                   </div>
                 </TabPane>
                 <TabPane tab="手机验证登陆" key="1">
@@ -155,7 +155,7 @@ function Login(props: SendCodeProps) {
                         {timeInterval === 0 ? <span>发送验证码</span> : <span>{timeInterval/1000}秒</span>}
                       </Button>
                     </Input.Group>
-                    <Input onChange={BindPhoneVerificationCode} placeholder='请输入验证码' prefix={<FaLock type="lock"/>} style={{ height: '40px' }} autoComplete='off' />
+                    <Input onChange={BindPhoneVerificationCode} onKeyDown={(event: React.KeyboardEvent<any>) => {if(event.keyCode===13){login(mode)}}} placeholder='请输入验证码' prefix={<FaLock type="lock"/>} style={{ height: '40px' }} autoComplete='off' />
                   </div>
                 </TabPane>
                 {/* <TabPane tab="微信扫码" key="2">

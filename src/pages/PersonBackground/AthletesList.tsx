@@ -231,19 +231,23 @@ function AthletesList(props:athletesProps) {
         let citys:string = '';
         let myAddress:string = '';
         let myImage : UploadFile | File | string;
-        // 如果用户填写了地址，那么将该地址转换成字符串
-        console.log(values.residence.city);
-        if(values.residence.city[0] === 'undefined-' || values.residence.city[0] === 'undefined--' ) {
-            citys = '';
-            myAddress = values.residence.address
-            // @ts-ignore
-        }else if(values.residence.city !== '' && values.residence.city.length !== 0) {
-            if(values.residence.address !== null) {
-                citys = values.residence.city.join("");
+        
+        if(values.residence === undefined){
+            ;
+        }else {
+            // 如果用户填写了地址，那么将该地址转换成字符串
+            if(values.residence.city[0] === 'undefined-' || values.residence.city[0] === 'undefined--' ) {
+                citys = '';
                 myAddress = values.residence.address
-            }else {
-                citys = values.residence.city.join("");
-                myAddress = '';
+                // @ts-ignore
+            }else if(values.residence.city !== '' && values.residence.city.length !== 0) {
+                if(values.residence.address !== null) {
+                    citys = values.residence.city.join("");
+                    myAddress = values.residence.address
+                }else {
+                    citys = values.residence.city.join("");
+                    myAddress = '';
+                }
             }
         }
 

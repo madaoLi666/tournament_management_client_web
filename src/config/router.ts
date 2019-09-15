@@ -21,8 +21,11 @@ import { IRoute } from 'umi-types';
 const uRoutes:Array<IRoute> = [
   // TODO 这个应写进运动员信息管理
   { path: '/home', component: require('../pages/Home/index.tsx').default, isRender:true, name: '主页' },
-  { path: '/user/athletesList', component: require('../pages/PersonBackground/AthletesList.tsx').default, isRender: true, name: '添加运动员' },
-  { path: '/user', component: require('../pages/index.tsx').default, isRender: false, name: '' },
+  // { path: '/user/personCenter', component: require('../pages/PersonBackground/PersonCenter.tsx').default, isRender: true, name: '个人中心' },
+  // { path: '/user/personSetting', component: require('../pages/PersonBackground/PersonSetting.tsx').default, isRender: true, name: '个人设置' },
+  // { path: '/user/athletesList', component: require('../pages/PersonBackground/AthletesList.tsx').default, isRender: true, name: '个人中心' },
+  // { path: '/user', component: require('../pages/index.tsx').default, isRender: false, name: '' },
+  { path: '/user', component: require('../pages/PersonBackground/AthletesList.tsx').default, isRender: true, name: '个人中心' },
 ];
 
 export const MAIN_PATH = '/user';
