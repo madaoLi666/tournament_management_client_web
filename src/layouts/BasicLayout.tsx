@@ -102,7 +102,7 @@ function BasicLayout(props: any) {
   return (
     <Layout style={{ minHeight: '100vh' }} className={styles['basic-layout']}>
       <Drawer
-        title='标题'
+        title='赛事平台辅助系统'
         placement='left'
         closable={false}
         onClose={showDrawer}
@@ -120,8 +120,8 @@ function BasicLayout(props: any) {
         <div>
         <FaList className={styles['falist']} onClick={showDrawer} style={{width:28,height:28,marginLeft:16,marginTop:16}} />
         <Button type="link" onClick={signout} style={{float:"right",marginTop:"15px"}} >退出账号</Button>
-        <FaRegBell className={styles['falist']} style={{float:"right",marginTop:"22px",width:20,height:20}} />
-        <FaSearch className={styles['falist']} style={{marginRight:28,float:"right",marginTop:"22px",width:20,height:20}} />
+        <FaRegBell className={styles['falist']} onClick={() => {message.warning('此功能维护中')}} style={{float:"right",marginTop:"22px",width:20,height:20}} />
+        <FaSearch className={styles['falist']} onClick={() => {message.warning('此功能维护中')}} style={{marginRight:28,float:"right",marginTop:"22px",width:20,height:20}} />
         </div>
         <Row style={{height:130}}>
           <Col {...autoAdjust1}>
@@ -138,7 +138,7 @@ function BasicLayout(props: any) {
           <Col {...autoAdjust2}>
               <div style={{marginLeft:30}}>
                 <Text type="secondary">在册运动员</Text>
-                <Title style={{margin:0}} level={1} >{athleteNumber === undefined ? null : athleteNumber}</Title>
+                <Title style={{margin:0,marginLeft:20}} level={1} >{athleteNumber === undefined ? null : athleteNumber}</Title>
               </div>
           </Col>
         </Row>

@@ -172,10 +172,7 @@ function AthletesList(props:athletesProps) {
         ),
         // 自定义搜索图标
         filterIcon: (filtered: boolean) => (
-            <Popover content={filtered ? "点击重置" : '点击搜索'}>
-                {/* <Icon type="search" style={{ color: filtered ? '#FF0000' : '#1890ff' }} /> */}
-                <FaSearch style={{width:16,color: filtered ? '#FF0000' : '#1890ff',marginRight:5}}  />
-            </Popover>
+            <FaSearch style={{width:16,color: filtered ? '#FF0000' : '#1890ff',marginRight:5}}  />
         ),
         // 本地模式下，确定筛选的运行函数 value不确定是否是string
         onFilter: (value: string, record: any) =>
@@ -234,13 +231,24 @@ function AthletesList(props:athletesProps) {
         let citys:string = '';
         let myAddress:string = '';
         let myImage : UploadFile | File | string;
-        // 如果用户填写了地址，那么将该地址转换成字符串
-        if (values.residence !== undefined && values.residence.address !== ('' || null)) {
-            citys = values.residence.city.join("");
-            myAddress = values.residence.address
+        
+        if(values.residence === undefined){
+            ;
         }else {
-            myAddress = '';
-            citys = '';
+            // 如果用户填写了地址，那么将该地址转换成字符串
+            if(values.residence.city[0] === 'undefined-' || values.residence.city[0] === 'undefined--' ) {
+                citys = '';
+                myAddress = values.residence.address
+                // @ts-ignore
+            }else if(values.residence.city !== '' && values.residence.city.length !== 0) {
+                if(values.residence.address !== null) {
+                    citys = values.residence.city.join("");
+                    myAddress = values.residence.address
+                }else {
+                    citys = values.residence.city.join("");
+                    myAddress = '';
+                }
+            }
         }
 
         // 传过去的data
@@ -250,12 +258,12 @@ function AthletesList(props:athletesProps) {
             idcardtype: values.idCardType,
             sex: values.sex,
             birthday: values.birthday,
-            phonenumber: values.phone,
-            email: values.email,
+            phonenumber: values.phone === null ? '' : values.phone,
+            email: values.email === null ? '' : values.email,
             province: citys,
-            address: myAddress,
-            emergencycontactpeople: values.emergencyContact,
-            emergencycontactpeoplephone: values.emergencyContactPhone,
+            address: myAddress === null ? '' : myAddress,
+            emergencycontactpeople: values.emergencyContact === null ? '' : values.emergencyContact ,
+            emergencycontactpeoplephone: values.emergencyContactPhone === null ? '' : values.emergencyContactPhone,
             face: values.image,
             unitdata: unitData[0] === undefined ? 0 : unitData[0].id
         }
@@ -291,7 +299,9 @@ function AthletesList(props:athletesProps) {
         }
 
         res.then((resp) => {
-            if (resp.error === '' || resp.error === null) {
+            console.log(resp);
+            // TODO 确认后台修改什么时候会失败
+            if (resp) {
                 message.success(todo === 'register' ? '添加成功' : '修改成功');
                 closemodal();
                 // 重置表单，先重置再设置成不重置
@@ -311,8 +321,6 @@ function AthletesList(props:athletesProps) {
                         message.warning(mykey+resp.error[key]);
                     }
                 }
-            }else {
-                message.warning('请填入所有的表单项');
             }
         })
 

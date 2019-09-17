@@ -38,7 +38,7 @@ export interface formFields {
     phone?: string | undefined | null
     email?: string | undefined | null
     residence?: {
-        city: string[] | undefined | null,
+        city: string[] | undefined | null ,
         address: string | undefined | null
     }
     emergencyContact?: string | undefined | null
@@ -102,9 +102,25 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
                     message.error('请确认出生年月日是否已填');
                     return;
                 }
-                if(values.residence !== undefined) {
-                    for(let i = 0; i < 3; i++) {
-                        values.residence.city[i] += '-'
+                // 如果地址项什么都没有输入
+                console.log(values.residence);
+                if(values.residence === undefined) {
+                    ;
+                }else {
+                    if(values.residence.city === undefined && values.residence.address === null) {
+                        values.residence.city = '';
+                        values.residence.address = '';
+                    } else if(values.residence.city === undefined && values.residence.address !== null) {
+                        message.error('请检查地址项是否正确！');
+                        return;
+                    }else if(values.residence.city.length === 0 && values.residence.address !== (null || '')) {
+                        message.error('请检查地址项是否正确！');
+                        return;
+                    }
+                    else {
+                        for(let i = 0; i < 3; i++) {
+                            values.residence.city[i] += '-'
+                        }
                     }
                 }
                 //如果没有表格的key，代表是从添加运动员按钮进来的
@@ -133,7 +149,6 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
         }
         if(checkIDCard.test(value) && isIDCard){
             const birthday = `${value.slice(6,10)}${value.slice(10,12)}${value.slice(12,14)}`;
-            console.log(birthday);
             setFieldsValue({
                 sex: value.slice(-2,-1)%2 === 1 ? '男' : '女',
                 birthday: moment(birthday)
@@ -157,16 +172,21 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
     };
 
     // 重置表单与设置表单，对应取消跟修改
-    componentWillReceiveProps = (nextProps:AddFormProps) => {
-        // 重置表单
-        if(this.props.resetField){
-            this.props.form.resetFields();
-        }
-    }
+    // componentWillReceiveProps = (nextProps:AddFormProps) => {
+    //     // 重置表单
+    //     if(this.props.resetField){
+    //         this.props.form.resetFields();
+    //     }
+    // }
 
-    componentDidUpdate() {
-        if(this.props.resetField){
-            // console.log('2');
+    componentDidUpdate(prevProps: Readonly<AddFormProps & FormComponentProps>, prevState: Readonly<any>, snapshot?: any) {
+        const pC =  prevProps.resetField;
+        const tC = this.props.resetField;
+        if(!pC && tC ) {
+            this.props.form.resetFields();
+            this.props.form.setFieldsValue({
+                image: null
+            })
         }
     }
 
@@ -240,9 +260,8 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
                     })(<Input />)}
                 </Form.Item>
                 <Form.Item label='地址'>
-                    {getFieldDecorator('residence', {
-                    })(
-                    <AddressInput />,
+                    {getFieldDecorator('residence', {})(
+                        <AddressInput />,
                     )}
                 </Form.Item>
                 <Form.Item label="紧急联系人">
@@ -282,6 +301,7 @@ const AddAthleteForm = connect(formStateToProps)(Form.create<AddFormProps & Form
                 citys = city.split('-',3);
             }
             let imageUrl = props.user.unitathlete[Number(props.tablekey)-1].athlete.face as string;
+            console.log(imageUrl);
 
             return {
                 name: Form.createFormField({
