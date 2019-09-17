@@ -164,7 +164,7 @@ class TeamEnroll extends React.Component<any,any>{
     if(legalAthleteList.length !== 0) {
       this.setState({legalAthleteList, modalVisible: true});
     }else{
-      console.log('kong');
+      message.error('队伍中不存在符合该组别条件要求人员');
     }
 
   };

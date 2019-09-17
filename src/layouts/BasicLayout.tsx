@@ -4,7 +4,7 @@ import { connect } from 'dva';
 import router from 'umi/router';
 import uRoutes from '@/config/router';
 
-import { Layout, Menu, Breadcrumb, Drawer, Button, Avatar, Typography, Row, Col } from 'antd';
+import { Layout, Menu, Breadcrumb, Drawer, Button, Avatar, Typography, Row, Col, message } from 'antd';
 import { FaList, FaSearch, FaRegBell } from 'react-icons/fa';
 // @ts-ignore
 import styles from './index.less';
@@ -78,6 +78,7 @@ function BasicLayout(props: any) {
   let unitName:string;
   let athleteNumber: number;
   if(props.userInfo) {
+    // 判断是否有单位账号信息
     leaderName = props.userInfo.athleteData[0].name;
     unitName = props.userInfo.unitData[0].name;
     athleteNumber = props.userInfo.unitathlete.length;
@@ -94,7 +95,8 @@ function BasicLayout(props: any) {
       type: 'user/clearstate',
       payload: null
     });
-    router.push('/login')
+    message.info('退出成功');
+    router.push('/home')
   }
 
   return (
@@ -157,6 +159,11 @@ function BasicLayout(props: any) {
 }
 
 const mapStateToProps = (state:any) => {
+  if(state.user.unitData !== undefined) {
+    if (state.user.unitData.length === 0) {
+      return {};
+    }
+  }
   if(state.user.id !== ''){
     return { userInfo: state.user};
   }
@@ -164,4 +171,3 @@ const mapStateToProps = (state:any) => {
 };
 
 export default connect(mapStateToProps)(BasicLayout);
-

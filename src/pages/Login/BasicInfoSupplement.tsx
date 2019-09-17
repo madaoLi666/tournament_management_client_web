@@ -1,9 +1,9 @@
 import React,{ Component } from 'react';
-import { Form, Input, Row, Col, Select, DatePicker, Button, Card } from 'antd';
+import { Form, Input, Row, Col, Select, DatePicker, Button, Card, message } from 'antd';
 import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
 import { ColProps } from 'antd/lib/grid';
 import { connect, DispatchProp } from 'dva';
-import moment from 'moment'
+import moment, { Moment } from 'moment'
 import { checkIDCard } from '@/utils/regulars';
 // @ts-ignore
 import styles from './index.less'
@@ -43,7 +43,7 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
   constructor(props: BasicInfoSupplementFormProps){
     super(props);
     this.state = {
-      isIDCard:false
+      isIDCard:true
     }
   }
   // 提交信息
@@ -53,6 +53,12 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
     const { emitData } = this.props;
     this.props.form.validateFieldsAndScroll((err: ValidateCallback<any>, values: any) => {
       if (!err) {
+        console.log(values);
+        let isBirthdayValid = values.birthday as Moment;
+        if(!isBirthdayValid.isValid()) {
+          message.error('请确认身份证的出生日期是否正确!');
+          return;
+        }
         emitData(values);
       }
     });
@@ -78,7 +84,8 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
       });
       callback(); return;
     }
-
+    callback('请输入正确的身份证号');
+    return;
   };
   // 判断当前证件类型是否为身份证
   handlerCertificationTypeChange = (value: string) => {
@@ -110,6 +117,7 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
         </Form.Item>
         <Form.Item label='证件类型'>
           {getFieldDecorator('certificationType',{
+            initialValue:'身份证',
             rules:[{required:true, message: '请选证件类型'}]
           })(
             <Select placeholder='请选择证件类型' onChange={this.handlerCertificationTypeChange}>

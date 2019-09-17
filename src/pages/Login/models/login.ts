@@ -23,13 +23,12 @@ const LOGIN_MODEL:Model = {
       //  因为登陆的特殊性，没有替换为统一的提示
       const { payload } = action; const { put } = effect;
       let res = yield Login(payload);
-      console.log(res);
       if(res && res.notice === '' && res.data !== ""){
         // 本地存储token
         yield window.localStorage.setItem('TOKEN',res.data);
         yield put({type:'user/modifyUserInfo',payload: action.payload});
         message.success('登录成功！');
-        yield router.goBack();
+        yield router.push('/home');
       }else if(res.notice !== ""){
         const { msg, user } = res.notice;
         if(msg === "3") {

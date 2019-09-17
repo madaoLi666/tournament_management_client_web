@@ -147,20 +147,31 @@ export function convertItemData(itemList: Array<ItemData>):any {
   return { iI,tI }
 }
 
-// 整合来源于服务区的运动员列表数据
+// 整合来源于服务区的运动员列表数据 - 将运动员的团体项目也放入个人信息中方便之后的统计于判断
 export function convertAthleteList(athleteList: Array<any>,teamEnrollList: Array<any>): any {
-  console.log(teamEnrollList);
   qSort(athleteList,0,athleteList.length - 1,'player');
   console.log(athleteList);
-
+  // 遍历所以队伍
   for(let i:number = teamEnrollList.length - 1 ; i >= 0; i--) {
+    // 遍历队伍成员
     for(let k:number = teamEnrollList[i].teammember.length - 1  ; k >= 0 ; k--) {
       let index:number = -1;
-      console.log(teamEnrollList[i].teammember[k].player);
       index = hSearch(athleteList,'player',teamEnrollList[i].teammember[k].player);
-      console.log(index);
+      if(index) {
+        athleteList[index].project.teamproject = [];
+        const birthday = athleteList[index].athlete.birthday.substr(0,10);
+        // 在运动员信息中加入teamproject
+        for(let j:number = teamEnrollList[i].groupprojectenroll.length - 1; j >= 0 ; j--) {
+          athleteList[index].project.teamproject.push({
+            ...teamEnrollList[i].groupprojectenroll[j],
+            isUpGroup: (!(birthday <= teamEnrollList[i].groupprojectenroll[j].endtime.substr(0, 10) && birthday >= teamEnrollList[i].groupprojectenroll[j].starttime.substr(0, 10)))
+          });
+        }
+      }
     }
   }
+  // 翻转数组，使参赛运动员在列表前
+  athleteList.reverse();
 }
 
 
@@ -334,7 +345,6 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
           if(rule.startTime === groupList[j].startTime) {index = j;break;}
         }
         if(index !== -1) {
-          // 这个位置可能有bug
           if(index + upGroupNumber > groupList.length) {
             // 向下取组到底部 全取
             tarGroupList = groupList.slice(index,groupList.length -1);
@@ -351,6 +361,7 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
         // 5 根据已报项目确定组别 暂时没办法做
         // 在 personaldata 和 upgouppersonaldata 中 仅仅会用一个有值
         let cGroup;
+        console.log(rule);
       }
     }
   }else if(rule.isCrossGroup) {

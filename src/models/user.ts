@@ -4,6 +4,7 @@ import { checkVerificationCode, accountdata } from '@/services/login.ts';
 import router from 'umi/router';
 import { deletePlayer } from '@/services/athlete';
 import { message } from 'antd';
+import { isIllegal } from '@/utils/judge';
 
 // 单位账号的data
 export interface UnitData {
@@ -51,8 +52,6 @@ const USER_MODEL:Model = {
     phonenumber:'',
     email:'',
     unitaccount:'',
-    errorstate:'',
-
   },
   reducers: {
     // 存手机进state
@@ -62,6 +61,7 @@ const USER_MODEL:Model = {
     },
     // 账号密码登陆校验
     modifyUserInfo(state:any, action: AnyAction) {
+      console.log(action.payload);
       state.username = action.payload.username;
       state.userPassword = action.payload.password;
       return state;
@@ -76,12 +76,6 @@ const USER_MODEL:Model = {
       state.username = action.payload.username;
       state.email = action.payload.email;
       state.unitaccount = action.payload.unitaccount;
-      return state;
-    },
-    // 修改errorstate,请求发送后的错误信息
-    modifyError(state: any, action: AnyAction): object {
-      const { payload } = action;
-      state.errorstate = payload;
       return state;
     },
     // 存储单位账号信息
@@ -121,7 +115,6 @@ const USER_MODEL:Model = {
       state.phonenumber = '';
       state.email = '';
       state.unitaccount = '';
-      state.errorstate = '';
       return state;
     }
    },
@@ -147,10 +140,6 @@ const USER_MODEL:Model = {
       console.log(action.payload);
       yield effect.put({type:'saveValue',payload:action.payload})
     },
-    // 清除errorState
-    * clearError(action: AnyAction, effect: EffectsCommandMap) {
-      yield effect.put({type: 'modifyError', payload:''})
-    },
     // 获取账号基本信息
     * getAccountData(action: AnyAction, effect: EffectsCommandMap) {
       const { put } = effect;
@@ -158,10 +147,10 @@ const USER_MODEL:Model = {
       if (data) {
         // ===2 代表是单位账号，还要多一项操作是调用获取单位账号下的运动员信息的接口
         if (data.unitaccount === 2) {
-          // 判断是否有单位账号信息
-          if(data.unitdata.length === 0 || data.unitdata ===  undefined || data.unitdata === null) {
-            message.warning('您的账号中没有单位信息，请重新填写');
-            router.push('/login/bindUnit');
+          if(!isIllegal(1,data,1)) {
+            message.error('此账号存在问题，请联系本公司！');
+            window.localStorage.clear();
+            router.push('/home');
             return;
           }
           yield effect.put({type: 'saveUnitAccount', payload: data});

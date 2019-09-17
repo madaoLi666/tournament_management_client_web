@@ -22,7 +22,6 @@ interface Athlete {
     phone: string;
     emergencyContact?: string | null;
     emergencyContactPhone?: string | null;
-    // TODO 修改/删除 设置成Node
     action?: React.ReactNode;
 }
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Upload, Table, Input, Button, Modal, message, Select, DatePicker, Checkbox } from 'antd';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import { FaPlus } from 'react-icons/fa';
 import AddressInput from '@/components/AddressInput/AddressInput';
 import { connect } from 'dva';
@@ -56,7 +56,7 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
       previewImage: '',
       previewVisible: false,
       // 是否 选中使用身份证
-      isIDCard:false
+      isIDCard:true
     }
   }
 
@@ -91,7 +91,7 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
     }
     // 长度是否为18
     if(value.length !== 18) {
-      callback("请输入正确的大陆居民身份证"); return;
+      callback("请输入正确的身份证号"); return;
     }
     if(checkIDCard.test(value) && isIDCard){
       const birthday = `${value.slice(6,10)}${value.slice(10,12)}${value.slice(12,14)}`;
@@ -101,6 +101,8 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
       });
       callback(); return;
     }
+    callback('请输入正确的身份证号');
+    return;
   };
   // 判断当前证件类型是否为身份证
   handlerCertificationTypeChange = (value: string) => {
@@ -129,14 +131,23 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
     // 阻止冒泡
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err: ValidateCallback<any>, values: any) => {
+      console.log(err);
       if (!err) {
-        console.log(fileList);
+        let isBirthdayValid = values.birthday as Moment;
+        if(!isBirthdayValid.isValid()) {
+          message.error('请确认身份证的出生日期是否正确!');
+          return;
+        }
+        if(values.birthday === undefined) {
+          message.error('请确认出生年月日是否已填');
+        }
         // 检查是否进行了图片上传
         if(fileList.length !== 0) {
           if(fileList[0].hasOwnProperty('uid') && fileList[0].uid === -1) {
             emitData({ image:'' ,...values });
           } else {
             emitData({ image:fileList[0] ,...values });
+            this.setState({ fileList:[] });
           }
         } else {
           emitData({ image:'' ,...values });
@@ -217,6 +228,7 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
           </Item>
           <Item label='证件类型'>
             {getFieldDecorator('idCardType',{
+              initialValue:'身份证',
               rules: [{required:true,message:'请选择你的证件号码类型'}],
             })(
               <Select placeholder='请选择证件类型' onChange={this.handlerCertificationTypeChange}>
@@ -244,7 +256,6 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
           </Item>
           <Item label='出生年月日'>
             {getFieldDecorator('birthday',{
-              rules: [{required:true,message:'请输入你的姓名'}],
             })(
               <DatePicker
                 style={{width: '100%'}}
@@ -338,7 +349,7 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
     {
       title: '是否参赛', dataIndex: 'active', key: 'active',
       render:(text:number, record: any) =>
-        <Checkbox defaultChecked={!!text} onChange={(e) => handleSelect(e.target.checked,record,e)}/>
+        <Checkbox checked={!!text} onChange={(e) => handleSelect(e.target.checked,record,e)}/>
     },
     { title: '单位运动员ID', dataIndex: 'id', key: 'unitAthleteId'},
     { title: '单位ID', dataIndex: 'unitdata', key: 'unitData'},
@@ -372,13 +383,16 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
       };
       addParticipantsAthlete(reqData)
         .then(data => {
-          console.log(data);
           // 无法通过 e 设置checked的值
-          if(!data) {console.warn('a');e.target.checked = !checked; }
+          if(data) {
+            dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: {unitId, matchId}});
+          }
         })
     }else{
       deleteParticipantsAthlete({matchdata: matchId, athlete: id, contestant: contestantId})
-        .then(data => {if(!data) {e.target.checked = !checked;}})
+        .then(data => {
+          if(data) dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: {unitId, matchId}});
+        })
     }
   }
   // 传入表单中
@@ -412,9 +426,14 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
       });
     }else if(!isFirstCreate) {
       updatePlayer(formData)
-        .then(data => {
-          if(data) {
-            dispatch({ type: "enroll/checkIsEnrollAndGetAthleteLIST", payload: { unitId, matchId } });
+        .then(res => {
+          if(res !== "") {
+            dispatch({
+              type: "enroll/checkIsEnrollAndGetAthleteLIST",
+              payload: { unitId, matchId }
+            });
+            message.success('修改成功！');
+            setCurrentAthleteData({});
             setVisible(false);
           }
         })
@@ -431,11 +450,12 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
   function handlerDelete(id: number|string) {
     deleteAthlete({athlete:id, unitdata: unitId})
       .then(res => {
-        if(res.data === 'true') {
+        if(res && res !== '') {
           dispatch({
             type: 'enroll/checkIsEnrollAndGetAthleteLIST',
             payload:{ matchId, unitId }
-          })
+          });
+          message.success('删除成功!');
         }
       });
   }
@@ -445,6 +465,14 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
     setVisible(true);
     setIsFirstCreate(true);
     setCurrentAthleteData({});
+  }
+  // 判断选中的运动员名单是否为空
+  function judgeAthlete() {
+    if(athleteList.length !== 0 && athleteList.filter((v:any) => (v.active === 1)).length !== 0) {
+      router.push('/enroll/individual')
+    }else {
+      message.warn('请添加运动员并勾选参赛运动员后后再进行报名');
+    }
   }
   /*
   *  首次渲染的 unitId 为undefined
@@ -480,7 +508,7 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
       <div>
         <Button
           type='primary'
-          onClick={() => router.push('/enroll/individual')}
+          onClick={judgeAthlete}
         >
           确认运动员名单，进入个人报名通道
         </Button>

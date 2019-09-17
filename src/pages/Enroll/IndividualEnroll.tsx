@@ -1,14 +1,16 @@
 import React from 'react';
 import { connect } from 'dva';
 import router from 'umi/router';
-import { Modal, Table, Select, message, Button, Tag, Checkbox} from 'antd';
+import { Modal, Table, Select, message, Button, Tag, Checkbox, Input} from 'antd';
 import { ModalProps } from 'antd/lib/modal';
 import { ColumnProps } from 'antd/lib/table';
 import { getListByKey, getGroupsByAge, getLegalSexList } from '@/utils/enroll';
-import { deleteIndividualEnroll, individualEnroll } from '@/services/enroll';
+import { deleteIndividualEnroll, individualEnroll, submitCertificationNumber } from '@/services/enroll';
 import { isIllegal } from '@/utils/judge';
 // @ts-ignore
 import styles from './index.less';
+import { Simulate } from 'react-dom/test-utils';
+
 
 const { Option } = Select;
 const autoAdjust = {
@@ -32,7 +34,10 @@ class IndividualEnroll extends React.Component<any,any>{
       groupValue: undefined,
       sexValue: undefined,
       itemValue: undefined,
-      isUpGroup: false
+      isUpGroup: false,
+      // 输入证书的modal框、证书号码
+      cModalVisible: false,
+      certificationNumber: ""
     }
   }
 
@@ -112,40 +117,58 @@ class IndividualEnroll extends React.Component<any,any>{
       const birthday = athleteData.athlete.birthday.slice(0,10);
       // 若没有相应组别 则返回false
       let groupList = getListByKey(itemList,itemId,'itemId') ? getListByKey(itemList,itemId,'itemId').groupData : false ;
+      console.log(groupList);
       // 存在可用组别信息
       if(groupList) {
         const { upGroupNumber } = limitation;
         // 通过 年龄+组别列表+可升组数量 得到可选组别列表
         let r = getGroupsByAge(birthday,groupList,upGroupNumber);
-
-        // 判断是否可以跨组别参赛
-        if(isCrossGroup) {
-          // 可以跨组
-          // 将其原组别设置（位于数组最后一个）进入itemValue，但禁用选择框
-          this.setState({groupList: r, groupValue:r[r.length - 1].groupId });
-
-        }else {
-          // 不可以跨组
-          console.log(athleteData);
-          if(athleteData.project.upgrouppersonaldata !== 0) {
-            // 已报名升组项目
-            // 将前一个组别设置
-            this.setState({groupList: r, groupValue:r[r.length - 2].groupId });
-            this.getSexByGroup(athleteData,r,r[r.length - 2].groupId);
-          }else if(athleteData.project.personaldata !== 0) {
-            // 已报名原本组别项目
-            this.setState({groupList: r, groupValue:r[r.length - 1].groupId });
-            this.getSexByGroup(athleteData,r,r[r.length - 1].groupId);
+        let fGroupList = [],fGroupValue = -1;
+        if(r.length !== 0) {
+          // 判断是否可以跨组别参赛
+          if(isCrossGroup) {
+            // 可以跨组
+            // 将其原组别设置（位于数组最后一个）进入itemValue，但禁用选择框
+            fGroupList = r; fGroupValue = r[r.length - 1].groupId;
+          }else {
+            // 不可以跨组
+            // r的最后一项为原组别
+            console.log(athleteData);
+            if(athleteData.project.upgrouppersonaldata !== 0) {
+              // 已报名升组项目
+              // 将前一个组别设置
+              fGroupList = r; fGroupValue = r[r.length - 2].groupId;
+            }else if(athleteData.project.personaldata !== 0) {
+              // 已报名原本组别项目
+              fGroupList = r; fGroupValue = r[r.length - 1].groupId;
+            } else {
+              // 不能从个人项目中判断组别，去查看团体项目
+              console.log(athleteData.project.teamproject);
+              if(athleteData.project.teamproject.length === 0) {
+                // 没有报团队项目
+                fGroupList = r; fGroupValue = r[r.length - 1].groupId;
+              }else{
+                let isUpGroup:boolean = false;
+                for(let i:number = athleteData.project.teamproject.length - 1 ; i >= 0; i--) {
+                  if(athleteData.project.teamproject[i].isUpGroup) {
+                    // 报了升组的项目
+                    isUpGroup = true; break;
+                  }
+                }
+                // FIXME 暂时不解决跨组的问题
+                if(isUpGroup) {
+                  //
+                  fGroupList = r; fGroupValue = r[r.length - 2].groupId;
+                }else {
+                  fGroupList = r; fGroupValue = r[r.length - 1].groupId;
+                }
+              }
+            }
+            //
           }
-          //
         }
-
-
-
-        console.log(r);
-        // 设置组别列表
-        // TODO 这里需要获取团队报名的信息才可以进行判断
-        this.setState({groupList: r});
+        this.setState({ groupList: fGroupList, groupValue: fGroupValue});
+        this.getSexByGroup(athleteData, fGroupList, fGroupValue);
       }else {
         message.warn('此项目没有适合该名运动员的组别');
         this.setState({groupList: []});
@@ -173,16 +196,54 @@ class IndividualEnroll extends React.Component<any,any>{
   };
   // 选中升组
   handleIsUpGroup = (e: any) => {
+    const { groupList }  = this.state;
     const { checked } = e.target;
+
     if(checked) {
       // 如果选中，筛选组别信息
+      this.setState({ groupValue: groupList[groupList.length - 2].groupId, isUpGroup: true });
     }else {
-
+      this.setState({ groupValue: groupList[groupList.length - 1].groupId, isUpGroup: false });
     }
   };
 
+  // 提交业余等级编号证书
+  submitCertificationNumber = () => {
+    // 默认将state中的提交
+    const { certificationNumber, currentAthleteData, itemValue } = this.state;
+    const { matchId } = this.props;
+    submitCertificationNumber({
+      certification_code: certificationNumber,
+      athlete_id: currentAthleteData.athlete.id,
+      openproject_id: itemValue,
+      matchdata_id: matchId
+    })
+      .then(data => {
+        if(data) {
+          message.success('提交成功,直接按原组别报名即可');
+          this.setState({
+            cModalVisible: false
+            // 这里暂时不知道需要需要获取
+          })
+        }
+      })
+  };
+
+  // 渲染升组请求文字
+  static renderCertificationBtnText(certificationCode: string):React.ReactNode {
+    if(certificationCode === "") {
+      return <span>请添加业余等级证书</span>
+    }else if(certificationCode === "-1") {
+      return <span>请重新添加业余等级证书</span>
+    }else if(certificationCode === "1"){
+      return <span>审核中</span>
+    }else {
+      return <span>已通过</span>
+    }
+  }
+
   render(): React.ReactNode {
-    const { modalVisible, currentAthleteData , groupList, sexList, itemGroupSexID, groupValue, sexValue, itemValue, isUpGroup } = this.state;
+    const { modalVisible, currentAthleteData , groupList, sexList, itemGroupSexID, groupValue, sexValue, itemValue, isUpGroup, cModalVisible } = this.state;
     const { enrollAthleteList, individualItemList, individualLimitation } = this.props;
     const modalProps: ModalProps = {
       visible: modalVisible,
@@ -231,6 +292,7 @@ class IndividualEnroll extends React.Component<any,any>{
         <div className={styles['table-block']}>
           <Table dataSource={enrollAthleteList} columns={tableColumns} rowKey={record => record.id} scroll={{ x: 1000}} />
         </div>
+        {/* 报名modal */}
         <Modal {...modalProps} style={{top: '0'}}>
           <div className={styles['enroll-block']}>
             <div className={styles['r']}>
@@ -252,8 +314,16 @@ class IndividualEnroll extends React.Component<any,any>{
                   * 2、未选中item
                   * 3、没有任何符合组别
                   * */
-                  disabled={individualLimitation.upGroupNumber === 0 || itemValue === undefined || groupList.length ===0}
+                  disabled={individualLimitation.upGroupNumber === 0 || itemValue === undefined || groupList.length === 0 || currentAthleteData['certification_code'] === "" || currentAthleteData['certification_code'] === "-1" || currentAthleteData['certification_code'] === "1"}
                 />
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <Button
+                  onClick={() => {this.setState({cModalVisible: true});console.log(currentAthleteData)}}
+                  type="primary"
+                  disabled={!(currentAthleteData['certification_code'] === "" || currentAthleteData['certification_code'] === "-1") || itemValue !== undefined}
+                >
+                  {IndividualEnroll.renderCertificationBtnText(currentAthleteData['certification_code'])}
+                </Button>
               </div>
             </div>
 
@@ -270,6 +340,7 @@ class IndividualEnroll extends React.Component<any,any>{
                   ? null
                   : groupList.map((v:any) => (<Option value={v.groupId} key={v.groupId}>{v.name}</Option>))
                 }
+                <Option value={-1} key={-1}>无可选组别</Option>
               </Select>
               <Select
                 onChange={(value) => this.setState({sexValue:value,itemGroupSexID:value})}
@@ -316,6 +387,18 @@ class IndividualEnroll extends React.Component<any,any>{
               ): (<span>无</span>)
             }
           </div>
+        </Modal>
+        {/* 填写证书modal */}
+        <Modal
+          visible={cModalVisible}
+          onCancel={() => this.setState({cModalVisible: false, certificationNumber: ""})}
+          onOk={this.submitCertificationNumber}
+          title="请输入你的业余证书编号"
+        >
+          <Input onChange={(e:any) => this.setState({certificationNumber: e.target.value})}/>
+          <p>
+            <span>请输入真实的证书编号，待校验后会将您所选组别调节为升组</span>
+          </p>
         </Modal>
         <div>
           <Button

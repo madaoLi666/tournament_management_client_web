@@ -50,25 +50,17 @@ function partition(arr: Array<any>, l: number, h:number, keyName:string) {
 // 仅使用于可以进行正常大小比较的查找
 // arr 是已经 ！！！升序 排序好的数组
 export function hSearch(arr: Array<any>, key: string, value: number|string) {
-  let len:number = arr.length - 1;
-  let index:number = -1;
-  let temp = -1;
-  if(len !== 0) {
-    for(let j:number = Math.ceil(len/2), l: number = 0, h: number= len; j > 0 && j < len && l < h; ) {
-      console.log(`w---${j}`);
-      if(value === arr[j][key]) {
-        index = j;
-        break;
-      } else if(value < arr[j][key]) {
-        temp = j;
-        j = Math.ceil((l+h)/2) - 1;
-        h = temp;
-      } else if(value > arr[j][key]) {
-        temp = j;
-        j = Math.floor((l+h)/2) + 1;
-        l = j;
+  let high:number = arr.length - 1, low = 0,mid = -1;
+  if(high !== -1) {
+    while (low <= high) {
+      mid = Math.ceil((low + high) / 2);
+      if (arr[mid][key] === value) {
+        return mid;
+      } else if (value > arr[mid][key]) {
+        low = mid + 1;
+      } else {
+        high = mid - 1;
       }
     }
   }
-  return index;
 }

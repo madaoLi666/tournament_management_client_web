@@ -50,8 +50,10 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
   };
 
   render() {
+
     // 渲染
     const { currentGameData } = this.state;
+    console.log(currentGameData);
     let IMG_DOM:React.ReactNode = <div>image</div>;
     let ENROLL_DOM:React.ReactNode = <div>image</div>;
     let TAB_DOM = <TabPane tab='联系人' key="联系人" />;
@@ -60,8 +62,7 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
       IMG_DOM = <img src={currentGameData.image} alt='' />;
       ENROLL_DOM = <h4>报名时间：{currentGameData.enrollstarttime.slice(0,10)}至{currentGameData.enrollendtime.slice(0,10)}</h4>
       TAB_DOM = (
-        // @ts-ignore
-        <TabPane tab='联系人' key={Math.random()}>
+        <TabPane tab='联系人' key={String(Math.random())}>
           <p>联系人：{currentGameData['leading_cadre']}</p>
           <p>联系电话：{currentGameData['phone']}</p>
           <p>报名时间：{currentGameData.enrollstarttime.slice(0,10)}至{currentGameData.enrollendtime.slice(0,10)}</p>
@@ -75,6 +76,7 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
 
 
 
+    // @ts-ignore
     // @ts-ignore
     // @ts-ignore
     // @ts-ignore
@@ -103,7 +105,6 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
             {TAB_DOM}
             <TabPane tab='赛事章程' key='rules'>
               <div>
-                // @ts-ignore
                 <StaticHtmlPage index={currentGameData.id} />
               </div>
             </TabPane>

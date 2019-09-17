@@ -53,3 +53,8 @@ export async function deleteTeamEnrollItem(data:object):Promise<any>{
 }
 
 
+// 提交资格证书
+export async function submitCertificationNumber(data:object):Promise<any>{
+    return axiosInstance.post('/submitCertificationCode/',data);
+}
+

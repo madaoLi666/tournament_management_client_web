@@ -51,6 +51,11 @@ export function isIllegal(type: number, value: any, key?: string | Array<string>
       break;
     case 0:
       // 基本类型
+      if ( Object.prototype.toString.call(value) === '[object Array]') {
+        if(value.length === 0) {
+          flag = false;break;
+        }
+      }
       flag = !!value && value !== "";
       break;
     case 1:
