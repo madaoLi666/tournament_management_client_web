@@ -37,7 +37,8 @@ export async function checkVerificationCode(data: object): Promise<any> {
   return axiosInstance.post('/phoneCode/',data);
 }
 
-
 export async function checkAccountState(data?:object): Promise<any> {
-  return axiosInstance.get('/checkregisterstep/');
+  // return axiosInstance.get('/checkregisterstep/');
+  // TODO 更换成自己的
+  return axios.get('');
 }

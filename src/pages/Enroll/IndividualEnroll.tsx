@@ -13,9 +13,7 @@ import { Simulate } from 'react-dom/test-utils';
 
 
 const { Option } = Select;
-const autoAdjust = {
-  xs: { span: 20 }, sm: { span: 20 }, md: { span: 14 }, lg: { span: 12 }, xl: { span: 10 }, xxl: { span: 10 },
-};
+
 /*
  * 1。前端不检查 项目下 单位 可报名 人（队） 限制
  */
@@ -407,6 +405,9 @@ class IndividualEnroll extends React.Component<any,any>{
             style={{width: '160px'}}
           >
             进入团队报名
+          </Button>
+          <Button type="primary" style={{float:'right'}} onClick={() => router.goBack()} >
+            返回
           </Button>
         </div>
       </div>

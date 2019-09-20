@@ -34,10 +34,10 @@ function Login(props: SendCodeProps) {
   const [timeInterval,setTimeInterval] = useState(0);
 
   // onChange 绑定mode1 电话号码
-  async function BindPhoneNumber(event:React.ChangeEvent<HTMLInputElement>) {
+  function BindPhoneNumber(event:React.ChangeEvent<HTMLInputElement>) {
     let phone:string | undefined = event.currentTarget.value;
     // 手机号码
-    setPhoneInfo({ phoneNumber: phone, verificationCode: '', });
+    setPhoneInfo({ phoneNumber: phone, verificationCode: phoneInfo.verificationCode, });
     props.dispatch({type:'user/savePhone',payload:{phonenumber:phone}})
   }
   // 发送验证码操作 类型不定
@@ -104,7 +104,7 @@ function Login(props: SendCodeProps) {
       if(phoneInfo.verificationCode !== '' && phoneInfo.verificationCode !== undefined && checkPhoneNumber.test(phoneInfo.phoneNumber) ){
         dispatch({ type:'user/checkCode', payload: phoneInfo.verificationCode })
       }else{
-        message.error('请输入确认输入无误后再次登陆');
+        message.error('请确认输入无误后再次登陆');
       }
     }
   }

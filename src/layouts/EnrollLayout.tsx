@@ -1,10 +1,11 @@
 import React,{ useEffect } from 'react';
-import { Layout, message } from 'antd';
+import { Layout, message, Button } from 'antd';
 import { connect } from 'dva';
 import router from 'umi/router';
 import { Dispatch } from 'redux';
 // @ts-ignore
 import styles from './index.less';
+import { FaHome } from 'react-icons/fa';
 
 const { Header, Content, Footer } = Layout;
 
@@ -46,6 +47,8 @@ function EnrollLayout(props: {dispatch: Dispatch, currentGameData: any,children:
           <span>
             {currentGameData !== undefined ? currentGameData.name : null}
           </span>
+          <Button type="link" href="/home" style={{float:"right",marginTop:3,padding:'0px 10px 0px'}} >返回主页</Button>
+          <FaHome style={{float:"right",marginTop:13,color:'blue'}} href="/home" />
         </Header>
         <Content className={styles.content}>
           {props.children}

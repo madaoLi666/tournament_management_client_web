@@ -1,6 +1,6 @@
 import { Model, EffectsCommandMap } from 'dva'
 import { AnyAction } from 'redux';
-import { checkVerificationCode, accountdata } from '@/services/login.ts';
+import { checkVerificationCode, accountdata, checkAccountState } from '@/services/login.ts';
 import router from 'umi/router';
 import { deletePlayer } from '@/services/athlete';
 import { message } from 'antd';
@@ -130,8 +130,18 @@ const USER_MODEL:Model = {
       // 验证手机号码与验证码
       let data = yield checkVerificationCode(phoneInfo);
       if (data) {
+        let account_state = yield checkAccountState();
+        if(account_state === 0) {
+          router.push('/home');
+        }else if(account_state === 3) {
+          
+        }else if(account_state === 4) {
+
+        }else {
+          message.error('该账号信息存在问题，请联系系统维护人员');
+          router.push('/notFound')
+        }
         router.push("/login/register");
-        yield console.log(action.payload);
         yield effect.put({type: 'modifyPhoneNumber', payload: phone.phoneNumber})
       }else {
         message.warning('如果您收到的验证码是5位数，请再次点击发送验证码');
