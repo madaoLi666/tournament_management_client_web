@@ -39,7 +39,7 @@ class IndividualEnroll extends React.Component<any,any>{
     }
   }
 
-  componentDidMount(): void {
+  componentDidMount(): void { 
     const { matchId, unitId, dispatch } = this.props;
     if(matchId && unitId){
       dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId } })
@@ -103,9 +103,10 @@ class IndividualEnroll extends React.Component<any,any>{
   * athleteData - 当前运动员信息
   * itemList - 个人项目列表
   * itemId - 选中输入的id
-  * limitation - 限制条件
+  * limitation - 限制条件，里面有isCrossGroup(boolean)，upGroupNumber(number)，itemLimitation(number)
   * */
   getGroupByItem = (athleteData:any, itemList: Array<any>, itemId: number, limitation:any) => {
+    // isCrossGroup 是个boolean
     const { isCrossGroup, upGroupNumber } = this.props.individualLimitation;
     this.setState({itemValue:itemId});
     if(itemId) {
@@ -115,14 +116,14 @@ class IndividualEnroll extends React.Component<any,any>{
       const birthday = athleteData.athlete.birthday.slice(0,10);
       // 若没有相应组别 则返回false
       let groupList = getListByKey(itemList,itemId,'itemId') ? getListByKey(itemList,itemId,'itemId').groupData : false ;
-      console.log(groupList);
       // 存在可用组别信息
       if(groupList) {
         const { upGroupNumber } = limitation;
-        // 通过 年龄+组别列表+可升组数量 得到可选组别列表
+        // 通过 年龄+组别列表+可升组数量 得到可选组别列表，例如可选青成组，少年组
         let r = getGroupsByAge(birthday,groupList,upGroupNumber);
         let fGroupList = [],fGroupValue = -1;
         if(r.length !== 0) {
+          // TODO 这里为什么要判断跨组
           // 判断是否可以跨组别参赛
           if(isCrossGroup) {
             // 可以跨组
@@ -288,7 +289,7 @@ class IndividualEnroll extends React.Component<any,any>{
         {/* rule-block */}
         <div className={styles['rule-block']} />
         <div className={styles['table-block']}>
-          <Table dataSource={enrollAthleteList} columns={tableColumns} rowKey={record => record.id} scroll={{ x: 1000}} />
+          <Table dataSource={enrollAthleteList} columns={tableColumns} rowKey={record => record.id} scroll={{ x: 1010}} />
         </div>
         {/* 报名modal */}
         <Modal {...modalProps} style={{top: '0'}}>
@@ -341,7 +342,7 @@ class IndividualEnroll extends React.Component<any,any>{
                 <Option value={-1} key={-1}>无可选组别</Option>
               </Select>
               <Select
-                onChange={(value) => this.setState({sexValue:value,itemGroupSexID:value})}
+                onChange={(value:any) => this.setState({sexValue:value,itemGroupSexID:value})}
                 disabled={sexList.length===0}
                 placeholder='请选择性别组别'
                 value={sexValue}

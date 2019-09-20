@@ -172,12 +172,6 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
     };
 
     // 重置表单与设置表单，对应取消跟修改
-    // componentWillReceiveProps = (nextProps:AddFormProps) => {
-    //     // 重置表单
-    //     if(this.props.resetField){
-    //         this.props.form.resetFields();
-    //     }
-    // }
 
     componentDidUpdate(prevProps: Readonly<AddFormProps & FormComponentProps>, prevState: Readonly<any>, snapshot?: any) {
         const pC =  prevProps.resetField;

@@ -5,6 +5,7 @@ import { ModalProps } from 'antd/lib/modal';
 
 import { legalAthleteFilter } from '@/utils/enroll.ts';
 import { teamEnroll, deleteTeamEnrollItem } from '@/services/enroll';
+import router from 'umi/router';
 
 const { Option } = Select;
 const { TreeNode } = TreeSelect;
@@ -359,6 +360,7 @@ class TeamEnroll extends React.Component<any,any>{
             expandedRowRender={this.renderExpandedRow}
             rowKey={(record:any) => record.id}
           />
+          <Button type="primary" style={{marginTop:20,float:"right"}} onClick={() => {router.goBack()}} >返回个人报名</Button>
         </div>
         <Modal {...modalProps}>
           <Input

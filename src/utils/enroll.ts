@@ -182,6 +182,7 @@ export function convertAthleteList(athleteList: Array<any>,teamEnrollList: Array
 * keyName 键值名
 * */
 export function getListByKey(obj: Array<any>, value: any, keyName: string ):any {
+  console.log(obj);
   for(let i:number = obj.length - 1; i>= 0; i--) {
     if(obj[i][keyName] === value) {
       return obj[i];
