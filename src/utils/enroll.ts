@@ -333,6 +333,7 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
   // 1
   const { startTime } = rule;
   athleteList = athleteList.filter((v:any) => (v.athlete.birthday.substr(0,10) > startTime));
+
   // 2
   const { upGroupNumber , groupList } = rule;
   if(!rule.isCrossGroup) {
@@ -342,7 +343,7 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
         // 4
         // 以组别列表筛选出适合的
         let index = -1,tarGroupList;
-        for(let j:number = groupList.length -1 ; j > 0 ; j--) {
+        for(let j:number = groupList.length -1 ; j >= 0 ; j--) {
           if(rule.startTime === groupList[j].startTime) {index = j;break;}
         }
         if(index !== -1) {
@@ -353,8 +354,8 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
             tarGroupList = groupList.slice(index,index + upGroupNumber);
           }
           tarGroupList.forEach((v:any) => {
-            if(v.startTime < athleteList[i].birthday.substr(0,10) && v.endTime >  athleteList[i].birthday.substr(0,10) ) {
-             v.groupFlag = true;
+            if(v.startTime < athleteList[i].athlete.birthday.substr(0,10) && v.endTime >  athleteList[i].athlete.birthday.substr(0,10) ) {
+              athleteList[i].groupFlag = true;
             }
           })
         }

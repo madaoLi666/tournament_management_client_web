@@ -132,13 +132,20 @@ class IndividualEnroll extends React.Component<any,any>{
           }else {
             // 不可以跨组
             // r的最后一项为原组别
-            console.log(athleteData);
+            console.log(athleteData.project);
             if(athleteData.project.upgrouppersonaldata !== 0) {
               // 已报名升组项目
               // 将前一个组别设置
-              fGroupList = r; fGroupValue = r[r.length - 2].groupId;
+              // TODO 这里的 r length只有1，为什么减2
+              fGroupList = r;
+              if(r.length === 1) {
+                fGroupValue = r[0].groupId;
+              }else {
+                fGroupValue = r[r.length - 2].groupId;
+              }
             }else if(athleteData.project.personaldata !== 0) {
               // 已报名原本组别项目
+              console.log(2);
               fGroupList = r; fGroupValue = r[r.length - 1].groupId;
             } else {
               // 不能从个人项目中判断组别，去查看团体项目

@@ -152,7 +152,10 @@ class TeamEnroll extends React.Component<any,any>{
     //1. 按照相应规则，过滤合法运动员
     //2. 设置如legalAthleteList中
     //3. 开启模态框
+    // currentItemGroupSexID 项目ID
     const { currentItemGroupSexID, rule } = this.state;
+    console.log(currentItemGroupSexID,rule);
+    // 选中的运动员列表
     const { athleteList } = this.props;
     if(currentItemGroupSexID === -1 ){
       // 判断当前id是否合法
@@ -167,13 +170,12 @@ class TeamEnroll extends React.Component<any,any>{
     }else{
       message.error('队伍中不存在符合该组别条件要求人员');
     }
-
   };
   handleCloseDialog = () => {
     // 清空状态
     this.setState({
       modalVisible: false, legalAthleteList:[],
-      teamName:'', selectedAthleteList:[],rule:{},
+      teamName:'', selectedAthleteList:[],
       roleTypeList:[]
     })
   };
