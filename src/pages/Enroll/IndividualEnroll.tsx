@@ -13,9 +13,7 @@ import { Simulate } from 'react-dom/test-utils';
 
 
 const { Option } = Select;
-const autoAdjust = {
-  xs: { span: 20 }, sm: { span: 20 }, md: { span: 14 }, lg: { span: 12 }, xl: { span: 10 }, xxl: { span: 10 },
-};
+
 /*
  * 1。前端不检查 项目下 单位 可报名 人（队） 限制
  */
@@ -105,9 +103,10 @@ class IndividualEnroll extends React.Component<any,any>{
   * athleteData - 当前运动员信息
   * itemList - 个人项目列表
   * itemId - 选中输入的id
-  * limitation - 限制条件
+  * limitation - 限制条件，里面有isCrossGroup(boolean)，upGroupNumber(number)，itemLimitation(number)
   * */
   getGroupByItem = (athleteData:any, itemList: Array<any>, itemId: number, limitation:any) => {
+    // isCrossGroup 是个boolean
     const { isCrossGroup, upGroupNumber } = this.props.individualLimitation;
     this.setState({itemValue:itemId});
     if(itemId) {
@@ -117,33 +116,42 @@ class IndividualEnroll extends React.Component<any,any>{
       const birthday = athleteData.athlete.birthday.slice(0,10);
       // 若没有相应组别 则返回false
       let groupList = getListByKey(itemList,itemId,'itemId') ? getListByKey(itemList,itemId,'itemId').groupData : false ;
-      console.log(groupList);
       // 存在可用组别信息
       if(groupList) {
         const { upGroupNumber } = limitation;
-        // 通过 年龄+组别列表+可升组数量 得到可选组别列表
+        // 通过 年龄+组别列表+可升组数量 得到可选组别列表，例如可选青成组，少年组
         let r = getGroupsByAge(birthday,groupList,upGroupNumber);
         let fGroupList = [],fGroupValue = -1;
+        console.table(r);
         if(r.length !== 0) {
+          // TODO 这里为什么要判断跨组
           // 判断是否可以跨组别参赛
           if(isCrossGroup) {
             // 可以跨组
             // 将其原组别设置（位于数组最后一个）进入itemValue，但禁用选择框
             fGroupList = r; fGroupValue = r[r.length - 1].groupId;
           }else {
+            console.warn('t');
             // 不可以跨组
             // r的最后一项为原组别
-            console.log(athleteData);
-            if(athleteData.project.upgrouppersonaldata !== 0) {
+            console.log(athleteData.project);
+            if(athleteData.project.upgrouppersonaldata.length !== 0) {
               // 已报名升组项目
               // 将前一个组别设置
-              fGroupList = r; fGroupValue = r[r.length - 2].groupId;
-            }else if(athleteData.project.personaldata !== 0) {
+              // TODO 这里的 r length只有1，为什么减2
+              fGroupList = r;
+              if(r.length === 1) {
+                fGroupValue = r[0].groupId;
+              }else {
+                fGroupValue = r[r.length - 2].groupId;
+              }
+            }else if(athleteData.project.personaldata.length !== 0) {
               // 已报名原本组别项目
+              console.log(2);
               fGroupList = r; fGroupValue = r[r.length - 1].groupId;
-            } else {
+            } else if(athleteData.project.hasOwnProperty('teamproject')) {
+              // 判断 是否 有团队报名项目
               // 不能从个人项目中判断组别，去查看团体项目
-              console.log(athleteData.project.teamproject);
               if(athleteData.project.teamproject.length === 0) {
                 // 没有报团队项目
                 fGroupList = r; fGroupValue = r[r.length - 1].groupId;
@@ -163,6 +171,9 @@ class IndividualEnroll extends React.Component<any,any>{
                   fGroupList = r; fGroupValue = r[r.length - 1].groupId;
                 }
               }
+            } else {
+              // 什么项目没有报名
+              fGroupList = r; fGroupValue = r[r.length - 1].groupId;
             }
             //
           }
@@ -290,7 +301,7 @@ class IndividualEnroll extends React.Component<any,any>{
         {/* rule-block */}
         <div className={styles['rule-block']} />
         <div className={styles['table-block']}>
-          <Table dataSource={enrollAthleteList} columns={tableColumns} rowKey={record => record.id} scroll={{ x: 1000}} />
+          <Table dataSource={enrollAthleteList} columns={tableColumns} rowKey={record => record.id} scroll={{ x: 1010}} />
         </div>
         {/* 报名modal */}
         <Modal {...modalProps} style={{top: '0'}}>
@@ -313,7 +324,7 @@ class IndividualEnroll extends React.Component<any,any>{
                   * 1、升组数量为0
                   * 2、未选中item
                   * 3、没有任何符合组别
-                  * 
+                  *
                   * */
                   disabled={individualLimitation.upGroupNumber === 0 || itemValue === undefined || groupList.length === 0 || currentAthleteData['certification_code'] === "" || currentAthleteData['certification_code'] === "-1" || currentAthleteData['certification_code'] === "1"}
                 />
@@ -321,7 +332,7 @@ class IndividualEnroll extends React.Component<any,any>{
                 <Button
                   onClick={() => {this.setState({cModalVisible: true});console.log(currentAthleteData)}}
                   type="primary"
-                  disabled={!(currentAthleteData['certification_code'] === "" || currentAthleteData['certification_code'] === "-1") || itemValue !== undefined}
+                  disabled={!(currentAthleteData['certification_code'] === "" || currentAthleteData['certification_code'] === "-1") && itemValue !== undefined}
                 >
                   {IndividualEnroll.renderCertificationBtnText(currentAthleteData['certification_code'])}
                 </Button>
@@ -344,7 +355,7 @@ class IndividualEnroll extends React.Component<any,any>{
                 <Option value={-1} key={-1}>无可选组别</Option>
               </Select>
               <Select
-                onChange={(value) => this.setState({sexValue:value,itemGroupSexID:value})}
+                onChange={(value:any) => this.setState({sexValue:value,itemGroupSexID:value})}
                 disabled={sexList.length===0}
                 placeholder='请选择性别组别'
                 value={sexValue}
@@ -408,6 +419,9 @@ class IndividualEnroll extends React.Component<any,any>{
             style={{width: '160px'}}
           >
             进入团队报名
+          </Button>
+          <Button type="primary" style={{float:'right'}} onClick={() => router.goBack()} >
+            返回
           </Button>
         </div>
       </div>

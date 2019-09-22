@@ -17,6 +17,7 @@ import { checkPhoneNumber, checkEmail, checkIDCard } from '@/utils/regulars';
 // @ts-ignore
 import styles from './index.less';
 import { Dispatch } from 'redux';
+import { ColumnProps } from 'antd/es/table';
 const { Option } = Select;
 const { Item } = Form;
 
@@ -33,6 +34,20 @@ interface AthleteInfoFormProps extends FormComponentProps{
   emitData:(data:object) => void;
   // 暂时定为any
   currentAthleteData: any;
+}
+
+interface athleteListProps {
+  key: string;
+  id: string;
+  name?: string;
+  active?: any;
+  identifyID?: string;
+  sex?: string;
+  birthday?: string;
+  phone?: string;
+  emergencyContact?: string | null;
+  emergencyContactPhone?: string | null;
+  handle?: React.ReactNode;
 }
 
 // 转base64
@@ -345,18 +360,18 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
   // table
   // 类型暂时保留
   //
-  const tableColumns = [
+  const tableColumns:ColumnProps<athleteListProps>[] = [
     {
-      title: '是否参赛', dataIndex: 'active', key: 'active',
+      title: '是否参赛', dataIndex: 'active', key: 'active',align:'center',
       render:(text:number, record: any) =>
         <Checkbox checked={!!text} onChange={(e) => handleSelect(e.target.checked,record,e)}/>
     },
-    { title: '单位运动员ID', dataIndex: 'id', key: 'unitAthleteId'},
-    { title: '单位ID', dataIndex: 'unitdata', key: 'unitData'},
-    { title: '运动员姓名', key: 'name', render:(text:any,record:any) => (<span>{record.athlete.name}</span>)},
-    { title: '运动员个人ID', key: 'athleteId', render:(text:any,record:any) => (<span>{record.athlete.id}</span>)},
-    { title: '出生年月日', key: 'birthday', render:(text:any,record:any) => ( <span>{record.athlete.birthday.slice(0,10)}</span>)},
-    { title: '操作', key: 'handle',
+    { title: '运动员姓名', key: 'name', align:'center', render:(text:any,record:any) => (<span>{record.athlete.name}</span>)},
+    { title: '性别', key: 'sex', dataIndex: 'sex', align:'center', render:(text:any,record:any) => (<span>{record.athlete.sex}</span>) },
+    { title: '证件号', key: 'identifyID', dataIndex: 'identifyID',align:'center', render:(text:any,record:any) => (<span>{record.athlete.idcard}</span>) },
+    { title: '出生年月日', key: 'birthday', align:'center', render:(text:any,record:any) => ( <span>{record.athlete.birthday.slice(0,10)}</span>)},
+    // { title: '联系电话', key: 'phonenumber', dataIndex: 'phonenumber', render:(text:any,record:any) => ( <span>{record.athlete.phonenumber}</span>) },
+    { title: '操作', key: 'handle',align:'center',
       render:(text:any, record:any) => (
         <div>
           {/* 使用外层 - 单位运动员id */}
@@ -503,6 +518,7 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
           columns={tableColumns}
           dataSource={athleteList}
           rowKey={record => record.id}
+          scroll={{x:1010}}
         />
       </div>
       <div>
