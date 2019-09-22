@@ -196,7 +196,7 @@ class IndividualEnroll extends React.Component<any,any>{
     let sexList = getListByKey(groupList, groupId, 'groupId') ? getListByKey(groupList, groupId, 'groupId').sexData : false ;
     if(sexList && sexList.length !== 0) {
       let r = getLegalSexList(sex,sexList);
-      this.setState({sexList:r, groupValue:groupId, itemGroupSexID:-1});
+      this.setState({sexList:r, groupValue:groupId, itemGroupSexID: r === false ? -1 : r[0].sexId, sexValue:r === false ? undefined : r[0].name});
     }else {
       message.warn('没有开设符合您的性别组别');
       this.setState({sexList: [], itemGroupSexID: -1});
@@ -292,6 +292,7 @@ class IndividualEnroll extends React.Component<any,any>{
         render: (_: any, record: any): React.ReactNode => (<a onClick={() => this.selectIndividualEnroll(record)}>报名</a>)
       },
     ];
+    const test: Array<string> = ['test1','test2'];
 
     return (
       <div className={styles['individual-enroll']}>
