@@ -332,10 +332,12 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
   // 1
   const { startTime } = rule;
   athleteList = athleteList.filter((v:any) => (v.athlete.birthday.substr(0,10) > startTime));
+  console.log(athleteList);
   // 2
   const { upGroupNumber , groupList } = rule;
   if(!rule.isCrossGroup) {
     for(let i = athleteList.length - 1 ; i >= 0 ; i--) {
+      console.log(i);
       // 3
       if(athleteList[i].itemNumber === 0 && athleteList[i].upGroupItemNumber === 0) {
         // 4

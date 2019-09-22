@@ -313,6 +313,7 @@ class IndividualEnroll extends React.Component<any,any>{
                   * 1、升组数量为0
                   * 2、未选中item
                   * 3、没有任何符合组别
+                  * 
                   * */
                   disabled={individualLimitation.upGroupNumber === 0 || itemValue === undefined || groupList.length === 0 || currentAthleteData['certification_code'] === "" || currentAthleteData['certification_code'] === "-1" || currentAthleteData['certification_code'] === "1"}
                 />
