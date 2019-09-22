@@ -122,7 +122,6 @@ class IndividualEnroll extends React.Component<any,any>{
         // 通过 年龄+组别列表+可升组数量 得到可选组别列表，例如可选青成组，少年组
         let r = getGroupsByAge(birthday,groupList,upGroupNumber);
         let fGroupList = [],fGroupValue = -1;
-        console.table(r);
         if(r.length !== 0) {
           // TODO 这里为什么要判断跨组
           // 判断是否可以跨组别参赛
@@ -131,10 +130,8 @@ class IndividualEnroll extends React.Component<any,any>{
             // 将其原组别设置（位于数组最后一个）进入itemValue，但禁用选择框
             fGroupList = r; fGroupValue = r[r.length - 1].groupId;
           }else {
-            console.warn('t');
             // 不可以跨组
             // r的最后一项为原组别
-            console.log(athleteData.project);
             if(athleteData.project.upgrouppersonaldata.length !== 0) {
               // 已报名升组项目
               // 将前一个组别设置

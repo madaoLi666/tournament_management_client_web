@@ -38,6 +38,7 @@ function Login(props: SendCodeProps) {
     let phone:string | undefined = event.currentTarget.value;
     // 手机号码
     setPhoneInfo({ phoneNumber: phone, verificationCode: phoneInfo.verificationCode, });
+    setUserInfo({username: phone, password: userInfo.password});
     props.dispatch({type:'user/savePhone',payload:{phonenumber:phone}})
   }
   // 发送验证码操作 类型不定
@@ -72,6 +73,10 @@ function Login(props: SendCodeProps) {
       phoneNumber: phoneInfo.phoneNumber,
       verificationCode: phoneVerificationCode
     })
+    setUserInfo({
+      username: userInfo.username,
+      password: phoneVerificationCode
+    })
   }
   // onChange 绑定mode0 账号密码登陆
   function BindUserInfoUserName(event:React.ChangeEvent<HTMLInputElement>) {
@@ -102,9 +107,9 @@ function Login(props: SendCodeProps) {
     }else if(mode === '1') {
       // 检测手机验证码是否正确
       if(phoneInfo.verificationCode !== '' && phoneInfo.verificationCode !== undefined && checkPhoneNumber.test(phoneInfo.phoneNumber) ){
-        dispatch({ type:'user/checkCode', payload: phoneInfo.verificationCode })
+        dispatch({ type:'login/sendLoginRequest', payload: userInfo })
       }else{
-        message.error('请确认输入无误后再次登陆');
+        message.error('请确认手机号码与验证码输入无误后再次登陆');
       }
     }
   }

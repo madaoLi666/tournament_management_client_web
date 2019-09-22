@@ -404,6 +404,7 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
           }
         })
     }else{
+      message.warning('取消参赛将会删除之前该运动员已报名项目的记录');
       deleteParticipantsAthlete({matchdata: matchId, athlete: id, contestant: contestantId})
         .then(data => {
           if(data) dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: {unitId, matchId}});
