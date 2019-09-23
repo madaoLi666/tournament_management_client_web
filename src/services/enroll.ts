@@ -52,9 +52,12 @@ export async function deleteTeamEnrollItem(data:object):Promise<any>{
     return axiosInstance.delete('/groupprojectenroll/',{data});
 }
 
-
 // 提交资格证书
 export async function submitCertificationNumber(data:object):Promise<any>{
     return axiosInstance.post('/submitCertificationCode/',data);
 }
 
+// 通过赛事id，单位id和运动员id获取该运动员所参加的项目信息
+export async function getEnrolledProject(data: object): Promise<any> {
+    return axiosInstance.post('/athleteenrolldata/',data);
+}

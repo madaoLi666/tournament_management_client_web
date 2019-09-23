@@ -108,7 +108,9 @@ class TeamEnroll extends React.Component<any,any>{
   };
   // 初始化树桩选择器dom
   initialTreeDOM = (item:Array<any>):React.ReactNode => {
+
     let res:Array<React.ReactNode> = [];
+    console.log(item);
     if(item && item.length !== 0) {
       for(let i:number = item.length - 1 ; i >= 0 ; i--) {
         const group = item[i].groupData;
@@ -298,7 +300,7 @@ class TeamEnroll extends React.Component<any,any>{
     })
   };
 
-
+  
   render(): React.ReactNode {
     const { teamItem, teamEnroll } = this.props;
     const { modalVisible, legalAthleteList, roleTypeList } = this.state;

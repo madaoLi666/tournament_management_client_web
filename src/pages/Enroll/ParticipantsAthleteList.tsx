@@ -404,7 +404,16 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
           }
         })
     }else{
-      message.warning('取消参赛将会删除之前该运动员已报名项目的记录');
+      message.warning('取消参赛将会删除之前该运动员已报名项目的记录！如果该运动员已报了团体项目，请重新删除该团体项目再进行报名');
+      // 先删除已报名的团队项目
+      props.dispatch({
+        type: 'enroll/deleteTeamProject',
+        payload: {
+          matchdata : matchId,
+          athlete : id,
+          contestant : contestantId
+        }
+      })
       deleteParticipantsAthlete({matchdata: matchId, athlete: id, contestant: contestantId})
         .then(data => {
           if(data) dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: {unitId, matchId}});

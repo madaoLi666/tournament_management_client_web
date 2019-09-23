@@ -150,8 +150,7 @@ export function convertItemData(itemList: Array<ItemData>):any {
 // 整合来源于服务区的运动员列表数据 - 将运动员的团体项目也放入个人信息中方便之后的统计于判断
 export function convertAthleteList(athleteList: Array<any>,teamEnrollList: Array<any>): any {
   qSort(athleteList,0,athleteList.length - 1,'player');
-  console.log(athleteList);
-  // 遍历所以队伍
+  // 遍历所有队伍
   for(let i:number = teamEnrollList.length - 1 ; i >= 0; i--) {
     // 遍历队伍成员
     for(let k:number = teamEnrollList[i].teammember.length - 1  ; k >= 0 ; k--) {

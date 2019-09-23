@@ -1,7 +1,7 @@
 import router from 'umi/router';
 import { Model, EffectsCommandMap } from 'dva';
 import { AnyAction } from 'redux';
-import { getContestantUnitData , checkISEnroll, individualEnroll} from '@/services/enroll.ts';
+import { getContestantUnitData , checkISEnroll, individualEnroll, getEnrolledProject} from '@/services/enroll.ts';
 import { getIndividualEnrollLimit, getAllItem } from '@/services/rules';
 import { convertItemData, convertAthleteList} from '@/utils/enroll';
 
@@ -99,6 +99,7 @@ const ENROLL_MODEL: Model = {
     * checkIsEnrollAndGetAthleteLIST  (action: AnyAction, effect: EffectsCommandMap) {
       const { put } = effect;
       const { matchId, unitId } = action.payload;
+      // TODO 这里的bug
       let data = yield checkISEnroll({unitdata: unitId, matchdata: matchId});
       // 判断数据是否存在
       if(data) {
@@ -171,6 +172,15 @@ const ENROLL_MODEL: Model = {
             matchId: yield select((state:any) => state.enroll.currentMatchId)
           }
         })
+      }
+    },
+    // 删除参赛运动员时关联删除他的团队参赛项目
+    * deleteTeamProject(action: AnyAction, effect: EffectsCommandMap) {
+      yield console.log(action.payload);
+      let res = yield getEnrolledProject(action.payload);
+      // 如果有已经报了名的团队项目
+      if(res.groupproject.length !== 0) {
+        // TODO 看有两个的团队项目是怎样的
       }
     }
   }
