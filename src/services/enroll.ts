@@ -61,3 +61,8 @@ export async function submitCertificationNumber(data:object):Promise<any>{
 export async function getEnrolledProject(data: object): Promise<any> {
     return axiosInstance.post('/athleteenrolldata/',data);
 }
+
+// 通过队伍id，来删除队伍参赛的项目
+export async function deleteTeam(data:object):Promise<any>{
+    return axiosInstance.delete('/teamenroll/',{data});
+}
