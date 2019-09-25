@@ -273,8 +273,6 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
     m.upGroupItemNumber = (m.project.hasOwnProperty('upgrouppersonaldata')) ? m.project.upgrouppersonaldata.length : 0;
     m.groupFlag = false;
   });
-  console.log(athleteList);
-  console.log(rule);
   const { sexType } = rule;
   /* 1、性别
   *  2、个人限报项目数量

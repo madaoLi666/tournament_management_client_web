@@ -108,6 +108,7 @@ const ENROLL_MODEL: Model = {
           yield put({ type: 'modifyContestantUnitData', payload: { contestantUnitData } });
           // 运动员列表
           let athleteList = data.unitathlete;
+          // console.log(data);
           convertAthleteList(athleteList,data.teamenrolldata);
           yield put({ type: 'modifyAthleteList', payload: { athleteList } });
           // 团队报名列表

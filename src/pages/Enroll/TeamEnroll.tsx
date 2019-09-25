@@ -4,7 +4,7 @@ import { TreeSelect, Button, Modal, Table, Input, Select, message } from 'antd';
 import { ModalProps } from 'antd/lib/modal';
 
 import { legalAthleteFilter } from '@/utils/enroll.ts';
-import { teamEnroll, deleteTeamEnrollItem } from '@/services/enroll';
+import { teamEnroll, deleteTeamEnrollItem, deleteTeam } from '@/services/enroll';
 import router from 'umi/router';
 
 const { Option } = Select;
@@ -50,7 +50,6 @@ class TeamEnroll extends React.Component<any,any>{
   handleTreeSelectChange = (value: any, label: any, extra: any) => {
     const { teamItem, individualLimitation } = this.props;
     // 取最后的ItemGroupSexID - 即 服务端 projectgroupsexid
-    console.log(value);
     if(value){
       let ItemGroupSexIDArr = value.split('-');
       this.setState({currentItemGroupSexID: ItemGroupSexIDArr[2]});
@@ -110,7 +109,6 @@ class TeamEnroll extends React.Component<any,any>{
   initialTreeDOM = (item:Array<any>):React.ReactNode => {
 
     let res:Array<React.ReactNode> = [];
-    console.log(item);
     if(item && item.length !== 0) {
       for(let i:number = item.length - 1 ; i >= 0 ; i--) {
         const group = item[i].groupData;
@@ -290,13 +288,40 @@ class TeamEnroll extends React.Component<any,any>{
       openprojectgroupsex:currentItemGroupSexID,
       player
     };
-    teamEnroll(reqData).then(res => console.log(res));
+    teamEnroll(reqData).then((res:any) => {
+      if(res) {
+        message.success('报名成功');
+        this.props.dispatch({
+          type: 'enroll/checkIsEnrollAndGetAthleteLIST',
+          payload: {
+            matchId : this.props.matchId,
+            unitId : this.props.unitId
+          }
+        })
+      }else {
+        message.error('报名失败');
+      }
+      this.setState({modalVisible: false});
+    });
   };
   // 删除
   handleDeleteTeamEnroll = (id:number) => {
     const { matchId, unitId, dispatch } = this.props;
-    deleteTeamEnrollItem({groupprojectenroll: id}).then(data => {
-      if(data) {dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId } });}
+    for(let i:number = 0;i < this.props.teamEnroll.length; i++) {
+      if(this.props.teamEnroll[i].id === id) {
+        id = this.props.teamEnroll[i].member[0].teamenroll;
+        break;
+      }
+    }
+    deleteTeam({teamenroll: id}).then(data => {
+      if(data) {
+        dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId } 
+      });
+        message.success('删除成功');
+      }else {
+        message.error('删除失败！');
+        console.log(data);
+      }
     })
   };
 

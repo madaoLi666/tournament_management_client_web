@@ -386,7 +386,7 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
   // 选中运动员是否参赛
   function handleSelect(checked: boolean, record: any, e: any ) {
     const { birthday, id } = record.athlete;
-    console.log(e.target);
+    // console.log(e.target);
     if(checked) {
       // 选中
       let reqData = {
