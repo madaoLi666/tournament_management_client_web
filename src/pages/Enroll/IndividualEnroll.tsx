@@ -25,6 +25,7 @@ class IndividualEnroll extends React.Component<any,any>{
       modalVisible: false,
       // 运动员信息
       currentAthleteData: {},
+      athleteName: '',
       // 筛选的列表
       groupList: [],
       sexList: [],
@@ -56,10 +57,12 @@ class IndividualEnroll extends React.Component<any,any>{
 
   // 选中运动员进行报名
   selectIndividualEnroll = (record:any) => {
+    console.log(record);
     this.setState({
       currentAthleteData:record,
       modalVisible: true,
-      itemGroupSexID: -1
+      itemGroupSexID: -1,
+      athleteName: record.athlete.name
     })
   };
   // 个人报名
@@ -87,12 +90,12 @@ class IndividualEnroll extends React.Component<any,any>{
   };
   // 删除个人报名
   handleCloseEnroll = (id:number) => {
-    console.log(id);
     const { dispatch,matchId,unitId } = this.props;
     deleteIndividualEnroll({personalprojectenroll:id})
       .then(data => {
         if(data) {
           dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId } })
+          message.success('删除个人报名项目成功');
         }
       })
   };
@@ -255,7 +258,7 @@ class IndividualEnroll extends React.Component<any,any>{
     const { enrollAthleteList, individualItemList, individualLimitation } = this.props;
     const modalProps: ModalProps = {
       visible: modalVisible,
-      title: '添加个人报名信息',
+      title:  this.state.athleteName === '' ? 1 : this.state.athleteName +'   请选择报名项目进行报名',
       onCancel:() => this.setState({modalVisible: false, groupList:[], sexList: [], itemGroupSexID: -1, groupValue: undefined, sexValue: undefined,itemValue:undefined}),
       footer:false,
       width: '100%'
@@ -364,6 +367,8 @@ class IndividualEnroll extends React.Component<any,any>{
                   : sexList.map((v:any) => (<Option value={v.sexId} key={v.sexId}>{v.name}</Option>))
                 }
               </Select>
+              <br />
+              <span style={{color:'red',marginLeft:'43%'}}>请选择参赛性别组别</span>
             </div>
             <Button
               type='primary'

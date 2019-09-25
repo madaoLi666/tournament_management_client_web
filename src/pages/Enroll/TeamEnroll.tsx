@@ -213,14 +213,29 @@ class TeamEnroll extends React.Component<any,any>{
   };
   renderExpandedRow = (record:any, index:number, indent:any, expanded:any):React.ReactNode => {
     const { member } = record;
+    const { athleteList } = this.props;
+    // 从props中找数据进行匹配，以获得组员的一些信息，如 性别 和 所在组别
+    let sexs = new Array(member.length);
+    let group_ages = new Array(member.length);
+    
+    for(let j:number = 0; j < member.length ; j++) {
+      for(let i:number = 0; i < athleteList.length ; i++) {
+        if(member[j].athlete.idcard === athleteList[i].athlete.idcard) {
+          sexs[j] = athleteList[i].athlete.sex;
+          group_ages[j] = athleteList[i].groupage;
+          break;
+        }
+      }
+    }
     let r:Array<React.ReactNode> = [];
-    member.forEach((v:any) => {
+    member.forEach((v:any,index:any) => {
       r.push(
         <div key={v.player}>
           <span>姓名：{v.athlete.name}</span>&nbsp;&nbsp;|&nbsp;&nbsp;
           <span>身份证号码：{v.athlete.idcard}</span>&nbsp;&nbsp;|&nbsp;&nbsp;
           <span>角色名称：{v.rolename}</span>&nbsp;&nbsp;|&nbsp;&nbsp;
-          <span>ID：{v.player}</span>
+          <span>性别：{sexs[index]}</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+          <span>所属组别：{group_ages[index]}</span>
         </div>
       )
     });
@@ -368,7 +383,6 @@ class TeamEnroll extends React.Component<any,any>{
 
     // showTable
     const showTableColumns = [
-      { title: 'ID', dataIndex: 'id', key: 'id'},
       { title: '项目-组别-性别', dataIndex: 'itemGroupSexName', key: 'itemGroupSexName'},
       { title: '队伍名称', dataIndex: 'teamName', key: 'teamName'},
       { title: '删除', key:'del',dataIndex: 'id',
@@ -381,10 +395,10 @@ class TeamEnroll extends React.Component<any,any>{
     return (
       <div>
         <div>
-          <TreeSelect style={{width: '300px'}} onChange={this.handleTreeSelectChange}>
+          <TreeSelect style={{width: '300px'}} placeholder='请选择团队项目' onChange={this.handleTreeSelectChange}>
             {TREE_NODE}
           </TreeSelect>
-          <Button onClick={this.handleOpenDialog}>开设新组别</Button>
+          <Button onClick={this.handleOpenDialog}>开设新队伍</Button>
         </div>
         <div>
           <Table
