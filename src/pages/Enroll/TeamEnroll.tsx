@@ -166,7 +166,11 @@ class TeamEnroll extends React.Component<any,any>{
     // 判断出合法的运动员列表，置入state 打开modal
     let legalAthleteList =  legalAthleteFilter(athleteList,rule);
     if(legalAthleteList.length !== 0) {
-      this.setState({legalAthleteList, modalVisible: true});
+      // TODO 这里不知道会不会有bug，先给每个运动员固定一个角色，要测试轮滑求
+      for(let i:number = 0; i < legalAthleteList.length ; i++) {
+        legalAthleteList[i].role = 3;
+      }
+      this.setState({legalAthleteList: legalAthleteList, modalVisible: true});
     }else{
       message.error('队伍中不存在符合该组别条件要求人员');
     }
@@ -178,10 +182,10 @@ class TeamEnroll extends React.Component<any,any>{
       teamName:'', selectedAthleteList:[],
       roleTypeList:[]
     })
-  };
+  };  
   // table
   handleCheckboxSelect = (record:any,selected:boolean) => {
-    let { selectedAthleteList } = this.state;
+    let { selectedAthleteList, legalAthleteList } = this.state;
     let index = -1;
     for(let i:number = selectedAthleteList.length - 1 ; i >= 0 ;i-- ) {
       if(selectedAthleteList[i] === record.id) {
@@ -346,7 +350,7 @@ class TeamEnroll extends React.Component<any,any>{
       },
       { title: '选择角色', dataIndex:'role', key:'role',
         render:(text:any,_:any,index:number) => (
-          <Select defaultValue={text} style={{width: '120px'}} onChange={(value:number) => this.handleRoleTypeSelect(value,index)}>
+          <Select defaultValue={roleTypeList[0].cn_name} style={{width: '120px'}} onChange={(value:number) => this.handleRoleTypeSelect(value,index)}>
             {
               roleTypeList.length !== 0
                 ? roleTypeList.map((v:any) => (<Option value={v.id} key={v.id}>{v['cn_name']}</Option>))
