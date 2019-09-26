@@ -4,9 +4,12 @@ import { TreeSelect, Button, Modal, Table, Input, Select, message } from 'antd';
 import { ModalProps } from 'antd/lib/modal';
 
 import { legalAthleteFilter } from '@/utils/enroll.ts';
-import { teamEnroll, deleteTeamEnrollItem, deleteTeam } from '@/services/enroll';
+import { teamEnroll, deleteTeam } from '@/services/enroll';
 import router from 'umi/router';
 import { TableRowSelection } from 'antd/es/table';
+
+// @ts-ignore
+import styles from './index.less';
 
 const { Option } = Select;
 const { TreeNode } = TreeSelect;
@@ -155,7 +158,6 @@ class TeamEnroll extends React.Component<any,any>{
     //3. 开启模态框
     // currentItemGroupSexID 项目ID
     const { currentItemGroupSexID, rule } = this.state;
-    console.log(currentItemGroupSexID,rule);
     // 选中的运动员列表
     const { athleteList } = this.props;
     if(currentItemGroupSexID === -1 ){
@@ -163,6 +165,8 @@ class TeamEnroll extends React.Component<any,any>{
      message.warn('请先进行选择项目');
      return false;
     }
+
+    console.log(athleteList);
 
     // 判断出合法的运动员列表，置入state 打开modal
     let legalAthleteList =  legalAthleteFilter(athleteList,rule);
@@ -181,8 +185,9 @@ class TeamEnroll extends React.Component<any,any>{
     this.setState({
       modalVisible: false, 
       // legalAthleteList:[],
-      // teamName:'', selectedAthleteList:[],
+      teamName:'',
       // roleTypeList:[]
+      selectedAthleteList: []
     })
   };  
   // table
@@ -252,7 +257,7 @@ class TeamEnroll extends React.Component<any,any>{
   //  处理队伍报名
   handleTeamEnroll = () => {
     const { teamName, selectedAthleteList, rule, currentItemGroupSexID, legalAthleteList } = this.state;
-    const { matchId, unitId, contestantId} = this.props;
+    const { matchId, contestantId} = this.props;
     if(teamName === "" || teamName === undefined){
       message.warn('请先填写队名');
       return;
@@ -262,6 +267,7 @@ class TeamEnroll extends React.Component<any,any>{
 
     // 判断人数是否符合
     const { maxTeamNumberLimitation, minTeamNumberLimitation} = rule;
+
     if(selectedAthleteList.length < minTeamNumberLimitation || selectedAthleteList.length > maxTeamNumberLimitation) {
       message.warn('队伍人数不符合报名要求');
       return;
@@ -327,7 +333,7 @@ class TeamEnroll extends React.Component<any,any>{
         teamName:'',
         // roleTypeList:[],
         // 因为清空这个，在前端界面中并没有清除选项，所以先不清空
-        // selectedAthleteList:[]
+        selectedAthleteList:[]
       });
     });
   };
@@ -355,7 +361,7 @@ class TeamEnroll extends React.Component<any,any>{
   
   render(): React.ReactNode {
     const { teamItem, teamEnroll } = this.props;
-    const { modalVisible, legalAthleteList, roleTypeList } = this.state;
+    const { modalVisible, legalAthleteList, roleTypeList, selectedAthleteList } = this.state;
 
     let TREE_NODE = this.initialTreeDOM(teamItem);
 
@@ -387,6 +393,7 @@ class TeamEnroll extends React.Component<any,any>{
       fixed:true,
       onSelect:this.handleCheckboxSelect,
       onSelectAll:this.handleCheckSelectAll,
+      selectedRowKeys: selectedAthleteList,
     };
 
     // showTable
@@ -408,14 +415,16 @@ class TeamEnroll extends React.Component<any,any>{
           </TreeSelect>
           <Button onClick={this.handleOpenDialog}>开设新队伍</Button>
         </div>
-        <div>
+        <div className={styles['myroll']}>
           <Table
+            style={{height:'200%'}}
             dataSource={teamEnroll}
             columns={showTableColumns}
             expandedRowRender={this.renderExpandedRow}
             rowKey={(record:any) => record.id}
           />
           <Button type="primary" style={{marginTop:20,float:"right"}} onClick={() => {router.goBack()}} >返回个人报名</Button>
+        
         </div>
         <Modal {...modalProps}>
           <Input
