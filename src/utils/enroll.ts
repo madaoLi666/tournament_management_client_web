@@ -359,7 +359,6 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
         // 5 根据已报项目确定组别 暂时没办法做
         // 在 personaldata 和 upgouppersonaldata 中 仅仅会用一个有值
         let cGroup;
-        console.log(rule);
       }
     }
   }else if(rule.isCrossGroup) {

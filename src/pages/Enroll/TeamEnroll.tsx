@@ -6,6 +6,7 @@ import { ModalProps } from 'antd/lib/modal';
 import { legalAthleteFilter } from '@/utils/enroll.ts';
 import { teamEnroll, deleteTeamEnrollItem, deleteTeam } from '@/services/enroll';
 import router from 'umi/router';
+import { TableRowSelection } from 'antd/es/table';
 
 const { Option } = Select;
 const { TreeNode } = TreeSelect;
@@ -178,14 +179,15 @@ class TeamEnroll extends React.Component<any,any>{
   handleCloseDialog = () => {
     // 清空状态
     this.setState({
-      modalVisible: false, legalAthleteList:[],
-      teamName:'', selectedAthleteList:[],
-      roleTypeList:[]
+      modalVisible: false, 
+      // legalAthleteList:[],
+      // teamName:'', selectedAthleteList:[],
+      // roleTypeList:[]
     })
   };  
   // table
   handleCheckboxSelect = (record:any,selected:boolean) => {
-    let { selectedAthleteList, legalAthleteList } = this.state;
+    let { selectedAthleteList } = this.state;
     let index = -1;
     for(let i:number = selectedAthleteList.length - 1 ; i >= 0 ;i-- ) {
       if(selectedAthleteList[i] === record.id) {
@@ -201,7 +203,6 @@ class TeamEnroll extends React.Component<any,any>{
     this.setState({selectedAthleteList});
   };
   handleCheckSelectAll = (selected:boolean) => {
-
     let { selectedAthleteList,legalAthleteList } = this.state;
     if(selected) {
       // 当反选后 如果错误 执行了这个会有bug
@@ -320,7 +321,14 @@ class TeamEnroll extends React.Component<any,any>{
       }else {
         message.error('报名失败');
       }
-      this.setState({modalVisible: false});
+      this.setState({
+        modalVisible: false,
+        // legalAthleteList:[],
+        teamName:'',
+        // roleTypeList:[],
+        // 因为清空这个，在前端界面中并没有清除选项，所以先不清空
+        // selectedAthleteList:[]
+      });
     });
   };
   // 删除
@@ -343,7 +351,7 @@ class TeamEnroll extends React.Component<any,any>{
       }
     })
   };
-
+  
   
   render(): React.ReactNode {
     const { teamItem, teamEnroll } = this.props;
@@ -365,7 +373,7 @@ class TeamEnroll extends React.Component<any,any>{
       },
       { title: '选择角色', dataIndex:'role', key:'role',
         render:(text:any,_:any,index:number) => (
-          <Select defaultValue={roleTypeList[0].cn_name} style={{width: '120px'}} onChange={(value:number) => this.handleRoleTypeSelect(value,index)}>
+          <Select defaultValue={roleTypeList.length === 0 ? '' : roleTypeList[0].cn_name} style={{width: '120px'}} onChange={(value:number) => this.handleRoleTypeSelect(value,index)}>
             {
               roleTypeList.length !== 0
                 ? roleTypeList.map((v:any) => (<Option value={v.id} key={v.id}>{v['cn_name']}</Option>))
@@ -375,7 +383,7 @@ class TeamEnroll extends React.Component<any,any>{
         )
       },
     ];
-    const rowSelection = {
+    const rowSelection:TableRowSelection<any> = {
       fixed:true,
       onSelect:this.handleCheckboxSelect,
       onSelectAll:this.handleCheckSelectAll,
@@ -412,6 +420,7 @@ class TeamEnroll extends React.Component<any,any>{
         <Modal {...modalProps}>
           <Input
             placeholder='请输入队伍名称'
+            value={this.state.teamName}
             onChange={(e:any) => this.setState({teamName:e.target.value})}
           />
           <Table
