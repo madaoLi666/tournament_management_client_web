@@ -285,7 +285,7 @@ const formStateToProps = ({user}:any) => {
 
 const AddAthleteForm = connect(formStateToProps)(Form.create<AddFormProps & FormComponentProps>({
     mapPropsToFields(props: any) {
-        if (props.tablekey !== '') {
+        if (props.tablekey !== '' && props.user.unitathlete !== undefined) {
             // 生日，re是正则匹配，用于替换，处理数据库中的birth字符串
             let birth = props.user.unitathlete[Number(props.tablekey)-1].athlete.birthday as string;
             let re = /-/gi;
@@ -325,6 +325,52 @@ const AddAthleteForm = connect(formStateToProps)(Form.create<AddFormProps & Form
                 residence: Form.createFormField({
                     value:{
                         address: props.user.unitathlete[Number(props.tablekey)-1].athlete.address,
+                        city: citys
+                    }
+                }),
+                image: Form.createFormField({
+                    value:  imageUrl
+                })
+            }
+        }else if(props.tablekey !== '') {
+            // 生日，re是正则匹配，用于替换，处理数据库中的birth字符串
+            let birth = props.user.athleteData[0].birthday as string;
+            let re = /-/gi;
+            let city = props.user.athleteData[0].province as string;
+            let citys:string[];
+            if (city !== null) {
+                citys = city.split('-',3);
+            }
+            let imageUrl = props.user.athleteData[0].face as string;
+
+            return {
+                name: Form.createFormField({
+                    value: props.user.athleteData[0].name
+                }),
+                sex: Form.createFormField({
+                    value: props.user.athleteData[0].sex
+                }),
+                emergencyContact: Form.createFormField({
+                    value: props.user.athleteData[0].emergencycontactpeople
+                }),
+                emergencyContactPhone: Form.createFormField({
+                    value: props.user.athleteData[0].emergencycontactpeoplephone
+                }),
+                email: Form.createFormField({
+                    value: props.user.athleteData[0].email
+                }),
+                identifyID: Form.createFormField({
+                    value: props.user.athleteData[0].idcard
+                }),
+                phone: Form.createFormField({
+                    value: props.user.athleteData[0].phonenumber
+                }),
+                birthday: Form.createFormField({
+                    value: moment(birth.substr(0,10).replace(re,''))
+                }),
+                residence: Form.createFormField({
+                    value:{
+                        address: props.user.athleteData[0].address,
                         city: citys
                     }
                 }),

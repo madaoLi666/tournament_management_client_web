@@ -1,6 +1,7 @@
 import axios,{ AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import { message } from 'antd';
 import { isIllegal } from '@/utils/judge';
+import router from 'umi/router';
 const BASE_URL:string = 'https://www.gsta.top/v3';
 const TIMEOUT:number = 6000;
 
@@ -14,8 +15,7 @@ let axiosInstance = axios.create({
   validateStatus:(status: number): boolean => {
     if( status === 401 ) {
       message.error('请重新登陆');
-      //@ts-ignore
-      window.g_app.router.push('/login');
+      router.push('/login');
       return false;
     }
     if(status < 200 || status > 301) {

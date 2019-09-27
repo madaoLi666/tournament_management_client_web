@@ -11,6 +11,7 @@ const LOGIN_MODEL:Model = {
   },
   reducers: {
     modifyUserId(state: any, action: AnyAction) {
+      console.log(action.payload);
       const { userId } = action.payload;
       console.log(state);
       state.userId = userId;

@@ -59,8 +59,10 @@ const RESISTER_MODEL: Model = {
       if(data) yield router.push('/login/setRole');
     },
     // 注册成为个人账号
-    * setAthleteRole(action: AnyAction) {
-      let data = yield setAthleteRole();
+    * setAthleteRole(action: AnyAction, effect: EffectsCommandMap) {
+      let user_id: any = yield effect.select((state: any) => ({userId: state.login.userId}));
+      let data = yield setAthleteRole({user_id: user_id.userId});
+      console.log(data);
       if(data) yield router.push('/user');
     },
     // 注册单位账号
@@ -69,6 +71,7 @@ const RESISTER_MODEL: Model = {
       let payCode = yield select(({register}:any) => {
         return register.unitRegisterPayCode;
       });
+      let user_id: any = yield effect.select((state: any) => ({userId: state.login.userId}));
       // yield console.log(payCode);
       yield console.log(unitData);
       let requestData =  yield {
@@ -81,7 +84,8 @@ const RESISTER_MODEL: Model = {
         province: unitData.residence.city[0]+unitData.residence.city[1]+unitData.residence.city[2],
         address: unitData.residence.address,
         password: unitData.password,
-        user:unitData.userId
+        user:unitData.userId,
+        user_id:user_id.userId
       };
       let data = yield registerUnitAccount(requestData);
       if(data) {

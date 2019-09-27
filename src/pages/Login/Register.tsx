@@ -6,17 +6,7 @@ import { Row, Col, Card, Tabs, Form, Input, Button, Modal, message } from 'antd'
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
 import { personalAccountRegister,PersonInfo } from '@/services/register.ts';
-import { checkEmail } from '@/utils/regulars';
-
-
-
-// 个人注册成功后返回信息
-interface RightResponse {
-  username?: string
-  email?: string
-  phone?: string
-  unitaccount?: string
-}
+import { checkEmail, checkPhoneNumber } from '@/utils/regulars';
 
 // 注册新用户表单项的接口
 interface UserFormProps {
@@ -179,37 +169,24 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
             email: values.email,
             emailcode: values.emailVerificationCode,
             // @ts-ignore
-            phonenumber: this.props.personInfo.phoneNumber
+            phonenumber: values.phone_number
         };
-        console.log(personInfo);
         // 如果注册成功存进user
-        let saveState = (value: RightResponse) => {
+        let saveState = (value: any) => {
           // @ts-ignore
           this.props.dispatch({
             type: 'user/saveInfo',
             payload: value
           })
         };
-        // 调用修改state
-        let changeState = (error: string) => {
-          this.setState({
-            visible: true,
-            errorText: error
-          })
-        };
-        // TODO 这个位置要改改 EDO
         let res = personalAccountRegister(personInfo);
         res.then((resp) => {
           if (resp) {
-            if (resp.error !== "") {
-              console.log(res);
-              changeState(resp.error);
-            }else {
-              console.log(res);
-              dispatch({type: 'login/modifyUserId', payload: {userId: resp.data.user}});
-              saveState(resp.data);
-              router.push('/login/infoSupplement')
-            }
+            console.log(resp);
+            dispatch({type: 'login/modifyUserId', payload: {userId: resp.user}});
+            saveState(resp);
+            message.success('注册成功');
+            router.push('/login/infoSupplement')
           }
         })
       }
@@ -234,6 +211,11 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
           <p>{errorText}</p>
         </Modal>
         <Form {...formItemLayout} onSubmit={this.handleSubmit}>
+          <Form.Item label='手机号码' >
+            {getFieldDecorator('phone_number', {
+              rules:[{required: true, message: '请输入手机号码！'},{pattern:checkPhoneNumber, message:'请输入正确的手机号码！'}]
+            })(<Input />)}
+          </Form.Item>  
           <Form.Item label='用户名'>
             {getFieldDecorator('userID', {
               rules: [{ required: true, message: '请输入用户名！' }],
@@ -259,7 +241,7 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
               <Col span={10}>
               {this.state.timeInterval === 0 ?
               <Button onClick={this.toParent} style={{width:'100%',height:32}} type="primary" >发送验证码</Button>
-              :<Button type="primary" style={{width:166,height:32}} disabled={true} >{this.state.timeInterval/1000}秒</Button>
+              :<Button type="primary" style={{width:'100%',height:32}} disabled={true} >{this.state.timeInterval/1000}秒</Button>
               }
               </Col>
             </Row>
@@ -270,7 +252,8 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
             })(<Input/>)}
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" style={{width:"80%"}} htmlType="submit">注册绑定,并进入下一步操作</Button>
+            <Button type="primary" style={{width:"45%"}} htmlType="submit">注册</Button>
+            <span style={{marginLeft:'5%'}} ><a href="/login">使用已有账号登录</a></span>
           </Form.Item>
         </Form>
       </div>

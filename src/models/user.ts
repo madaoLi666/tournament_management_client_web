@@ -61,7 +61,6 @@ const USER_MODEL:Model = {
     },
     // 账号密码登陆校验
     modifyUserInfo(state:any, action: AnyAction) {
-      console.log(action.payload);
       state.username = action.payload.username;
       state.userPassword = action.payload.password;
       return state;
@@ -76,6 +75,7 @@ const USER_MODEL:Model = {
       state.username = action.payload.username;
       state.email = action.payload.email;
       state.unitaccount = action.payload.unitaccount;
+      state.phonenumber = action.payload.phone;
       return state;
     },
     // 存储单位账号信息

@@ -50,9 +50,10 @@ function AthletesList(props:athletesProps) {
         return (
             <div>
                 <a href="#" onClick={changeConfirm} >修改</a>
-                &nbsp;&nbsp;|
                 &nbsp;&nbsp;
-                <a href="#"  onClick={deleteConfirm.bind(myEvent,index)} >删除</a>
+              { unitAccount === 1 ? (
+                  <div></div>
+              ) : <a href="#"  onClick={deleteConfirm.bind(myEvent,index)} >删除</a> }
             </div>
         )
     }
@@ -67,7 +68,7 @@ function AthletesList(props:athletesProps) {
                 name: item.name,
                 identifyID: item.idcard,
                 sex: item.sex,
-                birthday: item.birthday,
+                birthday: item.birthday.substr(0,10),
                 phone: item.phonenumber,
                 emergencyContact: item.emergencycontactpeople,
                 emergencyContactPhone: item.emergencycontactpeoplephone,

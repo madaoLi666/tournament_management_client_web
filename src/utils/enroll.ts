@@ -268,6 +268,7 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
   qSort(rule.groupList);
 
   // 整理 将 已报项目数量整理处理
+  // TODO 查看这里整理了什么已报项目，现在是某个人报了一个个人，团队这里就消失了
   athleteList.forEach((m:any) => {
     m.itemNumber = (m.project.hasOwnProperty('personaldata')) ? m.project.personaldata.length : 0;
     m.upGroupItemNumber = (m.project.hasOwnProperty('upgrouppersonaldata')) ? m.project.upgrouppersonaldata.length : 0;

@@ -72,16 +72,22 @@ function BasicLayout(props: any) {
     props.dispatch({
       type:'user/getAccountData'
     })
-  })
+  },[]);
 
   let leaderName:string;
   let unitName:string;
+  let person_name:string;
   let athleteNumber: number;
   if(props.userInfo) {
     // 判断是否有单位账号信息
     leaderName = props.userInfo.athleteData[0].name;
     unitName = props.userInfo.unitData[0].name;
     athleteNumber = props.userInfo.unitathlete.length;
+  }
+  if(props.personInfo) {
+    if(props.personInfo.length !== 0) {
+      person_name = props.personInfo[0].name;
+    }
   }
 
   // 默认不显示抽屉
@@ -129,17 +135,19 @@ function BasicLayout(props: any) {
               <div className={styles['headerMessage']} style={{display:"flex",marginLeft:16}} >
                 <Avatar style={{ backgroundColor: '#87d068',marginTop:20 }} size={84} icon="user" />
                 <div style={{display:"flex",flexWrap:"wrap",width:300,marginLeft:20}}>
-                  <p style={{fontSize:18,marginTop:8}} >早安，{leaderName === undefined ? null : leaderName}，祝你工作顺利</p>
-                  <p><strong>赛事职务：{unitName === undefined ? null : unitName}&nbsp;领队</strong></p>
+                  <p style={{fontSize:18,marginTop:8}} >早安，{leaderName === undefined ? person_name : leaderName}，祝你工作顺利</p>
+                  {unitName === undefined ? null : <p><strong>赛事职务：{unitName === undefined ? null : unitName}&nbsp;领队</strong></p>}
                 </div>
               </div>
             </div>
           </Col>
           <Col {...autoAdjust2}>
+            {unitName === undefined ? null :
               <div style={{marginLeft:30}}>
-                <Text type="secondary">在册运动员</Text>
-                <Title style={{margin:0,marginLeft:20}} level={1} >{athleteNumber === undefined ? null : athleteNumber}</Title>
+              <Text type="secondary">在册运动员</Text>
+              <Title style={{margin:0,marginLeft:20}} level={1} >{athleteNumber === undefined ? null : athleteNumber}</Title>
               </div>
+            }
           </Col>
         </Row>
       </Header>
@@ -161,7 +169,13 @@ function BasicLayout(props: any) {
 const mapStateToProps = (state:any) => {
   if(state.user.unitData !== undefined) {
     if (state.user.unitData.length === 0) {
-      return {};
+      if(state.user.unitAccount === 1) {
+        return {
+          personInfo: state.user.athleteData
+        };
+      }else {
+        return {};
+      }
     }
   }
   if(state.user.id !== ''){
