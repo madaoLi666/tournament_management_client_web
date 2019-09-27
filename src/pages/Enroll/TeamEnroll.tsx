@@ -260,7 +260,6 @@ class TeamEnroll extends React.Component<any,any>{
       message.warn('请先填写队名');
       return;
     }
-    console.log(rule);
     // 判断本单位下 该项目 组别 性别 是否已经报满
 
     // 判断人数是否符合
@@ -351,7 +350,6 @@ class TeamEnroll extends React.Component<any,any>{
         message.success('删除成功');
       }else {
         message.error('删除失败！');
-        console.log(data);
       }
     })
   };

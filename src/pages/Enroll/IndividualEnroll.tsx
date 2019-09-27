@@ -57,7 +57,7 @@ class IndividualEnroll extends React.Component<any,any>{
 
   // 选中运动员进行报名
   selectIndividualEnroll = (record:any) => {
-    console.log(record);
+    // console.log(record);
     this.setState({
       currentAthleteData:record,
       modalVisible: true,
@@ -147,7 +147,7 @@ class IndividualEnroll extends React.Component<any,any>{
               }
             }else if(athleteData.project.personaldata.length !== 0) {
               // 已报名原本组别项目
-              console.log(2);
+              // console.log(2);
               fGroupList = r; fGroupValue = r[r.length - 1].groupId;
             } else if(athleteData.project.hasOwnProperty('teamproject')) {
               // 判断 是否 有团队报名项目

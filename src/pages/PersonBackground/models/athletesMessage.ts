@@ -19,10 +19,9 @@ const ATHLETES_MODEL:Model = {
     effects: {
         // 获取单位账号下运动员信息
         * getUnitAthletes(action: AnyAction, effect: EffectsCommandMap) {
-            console.log(action.payload);
             let res = yield getUnitAthletesdata(action.payload);
             if (res) {
-                console.log(res);
+                // console.log(res);
             }
         },
         //  添加运动员信息

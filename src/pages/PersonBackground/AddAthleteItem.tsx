@@ -103,7 +103,6 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
                     return;
                 }
                 // 如果地址项什么都没有输入
-                console.log(values.residence);
                 if(values.residence === undefined) {
                     ;
                 }else {
@@ -295,7 +294,6 @@ const AddAthleteForm = connect(formStateToProps)(Form.create<AddFormProps & Form
                 citys = city.split('-',3);
             }
             let imageUrl = props.user.unitathlete[Number(props.tablekey)-1].athlete.face as string;
-            console.log(imageUrl);
 
             return {
                 name: Form.createFormField({

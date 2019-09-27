@@ -146,7 +146,6 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
     // 阻止冒泡
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err: ValidateCallback<any>, values: any) => {
-      console.log(err);
       if (!err) {
         let isBirthdayValid = values.birthday as Moment;
         if(!isBirthdayValid.isValid()) {
@@ -467,7 +466,6 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
   }
   //
   function editAthleteData(record: object) {
-    console.log(record);
     setCurrentAthleteData(record);
     setVisible(true);
     setIsFirstCreate(false);

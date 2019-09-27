@@ -29,7 +29,6 @@ class Home extends React.Component<any,any>{
 
   componentDidMount(): void {
     getHomePic().then(data => {
-      console.log();
       if(data) {
         this.setState({homePicArr: data.filter((m:any) => (m.id < 10)).map((v:any) => (v.file))});
       }else {

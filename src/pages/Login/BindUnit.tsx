@@ -61,7 +61,6 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
   compareToConfirmPassword = (rule: any, value: any, callback: Function) => {
     const { form } = this.props;
     const confirmPassword = form.getFieldValue('confirmPassword');
-    console.log(value);
     if ( value.length < 10 ) callback('请输入10位或以上的密码');
     if (value && confirmPassword && value !== confirmPassword) {
       // 去验证 confirmPassword
@@ -98,7 +97,6 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
     // 没有检查value是否为空 不知道会不会bug
     let res = unitNameIsLegal(value);
     res.then(function (result:{data:string,error:string,notice:string}) {
-      console.log(result);
       if (result) {
         callback();
         setSuccess();
@@ -396,9 +394,6 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
   // 这里可以拿到表单的信息
   async function submitRegister(data: any): Promise<any> {
     const { dispatch , userId} = props;
-    // edo
-    console.log(data);
-    console.log(userId);
 
     // 发起请求检查是否支付了费用
     // TODO 这个位置要再改改
@@ -433,7 +428,7 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
   async function getPayQRCodeUrl(): Promise<any> {
     const { userId } = props;
     let res = await getQRCodeForUnitRegister({user:userId}).then( res => (res));
-    console.log(res);
+
     if(res.data !== '' && res.error === ''){
       return res.data;
     }else{
@@ -454,7 +449,6 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
           closeDialog();
           clearInterval(i);
           // edo
-          console.log(unitData);
           dispatch({type: 'register/registerUnitAccount', payload: {unitData: unitData}});
 
           // message.success('已成功支付单位注册费用，请再次点击注册');
@@ -468,7 +462,6 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
   }
   // 提供给教练员/领队做单位的绑定
   function submitBindUnitData(data: any): void {
-    console.log(data);
     let myPayload = {
       unitname:"",
       password:"",
@@ -534,7 +527,6 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
 export default connect(({register,login}:any) => {
   let userId:number = login.userId;
   if(userId === -1) userId = Number(window.localStorage.getItem('USER'));
-  console.log(userId);
   return {
     payCode: register.unitRegisterPayCode,
     userId: userId

@@ -53,7 +53,6 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
     const { emitData } = this.props;
     this.props.form.validateFieldsAndScroll((err: ValidateCallback<any>, values: any) => {
       if (!err) {
-        console.log(values);
         let isBirthdayValid = values.birthday as Moment;
         if(!isBirthdayValid.isValid()) {
           message.error('请确认身份证的出生日期是否正确!');
@@ -69,7 +68,6 @@ class BasicInfoSupplementForm extends Component<BasicInfoSupplementFormProps, an
     const { setFieldsValue } = this.props.form;
     // 证件类型为身份证
     if(!isIDCard || value === undefined){
-      console.log('a');
       callback(); return;
     }
     // 长度是否为18
@@ -184,11 +182,9 @@ function BasicInfoSupplement(props:any) {
 
   function submitInfoSupplementData(data: any):void{
     const { dispatch, userId } = props;
-    console.log(userId);
     // 解析moment对象拿birthday
     data.birthday = data.birthday.format('YYYY-MM-DD') + ' 00:00:00';
     data.user = userId;
-    console.log(data);
     // 提交做请求
     dispatch({type: 'register/addAthleteBaseInfo',payload:data})
   }

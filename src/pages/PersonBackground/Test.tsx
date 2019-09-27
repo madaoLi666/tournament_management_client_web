@@ -10,7 +10,6 @@ class Test extends Component {
 
     public parseWordDocxFile = (inputElement: any) => {
         let file:any = this.fileInput.current.files[0];
-        console.log(file);
 
         var reader = new FileReader();
         reader.onload = function(event) {

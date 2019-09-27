@@ -182,7 +182,6 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
         let res = personalAccountRegister(personInfo);
         res.then((resp) => {
           if (resp) {
-            console.log(resp);
             dispatch({type: 'login/modifyUserId', payload: {userId: resp.user}});
             saveState(resp);
             message.success('注册成功');

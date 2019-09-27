@@ -149,7 +149,7 @@ const USER_MODEL:Model = {
     },
     // 个人注册成功后，存进state
     * saveInfo(action: AnyAction, effect: EffectsCommandMap) {
-      console.log(action.payload);
+      // console.log(action.payload);
       yield effect.put({type:'saveValue',payload:action.payload})
     },
     // 获取账号基本信息

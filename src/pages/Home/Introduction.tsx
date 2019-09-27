@@ -53,7 +53,6 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
 
     // 渲染
     const { currentGameData } = this.state;
-    console.log(currentGameData);
     let IMG_DOM:React.ReactNode = <div>image</div>;
     let ENROLL_DOM:React.ReactNode = <div>image</div>;
     let TAB_DOM = <TabPane tab='联系人' key="联系人" />;

@@ -187,7 +187,7 @@ function AthletesList(props:athletesProps) {
     })
     // onChange 表格筛选
     function onChange(pagination: PaginationConfig, filters: Record<"sex",string[]>, sorter: SorterResult<any>) {
-        console.log('params',pagination,filters,sorter);
+        // console.log('params',pagination,filters,sorter);
     }
 
     // 添加运动员
