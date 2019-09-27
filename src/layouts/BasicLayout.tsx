@@ -99,7 +99,11 @@ function BasicLayout(props: any) {
     window.localStorage.clear();
     props.dispatch({
       type: 'user/clearstate',
-      payload: null
+      payload: ''
+    });
+    props.dispatch({
+      type: 'enroll/clearstate',
+      payload: ''
     });
     message.info('退出成功');
     router.push('/home')

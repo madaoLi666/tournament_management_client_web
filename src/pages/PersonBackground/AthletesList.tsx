@@ -300,7 +300,6 @@ function AthletesList(props:athletesProps) {
         }
 
         res.then((resp) => {
-            console.log(resp);
             // TODO 确认后台修改什么时候会失败
             if (resp) {
                 message.success(todo === 'register' ? '添加成功' : '修改成功');

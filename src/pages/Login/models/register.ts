@@ -62,8 +62,10 @@ const RESISTER_MODEL: Model = {
     * setAthleteRole(action: AnyAction, effect: EffectsCommandMap) {
       let user_id: any = yield effect.select((state: any) => ({userId: state.login.userId}));
       let data = yield setAthleteRole({user_id: user_id.userId});
-      console.log(data);
-      if(data) yield router.push('/user');
+      if(data) {
+        message.success('成功注册个人账号，请重新登录');
+        yield router.push('/user');
+      }
     },
     // 注册单位账号
     * registerUnitAccount(action: AnyAction, effect: EffectsCommandMap) {
@@ -73,7 +75,6 @@ const RESISTER_MODEL: Model = {
       });
       let user_id: any = yield effect.select((state: any) => ({userId: state.login.userId}));
       // yield console.log(payCode);
-      yield console.log(unitData);
       let requestData =  yield {
         unitname: payCode,
         name: unitData.unitName,
@@ -102,6 +103,8 @@ const RESISTER_MODEL: Model = {
       if(data) {
         message.info('绑定单位成功');
         router.push('/home');
+      }else {
+        message.warning('请重新登录一次再进行绑定单位');
       }
     }
   },

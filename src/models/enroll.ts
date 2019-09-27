@@ -72,6 +72,26 @@ const ENROLL_MODEL: Model = {
       const { teamEnrollData } = action.payload;
       state.unit.teamEnrollList = teamEnrollData;
       return state;
+    },
+    clearState(state: any, action: AnyAction) {
+      state.currentMatchId = -1,
+      // state.unitInfo.id = '',
+      // state.unitInfo.unitName = '',
+      // state.unitInfo.province = '',
+      // state.unitInfo.address = '',
+      // state.unitInfo.email = '',
+      // state.unitInfo.contactPerson = '',
+      // state.unitInfo.contactPhone = '',
+      // state.unit.unitData = {},
+      state.unitInfo = {},
+      state.unit.contestantUnitData = {},
+      state.unit.athleteList = [],
+      state.unit.singleEnrollList = [],
+      state.unit.teamEnrollList = [],
+      state.individualLimitation = {},
+      state.individualItem = [],
+      state.teamItem = []
+      return state;
     }
   },
   effects: {
@@ -182,9 +202,11 @@ const ENROLL_MODEL: Model = {
       if(res.groupproject.length !== 0) {
         for(let i:number = 0;i < res.groupproject.length;i++){
           let newRes = yield deleteTeam({teamenroll: res.groupproject[i].team_id});
-          console.log(newRes);
         }
       }
+    },
+    * clearstate(action: AnyAction, effect: EffectsCommandMap) {
+      yield effect.put({type: 'clearState', payload:null});
     }
   }
 };

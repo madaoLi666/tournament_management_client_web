@@ -396,7 +396,6 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
     const { dispatch , userId} = props;
 
     // 发起请求检查是否支付了费用
-    // TODO 这个位置要再改改
     let isPay = await checkoutIsPay().then(res => (res));
     if(!isPay) {
       // 获取支付二维码
@@ -417,20 +416,19 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
   async function checkoutIsPay(): Promise<any> {
     const { dispatch,userId } = props;
     let res = await checkUnitIsPay({user:userId});
-    if(res.data === '' || res.data === undefined){
-      return false;
-    }else{
-      await dispatch({type: 'register/modifyUnitRegisterPayCode', payload: {payCode: res.data}});
+    if(res){
+      await dispatch({type: 'register/modifyUnitRegisterPayCode', payload: {payCode: res}});
       return true;
+    }else{
+      return false;
     }
   }
   // 获取支付二维码图片
   async function getPayQRCodeUrl(): Promise<any> {
     const { userId } = props;
     let res = await getQRCodeForUnitRegister({user:userId}).then( res => (res));
-
-    if(res.data !== '' && res.error === ''){
-      return res.data;
+    if(res){
+      return res;
     }else{
       return false;
     }
@@ -489,9 +487,9 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
           unitNameIsLegal={checkUnitNameIsLegal}
         />
       </TabPane>
-      <TabPane tab={<div>已有账号，马上绑定</div>} key="2">
+      {/* <TabPane tab={<div>已有账号，马上绑定</div>} key="2">
         <BForm emitData={submitBindUnitData}/>
-      </TabPane>
+      </TabPane> */}
     </Tabs>
   );
 

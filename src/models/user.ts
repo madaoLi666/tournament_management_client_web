@@ -115,6 +115,7 @@ const USER_MODEL:Model = {
       state.phonenumber = '';
       state.email = '';
       state.unitaccount = '';
+      state.unitathlete = [];
       return state;
     }
    },
@@ -178,7 +179,7 @@ const USER_MODEL:Model = {
     },
     // 清除state
     * clearstate(action: AnyAction, effect: EffectsCommandMap) {
-      yield effect.put({type: 'clearState'})
+      yield effect.put({type: 'clearState', payload:null});
     },
     // 删除运动员信息
     * deleteAthlete(action: AnyAction, effect: EffectsCommandMap) {

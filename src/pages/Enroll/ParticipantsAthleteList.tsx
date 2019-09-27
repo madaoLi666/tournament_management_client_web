@@ -178,7 +178,6 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
       file.preview = await getBase64(file.originFileObj);
     }
     //
-    await console.log(file);
     this.setState({
       previewImage: file.url || file.preview,
       previewVisible: true,
