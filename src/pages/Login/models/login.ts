@@ -41,6 +41,8 @@ const LOGIN_MODEL:Model = {
           yield router.push('/login/setRole');
           yield put({type: 'modifyUserId',payload: {userId: user}});
         }
+      }else {
+        message.error(res.error);
       }
     },
     // 发送手机验证码

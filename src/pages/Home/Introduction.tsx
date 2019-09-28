@@ -65,7 +65,7 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
           <p>联系人：{currentGameData['leading_cadre']}</p>
           <p>联系电话：{currentGameData['phone']}</p>
           <p>报名时间：{currentGameData.enrollstarttime.slice(0,10)}至{currentGameData.enrollendtime.slice(0,10)}</p>
-          <p>主办方：{currentGameData.organizer}</p>
+          <p>主办方：{currentGameData.sponsor}</p>
         </TabPane>
       );
       download_url = currentGameData.matchannex.filter((v:any) => {

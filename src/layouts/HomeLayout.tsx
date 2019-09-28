@@ -49,11 +49,15 @@ function HomeLayout(props: any) {
         <Header className={styles.header}>
           <div>
             <div style={{display: 'inline-block', float: 'left'}}>
-              <span style={{width: '120px'}}>广东省轮滑运动协会赛事报名系统</span>
+              <span style={{width: '120px'}}><a href='/home' >轮滑赛事辅助系统平台</a></span>
             </div>
             <div style={{display: 'inline-block', float: 'right'}}>
               {(token === null || token === undefined) ? (
+                <div>
+                <a onClick={() => router.push('/home')}>主页</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;
                 <a onClick={() => router.push('/login')} >你好，请登录</a>
+                </div>
               ) : (
                 <span>
                   <a onClick={() => router.push('/home')}>主页</a>
@@ -75,7 +79,7 @@ function HomeLayout(props: any) {
               </div>
               <div>
                 <img src={require('@/assets/logo.png')} style={{width:30,height:'auto'}} alt=""/>
-                <span style={{padding:5}} ><b>赛事辅助系统平台</b></span>
+                <span style={{padding:5}} ><b>轮滑赛事辅助系统平台</b></span>
               </div>
             </div>
             {/*<Col span={10} offset={10}>*/}

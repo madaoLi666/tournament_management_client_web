@@ -151,16 +151,19 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
     });
   };
 
+
   render() {
     const { getFieldDecorator } = this.props.form;
-
+    let myExtra:React.ReactNode = (
+      <span style={{color:'red',fontSize:13,margin:0,float:'right'}} >说明：请填写营业执照名称\在协会注册的成员单位名称</span>
+    )
     return (
       <div>
         <Form
           {...newUnitFormStyle}
           onSubmit={this.handleSubmit}
         >
-          <Form.Item label='单位名称' hasFeedback={true} validateStatus={this.state.validStatus} >
+          <Form.Item label='单位名称' style={{margin:0}} hasFeedback={true} extra={myExtra} validateStatus={this.state.validStatus} >
             {getFieldDecorator('unitName', {
               rules: [{ required: true, message: '请输入单位名称' },{ validator: this.checkUnitNameIsLegal }],
               validateTrigger: 'onBlur',
