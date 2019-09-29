@@ -106,6 +106,7 @@ const config: IConfig =  {
         })
     }
   },
+  exportStatic:true,
   plugins: [
     // ref: https://umijs.org/plugin/umi-plugin-react.html
     ['umi-plugin-react', {
