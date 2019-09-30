@@ -186,7 +186,7 @@ const USER_MODEL:Model = {
       let unitadata:UnitData = yield effect.select((state:any) => (state.user.unitData[0]));
       let data = yield deletePlayer({
         unitdata: String(unitadata.id),
-        athlete: String(unitadata.unitathlete[action.payload].athlete.id)
+        athlete: String(unitadata.unitathlete[action.payload-1].athlete.id)
       });
       if(data) {
         message.success('删除成功');

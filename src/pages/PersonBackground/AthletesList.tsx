@@ -53,7 +53,7 @@ function AthletesList(props:athletesProps) {
                 &nbsp;&nbsp;
               { unitAccount === 1 ? (
                   <div></div>
-              ) : <a href="#"  onClick={deleteConfirm.bind(myEvent,index)} >删除</a> }
+              ) : <a href="#"  onClick={deleteConfirm.bind(myEvent,record.key)} >删除</a> }
             </div>
         )
     }
@@ -101,11 +101,12 @@ function AthletesList(props:athletesProps) {
         setModalVisible(true);
     }
     // 删除确认
-    function deleteConfirm(index: number,event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
+    function deleteConfirm(index: string,event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
         isDelete = true;
         confirm({
             title:'确认删除吗?',
             onOk() {
+                console.log(index);
                 dispatch({
                     type: 'user/deleteAthlete',
                     payload: index
