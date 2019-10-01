@@ -267,12 +267,13 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
   qSort(rule.groupList);
 
   // 整理 将 已报项目数量整理处理
-  // TODO 查看这里整理了什么已报项目，现在是某个人报了一个个人，团队这里就消失了
+  // 整理时 如果有project内的升组或未升组的项目的长度不为零，则设置外面的itemNumber upGroupItemNumber，否则设为0
   athleteList.forEach((m:any) => {
-    m.itemNumber = (m.project.hasOwnProperty('personaldata')) ? m.project.personaldata.length : 0;
-    m.upGroupItemNumber = (m.project.hasOwnProperty('upgrouppersonaldata')) ? m.project.upgrouppersonaldata.length : 0;
+    m.itemNumber = (m.project.personaldata.length !== 0 ? m.project.personaldata.length : 0);
+    m.upGroupItemNumber = (m.project.upgrouppersonaldata.length !== 0 ? m.project.upgrouppersonaldata.length : 0);
     m.groupFlag = false;
   });
+  console.log(rule);
   const { sexType } = rule;
   /* 1、性别
   *  2、个人限报项目数量
@@ -289,8 +290,7 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
   const { itemLimitation } = rule;
   if(itemLimitation !== 0) {
     athleteList = athleteList.filter((v:any) => {
-      //
-      return ((v.itemNumber + v.upGroupItemNumber) < itemLimitation)
+      return ((v.itemNumber + v.upGroupItemNumber + v.teamname.length ) < itemLimitation)
     })
   }else{
     console.log('itemLimitation is 0');
@@ -316,7 +316,6 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
     console.log('itemName is lost');
   }
   // 这个暂时没有办法取做校验 2019-08-29
-
   /*============================== 4 升组逻辑判断 ==============================*/
   /*
   *  1）判别运动员组别是否高于开设项目组别 - 使用生日判别 ->2）
@@ -330,12 +329,14 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
   // 1
   const { startTime } = rule;
   athleteList = athleteList.filter((v:any) => (v.athlete.birthday.substr(0,10) > startTime));
+  console.log(athleteList);
   // 2
   const { upGroupNumber , groupList } = rule;
   if(!rule.isCrossGroup) {
+    // 不可以跨组
     for(let i = athleteList.length - 1 ; i >= 0 ; i--) {
       // 3
-      if(athleteList[i].itemNumber === 0 && athleteList[i].upGroupItemNumber === 0) {
+      // if(athleteList[i].itemNumber === 0 && athleteList[i].upGroupItemNumber === 0) {
         // 4
         // 以组别列表筛选出适合的
         let index = -1,tarGroupList;
@@ -355,11 +356,13 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
             }
           })
         }
-      }else {
-        // 5 根据已报项目确定组别 暂时没办法做
-        // 在 personaldata 和 upgouppersonaldata 中 仅仅会用一个有值
-        let cGroup;
-      }
+      // }else {
+      //   // 5 根据已报项目确定组别 暂时没办法做
+      //   // 这里是，已经报了一个项目（包括团体加个人）的
+      //   // 在 personaldata 和 upgouppersonaldata 中 仅仅会用一个有值
+      //   let cGroup;
+      //   console.log(123);
+      // }
     }
   }else if(rule.isCrossGroup) {
     //  可以跨组参赛  不需要理会是否有报名项目， 只需要向下取出groupList判别合法即可

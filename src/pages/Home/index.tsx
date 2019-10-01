@@ -47,7 +47,7 @@ class Home extends React.Component<any,any>{
         <Col key={v.id} {...adjustCol} >
           <div className={styles['game-list-block']}>
             <div className={styles['img-block']}>
-              <img src={v.image} alt=""/>
+              <img src={v.image} onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)} alt=""/>
             </div>
             <div className={styles['text-block']}>
               <div><b>赛事名称</b>:{v.name}</div>

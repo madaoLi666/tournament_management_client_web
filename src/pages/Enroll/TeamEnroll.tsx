@@ -54,6 +54,7 @@ class TeamEnroll extends React.Component<any,any>{
   handleTreeSelectChange = (value: any, label: any, extra: any) => {
     const { teamItem, individualLimitation } = this.props;
     // 取最后的ItemGroupSexID - 即 服务端 projectgroupsexid
+    console.log(value);
     if(value){
       let ItemGroupSexIDArr = value.split('-');
       this.setState({currentItemGroupSexID: ItemGroupSexIDArr[2]});
@@ -158,6 +159,7 @@ class TeamEnroll extends React.Component<any,any>{
     //3. 开启模态框
     // currentItemGroupSexID 项目ID
     const { currentItemGroupSexID, rule } = this.state;
+    const { matchId, unitId } = this.props;
     // 选中的运动员列表
     const { athleteList } = this.props;
     if(currentItemGroupSexID === -1 ){
@@ -165,9 +167,15 @@ class TeamEnroll extends React.Component<any,any>{
      message.warn('请先进行选择项目');
      return false;
     }
+    // 这里判断该单位是否已经报满了这个项目
+    // unitMaxEnrollNumber 例如 双人平花 一个单位限制报两支队伍，则这个等于2
+    console.log(this.props);
+    console.log(this.state.currentItemGroupSexID);
 
     // 判断出合法的运动员列表，置入state 打开modal
     let legalAthleteList =  legalAthleteFilter(athleteList,rule);
+    console.log(legalAthleteList);
+    return; 
     if(legalAthleteList.length !== 0) {
       // TODO 这里不知道会不会有bug，先给每个运动员固定一个角色，要测试轮滑求
       for(let i:number = 0; i < legalAthleteList.length ; i++) {
