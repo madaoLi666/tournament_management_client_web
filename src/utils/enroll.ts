@@ -1,4 +1,5 @@
 import { qSort, hSearch } from '@/utils/sort';
+import { message } from 'antd';
 
 interface SexData {
   openprojectgroup:number,
@@ -285,12 +286,15 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
     athleteList = athleteList.filter((v:any) => (v.athlete.sex === '男'));
   }else if(sexType === 2){
     athleteList = athleteList.filter((v:any) => (v.athlete.sex === '女'));
+  }else if(sexType === 4){
+    // sexType = 4  =》 至少要有一男一女
+
   }
   // 2 个人限报数量
   const { itemLimitation } = rule;
   if(itemLimitation !== 0) {
     athleteList = athleteList.filter((v:any) => {
-      return ((v.itemNumber + v.upGroupItemNumber + v.teamname.length ) < itemLimitation)
+        return ((v.itemNumber + v.upGroupItemNumber + v.teamname.length ) < itemLimitation)
     })
   }else{
     console.log('itemLimitation is 0');
@@ -300,16 +304,14 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
   if(itemName !== "" && itemName) {
     athleteList = athleteList.filter((v:any) => {
       let isEnrollSameItem = false;
-      if(v.itemNumber !== 0) v.project.personaldata.forEach((m:any) => {
-          if(m.name === itemName) {
+      if(v.teamname.length !== 0){
+        v.project.teamproject.forEach((m:any) => {
+          let temp_name = m.name.slice(0,itemName.length);
+          if(temp_name === itemName) {
             isEnrollSameItem = true;
           }
         });
-      if(v.upGroupItemNumber !== 0)v.project.upgrouppersonaldata.forEach((m:any) => {
-          if(m.name === itemName) {
-            isEnrollSameItem = true;
-          }
-        });
+      }
       return !isEnrollSameItem;
     })
   }else {
@@ -328,8 +330,7 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
   * */
   // 1
   const { startTime } = rule;
-  athleteList = athleteList.filter((v:any) => (v.athlete.birthday.substr(0,10) > startTime));
-  console.log(athleteList);
+  athleteList = athleteList.filter((v:any) => (v.athlete.birthday.substr(0,10) >= startTime));
   // 2
   const { upGroupNumber , groupList } = rule;
   if(!rule.isCrossGroup) {
@@ -341,7 +342,10 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
         // 以组别列表筛选出适合的
         let index = -1,tarGroupList;
         for(let j:number = groupList.length -1 ; j >= 0 ; j--) {
-          if(rule.startTime === groupList[j].startTime) {index = j;break;}
+          if(rule.startTime === groupList[j].startTime) {
+            index = j;
+            break;
+          }
         }
         if(index !== -1) {
           if(index + upGroupNumber > groupList.length) {
@@ -351,7 +355,7 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
             tarGroupList = groupList.slice(index,index + upGroupNumber);
           }
           tarGroupList.forEach((v:any) => {
-            if(v.startTime < athleteList[i].athlete.birthday.substr(0,10) && v.endTime >  athleteList[i].athlete.birthday.substr(0,10) ) {
+            if(v.startTime <= athleteList[i].athlete.birthday.substr(0,10) && v.endTime >=  athleteList[i].athlete.birthday.substr(0,10) ) {
               athleteList[i].groupFlag = true;
             }
           })
@@ -395,7 +399,25 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
     console.log('isCrossGroup is illegal');
   }
 
-  return athleteList.filter((v:any) => v.groupFlag);
+  // 这里等筛选好人再做SexType = 4 的判断
+  let my_athlete_list : any[] = athleteList.filter((v:any) => v.groupFlag);
+  if(rule.sexType === 4) {
+    let man_flag: boolean = false;
+    let woman_flag: boolean = false;
+    for(let i:number = 0;i < my_athlete_list.length; i++){
+      if(my_athlete_list[i].athlete.sex === '男'){
+        man_flag = true;
+      }else if(my_athlete_list[i].athlete.sex === '女'){
+        woman_flag = true;
+      }
+    }
+    if(!(man_flag && woman_flag)) {
+      message.warning('请确认选择的运动员中至少有一男一女');
+      return [];
+    }
+  }
+
+  return my_athlete_list;
 }
 
 // 判断报名人员性别是否符合要求

@@ -140,10 +140,11 @@ const ENROLL_MODEL: Model = {
               for(let j:number = 0 ; j < teamEnroll[i].groupprojectenroll.length ; j++) {
                 teamEnrollData.push({
                   itemGroupSexName: teamEnroll[i].groupprojectenroll[j].name,
+                  open_group_id: teamEnroll[i].groupprojectenroll[j].openprojectgroupsex_id,
                   // 用于删除项目
                   id: teamEnroll[i].groupprojectenroll[j].id,
                   teamName: teamEnroll[i].name,
-                  member: teamEnroll[i].teammember
+                  member: teamEnroll[i].teammember,
                 });
               }
             }

@@ -54,7 +54,6 @@ class TeamEnroll extends React.Component<any,any>{
   handleTreeSelectChange = (value: any, label: any, extra: any) => {
     const { teamItem, individualLimitation } = this.props;
     // 取最后的ItemGroupSexID - 即 服务端 projectgroupsexid
-    console.log(value);
     if(value){
       let ItemGroupSexIDArr = value.split('-');
       this.setState({currentItemGroupSexID: ItemGroupSexIDArr[2]});
@@ -159,7 +158,7 @@ class TeamEnroll extends React.Component<any,any>{
     //3. 开启模态框
     // currentItemGroupSexID 项目ID
     const { currentItemGroupSexID, rule } = this.state;
-    const { matchId, unitId } = this.props;
+    const { teamEnroll } = this.props;
     // 选中的运动员列表
     const { athleteList } = this.props;
     if(currentItemGroupSexID === -1 ){
@@ -167,15 +166,23 @@ class TeamEnroll extends React.Component<any,any>{
      message.warn('请先进行选择项目');
      return false;
     }
-    // 这里判断该单位是否已经报满了这个项目
-    // unitMaxEnrollNumber 例如 双人平花 一个单位限制报两支队伍，则这个等于2
-    console.log(this.props);
-    console.log(this.state.currentItemGroupSexID);
 
+    // 如果有团队队伍，查看是否已经报满
+    if(teamEnroll.length !== 0) {
+      let temp_teams = 0;
+      for(let i:number = 0; i < teamEnroll.length ; i++) {
+        if(teamEnroll[i].open_group_id == currentItemGroupSexID) {
+          temp_teams++;
+        }
+      }
+      if(temp_teams === rule.unitMaxEnrollNumber) {
+        message.error('本单位该项目该组别的数量已报满!');
+        return;
+      }
+    }
+    console.log(athleteList);
     // 判断出合法的运动员列表，置入state 打开modal
     let legalAthleteList =  legalAthleteFilter(athleteList,rule);
-    console.log(legalAthleteList);
-    return; 
     if(legalAthleteList.length !== 0) {
       // TODO 这里不知道会不会有bug，先给每个运动员固定一个角色，要测试轮滑求
       for(let i:number = 0; i < legalAthleteList.length ; i++) {
@@ -183,7 +190,7 @@ class TeamEnroll extends React.Component<any,any>{
       }
       this.setState({legalAthleteList: legalAthleteList, modalVisible: true});
     }else{
-      message.error('队伍中不存在符合该组别条件要求人员');
+      message.error('队伍中缺少符合该组别条件的人员');
     }
   };
   handleCloseDialog = () => {
@@ -451,13 +458,17 @@ class TeamEnroll extends React.Component<any,any>{
 
 export default connect(({enroll}:any) => {
   const { teamItem } = enroll;
+  let filter_athlete_list: any[] = [];
+  filter_athlete_list = enroll.unit.athleteList.filter((v:any) => {
+    return v.active === 1;
+  });
   return {
     teamItem:teamItem,
     matchId: enroll.currentMatchId,
     unitId: enroll.unitInfo.id,
     contestantId: enroll.unit.contestantUnitData.id,
     // 这里暂时这样写 - roletype 是number
-    athleteList: enroll.unit.athleteList.map((v:any) => ({...v,role:""})),
+    athleteList: filter_athlete_list.map((v:any) => ({...v,role:"",groupFlag:false})),
     individualLimitation: enroll.individualLimitation,
     teamEnroll: enroll.unit.teamEnrollList
   };

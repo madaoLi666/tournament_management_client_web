@@ -295,7 +295,6 @@ class IndividualEnroll extends React.Component<any,any>{
         render: (_: any, record: any): React.ReactNode => (<a onClick={() => this.selectIndividualEnroll(record)}>报名</a>)
       },
     ];
-    const test: Array<string> = ['test1','test2'];
 
     return (
       <div className={styles['individual-enroll']}>
