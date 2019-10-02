@@ -150,6 +150,7 @@ export function convertItemData(itemList: Array<ItemData>):any {
 
 // 整合来源于服务区的运动员列表数据 - 将运动员的团体项目也放入个人信息中方便之后的统计于判断
 export function convertAthleteList(athleteList: Array<any>,teamEnrollList: Array<any>): any {
+  console.log(athleteList);
   qSort(athleteList,0,athleteList.length - 1,'player');
   // 遍历所有队伍
   for(let i:number = teamEnrollList.length - 1 ; i >= 0; i--) {
@@ -161,6 +162,7 @@ export function convertAthleteList(athleteList: Array<any>,teamEnrollList: Array
         athleteList[index].project.teamproject = [];
         const birthday = athleteList[index].athlete.birthday.substr(0,10);
         // 在运动员信息中加入teamproject
+        // console.log(teamEnrollList[i]);
         for(let j:number = teamEnrollList[i].groupprojectenroll.length - 1; j >= 0 ; j--) {
           athleteList[index].project.teamproject.push({
             ...teamEnrollList[i].groupprojectenroll[j],

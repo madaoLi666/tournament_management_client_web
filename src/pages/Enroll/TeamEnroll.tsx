@@ -180,7 +180,6 @@ class TeamEnroll extends React.Component<any,any>{
         return;
       }
     }
-    console.log(athleteList);
     // 判断出合法的运动员列表，置入state 打开modal
     let legalAthleteList =  legalAthleteFilter(athleteList,rule);
     if(legalAthleteList.length !== 0) {
