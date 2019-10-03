@@ -1,5 +1,5 @@
 import React, { Component, useEffect } from 'react';
-import { Form, Input, Button, Upload, message} from 'antd';
+import { Form, Input, Button, Upload, message, Spin} from 'antd';
 import { FaCloudUploadAlt } from 'react-icons/fa';
 import router from 'umi/router';
 import { connect } from 'dva';
@@ -52,7 +52,8 @@ class UnitInfoForm extends Component<UnitInfoFormProps, any> {
 
   state = {
     guaranteePic: false,
-    url: ''
+    url: '',
+    loadingHide: true,
   };
 
   //
@@ -87,7 +88,9 @@ class UnitInfoForm extends Component<UnitInfoFormProps, any> {
         if (guaranteePic || url !== '') {
           // 合并在此提交出 父组件 上一层
           let formRes = { guaranteePic: guaranteePic ? guaranteePic : "" , ...values };
+          this.setState({loadingHide: true});
           emitData(formRes);
+          this.setState({loadingHide: false});
         } else {
           message.error('请上传承诺书图片后再提交单位信息');
         }
@@ -205,6 +208,7 @@ class UnitInfoForm extends Component<UnitInfoFormProps, any> {
           style={{ textAlign: 'center' }}
         >
           <br/>
+          <span style={{color:'red'}} hidden={this.state.loadingHide} >第一次上传需要几秒钟，请稍等&nbsp;&nbsp;<Spin /></span>
           <Button style={{ width: '100%' }} type='primary' htmlType='submit'>确认信息，进入报名</Button>
         </Form.Item>
       </Form>

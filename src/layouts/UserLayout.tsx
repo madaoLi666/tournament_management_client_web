@@ -33,6 +33,17 @@ export default function LoginLayout(props: any) {
 
       <Footer className={styles.footer}>
         <span>广州青苔科技有限公司 版权所有  粤ICP备19028504号</span>
+        <div style={{width: '300px',margin:'0 auto', padding:'20px 0'}}>
+            <a
+              target="_blank"
+              href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44011802000333"
+              style={{display:'inline-block', textDecoration:'none', height: '20px', lineHeight: '20px'}}
+            >
+              <img src={require('../assets/p.png')} style={{float: 'left'}} alt="" />
+              <p style={{float: 'left', height: '20px', lineHeight: '20px', margin: '0px 0px 0px 5px', color: '#939393'}} >
+              粤公网安备 44011802000333号</p>
+            </a>
+          </div>
       </Footer>
     </Layout>
   );

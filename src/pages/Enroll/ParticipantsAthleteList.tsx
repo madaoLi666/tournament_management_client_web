@@ -71,7 +71,8 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
       previewImage: '',
       previewVisible: false,
       // 是否 选中使用身份证
-      isIDCard:true
+      isIDCard:true,
+      input_disabled:false
     }
   }
 
@@ -80,16 +81,15 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
     const tC = this.props.currentAthleteData;
 
     // 两次都是新建，在不增加传承的情况下暂时无法情况upload
-
     if(pC && !tC) {
       // 上-有运动员信息 现-没有运动员信息
-      this.setState({fileList:[]});
+      this.setState({fileList:[],input_disabled:false});
     }else if(!pC && tC) {
       // 上-没有运动员信息 现-有&&运动员信息中已经上传了图片
       if(tC.athlete.face !== null && tC.athlete.face !== undefined) {
-        this.setState({fileList:[{uid: -1,url:tC.athlete.face}]});
+        this.setState({fileList:[{uid: -1,url:tC.athlete.face}],input_disabled:true});
       }else {
-        this.setState({fileList:[]});
+        this.setState({fileList:[],input_disabled:true});
       }
     }
   }
@@ -254,7 +254,7 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
             {getFieldDecorator('identifyNumber',{
               rules:[{required:true, message: '请填写证件号码'},{validator: this.handleIDCardChange}],
             })(
-              <Input placeholder='请填写证件号码' autoComplete='off'/>
+              <Input disabled={this.state.input_disabled} placeholder='请填写证件号码' autoComplete='off'/>
             )}
           </Item>
           <Item label='性别'>
@@ -443,6 +443,7 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
           // 没有重新渲染
           dispatch({ type: "enroll/checkIsEnrollAndGetAthleteLIST", payload: { unitId, matchId } });
           message.success('注册成功');
+          message.info('新注册的运动员信息会在表格最后一行，请确认是否勾选');
           setVisible(false);
           setCurrentAthleteData({});
         }
