@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Upload, Table, Input, Button, Modal, message, Select, DatePicker, Checkbox } from 'antd';
+import { Form, Upload, Table, Input, Button, Modal, message, Select, DatePicker, Checkbox, Spin } from 'antd';
 import moment, { Moment } from 'moment';
 import { FaPlus } from 'react-icons/fa';
 import AddressInput from '@/components/AddressInput/AddressInput';
@@ -72,7 +72,7 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
       previewVisible: false,
       // 是否 选中使用身份证
       isIDCard:true,
-      input_disabled:false
+      input_disabled:false,
     }
   }
 
@@ -196,7 +196,6 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
   };
 
   render(): React.ReactNode {
-    const { currentAthleteData } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { fileList, previewImage, previewVisible, isIDCard } = this.state;
     // 最大上传限制
@@ -343,6 +342,7 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
   const { matchId, unitId, dispatch, athleteList, contestantId } = props;
   // modal
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const modalProps: ModalProps = {
     title: '新建/修改赛事',
     visible: visible,
@@ -438,12 +438,13 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
     formData.append('face',data.image.originFileObj !== undefined ? data.image.originFileObj : '');
     formData.append('unitdata', unitId.toString());
     if(isFirstCreate) {
+      setLoading(true);
+      console.log(123);
       newUnitAthlete(formData,{headers:{"Content-Type": "multipart/form-data"}}).then(data => {
         if(data) {
           // 没有重新渲染
           dispatch({ type: "enroll/checkIsEnrollAndGetAthleteLIST", payload: { unitId, matchId } });
           message.success('注册成功');
-          message.info('新注册的运动员信息会在表格最后一行，请确认是否勾选');
           setVisible(false);
           setCurrentAthleteData({});
         }
@@ -509,6 +510,9 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
       })
     }
   },[unitId,matchId]);
+  useEffect(() => {
+    setLoading(false);
+  },[visible]);
 
   return (
     <div className={styles['participants-athlete-list']}>
@@ -520,6 +524,8 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
           emitData={submitAthleteData}
           currentAthleteData={Object.keys(currentAthleteData).length === 0 ? false : currentAthleteData}
         />
+        <Spin tip="上传中..." spinning={loading} size="large" style={{marginLeft:"47%"}}>
+        </Spin>
       </Modal>
       <div>
         <Table
@@ -543,7 +549,7 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
 
 export default connect(({enroll}:any) => {
   return {
-    athleteList: enroll.unit.athleteList,
+    athleteList: [...enroll.unit.athleteList].reverse(),
     matchId: enroll.currentMatchId,
     unitId: enroll.unitInfo.id,
     contestantId: enroll.unit.contestantUnitData.id

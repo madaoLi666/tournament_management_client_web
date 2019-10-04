@@ -432,8 +432,9 @@ class IndividualEnroll extends React.Component<any,any>{
 }
 
 export default connect(({enroll}:any) => {
+  let reverse_athlete:any[] = [...enroll.unit.athleteList].reverse();
   return {
-    enrollAthleteList:enroll.unit.athleteList.filter((v:any) => {
+    enrollAthleteList:reverse_athlete.filter((v:any) => {
       return v.active === 1;
     }),
     matchId: enroll.currentMatchId,

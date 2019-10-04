@@ -16,11 +16,13 @@ class PicturesWall extends React.Component<{getFile:Function, value?:string,onCh
    constructor(props:any) {
        super(props);
        this.state = {
+        is_leage: false,
         previewVisible: false,
         previewImage: '',
         fileList: [
         ],
       };
+      this.beforeUpload = this.beforeUpload.bind(this);
    }
 
    componentDidUpdate(prevProps: any, prevState: any, snapshot: any) {
@@ -45,11 +47,16 @@ class PicturesWall extends React.Component<{getFile:Function, value?:string,onCh
    public beforeUpload(file: RcFile, FileList: RcFile[]) {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
-      message.error('只可以上传JPG/PNG文件!请点击图片删除');
+      message.error('只可以上传JPG/PNG文件!');
     }
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {
       message.error('头像必须小于2MB!');
+    }
+    if(!(isJpgOrPng && isLt2M)) {
+      this.setState({is_leage: false});
+    }else{
+      this.setState({is_leage: true});
     }
     return isJpgOrPng && isLt2M;
    }
@@ -68,6 +75,8 @@ class PicturesWall extends React.Component<{getFile:Function, value?:string,onCh
   };
 
   handleChange = ({ file,fileList }:UploadChangeParam) => {
+    const { is_leage } = this.state;
+    if(!is_leage){ return; }
     this.setState({ fileList })
     this.props.getFile(file);
   };

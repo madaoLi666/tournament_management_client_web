@@ -1,5 +1,5 @@
 import React,{ useEffect, useState } from 'react';
-import { Popover, PageHeader, Input, Button, Modal, Layout, Table, message, Form } from 'antd';
+import { Popover, PageHeader, Input, Button, Modal, Layout, Table, message, Form, Spin } from 'antd';
 import { ColumnFilterItem, TableEventListeners, FilterDropdownProps, PaginationConfig, SorterResult } from 'antd/es/table';
 import AddAthleteForm,{ formFields } from './AddAthleteItem';
 import { connect } from 'dva';
@@ -92,6 +92,7 @@ function AthletesList(props:athletesProps) {
     // 添加运动员Modal
     const [ modalVisible,setModalVisible ] = useState(false);
     const [searchText,setSearchText] = useState('');
+    const [loading, setLoading] = useState(false);
     // 表格属性key
     const [ key ,setKey] = useState('');
     // 修改确认
@@ -106,7 +107,6 @@ function AthletesList(props:athletesProps) {
         confirm({
             title:'确认删除吗?',
             onOk() {
-                console.log(index);
                 dispatch({
                     type: 'user/deleteAthlete',
                     payload: index
@@ -299,9 +299,8 @@ function AthletesList(props:athletesProps) {
         } else if (todo === 'update') {
             res = updatePlayer(formData);
         }
-
+        setLoading(true);
         res.then((resp) => {
-            // TODO 确认后台修改什么时候会失败
             if (resp) {
                 message.success(todo === 'register' ? '添加成功' : '修改成功');
                 closemodal();
@@ -312,16 +311,8 @@ function AthletesList(props:athletesProps) {
                 if ( key !== '' ) {
                     setKey('');
                 }
-            }else if (Object.prototype.toString.call(resp.error) === '[object String]') {
-                message.error(resp.error);
-            }else if (Object.prototype.toString.call(resp.error) === '[object Object]') {
-                for(const key of Object.keys(resp.error)) {
-                    if(resp.error.hasOwnProperty(key)) {
-                        // @ts-ignore
-                        let mykey = resName[key];
-                        message.warning(mykey+resp.error[key]);
-                    }
-                }
+            }else{
+                setLoading(false);
             }
         })
 
@@ -332,6 +323,7 @@ function AthletesList(props:athletesProps) {
         dispatch({
             type:'user/getAccountData'
         })
+        setLoading(false);
     },[judgeReset]);
 
     return (
@@ -369,6 +361,8 @@ function AthletesList(props:athletesProps) {
                     footer={null}
             >
                 <AddAthleteForm resetField={judgeReset} tablekey={key} submit={handleSubmit} />
+                <Spin tip="上传中..." spinning={loading} size="large" style={{marginLeft:"47%"}}>
+                </Spin>
             </Modal>
         </Layout>
     );
