@@ -1,5 +1,5 @@
 import React,{ useEffect, useState } from 'react';
-import { Popover, PageHeader, Input, Button, Modal, Layout, Table, message, Form, Spin } from 'antd';
+import { PageHeader, Input, Button, Modal, Layout, Table, message, Form, Spin } from 'antd';
 import { ColumnFilterItem, TableEventListeners, FilterDropdownProps, PaginationConfig, SorterResult } from 'antd/es/table';
 import AddAthleteForm,{ formFields } from './AddAthleteItem';
 import { connect } from 'dva';
@@ -332,7 +332,7 @@ function AthletesList(props:athletesProps) {
 
                 <PageHeader style={{fontSize:16}} title="运动员列表" extra={AddbuttonNode} />
                 <br/>
-                <Table<Athlete> bordered={true} onChange={onChange} onRow={handleRow} dataSource={data} scroll={{x:1010}} >
+                <Table<Athlete> bordered={true} onChange={onChange} onRow={handleRow} dataSource={data} scroll={{x:950}} >
                     <Table.Column<Athlete> key='key'  title='编号' dataIndex='key' align="center" />
                     <Table.Column<Athlete> key='name' title='姓名' dataIndex='name' align="center" {...getColumnSearchProps('name')} />
                     <Table.Column<Athlete>

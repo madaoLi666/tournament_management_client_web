@@ -146,7 +146,7 @@ class TeamEnroll extends React.Component<any,any>{
         )
       }
     }else{
-      res.push(<TreeNode title='error' key='error' />);
+      res.push(<TreeNode title='无团体项目' key='error' />);
     }
     return res;
   };
@@ -432,9 +432,10 @@ class TeamEnroll extends React.Component<any,any>{
             columns={showTableColumns}
             expandedRowRender={this.renderExpandedRow}
             rowKey={(record:any) => record.id}
+            scroll={{ x: 400}}
           />
           <Button type="primary" style={{marginTop:20,float:"right"}} onClick={() => {router.goBack()}} >返回个人报名</Button>
-        
+          <Button type="primary" style={{marginTop:20,float:"left"}} onClick={() => {router.push('/enroll/showEnroll')}} >下一步</Button>
         </div>
         <Modal {...modalProps}>
           <Input
@@ -447,6 +448,7 @@ class TeamEnroll extends React.Component<any,any>{
             dataSource={legalAthleteList}
             rowSelection={rowSelection}
             rowKey={(record:any) => (record.id)}
+            scroll={{ x: 280}}
           />
           <Button style={{width: '100%'}} onClick={this.handleTeamEnroll}>确认报名</Button>
         </Modal>

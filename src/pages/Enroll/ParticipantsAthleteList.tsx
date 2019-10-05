@@ -384,7 +384,6 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
   // 选中运动员是否参赛
   function handleSelect(checked: boolean, record: any, e: any ) {
     const { birthday, id } = record.athlete;
-    // console.log(e.target);
     if(checked) {
       // 选中
       let reqData = {
@@ -399,10 +398,16 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
           // 无法通过 e 设置checked的值
           if(data) {
             dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: {unitId, matchId}});
+            message.success('确认成功');
           }
         })
     }else{
-      message.warning('取消参赛将会删除之前该运动员已报名项目的记录！如果该运动员已报了团体项目，请重新删除该团体项目再进行报名');
+      // 先检查这个人是否有已经参加比赛的项目
+      if(record.teamname.length !== 0) {
+        message.warning('请先删除该运动员参加的团体项目');
+        return;
+      }
+      // message.warning('取消参赛将会删除之前该运动员已报名项目的记录！如果该运动员已报了团体项目，请重新删除该团体项目再进行报名');
       // 先删除已报名的团队项目
       props.dispatch({
         type: 'enroll/deleteTeamProject',
@@ -439,7 +444,6 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
     formData.append('unitdata', unitId.toString());
     if(isFirstCreate) {
       setLoading(true);
-      console.log(123);
       newUnitAthlete(formData,{headers:{"Content-Type": "multipart/form-data"}}).then(data => {
         if(data) {
           // 没有重新渲染
@@ -493,6 +497,10 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
   // 判断选中的运动员名单是否为空
   function judgeAthlete() {
     if(athleteList.length !== 0 && athleteList.filter((v:any) => (v.active === 1)).length !== 0) {
+      if(matchId === 12 && athleteList.filter((v:any) => (v.active === 1)).length < 5) {
+        message.warn('本场赛事运动员人数至少5人以上（含5人）,请确认勾选');
+        return;
+      }
       router.push('/enroll/individual')
     }else {
       message.warn('请添加运动员并勾选参赛运动员后后再进行报名');
@@ -532,7 +540,7 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
           columns={tableColumns}
           dataSource={athleteList}
           rowKey={record => record.id}
-          scroll={{x:1010}}
+          scroll={{x:700}}
         />
       </div>
       <div>

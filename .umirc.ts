@@ -34,7 +34,9 @@ const config: IConfig =  {
         { path: '/enroll/editUnitInfo', component: './Enroll/EditUnitInfo.tsx', name: '参赛单位信息'},
         { path: '/enroll/participants', component: './Enroll/ParticipantsAthleteList.tsx', name: '编辑参赛运动员信息'},
         { path: '/enroll/individual', component: './Enroll/IndividualEnroll.tsx', name: '运动员个人报名'},
-        { path: '/enroll/team', component: './Enroll/TeamEnroll.tsx', name: '运动员个人报名'}
+        { path: '/enroll/team', component: './Enroll/TeamEnroll.tsx', name: '运动员个人报名'},
+        { path: '/enroll/showEnroll', component: './Enroll/ShowEnroll.tsx', name: '确认信息' },
+        { path: '/enroll/success', component: './Enroll/EnrollSuccess.tsx', name: '报名成功' }
       ]
     },
     // 主用户界面 - 这个位置是动态设置的

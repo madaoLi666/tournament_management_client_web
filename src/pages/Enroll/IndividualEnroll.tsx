@@ -301,7 +301,7 @@ class IndividualEnroll extends React.Component<any,any>{
         {/* rule-block */}
         <div className={styles['rule-block']} />
         <div className={styles['table-block']}>
-          <Table dataSource={enrollAthleteList} columns={tableColumns} rowKey={record => record.id} scroll={{ x: 1010}} />
+          <Table dataSource={enrollAthleteList} columns={tableColumns} rowKey={record => record.id} scroll={{ x: 940}} />
         </div>
         {/* 报名modal */}
         <Modal {...modalProps} style={{top: '0'}}>
