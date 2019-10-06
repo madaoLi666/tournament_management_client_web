@@ -14,7 +14,7 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
   constructor(props:any) {
     super(props);
     this.state = {
-      currentGameData:{}
+      currentGameData:{},
     };
   }
 
@@ -38,15 +38,18 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
     const { dispatch, unit_account } = this.props;
     const { currentGameData } = this.state;
     if(currentGameData.id !== undefined && currentGameData.id !== -1) {
+      console.log(unit_account);
+      if(unit_account == 0){
+        router.push('/enroll/individual');
+      }
       if(unit_account == 2){
         // 把matchId存入本地
         window.localStorage.setItem('MATCH_ID',currentGameData.id);
         dispatch({type: 'enroll/modifyCurrentMatchId', payload: {matchId: currentGameData.id}});
         router.push('/enroll/editUnitInfo');
-      }else{
-        window.localStorage.setItem('MATCH_ID',currentGameData.id);
-        dispatch({type: 'enroll/modifyCurrentMatchId', payload: {matchId: currentGameData.id}});
-        router.push('/enroll/individual');
+      }else if(unit_account == 1){
+        message.info('本系统暂不支持个人报名，请联系您的单位进行报名')
+        return;
       }
     }else{
       console.log('id为空');
@@ -129,6 +132,6 @@ export default connect(({gameList, enroll, user}:any) => {
   return {
     gameList: gameList.gameList,
     unitId: enroll.unitInfo.id,
-    unit_account: user.unitAccount
+    unit_account: user.unitAccount,
   };
 })(IntroductionPage)

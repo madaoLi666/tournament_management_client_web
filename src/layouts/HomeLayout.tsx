@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Layout, Input, message
 } from 'antd'
@@ -34,6 +34,7 @@ function HomeLayout(props: any) {
     message.info('退出登陆成功');
   }
 
+  const [loading,setLoading] = useState(false);
   useEffect(() => {
     const { dispatch } = props;
     dispatch({type: 'gameList/getGameList'});
@@ -41,13 +42,22 @@ function HomeLayout(props: any) {
     if(token !== null){
       dispatch({type: 'user/getAccountData'});
     }
-  });
+    setLoading(!loading);
+  },[]);
 
-  return (
+  if(!loading) {
+    return (
+      <div className={styles['mask']} hidden={loading} >
+      <div className={styles['mask-box']}>
+          Loading
+          <span className={styles['d']}>.</span><span className={styles['d d-2']}>.</span><span className={styles['d d-3']}>.</span>
+      </div>
+    </div>
+    )
+  }else return (
     <div>
       <Layout className={styles['home-layout']}>
-        <Header className={styles.header}>
-          <div>
+        <Header className={styles['header']}>
             <div style={{display: 'inline-block', float: 'left'}}>
               <span style={{width: '120px'}}><a href='/home' >轮滑赛事辅助系统平台</a></span>
             </div>
@@ -68,7 +78,6 @@ function HomeLayout(props: any) {
                 </span>
               )}
             </div>
-          </div>
         </Header>
 
         <Content className={styles.content}>
@@ -128,4 +137,10 @@ function HomeLayout(props: any) {
 *   信息判断 是否有登陆 有 显示信息 无 原本页面
 * */
 
-export default connect()(HomeLayout);
+const mapStateToProps = ({gameList}:any) => {
+  return {
+    maskloading: gameList.maskloading
+  }
+}
+
+export default connect(mapStateToProps)(HomeLayout);

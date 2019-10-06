@@ -23,7 +23,8 @@ class Home extends React.Component<any,any>{
   constructor(props: any) {
     super(props);
     this.state = {
-      homePicArr: []
+      homePicArr: [],
+      loading: false
     };
   }
 
@@ -58,7 +59,6 @@ class Home extends React.Component<any,any>{
         </Col>
       )
     });
-
     let carouselDOM: React.ReactNode = [];
     if(homePicArr.length !== 0){
       carouselDOM = homePicArr.map((v:string) => (

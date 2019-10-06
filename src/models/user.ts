@@ -45,7 +45,7 @@ const USER_MODEL:Model = {
     unitData:<UnitData>[],
     athleteData:<AthleteData>[],
     // 这个是判断个人账号与单位账号的，1代表个人，2代表单位
-    unitAccount:<number>1,
+    unitAccount:<number>0,
     // 个人账号state
     username:'',
     userPassword:'',
@@ -108,7 +108,7 @@ const USER_MODEL:Model = {
       state.unitData = <UnitData>[]
       state.athleteData = <AthleteData>[]
       // 这个是判断个人账号与单位账号的，1代表个人，2代表单位
-      state.unitAccount = 1;
+      state.unitAccount = 0;
       // 个人账号state
       state.username = '';
       state.userPassword = '';

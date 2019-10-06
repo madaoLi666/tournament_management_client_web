@@ -6,11 +6,13 @@ const GAMELIST_INTRODUCTION:Model = {
   namespace: 'gameList',
   state: {
     gameList: [],
+    maskloading: false
   },
   reducers: {
     modifyGameList(state: any,action: AnyAction) {
       const { payload } = action;
       state.gameList = payload.gameList;
+      state.maskloading = true;
       return state;
     }
   },
