@@ -9,7 +9,7 @@ import styles from './index.less';
 
 const { TabPane } = Tabs;
 
-class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Array<any>},any> {
+class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Array<any>,unit_account: number},any> {
 
   constructor(props:any) {
     super(props);
@@ -35,15 +35,19 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
   }
 
   enterEnrollChannel = () => {
-    // message.warn('尚未到报名时段');
-    const { dispatch } = this.props;
+    const { dispatch, unit_account } = this.props;
     const { currentGameData } = this.state;
     if(currentGameData.id !== undefined && currentGameData.id !== -1) {
-
-      // 把matchId存入本地
-      window.localStorage.setItem('MATCH_ID',currentGameData.id);
-      dispatch({type: 'enroll/modifyCurrentMatchId', payload: {matchId: currentGameData.id}});
-      router.push('/enroll/editUnitInfo');
+      if(unit_account == 2){
+        // 把matchId存入本地
+        window.localStorage.setItem('MATCH_ID',currentGameData.id);
+        dispatch({type: 'enroll/modifyCurrentMatchId', payload: {matchId: currentGameData.id}});
+        router.push('/enroll/editUnitInfo');
+      }else{
+        window.localStorage.setItem('MATCH_ID',currentGameData.id);
+        dispatch({type: 'enroll/modifyCurrentMatchId', payload: {matchId: currentGameData.id}});
+        router.push('/enroll/individual');
+      }
     }else{
       console.log('id为空');
     }
@@ -121,9 +125,10 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
 }
 
 
-export default connect(({gameList, enroll}:any) => {
+export default connect(({gameList, enroll, user}:any) => {
   return {
     gameList: gameList.gameList,
-    unitId: enroll.unitInfo.id
+    unitId: enroll.unitInfo.id,
+    unit_account: user.unitAccount
   };
 })(IntroductionPage)

@@ -183,7 +183,7 @@ class TeamEnroll extends React.Component<any,any>{
     // 判断出合法的运动员列表，置入state 打开modal
     let legalAthleteList =  legalAthleteFilter(athleteList,rule);
     if(legalAthleteList.length !== 0) {
-      // TODO 这里不知道会不会有bug，先给每个运动员固定一个角色，要测试轮滑求
+      // TODO 这里有bug，角色设置为队员，但是显示出来的是守门员
       for(let i:number = 0; i < legalAthleteList.length ; i++) {
         legalAthleteList[i].role = 3;
       }
@@ -198,7 +198,7 @@ class TeamEnroll extends React.Component<any,any>{
       modalVisible: false, 
       // legalAthleteList:[],
       teamName:'',
-      // roleTypeList:[]
+      // roleTypeList:[],
       selectedAthleteList: []
     })
   };  
@@ -305,7 +305,7 @@ class TeamEnroll extends React.Component<any,any>{
     * 全男/全女在filter中已经筛选
     * */
     const { sexType } = rule;
-    if(sexType !== 1 && sexType !== 2 && sexType === 3) {
+    if(sexType !== 1 && sexType !== 2 && sexType !== 3) {
       if(sexType === 4 && (m === 0 || w === 0)) {
         message.warn('男性或女性至少存在一个');
         return;
@@ -316,7 +316,19 @@ class TeamEnroll extends React.Component<any,any>{
       // scale
       if(sexType === 6 ) {}
     }
-    //
+    // 这里给轮滑球一个写死先，因为赛事设置中并没有设置，轮滑球项目中，必须要有两名守门员
+    if(rule.itemName == '单排轮滑球') {
+      let sum = 0;
+      for(let i = 0;i < player.length; i++) {
+        if(player[i].roletype == 11){
+          sum ++;
+        }
+      }
+      if(sum != 2) {
+        message.warning('队伍中必须有两名守门员');
+        return;
+      }
+    };
     // 报名
     let reqData = {
       name: teamName,

@@ -267,7 +267,6 @@ interface FilterRule {
 export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
   // 整理rule中的groupList 做排序
   qSort(rule.groupList);
-
   // 整理 将 已报项目数量整理处理
   // 整理时 如果有project内的升组或未升组的项目的长度不为零，则设置外面的itemNumber upGroupItemNumber，否则设为0
   athleteList.forEach((m:any) => {
@@ -275,7 +274,6 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
     m.upGroupItemNumber = (m.project.upgrouppersonaldata.length !== 0 ? m.project.upgrouppersonaldata.length : 0);
     m.groupFlag = false;
   });
-  console.log(rule);
   const { sexType } = rule;
   /* 1、性别
   *  2、个人限报项目数量
@@ -289,7 +287,7 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
     athleteList = athleteList.filter((v:any) => (v.athlete.sex === '女'));
   }else if(sexType === 4){
     // sexType = 4  =》 至少要有一男一女
-
+    
   }
   // 2 个人限报数量
   const { itemLimitation } = rule;

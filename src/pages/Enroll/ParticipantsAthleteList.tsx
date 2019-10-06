@@ -501,6 +501,10 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
         message.warn('本场赛事运动员人数至少5人以上（含5人）,请确认勾选');
         return;
       }
+      if(matchId === 13 && athleteList.filter((v:any) => (v.active === 1)).length > 16) {
+        message.warn('本场赛事运动员人数至多为16人,请确认勾选');
+        return;
+      }
       router.push('/enroll/individual')
     }else {
       message.warn('请添加运动员并勾选参赛运动员后后再进行报名');
@@ -549,6 +553,13 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
           onClick={judgeAthlete}
         >
           确认运动员名单，进入个人报名通道
+        </Button>
+        <Button
+          type='primary'
+          style={{float:'right'}}
+          onClick={() => router.goBack()}
+        >
+          返回
         </Button>
       </div>
     </div>

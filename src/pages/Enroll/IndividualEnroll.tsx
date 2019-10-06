@@ -36,15 +36,23 @@ class IndividualEnroll extends React.Component<any,any>{
       isUpGroup: false,
       // 输入证书的modal框、证书号码
       cModalVisible: false,
-      certificationNumber: ""
+      certificationNumber: "",
+      // 个人运动员信息
+      person_data: []
     }
   }
 
   componentDidMount(): void {
-    const { matchId, unitId, dispatch } = this.props;
+    const { matchId, unitId, dispatch, person_data, unit_account } = this.props;
     if(matchId && unitId){
       dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId } })
     }
+    // TODO 待确认 因为升组项目这些信息，这里面没有，看看怎么弄
+    // if(person_data.id !== undefined && unit_account !== undefined){
+    //   this.setState({person_data: [{
+        
+    //   }]})
+    // }
   }
   // 更新时重新获取
   componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
@@ -431,7 +439,7 @@ class IndividualEnroll extends React.Component<any,any>{
   }
 }
 
-export default connect(({enroll}:any) => {
+export default connect(({enroll, user}:any) => {
   let reverse_athlete:any[] = [...enroll.unit.athleteList].reverse();
   return {
     enrollAthleteList:reverse_athlete.filter((v:any) => {
@@ -440,6 +448,8 @@ export default connect(({enroll}:any) => {
     matchId: enroll.currentMatchId,
     unitId: enroll.unitInfo.id,
     individualItemList: enroll.individualItem,
-    individualLimitation: enroll.individualLimitation
+    individualLimitation: enroll.individualLimitation,
+    unit_account: user.unitAccount,
+    person_data: user.athleteData[0]
   }
 })(IndividualEnroll);
