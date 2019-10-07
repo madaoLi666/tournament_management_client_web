@@ -110,7 +110,12 @@
 .introduction-page {
 
   .pic-block {
-    width: 100%;
+    @media screen and (max-width:667px){
+      width: 100%;
+    }
+    @media screen and (min-width:667px) {
+      width: 60%;
+    }
     height: auto;
     margin: 0 auto;
     border: 1px solid #000000;

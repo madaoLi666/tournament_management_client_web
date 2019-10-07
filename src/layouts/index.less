@@ -118,13 +118,26 @@
       padding: 4px;
       height: auto;
       line-height: 30px;
-      > div {
-        display: inline-block;
-        width: 200px;
+      @media screen and (max-width:667px){
+        > div {
+          display: inline-block;
+          width: 153px;
+
+          img {
+            width: 17px;
+            height: auto;
+          }
+        }
       }
-      img {
-        width: 60px;
-        height: 60px;
+      @media screen and (min-width:667px) {
+        > div {
+          display: inline-block;
+          width: 200px;
+          img {
+            width: 30px;
+            height: auto;
+          }
+        }
       }
     }
     .menu {
