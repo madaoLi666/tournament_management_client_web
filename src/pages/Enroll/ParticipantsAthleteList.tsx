@@ -529,7 +529,7 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
   return (
     <div className={styles['participants-athlete-list']}>
       <div className={styles['n-block']}>
-        <Button onClick={() => openDialog()}>添加运动员</Button>
+        <Button type="primary" onClick={() => openDialog()}>添加运动员</Button>
       </div>
       <Modal {...modalProps}>
         <AIForm
