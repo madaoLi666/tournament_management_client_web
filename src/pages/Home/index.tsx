@@ -31,7 +31,7 @@ class Home extends React.Component<any,any>{
   componentDidMount(): void {
     getHomePic().then(data => {
       if(data) {
-        this.setState({homePicArr: data.filter((m:any) => (m.id >= 13)).map((v:any) => (v.file))});
+        this.setState({homePicArr: data.filter((m:any) => (m.id >= 13 && m.id <=15)).map((v:any) => (v.file))});
       }else {
         console.log('图片获取失败');
       }

@@ -1,11 +1,13 @@
 import React from 'react';
 import {
-  Row, Col, Button, Card
+  Row, Col, Button, Card, Modal
 } from 'antd';
 import router from 'umi/router';
 import { connect, DispatchProp } from 'dva';
 // @ts-ignore
 import styles from './index.less';
+
+const { confirm } = Modal;
 
 // Col 自适应
 const autoAdjust = {
@@ -13,6 +15,26 @@ const autoAdjust = {
 };
 
 function SetRole({dispatch}:DispatchProp) {
+
+  const message_tips:React.ReactNode = (
+    <p style={{color:'red'}}>注：个人帐号目前暂不提供赛事报名，如需报名参赛请选择注册单位帐号！</p>
+  ) 
+
+  function showDeleteConfirm() {
+    confirm({
+      title: '确认选择个人账号吗？',
+      content: message_tips,
+      okText: '确认',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk() {
+        toSetRole(1);
+      },
+      onCancel() {
+        ;
+      },
+    });
+  }
 
   function toSetRole(key:number){
     if(key === 1){
@@ -32,9 +54,9 @@ function SetRole({dispatch}:DispatchProp) {
             title='请选择你的角色身份'
           >
             <div className={styles['btn-block']}>
-              <Button style={{width: '100%'}} type='primary' onClick={() => toSetRole(1)}>运动员本人 或 运动员家长</Button>
+              <Button style={{width: '100%'}} onClick={showDeleteConfirm}>运动员本人 或 运动员家长</Button>
               <h1>或</h1>
-            <Button style={{width: '100%'}} onClick={() => toSetRole(2)}>单位（协会/俱乐部）负责人、领队或教练</Button>
+            <Button style={{width: '100%'}} type='primary' onClick={() => toSetRole(2)}>单位（协会/俱乐部）负责人、领队或教练</Button>
             </div>
             <br/>
             <div style={{color: 'red'}}>

@@ -49,7 +49,13 @@ const config: IConfig =  {
     {
       path: '/notFound',
       routes:[
-        { path: '/notFound', component: './Result/NotFound.tsx', name:'此页面未找到' }
+        { path: '/notFound', component: './Result/NotFound.tsx', name:'此页面未找到' },
+      ]
+    },
+    {
+      path: '/download',
+      routes:[
+        { path: '/download', component: './Result/StaticDownLoad.tsx', name:'下载' }
       ]
     },
     { path: '/', redirect: '/home' }

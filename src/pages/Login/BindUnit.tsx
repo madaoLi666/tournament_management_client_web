@@ -155,7 +155,17 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
   render() {
     const { getFieldDecorator } = this.props.form;
     let myExtra:React.ReactNode = (
-      <span style={{color:'red',fontSize:13,margin:0,float:'right'}} >说明：请填写营业执照名称\在协会注册的成员单位名称</span>
+      <div style={{textAlign:'left'}}>
+      <p style={{color:'red',fontSize:13,float:'left',margin:0}} >说明：</p>
+      <br/>
+      <p style={{color:'red',fontSize:13,margin:0}} >
+      1、注册的单位帐号为贵单位的总帐号，后续可对贵单位的运动员、参加赛事、教练员、裁判员、社指员培训、业余等级考试等项目进行管理。因此请填写：贵单位的营业执照相同的名称，或在广东省轮滑运动协会会员单位注册时填写的单位名称。
+      <br/>
+      </p>
+      <p style={{color:'red',fontSize:13,margin:0,marginTop:5}}>
+      2、每一场赛事的报名通道中都可以重新命名参赛单位（队伍）名称进行参赛。
+      </p>
+      </div>
     )
     return (
       <div>
@@ -163,7 +173,8 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
           {...newUnitFormStyle}
           onSubmit={this.handleSubmit}
         >
-          <Form.Item label='单位名称' style={{margin:0}} hasFeedback={true} extra={myExtra} validateStatus={this.state.validStatus} >
+          {myExtra}
+          <Form.Item label='单位名称' style={{marginTop:8}} hasFeedback={true} validateStatus={this.state.validStatus} >
             {getFieldDecorator('unitName', {
               rules: [{ required: true, message: '请输入单位名称' },{ validator: this.checkUnitNameIsLegal }],
               validateTrigger: 'onBlur',
@@ -483,8 +494,8 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
   }
 
   const TabsDOM: React.ReactNode = (
-    <Tabs>
-      <TabPane tab={<div>注册单位账号</div>} key="1">
+    <Tabs style={{textAlign:'center'}}>
+      <TabPane  tab={<div>注册单位账号</div>} key="1">
         <NUForm
           emitData={submitRegister}
           unitNameIsLegal={checkUnitNameIsLegal}
@@ -518,7 +529,7 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
           <img src={picUrl} alt=""/>
         </div>
         <div style={{marginTop: '20px'}}>
-          <h4>--&nbsp;&nbsp;请扫码支付相关注册费用&nbsp;&nbsp;--</h4>
+          <h4>--&nbsp;&nbsp;请扫码支付平台服务信息费（0.01元）&nbsp;&nbsp;--</h4>
         </div>
       </Modal>
     </div>
