@@ -75,7 +75,7 @@ function AthletesList(props:athletesProps) {
             })
         })
     // 是单位账号
-    }else if (unitData.length !== 0 || unitData !== undefined || unitData !== null) {
+    }else if (unitData !== undefined && unitData.length !== 0  && unitData !== null) {
         unitData[0].unitathlete.forEach((item,index) => {
             data.push({
                 key: (index+1).toString(),

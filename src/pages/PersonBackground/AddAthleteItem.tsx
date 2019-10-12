@@ -7,6 +7,8 @@ import { checkIDCard } from '@/utils/regulars';
 import moment,{ Moment } from 'moment'
 import PicturesWall from './pictureWall';
 import { UploadFile } from 'antd/lib/upload/interface';
+// @ts-ignore
+import styles from './index.less';
 
 // 表单State
 interface State {
@@ -25,6 +27,7 @@ interface AddFormProps {
     tablekey?: string;
 
     modifyComfirm?: boolean;
+    user?: any;
 }
 
 // 表单的属性名
@@ -91,16 +94,16 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
         this.props.form.validateFieldsAndScroll((err: Error,values: any) => {
             let isBirthdayValid = values.birthday as Moment;
             if(!err) {
+                if(values.birthday === undefined || values.birthday === null) {
+                    message.error('请确认出生年月日是否已填');
+                    return;
+                }
                 if(!isBirthdayValid.isValid()) {
                     message.error('请确认身份证的出生日期是否正确!');
                     return;
                 }
                 if(this.state.file) {
                     values.image = this.state.file;
-                }
-                if(values.birthday === undefined) {
-                    message.error('请确认出生年月日是否已填');
-                    return;
                 }
                 // 如果地址项什么都没有输入
                 if(values.residence === undefined) {
@@ -177,6 +180,7 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
         const tC = this.props.resetField;
         if(!pC && tC ) {
             this.props.form.resetFields();
+            this.setState({isIDCard:true});
             this.props.form.setFieldsValue({
                 image: null
             })
@@ -198,10 +202,10 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
             <Select
                 onChange={this.handlerCertificationTypeChange}
                 style={{ width: 130 }}
+                disabled={this.props.tablekey === '' ? false : true}
             >
-                <Select.Option value="identifyID" >大陆身份证</Select.Option>
-                <Select.Option value="hkmt">港澳台回乡证</Select.Option>
-                <Select.Option value="passport">护照</Select.Option>
+                <Select.Option value="大陆身份证" >大陆身份证</Select.Option>
+                <Select.Option value="港澳台回乡证">港澳台回乡证</Select.Option>
             </Select>,
             );
 
@@ -229,14 +233,14 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
                                 rules: [{ required: true, message: '请选择性别！' }],
                             })(
                                 <Select placeholder="请选择性别" disabled={isIDCard}>
-                                <Select.Option value="man">男</Select.Option>
-                                <Select.Option value="woman">女</Select.Option>
+                                <Select.Option value="男">男</Select.Option>
+                                <Select.Option value="女">女</Select.Option>
                                 </Select>
                             )}
                         </Col>
                     </Row>
                 </Form.Item>
-                <Form.Item label="出生年月日">
+                <Form.Item label="出生年月日" className={styles['require']}>
                     {getFieldDecorator('birthday',{
                     })(<DatePicker placeholder="请选择出生年月日" disabled={isIDCard} />)}
                 </Form.Item>
@@ -328,6 +332,9 @@ const AddAthleteForm = connect(formStateToProps)(Form.create<AddFormProps & Form
                 }),
                 image: Form.createFormField({
                     value:  imageUrl
+                }),
+                idCardType: Form.createFormField({
+                    value: props.user.unitathlete[Number(props.tablekey)-1].athlete.idcardtype
                 })
             }
         }else if(props.tablekey !== '') {
@@ -374,6 +381,9 @@ const AddAthleteForm = connect(formStateToProps)(Form.create<AddFormProps & Form
                 }),
                 image: Form.createFormField({
                     value:  imageUrl
+                }),
+                idCardType: Form.createFormField({
+                    value: props.user.unitathlete[Number(props.tablekey)-1].athlete.idcardtype
                 })
             }
         }

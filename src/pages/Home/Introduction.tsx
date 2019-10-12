@@ -38,7 +38,6 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
     const { dispatch, unit_account } = this.props;
     const { currentGameData } = this.state;
     if(currentGameData.id !== undefined && currentGameData.id !== -1) {
-      console.log(unit_account);
       if(unit_account == 0){
         router.push('/enroll/individual');
       }
@@ -76,7 +75,7 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
         </TabPane>
       );
       download_url = currentGameData.matchannex.filter((v:any) => {
-        return v.name.split('.')[0] === '自愿参赛责任书';
+        return v.name.split('.')[0] === '自愿参赛责任书2019';
       });
     }
 

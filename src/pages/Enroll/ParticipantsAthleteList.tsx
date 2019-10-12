@@ -94,6 +94,20 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
     }
   }
 
+  componentDidMount() {
+    // 加这个是为了第一次点击修改运动员时触发disabled，因为componentDidUpdate只在之后触发
+    const tC = this.props.currentAthleteData;
+    if(this.props.currentAthleteData !== undefined && this.props.currentAthleteData != {}) {
+      if(tC.athlete !== undefined) {
+        if(tC.athlete.face !== null && tC.athlete.face !== undefined) {
+          this.setState({fileList:[{uid: -1,url:tC.athlete.face}],input_disabled:true});
+        }else {
+          this.setState({fileList:[],input_disabled:true});
+        }
+      }
+    }
+  }
+
   /* =====================表单动态修改=========================== */
 
   // 处理填写身份证事件
@@ -243,9 +257,9 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
               initialValue:'身份证',
               rules: [{required:true,message:'请选择你的证件号码类型'}],
             })(
-              <Select placeholder='请选择证件类型' onChange={this.handlerCertificationTypeChange}>
+              <Select placeholder='请选择证件类型' disabled={this.state.input_disabled} onChange={this.handlerCertificationTypeChange}>
                 <Option value='身份证'>身份证</Option>
-                <Option value='港澳通行证'>港澳通行证</Option>
+                <Option value='港澳通行证'>港澳台回乡证</Option>
               </Select>
             )}
           </Item>
@@ -266,7 +280,7 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
               </Select>
             )}
           </Item>
-          <Item label='出生年月日'>
+          <Item label='出生年月日' className={styles['require']} >
             {getFieldDecorator('birthday',{
             })(
               <DatePicker
