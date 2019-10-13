@@ -269,8 +269,15 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
   qSort(rule.groupList);
   // 整理 将 已报项目数量整理处理
   // 整理时 如果有project内的升组或未升组的项目的长度不为零，则设置外面的itemNumber upGroupItemNumber，否则设为0
+  // 这里多加了判断是否是淘汰赛的规则
   athleteList.forEach((m:any) => {
-    m.itemNumber = (m.project.personaldata.length !== 0 ? m.project.personaldata.length : 0);
+    let sum: number = 0;
+    for(let i = 0; i < m.project.personaldata.length; i++){
+      if(m.project.personaldata[i].eachenrollnumberenable){
+        sum ++;
+      }
+    }
+    m.itemNumber = sum;
     m.upGroupItemNumber = (m.project.upgrouppersonaldata.length !== 0 ? m.project.upgrouppersonaldata.length : 0);
     m.groupFlag = false;
   });

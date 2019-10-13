@@ -1,15 +1,13 @@
 import React from 'react';
 import { connect } from 'dva';
 import router from 'umi/router';
-import { Modal, Table, Select, message, Button, Tag, Checkbox, Input} from 'antd';
+import { Modal, Table, Select, message, Button, Tag, Checkbox, Input, notification} from 'antd';
 import { ModalProps } from 'antd/lib/modal';
 import { ColumnProps } from 'antd/lib/table';
 import { getListByKey, getGroupsByAge, getLegalSexList } from '@/utils/enroll';
 import { deleteIndividualEnroll, individualEnroll, submitCertificationNumber } from '@/services/enroll';
-import { isIllegal } from '@/utils/judge';
 // @ts-ignore
 import styles from './index.less';
-import { Simulate } from 'react-dom/test-utils';
 
 
 const { Option } = Select;
@@ -23,6 +21,7 @@ class IndividualEnroll extends React.Component<any,any>{
     super(props);
     this.state = {
       modalVisible: false,
+      noticeVisible: true,
       // 运动员信息
       currentAthleteData: {},
       athleteName: '',
@@ -43,9 +42,16 @@ class IndividualEnroll extends React.Component<any,any>{
   }
 
   componentDidMount(): void {
-    const { matchId, unitId, dispatch, person_data, unit_account } = this.props;
+    const { matchId, unitId, dispatch, noticeVisbile } = this.props;
     if(matchId && unitId){
       dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId } })
+      if(noticeVisbile){
+        notification.info({
+          description: '速度过桩淘汰赛不算入个人总项目数，若参加速度过桩个人赛后需报名淘汰赛请自行报名',
+          message: '系统更新通知'
+        })
+        dispatch({type: 'enroll/modifyNoticeVisible', payload: {}})
+      }
     }
     // TODO 待确认 因为升组项目这些信息，这里面没有，看看怎么弄
     // if(person_data.id !== undefined && unit_account !== undefined){
@@ -75,18 +81,29 @@ class IndividualEnroll extends React.Component<any,any>{
   };
   // 个人报名
   handleIndividualEnroll = (athleteData: any, id: number) => {
-    const { dispatch, matchId, unitId } = this.props;
+    const { dispatch, matchId, unitId, individualItemList } = this.props;
     if(id !== -1) {
       // 加多一个前端的个人报名判断
       /*
       * 1、检查是否存在相同的项目
       * */
-
       let enrollData = { player:athleteData.player, openprojectgroupsex:id };
       individualEnroll(enrollData).then(data => {
         if(data) {
           dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload:{matchId,unitId}});
           message.success('报名成功');
+          // 用for 加多一个提示样式，说淘汰赛不算入总项目
+          for(let i = 0; i < individualItemList.length; i++){
+            if(individualItemList[i].name == '速度过桩个人赛'){
+              for(let j = 0; j < individualItemList[i].groupData.length; j++){
+                if(individualItemList[i].groupData[j].groupId == id){
+                  message.info('如需报名速度过桩淘汰赛请自行报名，不算入个人总项目数');
+                  break;
+                }
+              }
+              break;
+            }
+          }
           this.setState({
             modalVisible:false,
             groupList:[], sexList: [], itemGroupSexID: -1,
@@ -450,6 +467,7 @@ export default connect(({enroll, user}:any) => {
     individualItemList: enroll.individualItem,
     individualLimitation: enroll.individualLimitation,
     unit_account: user.unitAccount,
-    person_data: user.athleteData[0]
+    person_data: user.athleteData[0],
+    noticeVisbile: enroll.noticeVisbile
   }
 })(IndividualEnroll);

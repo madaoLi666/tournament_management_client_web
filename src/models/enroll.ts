@@ -21,7 +21,8 @@ const ENROLL_MODEL: Model = {
 
     },
     individualItem: [],
-    teamItem: []
+    teamItem: [],
+    noticeVisbile: true
   },
   reducers: {
     modifyCurrentMatchId(state: any, action: AnyAction){
@@ -91,6 +92,11 @@ const ENROLL_MODEL: Model = {
       state.individualLimitation = {},
       state.individualItem = [],
       state.teamItem = []
+      return state;
+    },
+    modifyNoticeVisible(state: any, action: AnyAction){
+      // 这里为了方便 直接改那个系统通知
+      state.noticeVisbile = false;
       return state;
     }
   },
@@ -208,7 +214,7 @@ const ENROLL_MODEL: Model = {
     },
     * clearstate(action: AnyAction, effect: EffectsCommandMap) {
       yield effect.put({type: 'clearState', payload:null});
-    }
+    },
   }
 };
 
