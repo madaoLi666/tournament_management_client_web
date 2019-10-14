@@ -218,13 +218,13 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
                 <Form.Item label="姓名">
                     {getFieldDecorator('name',{
                         rules: [{required: true, message: '请输入姓名'}]
-                    })(<Input />)}
+                    })(<Input placeholder="请输入运动员姓名"/>)}
                 </Form.Item>
                 <Form.Item label="证件号">
                     {getFieldDecorator('identifyID',{
                         rules: [{required: true, message: '请输入证件号！'},{validator: this.handleIDCardChange}],
                         trigger: 'onChange'
-                    })(<Input disabled={this.props.tablekey === '' ? false : true} addonBefore={prefixSelector} style={{width:"100%"}} />)}
+                    })(<Input  placeholder="请输入运动员证件号" disabled={this.props.tablekey === '' ? false : true} addonBefore={prefixSelector} style={{width:"100%"}} />)}
                 </Form.Item>
                 <Form.Item label="性别" >
                     <Row>
@@ -248,13 +248,13 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
                     {getFieldDecorator('phone',{
                         initialValue:'',
                         rules: [{pattern:/^1[3578]\d{9}$/, message:'请检查联系电话是否正确'}]
-                    })(<Input/>)}
+                    })(<Input placeholder="选填"/>)}
                 </Form.Item>
                 <Form.Item label="邮箱">
                     {getFieldDecorator('email',{
                         initialValue:'',
                         rules: [{type: 'email', message: '请输入正确的邮箱格式'}]
-                    })(<Input />)}
+                    })(<Input  placeholder="选填"/>)}
                 </Form.Item>
                 <Form.Item label='地址'>
                     {getFieldDecorator('residence', {})(
@@ -265,13 +265,13 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
                     {getFieldDecorator('emergencyContact',{
                         initialValue:'',
                         rules: []
-                    })(<Input/>)}
+                    })(<Input  placeholder="选填"/>)}
                 </Form.Item>
                 <Form.Item label="紧急联系人电话">
                     {getFieldDecorator('emergencyContactPhone',{
                         initialValue:'',
                         rules: [{pattern:/^1[3578]\d{9}$/, message:'请检查联系电话是否正确'}]
-                    })(<Input />)}
+                    })(<Input placeholder="选填"/>)}
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
                     <Button style={{width:"100%"}} type="primary" htmlType="submit">确定</Button>

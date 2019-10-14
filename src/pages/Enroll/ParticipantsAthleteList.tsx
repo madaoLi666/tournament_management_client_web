@@ -219,7 +219,7 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
       <div className={styles['p-upload-block']} style={{width: '100px', height: '100px'}}>
         <div>
           <p><FaPlus/></p>
-          <p>点击上传图片</p>
+          <p>点击上传图片（选填）</p>
         </div>
       </div>
     );
@@ -293,14 +293,14 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
             {getFieldDecorator('phone',{
               rules: [{validator: this.validatePhoneNumber}]
             })(
-              <Input/>
+              <Input placeholder="选填"/>
             )}
           </Item>
           <Item label='邮箱'>
             {getFieldDecorator('email',{
               rules: [{validator: this.validateEmail}]
             })(
-              <Input/>
+              <Input placeholder="选填" />
             )}
           </Item>
           <Item label='地址'>
@@ -358,7 +358,7 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const modalProps: ModalProps = {
-    title: '新建/修改赛事',
+    title: '添加/修改运动员',
     visible: visible,
     width: '80%',
     maskClosable: false,

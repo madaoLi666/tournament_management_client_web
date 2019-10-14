@@ -353,7 +353,7 @@ function AthletesList(props:athletesProps) {
             </Layout.Content>
             <Modal
                     visible={modalVisible}
-                    title="添加新运动员"
+                    title="添加/修改运动员"
                     onCancel={handleModalCancel}
                     style={{top:0}}
                     maskClosable={false}

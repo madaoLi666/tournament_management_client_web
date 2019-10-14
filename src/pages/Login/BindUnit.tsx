@@ -146,6 +146,10 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err: ValidateCallback<any>, values: any) => {
       if (!err) {
+        if(values.residence.address === "" || values.residence.city.length === 0) {
+          message.error('请确认地址信息填写完全');
+          return;
+        }
         emitData(values);
       }
     });
