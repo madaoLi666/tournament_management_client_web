@@ -9,9 +9,7 @@ const TIMEOUT:number = 6000;
 let axiosInstance = axios.create({
   baseURL: BASE_URL,
   timeout: TIMEOUT,
-  headers: {
-
-  },
+  headers: {  },
   validateStatus:(status: number): boolean => {
     if( status === 401 ) {
       message.error('请重新登陆');

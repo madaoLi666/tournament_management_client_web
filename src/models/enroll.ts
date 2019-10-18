@@ -76,14 +76,6 @@ const ENROLL_MODEL: Model = {
     },
     clearState(state: any, action: AnyAction) {
       state.currentMatchId = -1,
-      // state.unitInfo.id = '',
-      // state.unitInfo.unitName = '',
-      // state.unitInfo.province = '',
-      // state.unitInfo.address = '',
-      // state.unitInfo.email = '',
-      // state.unitInfo.contactPerson = '',
-      // state.unitInfo.contactPhone = '',
-      // state.unit.unitData = {},
       state.unitInfo = {},
       state.unit.contestantUnitData = {},
       state.unit.athleteList = [],
@@ -125,7 +117,7 @@ const ENROLL_MODEL: Model = {
     * checkIsEnrollAndGetAthleteLIST  (action: AnyAction, effect: EffectsCommandMap) {
       const { put } = effect;
       const { matchId, unitId } = action.payload;
-      let data = yield checkISEnroll({unitdata: unitId, matchdata: matchId});
+      let data = yield checkISEnroll({unitdata: 41, matchdata: matchId});
       // 判断数据是否存在
       if(data) {
         if(data.isEnroll === 'Y') {

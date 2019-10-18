@@ -86,8 +86,8 @@ class PicturesWall extends React.Component<{getFile:Function, value?:string,onCh
     const uploadButton = (
       <div>
         <FaPlus type="plus" />
-        <div className="ant-upload-text">
-          上传头像<br/>(可选项)
+        <div className="ant-upload-text" >
+          点击上传运动员图片<br/>(选填)
         </div>
       </div>
     );

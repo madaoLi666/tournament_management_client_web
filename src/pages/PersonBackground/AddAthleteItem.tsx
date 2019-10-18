@@ -211,7 +211,7 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
 
         return (
             <Form layout="horizontal" {...formItemLayout} onSubmit={this.handleSubmit}>
-                <Form.Item style={{marginLeft:"45%"}}>
+                <Form.Item style={{marginLeft:"0%"}}>
                     {getFieldDecorator('image',{
                     })(<PicturesWall getFile={this.getFile} />)}
                 </Form.Item>

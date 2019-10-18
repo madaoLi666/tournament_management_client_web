@@ -219,7 +219,7 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
       <div className={styles['p-upload-block']} style={{width: '100px', height: '100px'}}>
         <div>
           <p><FaPlus/></p>
-          <p>点击上传图片（选填）</p>
+          <p>点击上传运动员相片（选填）</p>
         </div>
       </div>
     );
@@ -513,10 +513,6 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
     if(athleteList.length !== 0 && athleteList.filter((v:any) => (v.active === 1)).length !== 0) {
       if(matchId === 12 && athleteList.filter((v:any) => (v.active === 1)).length < 5) {
         message.warn('本场赛事运动员人数至少5人以上（含5人）,请确认勾选');
-        return;
-      }
-      if(matchId === 13 && athleteList.filter((v:any) => (v.active === 1)).length > 16) {
-        message.warn('本场赛事运动员人数至多为16人,请确认勾选');
         return;
       }
       router.push('/enroll/individual')
