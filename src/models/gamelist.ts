@@ -25,7 +25,7 @@ const GAMELIST_INTRODUCTION:Model = {
           type: 'modifyGameList',
           payload: {gameList: data}
         })
-      }
+      }else{ return; }
     }
   },
 

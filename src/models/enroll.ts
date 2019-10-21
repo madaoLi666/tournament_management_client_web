@@ -117,7 +117,7 @@ const ENROLL_MODEL: Model = {
     * checkIsEnrollAndGetAthleteLIST  (action: AnyAction, effect: EffectsCommandMap) {
       const { put } = effect;
       const { matchId, unitId } = action.payload;
-      let data = yield checkISEnroll({unitdata: 41, matchdata: matchId});
+      let data = yield checkISEnroll({unitdata: unitId, matchdata: matchId});
       // 判断数据是否存在
       if(data) {
         if(data.isEnroll === 'Y') {

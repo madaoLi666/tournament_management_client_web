@@ -13,6 +13,7 @@ let axiosInstance = axios.create({
   validateStatus:(status: number): boolean => {
     if( status === 401 ) {
       message.error('请重新登陆');
+      window.localStorage.clear();
       router.push('/login');
       return false;
     }
@@ -53,6 +54,11 @@ axiosInstance.interceptors.response.use((response:AxiosResponse):any => {
   if(!isIllegal(1,data,'notice') && !isIllegal(1,data,'error')) {
     return data.data;
   } else if(isIllegal(0,data.error)) {
+    // if(Object.prototype.toString.call(data.error) == "[object String]"){
+    //   Object.keys(data.error).forEach(function(key: any){
+    //     console.log(key,data.error[key]);
+    //   })
+    // }
     message.error(data.error);
   } else if(isIllegal(0,data.notice)) {
     message.error(data.notice);

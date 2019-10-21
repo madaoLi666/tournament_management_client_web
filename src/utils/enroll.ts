@@ -267,6 +267,10 @@ interface FilterRule {
 export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
   // 整理rule中的groupList 做排序
   qSort(rule.groupList);
+  /**
+   * 这里针对轮滑球来做固定的限制，青年组升成年组，不需要业余等级证
+   */
+  const { itemName, startTime } = rule;
   // 整理 将 已报项目数量整理处理
   // 整理时 如果有project内的升组或未升组的项目的长度不为零，则设置外面的itemNumber upGroupItemNumber，否则设为0
   // 这里多加了判断是否是淘汰赛的规则
@@ -294,7 +298,7 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
     athleteList = athleteList.filter((v:any) => (v.athlete.sex === '女'));
   }else if(sexType === 4){
     // sexType = 4  =》 至少要有一男一女
-    
+    // 在本函数的最后处理了
   }
   // 2 个人限报数量
   const { itemLimitation } = rule;
@@ -306,7 +310,6 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
     console.log('itemLimitation is 0');
   }
   // 3是否已报本项目
-  const { itemName } = rule;
   if(itemName !== "" && itemName) {
     athleteList = athleteList.filter((v:any) => {
       let isEnrollSameItem = false;
@@ -323,7 +326,6 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
   }else {
     console.log('itemName is lost');
   }
-  // 这个暂时没有办法取做校验 2019-08-29
   /*============================== 4 升组逻辑判断 ==============================*/
   /*
   *  1）判别运动员组别是否高于开设项目组别 - 使用生日判别 ->2）
@@ -335,7 +337,6 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
   *  7）判别开设组别是否被其列表包含 -> null
   * */
   // 1
-  const { startTime } = rule;
   athleteList = athleteList.filter((v:any) => (v.athlete.birthday.substr(0,10) >= startTime));
   // 2
   const { upGroupNumber , groupList } = rule;
@@ -353,13 +354,27 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
             break;
           }
         }
-        if(index !== -1) {
+        /** 单排轮滑球的特例需求，青年组升组到成年组不需要证书 */
+        if(itemName === "单排轮滑球" && startTime == "1960-01-01" && index !== -1){
           if(index + upGroupNumber > groupList.length) {
             // 向下取组到底部 全取
             tarGroupList = groupList.slice(index,groupList.length -1);
           }else {
             tarGroupList = groupList.slice(index,index + upGroupNumber);
           }
+          tarGroupList.forEach((v:any) => {
+            if(v.startTime <= athleteList[i].athlete.birthday.substr(0,10) && "2004-08-31" >=  athleteList[i].athlete.birthday.substr(0,10) ) {
+              athleteList[i].groupFlag = true;
+            }
+          })
+        }else if(index !== -1) {
+          if(index + upGroupNumber > groupList.length) {
+            // 向下取组到底部 全取
+            tarGroupList = groupList.slice(index,groupList.length -1);
+          }else {
+            tarGroupList = groupList.slice(index,index + upGroupNumber);
+          }
+          // if( itemName === "单排轮滑球" && tarGroupList[0] )
           tarGroupList.forEach((v:any) => {
             if(v.startTime <= athleteList[i].athlete.birthday.substr(0,10) && v.endTime >=  athleteList[i].athlete.birthday.substr(0,10) ) {
               athleteList[i].groupFlag = true;
