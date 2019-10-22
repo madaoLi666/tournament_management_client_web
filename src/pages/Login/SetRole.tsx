@@ -54,9 +54,9 @@ function SetRole({dispatch}:DispatchProp) {
             title='请选择你的角色身份'
           >
             <div className={styles['btn-block']}>
-              <Button style={{width: '100%'}} onClick={showDeleteConfirm}>运动员本人 或 运动员家长</Button>
+              <Button style={{width: '100%',height:'auto'}} onClick={showDeleteConfirm}disabled >运动员本人 或 运动员家长<br/>目前比赛不支持个人报名</Button>
               <h1>或</h1>
-            <Button style={{width: '100%'}} type='primary' onClick={() => toSetRole(2)}>单位（协会/俱乐部）负责人、领队或教练</Button>
+            <Button style={{width: '100%',height:'auto'}} type='primary' onClick={() => toSetRole(2)}>单位（协会/俱乐部）负责人<br/>领队或教练</Button>
             </div>
             <br/>
             <div style={{color: 'red'}}>

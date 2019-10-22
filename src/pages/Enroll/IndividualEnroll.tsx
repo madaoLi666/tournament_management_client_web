@@ -45,10 +45,17 @@ class IndividualEnroll extends React.Component<any,any>{
     const { matchId, unitId, dispatch, noticeVisbile } = this.props;
     if(matchId && unitId){
       dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId } })
-      if(noticeVisbile){
+      if(noticeVisbile && matchId == 14){
         notification.info({
           description: '速度过桩淘汰赛不算入个人总项目数，若参加速度过桩个人赛后需报名淘汰赛请自行报名',
           message: '系统更新通知'
+        })
+        dispatch({type: 'enroll/modifyNoticeVisible', payload: {}})
+      }
+      if(noticeVisbile && matchId == 13){
+        notification.info({
+          description: '少年甲、乙、丙组参赛运动员若获得《广东省轮滑技术水平的等级测试》单排轮滑球项目中级一星（含）以上等级，则允许在其规定年龄段中往上跨一个组别进行参赛。青年组升组至成年组，则不需要该业余等级证',
+          message: '系统更新通知',
         })
         dispatch({type: 'enroll/modifyNoticeVisible', payload: {}})
       }

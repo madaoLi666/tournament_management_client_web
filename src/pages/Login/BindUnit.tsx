@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'dva';
 import { Button, Card, Col, Form, Input, Row, Tabs, Modal, message } from 'antd';
 import AddressInput from '@/components/AddressInput/AddressInput.tsx';
@@ -10,6 +10,7 @@ import { getQRCodeForUnitRegister, checkUnitIsPay, } from '@/services/pay';
 import { newUnitAccount } from '@/services/register';
 // @ts-ignore
 import styles from './index.less';
+import router from 'umi/router';
 
 interface NewUnitFromProps extends FormComponentProps {
   emitData: (data: any) => void;
@@ -401,6 +402,13 @@ const BForm = connect()(Form.create<BindUnitFromProps>()(BindUnitForm));
 
 function BindUnit(props: { dispatch: Dispatch; userId: number}) {
 
+  useEffect(() => {
+    if(props.userId == 0){
+      router.push('/login');
+      message.warning('由于您的页面刷新了，请再次登录账号后进行注册');
+    }
+  },[props.userId]);
+
   // modal的visible
   const [visible,setVisible] = useState(false);
   // 图片
@@ -412,7 +420,6 @@ function BindUnit(props: { dispatch: Dispatch; userId: number}) {
   // 这里可以拿到表单的信息
   async function submitRegister(data: any): Promise<any> {
     const { dispatch , userId} = props;
-
     // 发起请求检查是否支付了费用
     let isPay = await checkoutIsPay().then(res => (res));
     if(!isPay) {

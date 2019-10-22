@@ -1,4 +1,4 @@
-import React,{ Component } from 'react';
+import React,{ Component, useEffect } from 'react';
 import { Form, Input, Row, Col, Select, DatePicker, Button, Card, message } from 'antd';
 import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
 import { ColProps } from 'antd/lib/grid';
@@ -7,6 +7,7 @@ import moment, { Moment } from 'moment'
 import { checkIDCard } from '@/utils/regulars';
 // @ts-ignore
 import styles from './index.less'
+import router from 'umi/router';
 
 const { Option } = Select;
 // 表单属性
@@ -188,6 +189,13 @@ function BasicInfoSupplement(props:any) {
     // 提交做请求
     dispatch({type: 'register/addAthleteBaseInfo',payload:data})
   }
+  useEffect(() => {
+    const { userId } = props;
+    if(userId == 0){
+      message.warning('由于您的页面刷新了，请再次登录账号后进行注册');
+      router.push('/login');
+    }
+  },[props.userId])
 
   return (
     <div className={styles['info-supplement-page']}>
