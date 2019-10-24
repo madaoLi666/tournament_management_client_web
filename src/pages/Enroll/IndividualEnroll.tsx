@@ -452,7 +452,7 @@ class IndividualEnroll extends React.Component<any,any>{
             type='primary'
             style={{width: '160px'}}
           >
-            进入团队报名
+            下一步:团队项目报名
           </Button>
           <Button type="primary" style={{float:'right'}} onClick={() => router.goBack()} >
             返回

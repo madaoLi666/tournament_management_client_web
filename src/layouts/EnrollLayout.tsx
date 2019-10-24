@@ -44,10 +44,14 @@ function EnrollLayout(props: {dispatch: Dispatch, currentGameData: any,children:
     <div className={styles['enroll-layout']}>
       <Layout style={{height: '100%'}}>
         <Header className={styles.header}>
+          <strong>
           <span>
             {currentGameData !== undefined ? currentGameData.name : null}
           </span>
-          <Button type="link" href="/home" style={{float:"right",marginTop:3,padding:'0px 10px 0px'}} >返回主页</Button>
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <a onClick={() => window.open('https://www.gsta.top/nstatic/react/%E6%8A%A5%E5%90%8D%E6%AD%A5%E9%AA%A4_6fDXGU2.html')} >报名步骤查看</a>
+          </strong>
+          <Button type="link" onClick={() => router.push('/home')} style={{float:"right",marginTop:3,padding:'0px 10px 0px'}} >返回主页</Button>
           <FaHome style={{float:"right",marginTop:13,color:'blue'}} href="/home" />
         </Header>
         <Content className={styles.content}>

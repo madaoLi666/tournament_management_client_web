@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Layout, message
+  Layout, message, Modal, notification, Button
 } from 'antd'
 import { connect } from 'dva';
 import router from 'umi/router';
@@ -19,6 +19,8 @@ const Home = dynamic({
 });
 
 function HomeLayout(props: any) {
+
+  const { closeModal, dispatch } = props;
 
   let menuArr:Array<object> = [
     { name: '主页', key: 'home', path: ''},
@@ -59,6 +61,34 @@ function HomeLayout(props: any) {
     },1000)
   },[props]);
 
+  const close = () => {
+  };
+  // 报名步骤
+  useEffect(() => {
+    if(closeModal) {
+      Modal.info({
+        title: '若第一次登录本系统或对报名有疑问可查看该报名步骤',
+        content: (
+          <div>
+            <a onClick={() => window.open('https://www.gsta.top/nstatic/react/%E6%8A%A5%E5%90%8D%E6%AD%A5%E9%AA%A4_6fDXGU2.html')} >报名步骤查看</a>
+          </div>
+        ),
+        onOk() {
+          dispatch({
+            type: 'global/closeModal',
+            payload: false
+          });
+          notification.open({
+            message: '可在页面左上方再次查看报名步骤',
+            duration: 3,
+            placement: "topLeft"
+          });
+        },
+        okText:"知道了",
+      });
+    }
+  },[]);
+
   if(!loading) {
     return (
       <div className={styles['mask']} hidden={loading} >
@@ -72,10 +102,14 @@ function HomeLayout(props: any) {
     <div>
       <Layout className={styles['home-layout']}>
         <Header className={styles['header']}>
-            <div style={{display: 'inline-block', float: 'left'}}>
+            <div style={{ float: 'left'}}>
+              <strong>
               <span style={{width: '120px'}}><a href='/home' >轮滑赛事辅助系统平台</a></span>
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <a onClick={() => window.open('https://www.gsta.top/nstatic/react/%E6%8A%A5%E5%90%8D%E6%AD%A5%E9%AA%A4_6fDXGU2.html')} >报名步骤查看</a>
+              </strong>
             </div>
-            <div style={{display: 'inline-block', float: 'right'}}>
+            <div style={{ float: 'right'}}>
               {(token === null || token === undefined) ? (
                 <div>
                 <a onClick={() => router.push('/home')}>主页</a>
@@ -151,9 +185,10 @@ function HomeLayout(props: any) {
 *   信息判断 是否有登陆 有 显示信息 无 原本页面
 * */
 
-const mapStateToProps = ({gameList}:any) => {
+const mapStateToProps = ({gameList, global}:any) => {
   return {
-    maskloading: gameList.maskloading
+    maskloading: gameList.maskloading,
+    closeModal: global.showModal
   }
 }
 
