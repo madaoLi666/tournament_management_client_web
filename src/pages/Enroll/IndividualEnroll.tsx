@@ -143,6 +143,7 @@ class IndividualEnroll extends React.Component<any,any>{
   getGroupByItem = (athleteData:any, itemList: Array<any>, itemId: number, limitation:any) => {
     // isCrossGroup 是个boolean
     const { isCrossGroup, upGroupNumber } = this.props.individualLimitation;
+    const { matchId } = this.props;
     this.setState({itemValue:itemId});
     if(itemId) {
       // 清空下面的设置
@@ -155,10 +156,9 @@ class IndividualEnroll extends React.Component<any,any>{
       if(groupList) {
         const { upGroupNumber } = limitation;
         // 通过 年龄+组别列表+可升组数量 得到可选组别列表，例如可选青成组，少年组
-        let r = getGroupsByAge(birthday,groupList,upGroupNumber);
+        let r = getGroupsByAge(birthday,groupList,upGroupNumber,matchId);
         let fGroupList = [],fGroupValue = -1;
         if(r.length !== 0) {
-          // TODO 这里为什么要判断跨组
           // 判断是否可以跨组别参赛
           if(isCrossGroup) {
             // 可以跨组
@@ -170,7 +170,6 @@ class IndividualEnroll extends React.Component<any,any>{
             if(athleteData.project.upgrouppersonaldata.length !== 0) {
               // 已报名升组项目
               // 将前一个组别设置
-              // TODO 这里的 r length只有1，为什么减2
               fGroupList = r;
               if(r.length === 1) {
                 fGroupValue = r[0].groupId;
@@ -287,7 +286,7 @@ class IndividualEnroll extends React.Component<any,any>{
 
   render(): React.ReactNode {
     const { modalVisible, currentAthleteData , groupList, sexList, itemGroupSexID, groupValue, sexValue, itemValue, isUpGroup, cModalVisible } = this.state;
-    const { enrollAthleteList, individualItemList, individualLimitation } = this.props;
+    const { matchId, enrollAthleteList, individualItemList, individualLimitation } = this.props;
     const modalProps: ModalProps = {
       visible: modalVisible,
       title:  this.state.athleteName === '' ? 1 : this.state.athleteName +'   请选择报名项目进行报名',
@@ -362,7 +361,7 @@ class IndividualEnroll extends React.Component<any,any>{
                 />
                 &nbsp;&nbsp;&nbsp;&nbsp;
                 <Button
-                  onClick={() => {this.setState({cModalVisible: true});console.log(currentAthleteData)}}
+                  onClick={() => {this.setState({cModalVisible: true});}}
                   type="primary"
                   disabled={!(currentAthleteData['certification_code'] === "" || currentAthleteData['certification_code'] === "-1") && itemValue !== undefined}
                 >
@@ -375,7 +374,10 @@ class IndividualEnroll extends React.Component<any,any>{
               <Select
                 onChange={(value:number) => this.getSexByGroup(currentAthleteData, groupList, value)}
                 // 只有升组可升两组才可以选择
-                disabled={individualLimitation.upGroupNumber <= 1}
+                disabled={
+                  matchId === 12 ? individualLimitation.upGroupNumber <= 1 && groupList.length < 2
+                  : individualLimitation.upGroupNumber <= 1
+                }
                 placeholder='请选择组别'
                 value={groupValue}
               >

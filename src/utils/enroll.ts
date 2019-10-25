@@ -198,7 +198,7 @@ export function getListByKey(obj: Array<any>, value: any, keyName: string ):any 
 * upGroupNumber 可升组数量 输出应该不upGroupNumber 多出1项 ,
 *                         -1 即代表不可升组
 * */
-export function getGroupsByAge(birthday:string, groupList:Array<any>, upGroupNumber: number) {
+export function getGroupsByAge(birthday:string, groupList:Array<any>, upGroupNumber: number, matchId?: 0) {
   qSort(groupList,0,groupList.length-1,"startTime");
   let index:number = -1;
   for(let i:number = groupList.length - 1; i >= 0 ;i--) {
@@ -220,7 +220,15 @@ export function getGroupsByAge(birthday:string, groupList:Array<any>, upGroupNum
       return groupList.slice(0,index+1);
     }else {
       // 将可升组别与原组别返回
-      return groupList.slice(index-upGroupNumber,index+1);
+      if(matchId !== 0 && matchId === 12) {
+        if(index === 1) {
+          return groupList.slice(index-upGroupNumber,index+1);
+        }else {
+          return groupList.slice(index-upGroupNumber+1,index+1);
+        }
+      }else {
+        return groupList.slice(index-upGroupNumber,index+1);
+      }
     }
   }
 }
