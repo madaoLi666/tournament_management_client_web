@@ -83,6 +83,7 @@ const ENROLL_MODEL: Model = {
       state.unit.teamEnrollList = [],
       state.individualLimitation = {},
       state.individualItem = [],
+      state.unit.unitData = {},
       state.teamItem = []
       return state;
     },
@@ -111,6 +112,8 @@ const ENROLL_MODEL: Model = {
           guaranteePic: data.dutybook
         };
         yield put({ type: "modifyUnitData", payload: { unitData: uD} })
+      }else {
+        yield put({ type: "modifyUnitData", payload: { unitData: {}} })
       }
     },
     // 检查是否有报名信息，并获取运动员列表

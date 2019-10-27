@@ -174,7 +174,7 @@ const USER_MODEL:Model = {
           yield effect.put({type: 'savePerson', payload: data});
         }
       }else {
-
+        return;
       }
     },
     // 清除state

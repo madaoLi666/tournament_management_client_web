@@ -320,7 +320,7 @@ export default connect(({ enroll,user }: any) => {
   // 有账号信息
   if(athleteData !== undefined && athleteData !== null && athleteData.length !== 0 && user.email !== null && user.email !== undefined && user.email !=='') {
     targetUnitData.leaderName = athleteData[0].name;
-    targetUnitData.leaderPhone = athleteData[0].phonenumber;
+    targetUnitData.leaderPhone = user.phonenumber;
     targetUnitData.leaderEmail = user.email;
   }
   // 有报名信息

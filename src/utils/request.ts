@@ -12,7 +12,7 @@ let axiosInstance = axios.create({
   headers: {  },
   validateStatus:(status: number): boolean => {
     if( status === 401 ) {
-      message.error('请重新登陆');
+      message.warning('请重新登录账号');
       window.localStorage.clear();
       router.push('/login');
       return false;
