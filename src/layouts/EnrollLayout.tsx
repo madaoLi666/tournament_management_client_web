@@ -35,7 +35,16 @@ function EnrollLayout(props: {dispatch: Dispatch, currentGameData: any,children:
         router.push('/home');
       }
     }else {
-      message.error('登陆过期，请重新登陆');
+      message.warning('登陆过期，请重新登陆');
+      window.localStorage.clear();
+      dispatch({
+        type: 'user/clearstate',
+        payload: ''
+      });
+      dispatch({
+        type: 'enroll/clearstate',
+        payload: ''
+      });
       router.push('/login');
     }
   },[]);
