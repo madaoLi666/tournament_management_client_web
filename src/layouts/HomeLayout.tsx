@@ -10,14 +10,6 @@ import styles from './index.less';
 
 const { Header, Content, Footer } = Layout;
 
-const delay = (timeout: any) => new Promise((resolve:any) => setTimeout(resolve,timeout));
-const Home = dynamic({
-  loader: async function() {
-    await delay(1000);
-    return () => <div>I will render after 1s</div>;
-  },
-});
-
 function HomeLayout(props: any) {
 
   const { closeModal, dispatch } = props;

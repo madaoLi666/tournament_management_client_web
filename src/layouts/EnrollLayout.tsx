@@ -1,11 +1,10 @@
 import React,{ useEffect } from 'react';
-import { Layout, message, Button } from 'antd';
+import { Layout, message, Button, Icon } from 'antd';
 import { connect } from 'dva';
 import router from 'umi/router';
 import { Dispatch } from 'redux';
 // @ts-ignore
 import styles from './index.less';
-import { FaHome } from 'react-icons/fa';
 
 const { Header, Content, Footer } = Layout;
 
@@ -61,7 +60,7 @@ function EnrollLayout(props: {dispatch: Dispatch, currentGameData: any,children:
           <a onClick={() => window.open('https://www.gsta.top/nstatic/react/%E6%8A%A5%E5%90%8D%E6%AD%A5%E9%AA%A4_6fDXGU2.html')} >报名步骤查看</a>
           </strong>
           <Button type="link" onClick={() => router.push('/home')} style={{float:"right",marginTop:3,padding:'0px 10px 0px'}} >返回主页</Button>
-          <FaHome style={{float:"right",marginTop:13,color:'blue'}} href="/home" />
+          <Icon style={{float:"right",marginTop:13,color:'blue'}} type="home" />
         </Header>
         <Content className={styles.content}>
           {props.children}

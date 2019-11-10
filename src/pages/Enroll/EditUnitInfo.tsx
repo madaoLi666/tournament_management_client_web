@@ -1,6 +1,5 @@
 import React, { Component, useEffect } from 'react';
-import { Form, Input, Button, Upload, message, Spin} from 'antd';
-import { FaCloudUploadAlt } from 'react-icons/fa';
+import { Form, Input, Button, Upload, message, Spin, Icon} from 'antd';
 import router from 'umi/router';
 import { connect } from 'dva';
 import { FormComponentProps, FormProps, ValidateCallback } from 'antd/lib/form';
@@ -195,7 +194,7 @@ class UnitInfoForm extends Component<UnitInfoFormProps, any> {
               ) : (
                 <div>
                   <Button>
-                    <FaCloudUploadAlt/>&nbsp;Upload
+                    <Icon type="cloud-upload" />&nbsp;Upload
                   </Button>
                 </div>
               )

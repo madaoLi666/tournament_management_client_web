@@ -4,8 +4,7 @@ import { connect } from 'dva';
 import router from 'umi/router';
 import uRoutes from '@/config/router';
 
-import { Layout, Menu, Breadcrumb, Drawer, Button, Avatar, Typography, Row, Col, message } from 'antd';
-import { FaList, FaSearch, FaRegBell } from 'react-icons/fa';
+import { Layout, Menu, Breadcrumb, Drawer, Button, Avatar, Typography, Row, Col, message, Icon } from 'antd';
 // @ts-ignore
 import styles from './index.less';
 
@@ -128,10 +127,8 @@ function BasicLayout(props: any) {
       </Drawer>
       <Header style={{ background: '#fff', padding: 0 , height: "100%"}}>
         <div>
-        <FaList className={styles['falist']} onClick={showDrawer} style={{width:28,height:28,marginLeft:16,marginTop:16}} />
+          <Icon className={styles['falist']} onClick={showDrawer} style={{width:28,height:28,marginLeft:16,marginTop:16}} type="unordered-list" />
         <Button type="link" onClick={signout} style={{float:"right",marginTop:"15px"}} >退出账号</Button>
-        <FaRegBell className={styles['falist']} onClick={() => {message.warning('此功能维护中')}} style={{float:"right",marginTop:"22px",width:20,height:20}} />
-        <FaSearch className={styles['falist']} onClick={() => {message.warning('此功能维护中')}} style={{marginRight:28,float:"right",marginTop:"22px",width:20,height:20}} />
         </div>
         <Row style={{height:130}}>
           <Col {...autoAdjust1}>

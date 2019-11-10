@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Upload, Table, Input, Button, Modal, message, Select, DatePicker, Checkbox, Spin } from 'antd';
+import { Form, Upload, Table, Input, Button, Modal, message, Select, DatePicker, Checkbox, Spin, Icon } from 'antd';
 import moment, { Moment } from 'moment';
-import { FaPlus } from 'react-icons/fa';
 import AddressInput from '@/components/AddressInput/AddressInput';
 import { connect } from 'dva';
 import router from 'umi/router';
@@ -218,7 +217,7 @@ class AthleteInfoForm extends React.Component<AthleteInfoFormProps, any> {
     const uploadBtn: React.ReactNode = (
       <div className={styles['p-upload-block']} style={{width: '100px', height: '100px'}}>
         <div>
-          <p><FaPlus/></p>
+          <p><Icon type="plus-square" /></p>
           <p>点击上传运动员相片（选填）</p>
         </div>
       </div>

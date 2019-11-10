@@ -1,11 +1,10 @@
 import React,{ useEffect, useState } from 'react';
-import { PageHeader, Input, Button, Modal, Layout, Table, message, Form, Spin } from 'antd';
+import { PageHeader, Input, Button, Modal, Layout, Table, message, Form, Spin, Icon } from 'antd';
 import { ColumnFilterItem, TableEventListeners, FilterDropdownProps, PaginationConfig, SorterResult } from 'antd/es/table';
 import AddAthleteForm,{ formFields } from './AddAthleteItem';
 import { connect } from 'dva';
 import { UnitData, AthleteData } from '@/models/user';
 import { addplayer, updatePlayer } from '@/services/athlete';
-import { FaSearch } from 'react-icons/fa'
 // @ts-ignore
 import styles from './index.less';
 import { UploadFile } from 'antd/lib/upload/interface';
@@ -136,7 +135,7 @@ function AthletesList(props:athletesProps) {
         }
     }
     // 搜索框 搜索点击的函数
-    function handleSearch(selectedKeys: string[], confirm: Function) {
+    function handleSearch(selectedKeys: any[], confirm: Function) {
         confirm();
         setSearchText(selectedKeys[0]);
     }
@@ -146,7 +145,10 @@ function AthletesList(props:athletesProps) {
     }
 
     // Table 内嵌搜索框
-    let getColumnSearchProps:any = (dataIndex: string) => ({
+    // @ts-ignore
+  // @ts-ignore
+  // @ts-ignore
+  let getColumnSearchProps:any = (dataIndex: string) => ({
         // 可以自定义筛选菜单，此函数只负责渲染图层，需要自行编写各种交互
         filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}:FilterDropdownProps):React.ReactNode => (
             <div style={{padding:8}}>
@@ -174,7 +176,7 @@ function AthletesList(props:athletesProps) {
         ),
         // 自定义搜索图标
         filterIcon: (filtered: boolean) => (
-            <FaSearch style={{width:16,color: filtered ? '#FF0000' : '#1890ff',marginRight:5}}  />
+            <Icon style={{width:16,color: filtered ? '#FF0000' : '#1890ff',marginRight:5}} type="search" />
         ),
         // 本地模式下，确定筛选的运行函数 value不确定是否是string
         onFilter: (value: string, record: any) =>
@@ -233,7 +235,7 @@ function AthletesList(props:athletesProps) {
         let citys:string = '';
         let myAddress:string = '';
         let myImage : UploadFile | File | string;
-        
+
         if(values.residence === undefined){
             ;
         }else {
