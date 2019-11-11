@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Layout, message, Modal, notification, Button
+  Layout, message
 } from 'antd'
 import { connect } from 'dva';
 import router from 'umi/router';
-import dynamic from 'umi/dynamic';
+import { Dispatch } from 'redux';
 // @ts-ignore
 import styles from './index.less';
 
 const { Header, Content, Footer } = Layout;
 
-function HomeLayout(props: any) {
+interface HomeLayoutProps {
+  dispatch: Dispatch;
+  children: React.ReactNode;
+}
 
-  const { closeModal, dispatch } = props;
+function HomeLayout(props: HomeLayoutProps) {
 
   let menuArr:Array<object> = [
     { name: '主页', key: 'home', path: ''},
@@ -53,34 +56,6 @@ function HomeLayout(props: any) {
     },1000)
   },[props]);
 
-  const close = () => {
-  };
-  // 报名步骤
-  useEffect(() => {
-    if(closeModal) {
-      Modal.info({
-        title: '若第一次登录本系统或对报名有疑问可查看该报名步骤',
-        content: (
-          <div>
-            <a onClick={() => window.open('https://www.gsta.top/nstatic/react/%E6%8A%A5%E5%90%8D%E6%AD%A5%E9%AA%A4_6fDXGU2.html')} >报名步骤查看</a>
-          </div>
-        ),
-        onOk() {
-          dispatch({
-            type: 'global/closeModal',
-            payload: false
-          });
-          notification.open({
-            message: '可在页面左上方再次查看报名步骤',
-            duration: 3,
-            placement: "topLeft"
-          });
-        },
-        okText:"知道了",
-      });
-    }
-  },[]);
-
   if(!loading) {
     return (
       <div className={styles['mask']} hidden={loading} >
@@ -92,11 +67,11 @@ function HomeLayout(props: any) {
     )
   }else return (
     <div>
-      <Layout className={styles['home-layout']}>
+      <Layout className={styles['home-layout']} style={{backgroundColor:'white'}} >
         <Header className={styles['header']}>
             <div style={{ float: 'left'}}>
               <strong>
-              <span style={{width: '120px'}}><a href='/home' >轮滑赛事辅助系统平台</a></span>
+              <span style={{width: '120px'}}><a href={"/home"} >轮滑赛事辅助系统平台</a></span>
               &nbsp;&nbsp;&nbsp;&nbsp;
               <a onClick={() => window.open('https://www.gsta.top/nstatic/react/%E6%8A%A5%E5%90%8D%E6%AD%A5%E9%AA%A4_6fDXGU2.html')} >报名步骤查看</a>
               </strong>
@@ -180,8 +155,36 @@ function HomeLayout(props: any) {
 const mapStateToProps = ({gameList, global}:any) => {
   return {
     maskloading: gameList.maskloading,
-    closeModal: global.showModal
+    // closeModal: global.showModal
   }
 }
 
 export default connect(mapStateToProps)(HomeLayout);
+
+/**
+ *   // 报名步骤
+  useEffect(() => {
+    if(closeModal) {
+      Modal.info({
+        title: '若第一次登录本系统或对报名有疑问可查看该报名步骤',
+        content: (
+          <div>
+            <a onClick={() => window.open('https://www.gsta.top/nstatic/react/%E6%8A%A5%E5%90%8D%E6%AD%A5%E9%AA%A4_6fDXGU2.html')} >报名步骤查看</a>
+          </div>
+        ),
+        onOk() {
+          dispatch({
+            type: 'global/closeModal',
+            payload: false
+          });
+          notification.open({
+            message: '可在页面左上方再次查看报名步骤',
+            duration: 3,
+            placement: "topLeft"
+          });
+        },
+        okText:"知道了",
+      });
+    }
+  },[]);
+ * */

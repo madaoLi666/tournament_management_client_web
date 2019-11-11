@@ -1,24 +1,31 @@
-import { Model, EffectsCommandMap } from 'dva';
-import { AnyAction } from 'redux';
+import { Effect } from 'dva';
+import { Reducer } from 'redux';
 import { getGameList } from '@/services/gamelist';
 
-const GAMELIST_INTRODUCTION:Model = {
+export interface GameListModelState {
+  gameList?: Array<any>;
+  maskloading?: boolean;
+}
+
+export interface GameListModelType {
+  namespace: 'gameList';
+  state: GameListModelState;
+  effects: {
+    getGameList: Effect;
+  };
+  reducers: {
+    modifyGameList: Reducer<GameListModelState>;
+  };
+}
+
+const GameListModel: GameListModelType = {
   namespace: 'gameList',
   state: {
     gameList: [],
     maskloading: false
   },
-  reducers: {
-    modifyGameList(state: any,action: AnyAction) {
-      const { payload } = action;
-      state.gameList = payload.gameList;
-      state.maskloading = true;
-      return state;
-    }
-  },
   effects: {
-    *getGameList(action: AnyAction, effect: EffectsCommandMap ){
-      const { put } = effect;
+    *getGameList({ _ }, { put }){
       let data = yield getGameList();
       if(data) {
         yield put({
@@ -28,7 +35,16 @@ const GAMELIST_INTRODUCTION:Model = {
       }else{ return; }
     }
   },
+  reducers: {
+    modifyGameList(state, { payload }) {
+      return {
+        ...state,
+        gameList: payload.gameList,
+        maskloading: true
+      };
+    }
+  }
 
 };
 
-export default GAMELIST_INTRODUCTION;
+export default GameListModel;

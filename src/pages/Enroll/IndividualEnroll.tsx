@@ -63,7 +63,7 @@ class IndividualEnroll extends React.Component<any,any>{
     // TODO 待确认 因为升组项目这些信息，这里面没有，看看怎么弄
     // if(person_data.id !== undefined && unit_account !== undefined){
     //   this.setState({person_data: [{
-        
+
     //   }]})
     // }
   }
@@ -477,6 +477,6 @@ export default connect(({enroll, user}:any) => {
     individualLimitation: enroll.individualLimitation,
     unit_account: user.unitAccount,
     person_data: user.athleteData[0],
-    noticeVisbile: enroll.noticeVisbile
+    noticeVisible: enroll.noticeVisbile
   }
 })(IndividualEnroll);

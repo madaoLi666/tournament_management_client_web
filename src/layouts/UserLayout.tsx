@@ -1,5 +1,4 @@
-import React,{ useEffect } from 'react';
-import router from 'umi/router';
+import React from 'react';
 // @ts-ignore
 import styles from './index.less';
 import { Layout } from 'antd';

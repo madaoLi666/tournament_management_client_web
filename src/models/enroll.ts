@@ -1,11 +1,54 @@
-import router from 'umi/router';
-import { Model, EffectsCommandMap } from 'dva';
-import { AnyAction } from 'redux';
+import {  Effect } from 'dva';
+import {  Reducer } from 'redux';
 import { getContestantUnitData , checkISEnroll, individualEnroll, getEnrolledProject, deleteTeam} from '@/services/enroll.ts';
 import { getIndividualEnrollLimit, getAllItem } from '@/services/rules';
 import { convertItemData, convertAthleteList} from '@/utils/enroll';
 
-const ENROLL_MODEL: Model = {
+interface UnitMes {
+  unitData: object;
+  contestantUnitData: object;
+  athleteList: Array<any>;
+  singleEnrollList: Array<any>;
+  teamEnrollList: Array<any>;
+}
+
+export interface EnrollModelState {
+  currentMatchId?: number;
+  unitInfo?: object;
+  unit?: UnitMes;
+  individualLimitation?: object;
+  individualItem?: Array<any>;
+  teamItem?: Array<any>;
+  noticeVisbile?: boolean;
+}
+
+export interface EnrollModelType {
+  namespace: 'enroll',
+  state: EnrollModelState,
+  effects: {
+    getContestantUnitData: Effect;
+    checkIsEnrollAndGetAthleteLIST: Effect;
+    getIndividualLimitation: Effect;
+    getAllItemInfo: Effect;
+    individualEnroll: Effect;
+    deleteTeamProject: Effect;
+    clearstate: Effect;
+  },
+  reducers: {
+    modifyCurrentMatchId: Reducer<EnrollModelState>;
+    modifyUnitInfo: Reducer<EnrollModelState>;
+    modifyUnitData: Reducer<EnrollModelState>;
+    modifyAthleteList: Reducer<EnrollModelState>;
+    modifyIndividualLimitation: Reducer<EnrollModelState>;
+    modifyItem: Reducer<EnrollModelState>;
+    modifyContestantUnitData: Reducer<EnrollModelState>;
+    modifyTeamEnroll: Reducer<EnrollModelState>;
+    clearState: Reducer<EnrollModelState>;
+    modifyNoticeVisible: Reducer<EnrollModelState>;
+  }
+}
+
+const EnrollModel: EnrollModelType = {
   namespace: 'enroll',
   state: {
     currentMatchId: -1,
@@ -24,82 +67,13 @@ const ENROLL_MODEL: Model = {
     teamItem: [],
     noticeVisbile: true
   },
-  reducers: {
-    modifyCurrentMatchId(state: any, action: AnyAction){
-      const { matchId } = action.payload;
-      state.currentMatchId = matchId;
-      return state;
-    },
-    modifyUnitInfo(state: any, action: AnyAction){
-      const { unitInfo } = action.payload;
-      state.unitInfo = {
-        id: unitInfo.id,
-        unitName: unitInfo.name,
-        province: unitInfo.province,
-        address: unitInfo.address,
-        email: unitInfo.email,
-        contactPerson: unitInfo.contactperson,
-        contactPhone: unitInfo.contactphone,
-      };
-      return state;
-    },
-    modifyUnitData(state: any, action: AnyAction){
-      const { unitData } = action.payload;
-      state.unit.unitData = unitData;
-      return state;
-    },
-    modifyAthleteList (state: any, action: AnyAction){
-      const { athleteList } = action.payload;
-      state.unit.athleteList = athleteList;
-      return state;
-    },
-    modifyIndividualLimitation(state: any, action: AnyAction){
-      const { individualLimitation } = action.payload;
-      state.individualLimitation = individualLimitation;
-      return state;
-    },
-    modifyItem(state: any, action: AnyAction){
-      const { iI, tI } = action.payload;
-      state.individualItem = iI;
-      state.teamItem = tI;
-      return state;
-    },
-    modifyContestantUnitData(state: any, action: AnyAction){
-      const { contestantUnitData } = action.payload;
-      state.unit.contestantUnitData = contestantUnitData;
-      return state;
-    },
-    modifyTeamEnroll(state:any, action: AnyAction) {
-      const { teamEnrollData } = action.payload;
-      state.unit.teamEnrollList = teamEnrollData;
-      return state;
-    },
-    clearState(state: any, action: AnyAction) {
-      state.currentMatchId = -1,
-      state.unitInfo = {},
-      state.unit.contestantUnitData = {},
-      state.unit.athleteList = [],
-      state.unit.singleEnrollList = [],
-      state.unit.teamEnrollList = [],
-      state.individualLimitation = {},
-      state.individualItem = [],
-      state.unit.unitData = {},
-      state.teamItem = []
-      return state;
-    },
-    modifyNoticeVisible(state: any, action: AnyAction){
-      // 这里为了方便 直接改那个系统通知
-      state.noticeVisbile = false;
-      return state;
-    }
-  },
   effects: {
     // 获取参赛单位信息
-    * getContestantUnitData (action: AnyAction, effect: EffectsCommandMap) {
-      const { put } = effect;
-      const { unitId, matchId } = action.payload;
+    * getContestantUnitData ({ payload }, { put }) {
+      const { unitId, matchId } = payload;
       let data = yield getContestantUnitData({matchdata: matchId, unitdata: unitId});
       if(data) {
+        console.log(312);
         let uD = {
           id: data.id,
           leaderName: data.leader,
@@ -117,9 +91,8 @@ const ENROLL_MODEL: Model = {
       }
     },
     // 检查是否有报名信息，并获取运动员列表
-    * checkIsEnrollAndGetAthleteLIST  (action: AnyAction, effect: EffectsCommandMap) {
-      const { put } = effect;
-      const { matchId, unitId } = action.payload;
+    * checkIsEnrollAndGetAthleteLIST  ({ payload }, { put }) {
+      const { matchId, unitId } = payload;
       let data = yield checkISEnroll({unitdata: unitId, matchdata: matchId});
       // 判断数据是否存在
       if(data) {
@@ -154,7 +127,7 @@ const ENROLL_MODEL: Model = {
       }
     },
     // 得到个人项目限制
-    * getIndividualLimitation ({payload}: AnyAction, {put}: EffectsCommandMap) {
+    * getIndividualLimitation ({payload}, {put}) {
       const { matchId } = payload;
       let data = yield getIndividualEnrollLimit({matchdata: matchId});
       if(data) {
@@ -171,7 +144,7 @@ const ENROLL_MODEL: Model = {
       }
     },
     //获取所有项目
-    * getAllItemInfo ({payload}: AnyAction, {put}: EffectsCommandMap) {
+    * getAllItemInfo ({payload}, {put}) {
       const { matchId } = payload;
       let data = yield getAllItem({matchdata: matchId});
       if( data ) {
@@ -182,7 +155,7 @@ const ENROLL_MODEL: Model = {
         })
       }
     },
-    * individualEnroll ({payload}: AnyAction, {put, select}: EffectsCommandMap) {
+    * individualEnroll ({payload}, {put, select}) {
       const { enrollData } = payload;
       let data = yield individualEnroll(enrollData);
       if(data) {
@@ -196,9 +169,8 @@ const ENROLL_MODEL: Model = {
       }
     },
     // 删除参赛运动员时关联删除他的团队参赛项目
-    * deleteTeamProject(action: AnyAction, effect: EffectsCommandMap) {
-      yield console.log(action.payload);
-      let res = yield getEnrolledProject(action.payload);
+    * deleteTeamProject({ payload }, { put }) {
+      let res = yield getEnrolledProject(payload);
       // 如果有已经报了名的团队项目
       if(res.groupproject.length !== 0) {
         for(let i:number = 0;i < res.groupproject.length;i++){
@@ -206,10 +178,94 @@ const ENROLL_MODEL: Model = {
         }
       }
     },
-    * clearstate(action: AnyAction, effect: EffectsCommandMap) {
-      yield effect.put({type: 'clearState', payload:null});
+    * clearstate({ payload }, { put }) {
+      yield put({type: 'clearState', payload:null});
     },
+  },
+  reducers: {
+    modifyCurrentMatchId(state, { payload }){
+      const { matchId } = payload;
+      return {
+        ...state,
+        currentMatchId: matchId
+      };
+    },
+    modifyUnitInfo(state, { payload }){
+      const { unitInfo } = payload;
+      console.log(unitInfo);
+      return {
+        ...state,
+        unitInfo: {
+          id: unitInfo.id,
+          unitName: unitInfo.name,
+          province: unitInfo.province,
+          address: unitInfo.address,
+          email: unitInfo.email,
+          contactPerson: unitInfo.contactperson,
+          contactPhone: unitInfo.contactphone,
+        }
+      };
+    },
+    modifyUnitData(state, { payload }){
+      const { unitData } = payload;
+      state.unit.unitData = unitData;
+      return state;
+    },
+    modifyAthleteList (state, { payload }){
+      const { athleteList } = payload;
+      state.unit.athleteList = athleteList;
+      return state;
+    },
+    modifyIndividualLimitation(state, { payload }){
+      const { individualLimitation } = payload;
+      return {
+        ...state,
+        individualLimitation: individualLimitation
+      };
+    },
+    modifyItem(state, { payload }){
+      const { iI, tI } = payload;
+      return {
+        ...state,
+        individualItem: iI,
+        teamItem: tI
+      };
+    },
+    modifyContestantUnitData(state, { payload }){
+      const { contestantUnitData } = payload;
+      state.unit.contestantUnitData = contestantUnitData;
+      return state;
+    },
+    modifyTeamEnroll(state, { payload }) {
+      const { teamEnrollData } = payload;
+      state.unit.teamEnrollList = teamEnrollData;
+      return state;
+    },
+    clearState(state, { payload }) {
+      return {
+        ...state,
+        currentMatchId: -1,
+        unitInfo: {},
+        unit: {
+          contestantUnitData: {},
+          athleteList: [],
+          singleEnrollList: [],
+          teamEnrollList: [],
+          unitData: {}
+        },
+        individualLimitation: {},
+        individualItem: [],
+        teamItem: []
+      };
+    },
+    modifyNoticeVisible(state, { payload }){
+      // 这里为了方便 直接改那个系统通知
+      return {
+        ...state,
+        noticeVisbile: false
+      };
+    }
   }
 };
 
-export default ENROLL_MODEL;
+export default EnrollModel;

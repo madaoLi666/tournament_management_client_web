@@ -241,7 +241,7 @@ const UIForm = Form.create<UnitInfoFormProps>({
 
 function EditUnitInfo(props: { unitData: any, matchId: number, dispatch: Dispatch }) {
 
-  const { unitData, matchId,dispatch } = props;
+  const { unitData, matchId, dispatch } = props;
 
   function submitData(data: any) {
     if(unitData){
@@ -331,4 +331,3 @@ export default connect(({ enroll,user }: any) => {
 
   return { unitData: targetUnitData, matchId:currentMatchId };
 })(EditUnitInfo);
-

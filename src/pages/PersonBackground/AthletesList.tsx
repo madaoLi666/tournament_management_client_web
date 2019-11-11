@@ -8,6 +8,8 @@ import { addplayer, updatePlayer } from '@/services/athlete';
 // @ts-ignore
 import styles from './index.less';
 import { UploadFile } from 'antd/lib/upload/interface';
+import { Simulate } from 'react-dom/test-utils';
+import load = Simulate.load;
 
 const { confirm } = Modal;
 
@@ -29,12 +31,7 @@ interface athletesProps {
     unitAccount?: number
     athletes?: AthleteData[]
     unitData?: UnitData[]
-}
-// 这个枚举类型是用来更换 当接口返回错误对象时，更改单词变成中文的，比如
-enum resName {
-    province = '省份地名',
-    address = '地址',
-    emergencycontactpeople = '紧急联系人'
+    loading: boolean;
 }
 
 function AthletesList(props:athletesProps) {
@@ -334,7 +331,7 @@ function AthletesList(props:athletesProps) {
 
                 <PageHeader style={{fontSize:16}} title="运动员列表" extra={AddbuttonNode} />
                 <br/>
-                <Table<Athlete> bordered={true} onChange={onChange} onRow={handleRow} dataSource={data} scroll={{x:950}} >
+                <Table<Athlete> bordered={true} loading={props.loading} onChange={onChange} onRow={handleRow} dataSource={data} scroll={{x:950}} >
                     <Table.Column<Athlete> key='key'  title='编号' dataIndex='key' align="center" />
                     <Table.Column<Athlete> key='name' title='姓名' dataIndex='name' align="center" {...getColumnSearchProps('name')} />
                     <Table.Column<Athlete>
@@ -370,14 +367,15 @@ function AthletesList(props:athletesProps) {
     );
 }
 
-const mapStateToProps = ({user}:any) => {
+const mapStateToProps = ({user,loading}:any) => {
     let props:athletesProps = {
         id: user.id,
         unitAccount: user.unitAccount,
         athletes: user.athleteData,
-        unitData: user.unitData
-    }
+        unitData: user.unitData,
+        loading: loading.global
+    };
     return props;
-}
+};
 
 export default connect(mapStateToProps)(AthletesList);

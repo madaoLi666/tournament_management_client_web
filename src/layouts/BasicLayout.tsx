@@ -1,9 +1,9 @@
-import React,{ ReactNode, useEffect } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { IRoute } from 'umi-types';
 import { connect } from 'dva';
 import router from 'umi/router';
 import uRoutes from '@/config/router';
-
+import { Dispatch } from 'redux';
 import { Layout, Menu, Breadcrumb, Drawer, Button, Avatar, Typography, Row, Col, message, Icon } from 'antd';
 // @ts-ignore
 import styles from './index.less';
@@ -33,7 +33,7 @@ const autoAdjust2 = {
 // 初始化菜单栏的Function 内部方法
 function initialMenuDOM(routes: IRoute): ReactNode{
   let menuDOM:Array<ReactNode> = [];
-  if(routes == undefined || routes.length === 0){return <div>暂无路由数据</div>}
+  if(routes === undefined || routes.length === 0){return <div>暂无路由数据</div>}
   // 遍历
   routes.forEach((v:IRoute) => {
     // 是否需要渲染
@@ -66,7 +66,14 @@ function initialMenuDOM(routes: IRoute): ReactNode{
   return menuDOM;
 }
 
-function BasicLayout(props: any) {
+interface BasicLayoutProps {
+  dispatch: Dispatch;
+  children: React.ReactNode;
+  userInfo: any;
+  personInfo: any;
+}
+
+function BasicLayout(props: BasicLayoutProps) {
   useEffect(() => {
     props.dispatch({
       type:'user/getAccountData'
