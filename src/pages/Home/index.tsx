@@ -28,27 +28,37 @@ class Home extends React.Component<any,any>{
     };
   }
 
-  componentDidMount(): void {
-    getHomePic().then(data => {
-      if(data) {
-        this.setState({homePicArr: data.filter((m:any) => (m.id >= 13 && m.id <=15)).map((v:any) => (v.file))});
-      }else {
-        console.log('图片获取失败');
-      }
-    })
-  }
+  // componentDidMount(): void {
+  //   getHomePic().then(data => {
+  //     if(data) {
+  //       this.setState({homePicArr: data.filter((m:any) => (m.id >= 13 && m.id <=15)).map((v:any) => (v.file))});
+  //     }else {
+  //       console.log('图片获取失败');
+  //     }
+  //   })
+  // }
 
   render():React.ReactNode {
     const { gameList } = this.props;
     const { homePicArr } = this.state;
     let gameListDOM: React.ReactNode = [];
-    gameList.forEach((v:any) => {
+    const new_homePicArr: string[] = [
+      'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/1.jpg',
+      'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/2.jpg',
+      'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/3.jpg',
+    ];
+    const small_new_homePicArr: string[] = [
+      'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/sudulunhua.jpeg',
+      'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/lunhuaqiu.jpeg',
+      'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/ziyoushi.jpeg',
+    ];
+    gameList.forEach((v:any,index:any) => {
       // @ts-ignore
       gameListDOM.push(
         <Col key={v.id} {...adjustCol} >
           <div className={styles['game-list-block']}>
             <div className={styles['img-block']}>
-              <img src={v.image} onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)} alt=""/>
+              <img src={small_new_homePicArr[index]} onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)} alt=""/>
             </div>
             <div className={styles['text-block']}>
               <div><b>赛事名称</b>:{v.name}</div>
@@ -60,8 +70,8 @@ class Home extends React.Component<any,any>{
       )
     });
     let carouselDOM: React.ReactNode = [];
-    if(homePicArr.length !== 0){
-      carouselDOM = homePicArr.map((v:string) => (
+    if(new_homePicArr.length !== 0){
+      carouselDOM = new_homePicArr.map((v:string) => (
         <div className={styles['carousel-item']} key={v.slice(-13,-5)}>
           <img src={v} alt=""/>
         </div>

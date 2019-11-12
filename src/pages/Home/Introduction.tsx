@@ -30,6 +30,13 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
       }
     }
     if(index !== -1 && Object.keys(currentGameData).length === 0){
+      if(gameList[index].id === 12) {
+        gameList[index].image = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/sudulunhua.jpeg';
+      }else if (gameList[index].id === 13) {
+        gameList[index].image = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/lunhuaqiu.jpeg';
+      }else if(gameList[index].id === 14) {
+        gameList[index].image = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/ziyoushi.jpeg';
+      }
       this.setState({currentGameData: gameList[index]});
     }
   }
@@ -79,8 +86,6 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
       });
     }
 
-
-
     // @ts-ignore
     // @ts-ignore
     // @ts-ignore
@@ -101,7 +106,7 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
                 {currentGameData ? <span>下载：<a href={download_url[0]['saveaddress']}>参赛自愿责任书</a></span> : <div>数据尚未加载</div>}
                 <br/>
                 <Button type='primary' onClick={() => this.enterEnrollChannel()}>参加报名</Button>
-                {/* <Button type='primary' onClick={() => {message.warning('现在不是报名时间，请先查看赛事章程')}}>参加报名</Button> */}
+                {/* <Button type='primary' onClick={() => {message.warning('现在不是报名时间')}}>参加报名</Button> */}
               </Col>
             </Row>
           </div>
