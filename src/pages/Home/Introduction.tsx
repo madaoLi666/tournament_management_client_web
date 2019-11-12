@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tabs, Button, Col, Row, message } from 'antd';
+import { Tabs, Button, Col, Row, message, Skeleton } from 'antd';
 import StaticHtmlPage from '@/components/StaticHtmlPage/StaticHtmlPage'
 import { connect } from 'dva';
 import { Dispatch } from 'redux';
@@ -9,12 +9,19 @@ import styles from './index.less';
 
 const { TabPane } = Tabs;
 
+const imageItems: string[] = [
+  'http://cos.gsta.top/sudulunhua.jpeg',
+  'http://cos.gsta.top/lunhuaqiu.jpeg',
+  'http://cos.gsta.top/ziyoushi.jpeg'
+];
+
 class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Array<any>,unit_account: number},any> {
 
   constructor(props:any) {
     super(props);
     this.state = {
       currentGameData:{},
+      gameList: []
     };
   }
 
@@ -31,14 +38,20 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
     }
     if(index !== -1 && Object.keys(currentGameData).length === 0){
       if(gameList[index].id === 12) {
-        gameList[index].image = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/sudulunhua.jpeg';
+        gameList[index].image = 'http://cos.gsta.top/sudulunhua.jpeg';
       }else if (gameList[index].id === 13) {
-        gameList[index].image = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/lunhuaqiu.jpeg';
+        gameList[index].image = 'http://cos.gsta.top/lunhuaqiu.jpeg';
       }else if(gameList[index].id === 14) {
-        gameList[index].image = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/ziyoushi.jpeg';
+        gameList[index].image = 'http://cos.gsta.top/ziyoushi.jpeg';
       }
       this.setState({currentGameData: gameList[index]});
     }
+  }
+
+  onLoad(images: string) {
+    this.setState(({gameList}: any) => {
+      return { gameList: gameList.concat(images) };
+    })
   }
 
   enterEnrollChannel = () => {
@@ -65,12 +78,14 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
   render() {
 
     // 渲染
-    const { currentGameData } = this.state;
-    let IMG_DOM:React.ReactNode = <div>image</div>;
-    let ENROLL_DOM:React.ReactNode = <div>image</div>;
+    const { currentGameData, gameList } = this.state;
+    let IMG_DOM:React.ReactNode = <Skeleton active />;
+    let ENROLL_DOM:React.ReactNode = <Skeleton active />;
     let TAB_DOM = <TabPane tab='联系人' key="联系人" />;
     let download_url = [{saveaddress: ''}];
-    if(Object.keys(currentGameData).length !== 0) {
+    if(Object.keys(currentGameData).length !== 0 && gameList.length === imageItems.length) {
+      setTimeout(() =>{}
+      ,500);
       IMG_DOM = <img src={currentGameData.image} alt='' />;
       ENROLL_DOM = <h4>报名时间：{currentGameData.enrollstarttime.slice(0,10)}至{currentGameData.enrollendtime.slice(0,10)}</h4>
       TAB_DOM = (
@@ -86,10 +101,6 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
       });
     }
 
-    // @ts-ignore
-    // @ts-ignore
-    // @ts-ignore
-    // @ts-ignore
     return (
       <div className={styles['introduction-page']}>
         <div className={styles['pic-block']}>
@@ -126,11 +137,21 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
             </TabPane>
           </Tabs>
         </div>
+        {/*这里是隐藏加载图片*/}
+        <div className={styles['hidden']}>
+          {imageItems.map((item, i) =>
+            <img
+              src={item}
+              onLoad={this.onLoad.bind(this, item)}
+              key={i}
+              alt=""
+            />
+          )}
+        </div>
       </div>
     )
   }
 }
-
 
 export default connect(({gameList, enroll, user}:any) => {
   return {

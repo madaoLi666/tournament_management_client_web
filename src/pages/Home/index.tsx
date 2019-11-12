@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Carousel, Row, Col
+  Carousel, Row, Col, Skeleton
 } from 'antd';
 import { getHomePic } from '@/services/gamelist.ts';
 import router from 'umi/router';
@@ -24,57 +24,84 @@ class Home extends React.Component<any,any>{
     super(props);
     this.state = {
       homePicArr: [],
-      loading: false
+      loading: false,
+      small_homePicArr: []
     };
   }
 
-  // componentDidMount(): void {
-  //   getHomePic().then(data => {
-  //     if(data) {
-  //       this.setState({homePicArr: data.filter((m:any) => (m.id >= 13 && m.id <=15)).map((v:any) => (v.file))});
-  //     }else {
-  //       console.log('图片获取失败');
-  //     }
-  //   })
-  // }
+  onLoad(images: string) {
+    this.setState(({homePicArr}: any) => {
+      return { homePicArr: homePicArr.concat(images) };
+    })
+  }
+
+  onLoadSmall(images: string) {
+    this.setState(({small_homePicArr}: any) => {
+      return { small_homePicArr: small_homePicArr.concat(images) };
+    })
+  }
 
   render():React.ReactNode {
     const { gameList } = this.props;
-    const { homePicArr } = this.state;
+    const { homePicArr, small_homePicArr } = this.state;
     let gameListDOM: React.ReactNode = [];
     const new_homePicArr: string[] = [
-      'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/1.jpg',
-      'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/2.jpg',
-      'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/3.jpg',
+      'http://cos.gsta.top/1.jpg',
+      'http://cos.gsta.top/2.jpg',
+      'http://cos.gsta.top/3.jpg',
     ];
     const small_new_homePicArr: string[] = [
-      'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/sudulunhua.jpeg',
-      'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/lunhuaqiu.jpeg',
-      'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/ziyoushi.jpeg',
+      'http://cos.gsta.top/sudulunhua.jpeg',
+      'http://cos.gsta.top/lunhuaqiu.jpeg',
+      'http://cos.gsta.top/ziyoushi.jpeg',
     ];
-    gameList.forEach((v:any,index:any) => {
-      // @ts-ignore
-      gameListDOM.push(
-        <Col key={v.id} {...adjustCol} >
-          <div className={styles['game-list-block']}>
-            <div className={styles['img-block']}>
-              <img src={small_new_homePicArr[index]} onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)} alt=""/>
+    if(small_homePicArr.length === small_new_homePicArr.length) {
+      gameList.forEach((v:any,index:any) => {
+        // @ts-ignore
+        gameListDOM.push(
+          <Col key={v.id} {...adjustCol} >
+            <div className={styles['game-list-block']}>
+              <div className={styles['img-block']}>
+                <img src={small_new_homePicArr[index]} onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)} alt=""/>
+              </div>
+              <div className={styles['text-block']}>
+                <div><b>赛事名称</b>:{v.name}</div>
+                <div><b>举办时间</b><span>:{v.rpstarttime.slice(0,10).replace(/-/g,"/")}~{v.rpendtime.slice(0,10).replace(/-/g,"/")}</span></div>
+              </div>
+              <a onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)}>进入赛事</a>
             </div>
-            <div className={styles['text-block']}>
-              <div><b>赛事名称</b>:{v.name}</div>
-              <div><b>举办时间</b><span>:{v.rpstarttime.slice(0,10).replace(/-/g,"/")}~{v.rpendtime.slice(0,10).replace(/-/g,"/")}</span></div>
+          </Col>
+        )
+      });
+    }else {
+      gameList.forEach((v:any,index:any) => {
+        // @ts-ignore
+        gameListDOM.push(
+          <Col key={v.id} {...adjustCol} >
+            <div className={styles['game-list-block']}>
+              <div className={styles['img-block']}>
+                <Skeleton active />
+              </div>
+              <div className={styles['text-block']}>
+                <div><b>赛事名称</b>:{v.name}</div>
+                <div><b>举办时间</b><span>:{v.rpstarttime.slice(0,10).replace(/-/g,"/")}~{v.rpendtime.slice(0,10).replace(/-/g,"/")}</span></div>
+              </div>
+              <a onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)}>进入赛事</a>
             </div>
-            <a onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)}>进入赛事</a>
-          </div>
-        </Col>
-      )
-    });
+          </Col>
+        )
+      });
+    }
     let carouselDOM: React.ReactNode = [];
-    if(new_homePicArr.length !== 0){
+    if(homePicArr.length === new_homePicArr.length){
       carouselDOM = new_homePicArr.map((v:string) => (
         <div className={styles['carousel-item']} key={v.slice(-13,-5)}>
           <img src={v} alt=""/>
         </div>
+      ));
+    }else {
+      carouselDOM = new_homePicArr.map((v:string) => (
+        <Skeleton active />
       ));
     }
 
@@ -98,6 +125,24 @@ class Home extends React.Component<any,any>{
               {gameListDOM}
             </Row>
           </div>
+        </div>
+        <div className={styles['hidden']}>
+          {new_homePicArr.map((item, i) =>
+            <img
+              src={item}
+              onLoad={this.onLoad.bind(this, item)}
+              key={i}
+              alt=""
+            />
+          )}
+          {small_new_homePicArr.map((item, i) =>
+            <img
+              src={item}
+              onLoad={this.onLoadSmall.bind(this, item)}
+              key={i}
+              alt=""
+            />
+          )}
         </div>
       </div>
     )

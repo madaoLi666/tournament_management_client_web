@@ -121,8 +121,6 @@ const config: IConfig =  {
       antd: true,
       dva: true,
       dynamicImport: { webpackChunkName: true },
-      // title: 'userEntryPage',
-      title: '轮滑赛事辅助平台',
       dll: true,
       // chunks: ['antdesigns', 'icons','umi'],
       routes: {
