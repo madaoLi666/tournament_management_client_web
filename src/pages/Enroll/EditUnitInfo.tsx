@@ -9,6 +9,7 @@ import { participativeUnit } from '@/services/enroll.ts';
 // @ts-ignore
 import styles from './index.less';
 import { Dispatch } from 'redux';
+import { ConnectState } from '@/models/connect';
 
 // interface UnitInfo {
 //   // 单位id
@@ -66,12 +67,12 @@ class UnitInfoForm extends Component<UnitInfoFormProps, any> {
   // 对 教练（选填项）电话号码判别
   checkOptionalPhone = (rule: any, value: any, callback: Function) => {
     if (value === '' || value === undefined) {
-      callback();
+      callback();return;
     } else {
       if (checkPhoneNumber.test(value)) {
-        callback();
+        callback();return;
       } else {
-        callback('请输入正确的国内手机号码');
+        callback('请输入正确的国内手机号码');return;
       }
     }
   };
@@ -215,7 +216,7 @@ class UnitInfoForm extends Component<UnitInfoFormProps, any> {
   }
 }
 
-const UIForm = Form.create<UnitInfoFormProps>({
+const UIForm = connect()(Form.create<UnitInfoFormProps>({
   mapPropsToFields: props => {
     const { createFormField } = Form;
     const { unitData } = props;
@@ -237,7 +238,7 @@ const UIForm = Form.create<UnitInfoFormProps>({
       unitNameAlias: createFormField({value:unitData.unitName}),
     } }
   },
-})(UnitInfoForm);
+})(UnitInfoForm));
 
 function EditUnitInfo(props: { unitData: any, matchId: number, dispatch: Dispatch }) {
 
@@ -289,8 +290,7 @@ function EditUnitInfo(props: { unitData: any, matchId: number, dispatch: Dispatc
         payload:{ matchId: matchId, unitId:unitData.unitId }
       })
     }
-
-  },[unitData.unitId]);
+  },[unitData.unitId,matchId]);
 
   return (
     <div className={styles['edit-unit-info']}>
@@ -328,6 +328,5 @@ export default connect(({ enroll,user }: any) => {
   }else {
     targetUnitData.unitNameAlias = unitInfo.unitName;
   }
-
   return { unitData: targetUnitData, matchId:currentMatchId };
 })(EditUnitInfo);

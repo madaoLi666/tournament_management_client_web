@@ -66,3 +66,8 @@ export async function getEnrolledProject(data: object): Promise<any> {
 export async function deleteTeam(data:object):Promise<any>{
     return axiosInstance.delete('/teamenroll/',{data});
 }
+
+// 获取本场赛事本个单位是否有参赛资格
+export async function getLimitEnroll(data: object): Promise<any> {
+    return axiosInstance.get('/matchdataunitdatalimit/', { params: data});
+}

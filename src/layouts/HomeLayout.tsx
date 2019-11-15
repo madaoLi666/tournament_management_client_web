@@ -43,12 +43,15 @@ function HomeLayout(props: HomeLayoutProps) {
   const [loading,setLoading] = useState(false);
   useEffect(() => {
     const { dispatch } = props;
-    dispatch({type: 'gameList/getGameList'});
-    const token = window.localStorage.getItem('TOKEN');
-    if(token !== null){
-      dispatch({type: 'user/getAccountData'});
-    }
-  });
+    /* 这里加多一个callback，用以防止401时重复请求 */
+    dispatch({type: 'gameList/getGameList',
+      callback: (data: any) => {
+        if(data !== undefined && token !== null){
+          dispatch({type: 'user/getAccountData'});
+        }
+      }
+    });
+  },[]);
 
   useEffect(() => {
     setTimeout(() => {

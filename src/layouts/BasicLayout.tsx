@@ -71,6 +71,7 @@ interface BasicLayoutProps {
   children: React.ReactNode;
   userInfo: any;
   personInfo: any;
+  drawer_visible: boolean;
 }
 
 function BasicLayout(props: BasicLayoutProps) {
@@ -78,26 +79,30 @@ function BasicLayout(props: BasicLayoutProps) {
     props.dispatch({
       type:'user/getAccountData'
     })
-  },[]);
+    props.dispatch({
+      type:'global/person_background_drawer',
+      payload: false
+    })
+},[]);
 
-  let leaderName:string;
-  let unitName:string;
-  let person_name:string;
-  let athleteNumber: number;
-  if(props.userInfo) {
-    // 判断是否有单位账号信息
-    leaderName = props.userInfo.athleteData[0].name;
-    unitName = props.userInfo.unitData[0].name;
-    athleteNumber = props.userInfo.unitathlete.length;
+let leaderName:string;
+let unitName:string;
+let person_name:string;
+let athleteNumber: number;
+if(props.userInfo) {
+  // 判断是否有单位账号信息
+  leaderName = props.userInfo.athleteData[0].name;
+  unitName = props.userInfo.unitData[0].name;
+  athleteNumber = props.userInfo.unitathlete.length;
+}
+if(props.personInfo) {
+  if(props.personInfo.length !== 0) {
+    person_name = props.personInfo[0].name;
   }
-  if(props.personInfo) {
-    if(props.personInfo.length !== 0) {
-      person_name = props.personInfo[0].name;
-    }
-  }
+}
 
   // 默认不显示抽屉
-  const [visible, setVisible] = React.useState(false);
+  const [visible, setVisible] = React.useState(props.drawer_visible);
   function showDrawer() {setVisible(!visible);}
 
   function signout() {
@@ -134,8 +139,9 @@ function BasicLayout(props: BasicLayoutProps) {
       </Drawer>
       <Header style={{ background: '#fff', padding: 0 , height: "100%"}}>
         <div>
-          <Icon className={styles['falist']} onClick={showDrawer} style={{width:28,height:28,marginLeft:16,marginTop:16}} type="unordered-list" />
-        <Button type="link" onClick={signout} style={{float:"right",marginTop:"15px"}} >退出账号</Button>
+          <Icon className={styles['falist']} onClick={showDrawer} style={{fontSize:28,marginLeft:16,marginTop:16}} type="unordered-list" />
+          <Button type="link" onClick={signout} style={{float:"right",marginTop:"15px"}} >退出账号</Button>
+          <Button type="link" onClick={() => {router.push('/home')}} style={{float:"right",marginTop:"15px"}} >返回主页</Button>
         </div>
         <Row style={{height:130}}>
           <Col {...autoAdjust1}>
@@ -190,17 +196,18 @@ const mapStateToProps = (state:any) => {
     if (state.user.unitData.length === 0) {
       if(state.user.unitAccount === 1) {
         return {
-          personInfo: state.user.athleteData
+          personInfo: state.user.athleteData,
+          drawer_visible: state.global.drawer_visible
         };
       }else {
-        return {};
+        return { drawer_visible: state.global.drawer_visible };
       }
     }
   }
   if(state.user.id !== ''){
-    return { userInfo: state.user};
+    return { userInfo: state.user, drawer_visible: state.global.drawer_visible};
   }
-  return {}
+  return { drawer_visible: state.global.drawer_visible }
 };
 
 export default connect(mapStateToProps)(BasicLayout);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tabs, Button, Col, Row, message, Skeleton } from 'antd';
+import { Tabs, Button, Col, Row, message, Skeleton, Modal } from 'antd';
 import StaticHtmlPage from '@/components/StaticHtmlPage/StaticHtmlPage'
 import { connect } from 'dva';
 import { Dispatch } from 'redux';
@@ -15,7 +15,8 @@ const imageItems: string[] = [
   'http://cos.gsta.top/ziyoushi.jpeg'
 ];
 
-class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Array<any>,unit_account: number},any> {
+class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Array<any>,unit_account: number,
+  unitId: number},any> {
 
   constructor(props:any) {
     super(props);
@@ -55,7 +56,7 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
   }
 
   enterEnrollChannel = () => {
-    const { dispatch, unit_account } = this.props;
+    const { dispatch, unit_account, unitId } = this.props;
     const { currentGameData } = this.state;
     if(currentGameData.id !== undefined && currentGameData.id !== -1) {
       if(unit_account == 0){
@@ -64,8 +65,20 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
       if(unit_account == 2){
         // 把matchId存入本地
         window.localStorage.setItem('MATCH_ID',currentGameData.id);
-        dispatch({type: 'enroll/modifyCurrentMatchId', payload: {matchId: currentGameData.id}});
-        router.push('/enroll/editUnitInfo');
+        dispatch({type: 'enroll/getEnrollLimit', payload: { matchdata_id: currentGameData.id, unitdata_id: unitId },
+          callback: (data: boolean) => {
+            if(data) {
+              dispatch({type: 'enroll/modifyCurrentMatchId', payload: {matchId: currentGameData.id}});
+              router.push('/enroll/editUnitInfo');
+            }else {
+              Modal.warning({
+                title: '您的单位暂时报名不了本场赛事',
+                content: '此为广东省轮滑运动协会会员单位杯，贵单位注册的名称为非会员，不能参赛，感谢您们的参与！如是会员需更正名称，请在个人中心中更新单位信息后 再进行报名。',
+                okText: '确定'
+              })
+            }
+          }
+        });
       }else if(unit_account == 1){
         message.info('本系统暂不支持个人报名，请联系您的单位进行报名')
         return;
@@ -79,8 +92,8 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
 
     // 渲染
     const { currentGameData, gameList } = this.state;
-    let IMG_DOM:React.ReactNode = <Skeleton active />;
-    let ENROLL_DOM:React.ReactNode = <Skeleton active />;
+    let IMG_DOM:React.ReactNode = <Skeleton key="skeleton" active />;
+    let ENROLL_DOM:React.ReactNode = <Skeleton key="skeleton1" active />;
     let TAB_DOM = <TabPane tab='联系人' key="联系人" />;
     let download_url = [{saveaddress: ''}];
     if(Object.keys(currentGameData).length !== 0 && gameList.length === imageItems.length) {

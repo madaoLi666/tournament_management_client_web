@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Carousel, Row, Col, Skeleton
 } from 'antd';
-import { getHomePic } from '@/services/gamelist.ts';
 import router from 'umi/router';
 import { connect } from 'dva';
 import { ColProps } from 'antd/lib/grid';
@@ -80,7 +79,7 @@ class Home extends React.Component<any,any>{
           <Col key={v.id} {...adjustCol} >
             <div className={styles['game-list-block']}>
               <div className={styles['img-block']}>
-                <Skeleton active />
+                <Skeleton key="skeleton" active />
               </div>
               <div className={styles['text-block']}>
                 <div><b>赛事名称</b>:{v.name}</div>
@@ -101,7 +100,7 @@ class Home extends React.Component<any,any>{
       ));
     }else {
       carouselDOM = new_homePicArr.map((v:string) => (
-        <Skeleton active />
+        <Skeleton key="skeleton1" active />
       ));
     }
 

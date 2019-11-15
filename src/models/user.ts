@@ -3,6 +3,7 @@ import { AnyAction, Reducer } from 'redux';
 import { checkVerificationCode, accountdata, checkAccountState } from '@/services/login.ts';
 import router from 'umi/router';
 import { deletePlayer } from '@/services/athlete';
+import { modifyUnitData } from '@/services/unit';
 import { message } from 'antd';
 import { isIllegal } from '@/utils/judge';
 
@@ -62,6 +63,7 @@ export interface UserModelType {
     getAccountData: Effect;
     clearstate: Effect;
     deleteAthlete: Effect;
+    changeUnitBasicData: Effect;
   };
   reducers: {
     modifyPhoneNumber: Reducer<UserModelState>;
@@ -71,6 +73,7 @@ export interface UserModelType {
     saveUnitAccount: Reducer<UserModelState>;
     savePerson: Reducer<UserModelState>;
     clearState: Reducer<UserModelState>;
+    modifyUnitBasicData: Reducer<UserModelState>;
   };
 }
 
@@ -92,6 +95,17 @@ const UserModel: UserModelType = {
     unitathlete: []
   },
   reducers: {
+    // 修改单位基本信息
+    modifyUnitBasicData(state, { payload }) {
+      state.unitData[0].name = payload.name;
+      state.unitData[0].contactperson = payload.contactperson;
+      state.unitData[0].contactphone = payload.contactphone;
+      state.unitData[0].province = payload.province;
+      state.unitData[0].address = payload.address;
+      state.unitData[0].email = payload.email;
+      state.unitData[0].postalcode = payload.postalcode;
+      return {...state};
+    },
     // 存手机进state
     modifyPhoneNumber(state, { payload }) {
       return {
@@ -167,6 +181,13 @@ const UserModel: UserModelType = {
     }
    },
   effects: {
+    * changeUnitBasicData({ payload, callback }, { put }) {
+      let res = yield modifyUnitData(payload);
+      if(res) {
+        message.success(res);
+        yield put({type: 'modifyUnitBasicData', payload: payload});
+      }
+    },
     // 修改手机号码state
     * savePhone({ payload }, { put }) {
       yield put({type:'modifyPhoneNumber',payload: payload.phonenumber})
@@ -200,7 +221,7 @@ const UserModel: UserModelType = {
       yield put({type:'saveValue',payload: payload})
     },
     // 获取账号基本信息
-    * getAccountData({ payload }, { put }) {
+    * getAccountData({ payload, callback }, { put }) {
       let data = yield accountdata();
       if (data) {
         // ===2 代表是单位账号，还要多一项操作是调用获取单位账号下的运动员信息的接口
@@ -209,17 +230,19 @@ const UserModel: UserModelType = {
             message.error('此账号存在问题，请联系本公司！');
             window.localStorage.clear();
             router.push('/home');
-            return;
+            if(callback) { callback(undefined); }
           }
           yield put({type: 'saveUnitAccount', payload: data});
           // 将unitData 设置
           yield put({type: 'enroll/modifyUnitInfo',payload: {unitInfo: data.unitdata[0]}})
+          if (callback) { callback(true); }
         }else {
           // 代表是个人账号
           yield put({type: 'savePerson', payload: data});
+          if (callback) { callback(true); }
         }
       }else {
-        return;
+        if(callback) { callback(undefined); }
       }
     },
     // 清除state

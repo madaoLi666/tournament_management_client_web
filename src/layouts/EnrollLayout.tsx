@@ -20,19 +20,23 @@ function EnrollLayout(props: {dispatch: Dispatch, currentGameData: any,children:
     const matchId = Number(window.localStorage.getItem('MATCH_ID'));
     if(token !== null){
       // 获取账号信息
-      dispatch({type: 'user/getAccountData'});
-      if(matchId !== null) {
-        // 修改model中赛事id
-        dispatch({type: 'enroll/modifyCurrentMatchId', payload: {matchId: matchId}});
-        // 获取赛事规则
-        dispatch({type: 'enroll/getIndividualLimitation',payload: {matchId: matchId}});
-        dispatch({type: 'enroll/getAllItemInfo',payload: {matchId: matchId}});
-        // 获取gameList 拿本场赛事信息
-        dispatch({type: 'gameList/getGameList'});
-      }else {
-        message.error('请选择赛事');
-        router.push('/home');
-      }
+      dispatch({type: 'user/getAccountData',
+        callback: (data: any) => {
+          if(data === undefined) { return; }
+          if(matchId !== null) {
+            // 修改model中赛事id
+            dispatch({type: 'enroll/modifyCurrentMatchId', payload: {matchId: matchId}});
+            // 获取赛事规则
+            dispatch({type: 'enroll/getIndividualLimitation',payload: {matchId: matchId}});
+            dispatch({type: 'enroll/getAllItemInfo',payload: {matchId: matchId}});
+            // 获取gameList 拿本场赛事信息
+            dispatch({type: 'gameList/getGameList'});
+          }else {
+            message.error('请选择赛事');
+            router.push('/home');
+          }
+        }
+      });
     }else {
       message.warning('登陆过期，请重新登陆');
       window.localStorage.clear();

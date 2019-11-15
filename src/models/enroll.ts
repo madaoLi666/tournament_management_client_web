@@ -3,6 +3,7 @@ import {  Reducer } from 'redux';
 import { getContestantUnitData , checkISEnroll, individualEnroll, getEnrolledProject, deleteTeam} from '@/services/enroll.ts';
 import { getIndividualEnrollLimit, getAllItem } from '@/services/rules';
 import { convertItemData, convertAthleteList} from '@/utils/enroll';
+import { getLimitEnroll } from '@/services/enroll';
 
 interface UnitMes {
   unitData: object;
@@ -33,6 +34,8 @@ export interface EnrollModelType {
     individualEnroll: Effect;
     deleteTeamProject: Effect;
     clearstate: Effect;
+    // 获取本赛事本单位是否有参赛资格
+    getEnrollLimit: Effect;
   },
   reducers: {
     modifyCurrentMatchId: Reducer<EnrollModelState>;
@@ -68,12 +71,15 @@ const EnrollModel: EnrollModelType = {
     noticeVisbile: true
   },
   effects: {
+    * getEnrollLimit({ payload, callback }, { put }) {
+      let res = yield getLimitEnroll(payload);
+      if(callback) { callback(res) };
+    },
     // 获取参赛单位信息
     * getContestantUnitData ({ payload }, { put }) {
       const { unitId, matchId } = payload;
       let data = yield getContestantUnitData({matchdata: matchId, unitdata: unitId});
       if(data) {
-        console.log(312);
         let uD = {
           id: data.id,
           leaderName: data.leader,
@@ -192,7 +198,6 @@ const EnrollModel: EnrollModelType = {
     },
     modifyUnitInfo(state, { payload }){
       const { unitInfo } = payload;
-      console.log(unitInfo);
       return {
         ...state,
         unitInfo: {

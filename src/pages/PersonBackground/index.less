@@ -1,16 +1,13 @@
+@import '~antd/es/style/themes/default.less';
 // 运动员列表页面
 .AthletesList-page {
-    background-color: #ffffff;
     .avatar-uploader > .ant-upload {
         width: 128px;
         height: 128px;
     }
 
-    .AthletesList-header {
-        background-color: #ffffff;
-    }
-
     .AthletesList-content {
+      background-color: white;
     }
 }
 
@@ -36,4 +33,74 @@
           }
         }
       }
+}
+
+.baseView {
+  display: flex;
+  padding-top: 12px;
+
+  @media screen and (min-width:667px) {
+    padding-left: 480px;
+    .left {
+      min-width: 448px;
+      max-width: 448px;
+    }
+  }
+
+  @media screen and (max-width:667px) {
+    .left {
+      .headerPage {
+        > div span {
+          padding-left: 68px;
+        }
+      }
+    }
+  }
+  .right {
+    flex: 1;
+    padding-left: 104px;
+    .avatar_title {
+      height: 22px;
+      margin-bottom: 8px;
+      color: @heading-color;
+      font-size: @font-size-base;
+      line-height: 22px;
+    }
+    .avatar {
+      width: 144px;
+      height: 144px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      img {
+        width: 100%;
+      }
+    }
+    .button_view {
+      width: 144px;
+      text-align: center;
+    }
+
+    .input_view {
+      min-width: 295px;
+      max-width: 375px;
+      padding-top: 24px;
+    }
+  }
+}
+
+@media screen and (max-width: @screen-xl) {
+  .baseView {
+    flex-direction: column-reverse;
+
+    .right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 448px;
+      padding: 20px;
+      .avatar_title {
+        display: none;
+      }
+    }
+  }
 }

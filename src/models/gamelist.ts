@@ -25,14 +25,15 @@ const GameListModel: GameListModelType = {
     maskloading: false
   },
   effects: {
-    *getGameList({ _ }, { put }){
+    *getGameList({ callback }, { put }){
       let data = yield getGameList();
       if(data) {
         yield put({
           type: 'modifyGameList',
           payload: {gameList: data}
-        })
-      }else{ return; }
+        });
+        if(callback){callback(data);}
+      }else{ if(callback){callback(undefined);} }
     }
   },
   reducers: {

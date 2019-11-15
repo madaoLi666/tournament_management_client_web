@@ -227,6 +227,7 @@ function AthletesList(props:athletesProps) {
 
     // 表单提交方法
     let handleSubmit = (values: formFields, todo: string) => {
+        console.log(values);return;
         var formData = new FormData();
 
         let citys:string = '';

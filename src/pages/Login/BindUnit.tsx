@@ -81,7 +81,6 @@ class NewUnitForm extends React.Component<NewUnitFromProps, any> {
     }
   };
   // 检查单位名称是否和合法
-  // TODO 这个位置是否需要统一提示仍待商榷
   checkUnitNameIsLegal = (rule: any, value: any, callback: Function) => {
     const setSuccess = () => {
       this.setState({ validStatus: 'success' })

@@ -191,7 +191,7 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
         this.setState({
             file: file.originFileObj
         })
-    }
+    };
 
     render() {
         const { getFieldDecorator } = this.props.form;
@@ -247,7 +247,7 @@ class AddForm extends React.Component<AddFormProps & FormComponentProps,State> {
                 <Form.Item label="联系电话">
                     {getFieldDecorator('phone',{
                         initialValue:'',
-                        rules: [{pattern:/^1[3578]\d{9}$/, message:'请检查联系电话是否正确'}]
+                        rules: [{pattern:/^1[35789]\d{9}$/, message:'请检查联系电话是否正确'}]
                     })(<Input placeholder="选填"/>)}
                 </Form.Item>
                 <Form.Item label="邮箱">
