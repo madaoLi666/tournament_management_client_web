@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react';
 import { Dispatch } from 'redux';
 import { FormComponentProps } from 'antd/es/form';
-import { Button, Form, Input, message, PageHeader, Upload } from 'antd';
+import { Typography, Button, Form, Input, message, Modal, PageHeader, Upload } from 'antd';
 // @ts-ignore
 import styles from './index.less';
 import {  UploadChangeParam } from 'antd/lib/upload/interface';
@@ -45,13 +45,14 @@ function AvatarView(props:AvatarViewProps) {
   return (
     <Fragment>
     <div>
-      {/*<div className={styles.avatar_title}>*/}
-      {/*  营业执照*/}
-      {/*</div>*/}
+      {/* <div className={styles.avatar_title}>
+      验证单位信息（选填）
+      </div> */}
       <div className={styles.avatar}>
         <img src={props.avatar} alt="avatar" />
       </div>
     </div>
+    <Typography.Text code>该项用于验证单位信息（选填）</Typography.Text><br/><br/>
     <Upload
       fileList={[]}
       onChange={handleChange}
@@ -63,6 +64,7 @@ function AvatarView(props:AvatarViewProps) {
         </Button>
       </div>
     </Upload>
+    <br/><br />
   </Fragment>
   )
 }
@@ -73,9 +75,15 @@ function AvatarView(props:AvatarViewProps) {
 interface MainPartProps extends FormComponentProps {
   dispatch?: Dispatch;
   current_main_part?: string;
+  businesslicense?: string | null;
+  unitdata_id?: number;
+  loading?: boolean;
 }
 
 function MainPart(props: MainPartProps) {
+  const [ upLoadFile, setFile ] = useState<any>({});
+  const [ visible, setvisible ] = useState(false);
+
   let view: HTMLDivElement | undefined = undefined;
   function getViewDom(ref: HTMLDivElement) {
     view = ref;
@@ -85,30 +93,34 @@ function MainPart(props: MainPartProps) {
   } = props;
   const fileRef = useRef<any>('');
 
-  function getAvatarURL() {
-    const { current_main_part } = props;
-    // if (currentUser) {
-    //   if (currentUser.avatar) {
-    //     return currentUser.avatar;
-    //   }
-    //   const url = 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png';
-    //   return url;
-    // }s
-    return 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png';
-  }
-
   function handleSubmitMainPart(event: React.MouseEvent) {
     event.preventDefault();
     const { form } = props;
     form.validateFields((err: Error, values: any) => {
-        message.success('submit');
-        console.log(values);
+      let formData = new FormData();
+      formData.append('mainpart', values.mainpart);
+      formData.append('unitdata_id', String(props.unitdata_id));
+      formData.append('businesslicense', upLoadFile);
+      props.dispatch({
+          type: 'unit/changeUnitMainPart',
+          payload: formData,
+          callback: (res: boolean) => {
+            if(res) {
+              props.dispatch({type: 'user/getAccountData'});
+            }
+          }
+        })
+      setTimeout(() => {
+        setvisible(false);
+      },1000);
     })
   }
 
   function getFile(file: any, legal: { current: boolean }) {
     if(!legal.current) { return; }
     message.success('已成功上传营业执照，请输入主体名称后点击更改营业执照信息');
+    setFile(file.originFileObj);
+    setvisible(true);
   }
 
   return (
@@ -116,24 +128,40 @@ function MainPart(props: MainPartProps) {
     <div className={styles.right}>
       <PageHeader style={{fontSize:16, padding: 0}} title="营业执照管理" />
       <br/>
-      <AvatarView getFile={getFile} avatar={getAvatarURL()} />
-      <Form layout="vertical" hideRequiredMark>
-        <FormItem label="主体名称" className={styles.input_view}>
-          {getFieldDecorator('mainpart', {
-            rules: [{ required: true , message: '请输入主体名称'}]
-          })(<Input />)}
-        </FormItem>
-        <p>更改营业执照信息功能正在维护中，请稍后再进行上传</p>
-        <Button type="primary" disabled htmlType={"submit"} onClick={handleSubmitMainPart} >
-          更改营业执照信息
-        </Button>
-      </Form>
+      <AvatarView getFile={getFile} avatar={props.businesslicense === null ?
+      'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png'
+      : props.businesslicense} />
+      <Modal footer={null} title={"请输入营业执照主体名称"} visible={visible} >
+        <Form layout="vertical" hideRequiredMark>
+          <FormItem label="主体名称" className={styles.input_view}>
+            {getFieldDecorator('mainpart', {
+              rules: [{ required: true , message: '请输入主体名称'}]
+            })(<Input />)}
+          </FormItem>
+          <Button type="primary" loading={props.loading} htmlType={"submit"} onClick={handleSubmitMainPart} >
+            更改营业执照信息
+          </Button>
+        </Form>
+      </Modal>
     </div>
   </div>
   )
 }
 
-const MainPartForm = Form.create<MainPartProps>()(MainPart);
+const MainPartForm = connect(({loading}: ConnectState) => {
+  return { loading: loading.global };
+})(Form.create<MainPartProps & FormComponentProps>({
+  mapPropsToFields(props: MainPartProps) {
+    const { current_main_part, businesslicense } = props;
+    if(current_main_part !== undefined && current_main_part !== "") {
+      return {
+        mainpart: Form.createFormField({
+          value: current_main_part
+        })
+      }
+    }
+  }
+})(MainPart));
 
 /* 单位名称 单位联系人	单位联系人电话 邮箱 邮政编码 省份 地址 */
 interface CurrentAccount {
@@ -155,6 +183,8 @@ interface AccountManagementProps extends FormComponentProps {
   dispatch: Dispatch;
   currentAccount: CurrentAccount;
   unitdata_id: number;
+  businesslicense: string | null;
+  mainpart: string;
 }
 
 function AccountManagement(props: AccountManagementProps) {
@@ -268,13 +298,18 @@ function AccountManagement(props: AccountManagementProps) {
             </Button>
           </Form>
         </div>
-        {/* <MainPartForm /> */}
+         <MainPartForm
+           current_main_part={props.mainpart}
+           businesslicense={props.businesslicense}
+           unitdata_id={props.unitdata_id}
+         />
       </div>
     );
 }
 
-const MapStateToProps = ({ user }: ConnectState) => {
+const MapStateToProps = ({ user, unit }: ConnectState) => {
   const { unitData } = user;
+  const { businesslicense, mainpart } = unit;
   if(unitData.length !==0 && unitData[0].id !== undefined ) {
     return {
       currentAccount: {
@@ -287,7 +322,9 @@ const MapStateToProps = ({ user }: ConnectState) => {
         province: unitData[0].province,
         address: unitData[0].address
       },
-      unitdata_id: unitData[0].id
+      unitdata_id: unitData[0].id,
+      businesslicense,
+      mainpart
     }
   }
   return user;

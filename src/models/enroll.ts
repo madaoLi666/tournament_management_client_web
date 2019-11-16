@@ -5,9 +5,25 @@ import { getIndividualEnrollLimit, getAllItem } from '@/services/rules';
 import { convertItemData, convertAthleteList} from '@/utils/enroll';
 import { getLimitEnroll } from '@/services/enroll';
 
+/* 参赛单位信息 */
+export interface ContestantUnitData {
+  id?: number;
+  matchdata?: number;
+  unitdata?: number;
+  name?: string;
+  leader?: string;
+  leaderphonenumber?: string;
+  coachone?: string;
+  coachonephonenumber?: string;
+  coachtwo?: string;
+  coachtwophonenumber?: string;
+  dutybook?: string;
+  email?: string;
+}
+
 interface UnitMes {
   unitData: object;
-  contestantUnitData: object;
+  contestantUnitData: ContestantUnitData;
   athleteList: Array<any>;
   singleEnrollList: Array<any>;
   teamEnrollList: Array<any>;
@@ -15,7 +31,7 @@ interface UnitMes {
 
 export interface EnrollModelState {
   currentMatchId?: number;
-  unitInfo?: object;
+  unitInfo?: any;
   unit?: UnitMes;
   individualLimitation?: object;
   individualItem?: Array<any>;

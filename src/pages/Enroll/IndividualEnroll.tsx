@@ -8,6 +8,7 @@ import { getListByKey, getGroupsByAge, getLegalSexList } from '@/utils/enroll';
 import { deleteIndividualEnroll, individualEnroll, submitCertificationNumber } from '@/services/enroll';
 // @ts-ignore
 import styles from './index.less';
+import { ConnectState } from '@/models/connect';
 
 
 const { Option } = Select;
@@ -332,7 +333,7 @@ class IndividualEnroll extends React.Component<any,any>{
         {/* rule-block */}
         <div className={styles['rule-block']} />
         <div className={styles['table-block']}>
-          <Table dataSource={enrollAthleteList} columns={tableColumns} rowKey={record => record.id} scroll={{ x: 940}} />
+          <Table loading={this.props.loading} dataSource={enrollAthleteList} columns={tableColumns} rowKey={record => record.id} scroll={{ x: 940}} />
         </div>
         {/* 报名modal */}
         <Modal {...modalProps} style={{top: '0'}}>
@@ -465,7 +466,7 @@ class IndividualEnroll extends React.Component<any,any>{
   }
 }
 
-export default connect(({enroll, user}:any) => {
+export default connect(({enroll, user, loading}:ConnectState) => {
   let reverse_athlete:any[] = [...enroll.unit.athleteList].reverse();
   return {
     enrollAthleteList:reverse_athlete.filter((v:any) => {
@@ -477,6 +478,7 @@ export default connect(({enroll, user}:any) => {
     individualLimitation: enroll.individualLimitation,
     unit_account: user.unitAccount,
     person_data: user.athleteData[0],
-    noticeVisible: enroll.noticeVisbile
+    noticeVisible: enroll.noticeVisbile,
+    loading: loading.global
   }
 })(IndividualEnroll);

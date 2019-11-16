@@ -50,9 +50,10 @@ class Home extends React.Component<any,any>{
       'http://cos.gsta.top/3.jpg',
     ];
     const small_new_homePicArr: string[] = [
-      'http://cos.gsta.top/sudulunhua.jpeg',
-      'http://cos.gsta.top/lunhuaqiu.jpeg',
+      'http://cos.gsta.top/zhiyoushi-1.png',
       'http://cos.gsta.top/ziyoushi.jpeg',
+      'http://cos.gsta.top/lunhuaqiu.jpeg',
+      'http://cos.gsta.top/sudulunhua.jpeg',
     ];
     if(small_homePicArr.length === small_new_homePicArr.length) {
       gameList.forEach((v:any,index:any) => {

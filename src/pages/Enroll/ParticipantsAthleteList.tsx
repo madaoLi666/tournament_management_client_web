@@ -17,6 +17,7 @@ import { checkPhoneNumber, checkEmail, checkIDCard } from '@/utils/regulars';
 import styles from './index.less';
 import { Dispatch } from 'redux';
 import { ColumnProps } from 'antd/es/table';
+import { ConnectState } from '@/models/connect';
 const { Option } = Select;
 const { Item } = Form;
 
@@ -350,7 +351,7 @@ const AIForm = Form.create<AthleteInfoFormProps>({
   }
 })(AthleteInfoForm);
 
-function ParticipantsAthleteList(props:{matchId: number, unitId: number , athleteList: Array<any>, contestantId:number , dispatch: Dispatch}) {
+function ParticipantsAthleteList(props:{loading: boolean,matchId: number, unitId: number , athleteList: Array<any>, contestantId:number , dispatch: Dispatch}) {
 
   const { matchId, unitId, dispatch, athleteList, contestantId } = props;
   // modal
@@ -545,7 +546,7 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
           emitData={submitAthleteData}
           currentAthleteData={Object.keys(currentAthleteData).length === 0 ? false : currentAthleteData}
         />
-        <Spin tip="上传中..." spinning={loading} size="large" style={{marginLeft:"47%"}}>
+        <Spin tip="上传中..." spinning={props.loading} size="large" style={{marginLeft:"47%"}}>
         </Spin>
       </Modal>
       <div>
@@ -554,6 +555,7 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
           dataSource={athleteList}
           rowKey={record => record.id}
           scroll={{x:700}}
+          loading={props.loading}
         />
       </div>
       <div>
@@ -575,11 +577,12 @@ function ParticipantsAthleteList(props:{matchId: number, unitId: number , athlet
   );
 }
 
-export default connect(({enroll}:any) => {
+export default connect(({enroll, loading}: ConnectState) => {
   return {
     athleteList: [...enroll.unit.athleteList].reverse(),
     matchId: enroll.currentMatchId,
     unitId: enroll.unitInfo.id,
-    contestantId: enroll.unit.contestantUnitData.id
+    contestantId: enroll.unit.contestantUnitData.id,
+    loading: loading.global
   };
 })(ParticipantsAthleteList);

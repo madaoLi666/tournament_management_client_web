@@ -1,11 +1,14 @@
 import React,{useEffect, useState} from 'react';
-import { Layout, PageHeader, Descriptions, Table, Comment, Button } from 'antd';
+import { Layout, PageHeader, Descriptions, Table, Comment, Button, message } from 'antd';
 import { ColumnProps } from 'antd/es/table';
 import { connect } from 'dva';
 import { Dispatch } from 'redux';
 // @ts-ignore
 import styles from './index.less';
 import router from 'umi/router';
+import { ConnectState } from '@/models/connect';
+import { sendEmail } from '@/services/enroll';
+import { ContestantUnitData } from '@/models/enroll';
 
 const { Header, Content, Footer } = Layout;
 
@@ -17,6 +20,8 @@ interface showEnrollProps {
     contestant?: any;
     athleteList?: any;
     teamList?: Array<any>;
+    loading: boolean;
+    contestantUnitData?: ContestantUnitData;
 }
 interface unitInfo {
     unit_name?: string
@@ -84,7 +89,7 @@ function ShowEnroll(props:showEnrollProps) {
             }
         }
     },[props.current_match_id,props.game_list]);
-    
+
     // 获取信息 调用 checkisenroll接口
     useEffect(() => {
         if(props.unit_info.id === undefined){return;};
@@ -96,7 +101,7 @@ function ShowEnroll(props:showEnrollProps) {
             }
         })
     },[props.unit_info,props.current_match_id]);
-    
+
     const [unit_info, setUnit_info] = useState<unitInfo>({
         unit_name:'',unit_leader:'',leader_phone:'',leader_email:'',
         coach1:'',coach1_phone:'',coach2:'',coach2_phone:''
@@ -115,7 +120,7 @@ function ShowEnroll(props:showEnrollProps) {
             coach2_phone: contestant.coachtwophonenumber,
         })
     },[props.contestant])
-    
+
     const [athlete_list, setAthlete_list] = useState<personProject[]>();
     useEffect(() => {
         const { athleteList } = props;
@@ -162,6 +167,15 @@ function ShowEnroll(props:showEnrollProps) {
         setTeam_list(temp_list);
     },[props.teamList]);
 
+    function send_email() {
+      const { id } = props.contestantUnitData;
+      if(id === undefined ) { return; }
+      sendEmail({
+        contestant_id: id
+      });
+      router.push('/enroll/success');
+    }
+
     // 页头主体
     const renderContent = (column = 2) => (
         <div >
@@ -172,13 +186,13 @@ function ShowEnroll(props:showEnrollProps) {
             </Descriptions.Item>
             <Descriptions.Item label="领队邮箱">{unit_info.leader_email}</Descriptions.Item>
             </Descriptions>
-            {unit_info.coach1 === "" ? null : 
+            {unit_info.coach1 === "" ? null :
                 <Descriptions size="middle" column={2} >
                 <Descriptions.Item label="教练">{unit_info.coach1}</Descriptions.Item>
                 <Descriptions.Item label="联系电话">{unit_info.coach1_phone}</Descriptions.Item>
                 </Descriptions>
             }
-            {unit_info.coach2 === "" ? null : 
+            {unit_info.coach2 === "" ? null :
                 <Descriptions size="middle" column={2} >
                 <Descriptions.Item label="教练">{unit_info.coach2}</Descriptions.Item>
                 <Descriptions.Item label="联系电话">{unit_info.coach2_phone}</Descriptions.Item>
@@ -212,6 +226,7 @@ function ShowEnroll(props:showEnrollProps) {
         {key: 'woman', dataIndex: 'woman', title: '女',align:'center'}
     ]
 
+
     return(
 
         <Layout>
@@ -219,7 +234,7 @@ function ShowEnroll(props:showEnrollProps) {
                 <strong style={{fontSize:20}}>报名赛事：{game_name}</strong>
             </Header>
             <hr />
-            <Comment author={<a style={{fontSize:12,color:'#f5222d'}}>尊敬的领队您好：</a>} 
+            <Comment author={<a style={{fontSize:12,color:'#f5222d'}}>尊敬的领队您好：</a>}
                 content={
                     <p style={{color:'#f5222d'}} >
                         本赛事组委会已收到贵单位提交的报名信息，请认真确认下列全部信息。
@@ -236,31 +251,32 @@ function ShowEnroll(props:showEnrollProps) {
                 <br />
                 <div className={styles['show-person']} >
                     <p><strong>个人项目报名</strong></p>
-                    <Table bordered={true} scroll={{x: 800}} columns={personColumns} dataSource={athlete_list} rowKey={(record:any) => record.key} />
+                    <Table loading={props.loading} bordered={true} scroll={{x: 800}} columns={personColumns} dataSource={athlete_list} rowKey={(record:any) => record.key} />
                 </div>
                 <br />
                 <div className={styles['show-team']} >
                     <p><strong>团体项目报名</strong></p>
-                    <Table bordered={true} scroll={{x: 850}} columns={teamColumns} dataSource={team_list} rowKey={(record:any) => record.key}  />
+                    <Table loading={props.loading} bordered={true} scroll={{x: 850}} columns={teamColumns} dataSource={team_list} rowKey={(record:any) => record.key}  />
                 </div>
             </Content>
-            <Footer><Button type="primary" style={{display:'block',margin:'0 auto',width:'100%'}} onClick={() => router.push('/enroll/success')} >提交本《确认书》</Button></Footer>
+            <Footer><Button type="primary" style={{display:'block',margin:'0 auto',width:'100%'}} onClick={send_email} >提交本《确认书》</Button></Footer>
         </Layout>
     );
 
 }
 
-let mapStateToProps = (state:any) => {
-    const { enroll } = state;
-    const { gameList } = state;
+let mapStateToProps = ({enroll, gameList, loading}: ConnectState) => {
+    const { unit } = enroll;
     return {
         current_match_id: enroll.currentMatchId,
         unit_info: enroll.unitInfo,
         game_list: gameList.gameList,
         contestant: enroll.unit.contestantUnitData,
         athleteList: enroll.unit.athleteList,
-        teamList: enroll.unit.teamEnrollList
+        teamList: enroll.unit.teamEnrollList,
+        loading: loading.global,
+        contestantUnitData: unit.contestantUnitData
     }
-}
+};
 
 export default connect (mapStateToProps)(ShowEnroll);

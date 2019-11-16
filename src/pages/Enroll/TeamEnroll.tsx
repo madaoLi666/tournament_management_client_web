@@ -10,6 +10,7 @@ import { TableRowSelection } from 'antd/es/table';
 
 // @ts-ignore
 import styles from './index.less';
+import { ConnectState } from '@/models/connect';
 
 const { Option } = Select;
 const { TreeNode } = TreeSelect;
@@ -33,12 +34,6 @@ class TeamEnroll extends React.Component<any,any>{
       roleTypeList:[]
     }
   }
-
-  // updateItemData = () => {
-  //   const { matchId, unitId, dispatch } = this.props;
-  //
-  //   dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId } })
-  // };
 
   // 更新时重新获取
   componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
@@ -195,13 +190,13 @@ class TeamEnroll extends React.Component<any,any>{
   handleCloseDialog = () => {
     // 清空状态
     this.setState({
-      modalVisible: false, 
+      modalVisible: false,
       // legalAthleteList:[],
       teamName:'',
       // roleTypeList:[],
       selectedAthleteList: []
     })
-  };  
+  };
   // table
   handleCheckboxSelect = (record:any,selected:boolean) => {
     let { selectedAthleteList } = this.state;
@@ -235,7 +230,7 @@ class TeamEnroll extends React.Component<any,any>{
     // 从props中找数据进行匹配，以获得组员的一些信息，如 性别 和 所在组别
     let sexs = new Array(member.length);
     let group_ages = new Array(member.length);
-    
+
     for(let j:number = 0; j < member.length ; j++) {
       for(let i:number = 0; i < athleteList.length ; i++) {
         if(member[j].athlete.idcard === athleteList[i].athlete.idcard) {
@@ -371,7 +366,7 @@ class TeamEnroll extends React.Component<any,any>{
     }
     deleteTeam({teamenroll: id}).then(data => {
       if(data) {
-        dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId } 
+        dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId }
       });
         message.success('删除成功');
       }else {
@@ -379,8 +374,8 @@ class TeamEnroll extends React.Component<any,any>{
       }
     })
   };
-  
-  
+
+
   render(): React.ReactNode {
     const { teamItem, teamEnroll } = this.props;
     const { modalVisible, legalAthleteList, roleTypeList, selectedAthleteList } = this.state;
@@ -445,6 +440,7 @@ class TeamEnroll extends React.Component<any,any>{
             expandedRowRender={this.renderExpandedRow}
             rowKey={(record:any) => record.id}
             scroll={{ x: 400}}
+            loading={this.props.loading}
           />
           <Button type="primary" style={{marginTop:20,float:"right"}} onClick={() => {router.goBack()}} >返回个人报名</Button>
           <Button type="primary" style={{marginTop:20,float:"left"}} onClick={() => {router.push('/enroll/showEnroll')}} >下一步</Button>
@@ -469,7 +465,7 @@ class TeamEnroll extends React.Component<any,any>{
   }
 }
 
-export default connect(({enroll}:any) => {
+export default connect(({enroll, loading}: ConnectState) => {
   const { teamItem } = enroll;
   let filter_athlete_list: any[] = [];
   filter_athlete_list = enroll.unit.athleteList.filter((v:any) => {
@@ -480,9 +476,9 @@ export default connect(({enroll}:any) => {
     matchId: enroll.currentMatchId,
     unitId: enroll.unitInfo.id,
     contestantId: enroll.unit.contestantUnitData.id,
-    // 这里暂时这样写 - roletype 是number
     athleteList: filter_athlete_list.map((v:any) => ({...v,role:"",groupFlag:false})),
     individualLimitation: enroll.individualLimitation,
-    teamEnroll: enroll.unit.teamEnrollList
+    teamEnroll: enroll.unit.teamEnrollList,
+    loading: loading.global
   };
 })(TeamEnroll)

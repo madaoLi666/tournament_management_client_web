@@ -251,7 +251,7 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
             })(<Input/>)}
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>
-            {/* <Button type="primary" style={{width:"45%"}} htmlType="submit">注册</Button> */}
+            <Button type="primary" style={{width:"45%"}} htmlType="submit">注册</Button>
             <span style={{marginLeft:'5%'}} ><a href="/login">使用已有账号登录</a></span>
           </Form.Item>
         </Form>

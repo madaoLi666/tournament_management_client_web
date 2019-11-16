@@ -31,6 +31,7 @@ interface UnitInfoFormProps extends FormComponentProps {
   emitData: (data: object) => void;
   // 类型未定
   unitData: any;
+  loading: boolean;
 }
 
 const UnitInfoFormStyle: FormProps = {
@@ -205,18 +206,20 @@ class UnitInfoForm extends Component<UnitInfoFormProps, any> {
         <Form.Item
           wrapperCol={{ span: 24 }}
           labelCol={{ span: 0 }}
-          style={{ textAlign: 'center' }}
+        style={{ textAlign: 'center' }}
         >
-          <br/>
-          <span style={{color:'red'}} hidden={this.state.loadingHide} >第一次上传需要几秒钟，请稍等&nbsp;&nbsp;<Spin /></span>
-          <Button style={{ width: '100%' }} type='primary' htmlType='submit'>确认信息，进入报名</Button>
-        </Form.Item>
+        <br/>
+        <span style={{color:'red'}} hidden={this.state.loadingHide} >第一次上传需要几秒钟，请稍等&nbsp;&nbsp;<Spin spinning={!this.props.loading} /></span>
+        <Button style={{ width: '100%' }} type='primary' htmlType='submit'>确认信息，进入报名</Button>
+      </Form.Item>
       </Form>
     );
   }
 }
 
-const UIForm = connect()(Form.create<UnitInfoFormProps>({
+const UIForm = connect(({loading}: ConnectState) => {
+  return { loading: loading.global }
+})(Form.create<UnitInfoFormProps>({
   mapPropsToFields: props => {
     const { createFormField } = Form;
     const { unitData } = props;

@@ -18,7 +18,7 @@ function SetRole({dispatch}:DispatchProp) {
 
   const message_tips:React.ReactNode = (
     <p style={{color:'red'}}>注：个人帐号目前暂不提供赛事报名，如需报名参赛请选择注册单位帐号！</p>
-  ) 
+  )
 
   function showDeleteConfirm() {
     confirm({
@@ -60,7 +60,7 @@ function SetRole({dispatch}:DispatchProp) {
             </div>
             <br/>
             <div style={{color: 'red'}}>
-              <p>如你不是领队等请不要点此键，并不要胡乱注册新单位！</p>
+              {/*<p>如你不是领队等请不要点此键，并不要胡乱注册新单位！</p>*/}
               <p>在新注册单位时，本平台将收取一定服务费用，敬请留意！</p>
             </div>
           </Card>

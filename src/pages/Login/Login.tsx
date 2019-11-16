@@ -144,7 +144,7 @@ function Login(props: SendCodeProps) {
                   <div className={styles['form-input-block']}>
                     <Input onChange={BindUserInfoUserName} placeholder='请输入账号/手机号码/电子邮箱' prefix={<Icon type="user" />} style={{height: '40px'}} autoComplete='off' />
                     <Input.Password onChange={BindUserInfoPassword} onKeyDown={(event: React.KeyboardEvent<any>) => {if(event.keyCode===13){login(mode)}}} placeholder='请输入密码'  prefix={<Icon type="lock" />} style={{height: '40px'}} />
-                    {/* <span style={{float:'right'}} >没有账号？<a href="/login/register">点击注册</a></span> */}
+                    <span style={{float:'right'}} >没有账号？<a href="/login/register">点击注册</a></span>
                   </div>
                 </TabPane>
                 <TabPane tab="手机验证登陆" key="1">
@@ -161,7 +161,7 @@ function Login(props: SendCodeProps) {
                       </Button>
                     </Input.Group>
                     <Input onChange={BindPhoneVerificationCode} onKeyDown={(event: React.KeyboardEvent<any>) => {if(event.keyCode===13){login(mode)}}} placeholder='请输入验证码' prefix={<Icon type="lock" />} style={{ height: '40px' }} autoComplete='off' />
-                    {/* <span style={{float:'right'}} >没有账号？<a href="/login/register">点击注册</a></span> */}
+                    <span style={{float:'right'}} >没有账号？<a href="/login/register">点击注册</a></span>
                   </div>
                 </TabPane>
                 {/* <TabPane tab="微信扫码" key="2">

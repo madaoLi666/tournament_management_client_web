@@ -71,3 +71,8 @@ export async function deleteTeam(data:object):Promise<any>{
 export async function getLimitEnroll(data: object): Promise<any> {
     return axiosInstance.get('/matchdataunitdatalimit/', { params: data});
 }
+
+// 发送邮件查看报名数据
+export async function sendEmail(data: object): Promise<any> {
+  return axiosInstance.get('/sendenrollsuccessemail/', { params: data });
+}

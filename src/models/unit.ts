@@ -1,4 +1,7 @@
 import { Reducer } from 'redux';
+import { modifyMainPart } from '@/services/unit';
+import { Effect } from 'dva';
+import { message } from 'antd';
 
 export interface UnitModelState {
     mainpart?: string | null;
@@ -10,10 +13,10 @@ export interface UnitModelType {
     namespace: 'unit',
     state: UnitModelState,
     effects: {
-
+      changeUnitMainPart: Effect;
     },
     reducers: {
-
+      modifyUnitMainPart: Reducer<UnitModelState>;
     }
 }
 
@@ -25,10 +28,26 @@ const UnitModel: UnitModelType = {
         businesslicense: ''
     },
     effects: {
-
+        * changeUnitMainPart({ payload, callback }, { put }) {
+          console.log(payload);
+          let res = yield modifyMainPart(payload);
+          if(res) {
+            message.success(res);
+            callback(true);
+          }else {
+            callback(false);
+          }
+        }
     },
     reducers: {
-
+        modifyUnitMainPart(state, { payload }) {
+          return {
+            ...state,
+            mainpart: payload.mainpart,
+            unitdata_id: payload.unitdata_id,
+            businesslicense: payload.businesslicense
+          }
+        }
     }
 }
 

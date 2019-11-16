@@ -5,6 +5,7 @@ import { GlobalModelState } from './global';
 import { EnrollModelState } from '@/models/enroll';
 import { GameListModelState } from './gamelist';
 import { UserModelState } from './user';
+import { UnitModelState } from '@/models/unit';
 
 export interface Loading {
     global: boolean;
@@ -14,6 +15,7 @@ export interface Loading {
         enroll?: boolean;
         gameList?: boolean;
         user?: boolean;
+        unit?: boolean;
     }
 }
 
@@ -23,6 +25,7 @@ export interface ConnectState {
     enroll: EnrollModelState;
     gameList: GameListModelState;
     user: UserModelState;
+    unit: UnitModelState;
 }
 
 /**

@@ -235,6 +235,12 @@ const UserModel: UserModelType = {
           yield put({type: 'saveUnitAccount', payload: data});
           // 将unitData 设置
           yield put({type: 'enroll/modifyUnitInfo',payload: {unitInfo: data.unitdata[0]}})
+          yield put({type: 'unit/modifyUnitMainPart' ,
+            payload: {
+              mainpart: data.unitdata[0].mainpart,
+              unitdata_id: data.unitdata[0].id,
+              businesslicense: data.unitdata[0].businesslicense
+            } })
           if (callback) { callback(true); }
         }else {
           // 代表是个人账号
