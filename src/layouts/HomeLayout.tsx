@@ -70,7 +70,7 @@ function HomeLayout(props: HomeLayoutProps) {
     )
   }else return (
     <div>
-      <Layout className={styles['home-layout']} style={{backgroundColor:'white'}} >
+      <Layout className={styles['home-layout']} >
         <Header className={styles['header']}>
             <div style={{ float: 'left'}}>
               <strong>
@@ -155,12 +155,11 @@ function HomeLayout(props: HomeLayoutProps) {
 *   信息判断 是否有登陆 有 显示信息 无 原本页面
 * */
 
-const mapStateToProps = ({gameList, global}:any) => {
+const mapStateToProps = ({gameList}:any) => {
   return {
     maskloading: gameList.maskloading,
-    // closeModal: global.showModal
   }
-}
+};
 
 export default connect(mapStateToProps)(HomeLayout);
 

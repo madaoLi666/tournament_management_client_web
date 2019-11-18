@@ -106,10 +106,10 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
       ENROLL_DOM = <h4>报名时间：{currentGameData.enrollstarttime.slice(0,10)}至{currentGameData.enrollendtime.slice(0,10)}</h4>
       TAB_DOM = (
         <TabPane tab='联系人' key={String(Math.random())}>
-          <p>联系人：{currentGameData['leading_cadre']}</p>
-          <p>联系电话：{currentGameData['phone']}</p>
-          <p>报名时间：{currentGameData.enrollstarttime.slice(0,10)}至{currentGameData.enrollendtime.slice(0,10)}</p>
-          <p>主办方：{currentGameData.sponsor}</p>
+          <p><strong>联系人：</strong>{currentGameData['leading_cadre']}</p>
+          <p><strong>联系电话：</strong>{currentGameData['phone']}</p>
+          <p><strong>报名时间：</strong>{currentGameData.enrollstarttime.slice(0,10)}至{currentGameData.enrollendtime.slice(0,10)}</p>
+          <p><strong>主办方：</strong>{currentGameData.sponsor}</p>
         </TabPane>
       );
       download_url = currentGameData.matchannex.filter((v:any) => {
@@ -141,14 +141,14 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
           </div>
         </div>
         <div className={styles['menu-block']} >
-          <Tabs type='card' >
+          <Tabs className={styles.tab} type='card' >
             {TAB_DOM}
             <TabPane tab='赛事章程' key='rules'>
               <div>
                 <StaticHtmlPage index={currentGameData.id} />
               </div>
             </TabPane>
-            <TabPane tab='参赛须知' key='known'>
+            <TabPane className={styles.tabPane} tab='参赛须知' key='known'>
               <p>1.报名需提供“真实姓名+身份证+手机号码”！（资料保密，绝不会泄漏）</p>
               <p>2.如时间或天气上有意外，根据实际情况的变化对行程进行适当调整。</p>
               <p>3.代他人报名者必须将以上注意事项告知被代报名参加者，凡报名者均视为接受本俱乐部声明，凡被代报名参加者均视为已通过代他人报名者知晓以上注意事项并接受本俱乐部声明及安排。</p>

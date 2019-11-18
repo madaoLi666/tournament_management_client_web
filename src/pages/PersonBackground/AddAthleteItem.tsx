@@ -298,7 +298,6 @@ const AddAthleteForm = connect(formStateToProps)(Form.create<AddFormProps & Form
                 citys = city.split('-',3);
             }
             let imageUrl = props.user.unitathlete[Number(props.tablekey)-1].athlete.face as string;
-
             return {
                 name: Form.createFormField({
                     value: props.user.unitathlete[Number(props.tablekey)-1].athlete.name

@@ -275,7 +275,7 @@ class IndividualEnroll extends React.Component<any,any>{
   // 渲染升组请求文字
   static renderCertificationBtnText(certificationCode: string):React.ReactNode {
     if(certificationCode === "") {
-      return <span>请添加业余等级证书</span>
+      return <span>添加业余等级证书</span>
     }else if(certificationCode === "-1") {
       return <span>请重新添加业余等级证书</span>
     }else if(certificationCode === "1"){
@@ -297,15 +297,15 @@ class IndividualEnroll extends React.Component<any,any>{
     };
     const tableColumns: Array<ColumnProps<any>> = [
       { title: '姓名', key: 'name', render:(_:any,record:any) => (<span>{record.athlete.name}</span>),align: 'center', fixed: 'left',width: 100},
-      { title: '证件号', key: 'identifyNumber', render:(_:any,record:any) => (<span>{record.athlete.idcard}</span>),align: 'center'},
-      { title: '出生日期', key: 'birthday', render:(_:any,record:any) => (<span>{record.athlete.birthday.slice(0,10)}</span>),align: 'center'},
+      // { title: '证件号', key: 'identifyNumber', render:(_:any,record:any) => (<span>{record.athlete.idcard}</span>),align: 'center'},
+      // { title: '出生日期', key: 'birthday', render:(_:any,record:any) => (<span>{record.athlete.birthday.slice(0,10)}</span>),align: 'center'},
       { title: '所属组别', key: 'group', dataIndex: 'groupage',align: 'center'},
       {
-        title: '未升组项目', key: 'enrolledItem', dataIndex: 'project',align: 'center',
+        title: '已参赛未升组项目', key: 'enrolledItem', dataIndex: 'project',align: 'center',
         render:(text:any):React.ReactNode => {
           const { personaldata } = text;
           return (
-            <div style={{fontSize: '10px'}}>
+            <div style={{fontSize: '10px',color:'#52c41a'}}>
               {personaldata.length !== 0 ? personaldata.map((v:any) => (<p key={v.id}><span>{v.name}</span></p>)) : <span key={Math.random()}>--</span>}
             </div>
           )
@@ -333,7 +333,7 @@ class IndividualEnroll extends React.Component<any,any>{
         {/* rule-block */}
         <div className={styles['rule-block']} />
         <div className={styles['table-block']}>
-          <Table loading={this.props.loading} dataSource={enrollAthleteList} columns={tableColumns} rowKey={record => record.id} scroll={{ x: 940}} />
+          <Table loading={this.props.loading} dataSource={enrollAthleteList} columns={tableColumns} rowKey={record => record.id} scroll={{ x: 'max-content'}} />
         </div>
         {/* 报名modal */}
         <Modal {...modalProps} style={{top: '0'}}>
@@ -347,27 +347,27 @@ class IndividualEnroll extends React.Component<any,any>{
                 {individualItemList.map((v:any) => (<Option key={`item-${v.itemId}`} value={v.itemId}>{v.name}</Option>))}
               </Select>
               <div>
-                <span>升组请勾选</span>
-                <Checkbox
-                  checked={isUpGroup}
-                  onChange={this.handleIsUpGroup}
-                  // 禁用升组选择
-                  /*
-                  * 1、升组数量为0
-                  * 2、未选中item
-                  * 3、没有任何符合组别
-                  *
-                  * */
-                  disabled={individualLimitation.upGroupNumber === 0 || itemValue === undefined || groupList.length === 0 || currentAthleteData['certification_code'] === "" || currentAthleteData['certification_code'] === "-1" || currentAthleteData['certification_code'] === "1"}
-                />
-                &nbsp;&nbsp;&nbsp;&nbsp;
-                <Button
-                  onClick={() => {this.setState({cModalVisible: true});}}
-                  type="primary"
-                  disabled={!(currentAthleteData['certification_code'] === "" || currentAthleteData['certification_code'] === "-1") && itemValue !== undefined}
-                >
-                  {IndividualEnroll.renderCertificationBtnText(currentAthleteData['certification_code'])}
-                </Button>
+                {/*<span>升组请勾选</span>*/}
+                {/*<Checkbox*/}
+                {/*  checked={isUpGroup}*/}
+                {/*  onChange={this.handleIsUpGroup}*/}
+                {/*  // 禁用升组选择*/}
+                {/*  /**/}
+                {/*  * 1、升组数量为0*/}
+                {/*  * 2、未选中item*/}
+                {/*  * 3、没有任何符合组别*/}
+                {/*  **/}
+                {/*  * */}
+                {/*  disabled={individualLimitation.upGroupNumber === 0 || itemValue === undefined || groupList.length === 0 || currentAthleteData['certification_code'] === "" || currentAthleteData['certification_code'] === "-1" || currentAthleteData['certification_code'] === "1"}*/}
+                {/*/>*/}
+                {/*&nbsp;&nbsp;&nbsp;&nbsp;*/}
+                {/*<Button*/}
+                {/*  onClick={() => {this.setState({cModalVisible: true});}}*/}
+                {/*  type="primary"*/}
+                {/*  disabled={!(currentAthleteData['certification_code'] === "" || currentAthleteData['certification_code'] === "-1") && itemValue !== undefined}*/}
+                {/*>*/}
+                {/*  {IndividualEnroll.renderCertificationBtnText(currentAthleteData['certification_code'])}*/}
+                {/*</Button>*/}
               </div>
             </div>
 
@@ -402,7 +402,7 @@ class IndividualEnroll extends React.Component<any,any>{
                 }
               </Select>
               <br />
-              <span style={{color:'red',marginLeft:'43%'}}>请选择参赛性别组别</span>
+              {/*<span style={{color:'red',marginLeft:'43%'}}>请选择参赛性别组别</span>*/}
             </div>
             <Button
               type='primary'

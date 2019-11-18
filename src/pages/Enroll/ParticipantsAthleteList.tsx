@@ -390,7 +390,7 @@ function ParticipantsAthleteList(props:{loading: boolean,matchId: number, unitId
           <a onClick={() => {editAthleteData(record)}}>修改</a>
           &nbsp;|&nbsp;
           {/* 删除使用内层id 运动员id */}
-          <a onClick={() => {handlerDelete(record.athlete.id)}}>删除</a>
+          <a style={{color:'#f5222d'}} onClick={() => {handlerDelete(record.athlete.id)}}>删除</a>
         </div>
       )
     }

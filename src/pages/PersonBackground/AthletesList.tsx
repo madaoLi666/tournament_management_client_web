@@ -47,12 +47,10 @@ function AthletesList(props:athletesProps) {
             <div>
                 <a href="#" onClick={changeConfirm} >修改</a>
                 &nbsp;&nbsp;
-              { unitAccount === 1 ? (
-                  <div></div>
-              ) : <a href="#"  onClick={deleteConfirm.bind(myEvent,record.key)} >删除</a> }
+              { unitAccount === 1 ? null : <a href="#" style={{color:'#f5222d'}} onClick={deleteConfirm.bind(myEvent,record.key)} >删除</a> }
             </div>
         )
-    }
+    };
     // 表格data
     let data: Athlete[] = [];
 
@@ -227,7 +225,6 @@ function AthletesList(props:athletesProps) {
 
     // 表单提交方法
     let handleSubmit = (values: formFields, todo: string) => {
-        console.log(values);return;
         var formData = new FormData();
 
         let citys:string = '';
