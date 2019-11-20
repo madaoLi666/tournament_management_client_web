@@ -374,11 +374,12 @@ function ParticipantsAthleteList(props:{loading: boolean,matchId: number, unitId
   //
   const tableColumns:ColumnProps<athleteListProps>[] = [
     {
-      title: '是否参赛', dataIndex: 'active', key: 'active',align:'center',
+      title: '选择是否参赛', dataIndex: 'active', key: 'active',align:'center',
       render:(text:number, record: any) => {
         return (
-          // TODO <Button size="small" type="danger" >取消参赛</Button>
-          <Checkbox checked={!!text} onChange={(e) => handleSelect(e.target.checked,record,e)}/>
+          record.active === 1
+            ? <Button onClick={(event) => handle_delete(record,event)} size="small" type="danger" >取消参赛</Button>
+            : <Button style={{backgroundColor:'#52c41a'}} type="primary" onClick={(event) => handle_add(record,event)} size="small" >确认参赛</Button>
         );
       }
     },
@@ -386,7 +387,6 @@ function ParticipantsAthleteList(props:{loading: boolean,matchId: number, unitId
     { title: '性别', key: 'sex', dataIndex: 'sex', align:'center', render:(text:any,record:any) => (<span>{record.athlete.sex}</span>) },
     { title: '证件号', key: 'identifyID', dataIndex: 'identifyID',align:'center', render:(text:any,record:any) => (<span>{record.athlete.idcard}</span>) },
     { title: '出生年月日', key: 'birthday', align:'center', render:(text:any,record:any) => ( <span>{record.athlete.birthday.slice(0,10)}</span>)},
-    // { title: '联系电话', key: 'phonenumber', dataIndex: 'phonenumber', render:(text:any,record:any) => ( <span>{record.athlete.phonenumber}</span>) },
     { title: '操作', key: 'handle',align:'center',
       render:(text:any, record:any) => (
         <div>
@@ -399,49 +399,46 @@ function ParticipantsAthleteList(props:{loading: boolean,matchId: number, unitId
       )
     }
   ];
-  function handle_confirm_delete() {
-
-  }
   // 选中运动员是否参赛
-  function handleSelect(checked: boolean, record: any, e: any ) {
+  function handle_add(record: any, e: React.MouseEvent) {
     const { birthday, id } = record.athlete;
-    if(checked) {
-      // 选中
-      let reqData = {
-        matchdata: matchId,
-        contestant: contestantId,
-        unitathlete: record.id,
-        birthday: birthday.slice(0,10),
-        athlete: id
-      };
-      addParticipantsAthlete(reqData)
-        .then(data => {
-          // 无法通过 e 设置checked的值
-          if(data) {
-            dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: {unitId, matchId}});
-            message.success('确认成功');
-          }
-        })
-    }else{
-      // 先检查这个人是否有已经参加比赛的项目
-      if(record.teamname.length !== 0) {
-        message.warning('请先删除该运动员参加的团体项目');
-        return;
-      }
-      // 先删除已报名的团队项目
-      // props.dispatch({
-      //   type: 'enroll/deleteTeamProject',
-      //   payload: {
-      //     matchdata : matchId,
-      //     athlete : id,
-      //     contestant : contestantId
-      //   }
-      // });
-      deleteParticipantsAthlete({matchdata: matchId, athlete: id, contestant: contestantId})
-        .then(data => {
-          if(data) dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: {unitId, matchId}});
-        })
+    // 选中
+    let reqData = {
+      matchdata: matchId,
+      contestant: contestantId,
+      unitathlete: record.id,
+      birthday: birthday.slice(0,10),
+      athlete: id
+    };
+    addParticipantsAthlete(reqData)
+      .then(data => {
+        // 无法通过 e 设置checked的值
+        if(data) {
+          dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: {unitId, matchId}});
+          message.success('确认成功');
+        }
+      })
+  }
+  function handle_delete(record: any, e: React.MouseEvent) {
+    const { id } = record.athlete;
+    // 先检查这个人是否有已经参加比赛的项目
+    if(record.teamname.length !== 0) {
+      message.warning('请先删除该运动员参加的团体项目');
+      return;
     }
+    // 先删除已报名的团队项目
+    // props.dispatch({
+    //   type: 'enroll/deleteTeamProject',
+    //   payload: {
+    //     matchdata : matchId,
+    //     athlete : id,
+    //     contestant : contestantId
+    //   }
+    // });
+    deleteParticipantsAthlete({matchdata: matchId, athlete: id, contestant: contestantId})
+      .then(data => {
+        if(data) dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: {unitId, matchId}});
+      })
   }
   // 传入表单中
   function submitAthleteData(data: any) {
