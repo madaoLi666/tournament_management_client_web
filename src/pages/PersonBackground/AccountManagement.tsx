@@ -52,7 +52,7 @@ function AvatarView(props:AvatarViewProps) {
         <img src={props.avatar} alt="avatar" />
       </div>
     </div>
-    <Typography.Text code>该项用于验证单位信息（选填）</Typography.Text><br/><br/>
+    {/*<Typography.Text code>该项用于验证单位信息（选填）</Typography.Text><br/><br/>*/}
     <Upload
       fileList={[]}
       onChange={handleChange}
@@ -254,7 +254,7 @@ function AccountManagement(props: AccountManagementProps) {
           <PageHeader className={styles.headerPage} style={{fontSize:16, padding: 0}} title="单位信息管理" />
           <br/>
           <Form layout="vertical" hideRequiredMark>
-            <FormItem label="单位名称" hasFeedback validateStatus={validStatus}>
+            <FormItem extra="注：此项用于验证会员单位" label="单位名称" hasFeedback validateStatus={validStatus}>
               {getFieldDecorator('name', {
                 rules: [{ required: true , message: '请输入单位名称'},
                 { validator: checkUnitNameIsLegal }]

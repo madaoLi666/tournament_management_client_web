@@ -104,6 +104,20 @@
         text-overflow: ellipsis;
         white-space: nowrap;
       }
+      .status {
+        display: flex;
+        height: 20px;
+        .button {
+          height: auto;
+          font-size: 12px;
+          @media screen and (max-width: 667px) {
+            margin-left: 52%;
+          }
+          @media screen and (min-width: 667px) {
+            margin-left: 57%;
+          }
+        }
+      }
     }
   }
 }

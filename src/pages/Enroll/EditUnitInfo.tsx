@@ -57,7 +57,6 @@ class UnitInfoForm extends Component<UnitInfoFormProps, any> {
     loadingHide: true,
   };
 
-  //
   componentDidUpdate(prevProps: Readonly<UnitInfoFormProps>, prevState: Readonly<any>, snapshot?: any): void {
     const { guaranteePic } = this.props.unitData;
     // guaranteepic存储的是服务器返回的url

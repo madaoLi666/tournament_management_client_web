@@ -150,7 +150,8 @@ export function convertItemData(itemList: Array<ItemData>):any {
 
 // 整合来源于服务区的运动员列表数据 - 将运动员的团体项目也放入个人信息中方便之后的统计于判断
 export function convertAthleteList(athleteList: Array<any>,teamEnrollList: Array<any>): any {
-  qSort(athleteList,0,athleteList.length - 1,'player');
+  /* 先注释快排，因为想点击参赛后运动员位置不变 */
+  // qSort(athleteList,0,athleteList.length - 1,'player');
   // 遍历所有队伍
   for(let i:number = teamEnrollList.length - 1 ; i >= 0; i--) {
     // 遍历队伍成员
@@ -172,7 +173,7 @@ export function convertAthleteList(athleteList: Array<any>,teamEnrollList: Array
     }
   }
   // 翻转数组，使参赛运动员在列表前
-  athleteList.reverse();
+  // athleteList.reverse();
 }
 
 
@@ -279,6 +280,7 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
    * 这里针对轮滑球来做固定的限制，青年组升成年组，不需要业余等级证
    */
   const { itemName, startTime } = rule;
+  
   // 整理 将 已报项目数量整理处理
   // 整理时 如果有project内的升组或未升组的项目的长度不为零，则设置外面的itemNumber upGroupItemNumber，否则设为0
   // 这里多加了判断是否是淘汰赛的规则
@@ -323,7 +325,7 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
       let isEnrollSameItem = false;
       if(v.teamname.length !== 0){
         v.project.teamproject.forEach((m:any) => {
-          let temp_name = m.name.slice(0,itemName.length);
+          let temp_name = m
           if(temp_name === itemName) {
             isEnrollSameItem = true;
           }
@@ -380,7 +382,11 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
             // 向下取组到底部 全取
             tarGroupList = groupList.slice(index,groupList.length -1);
           }else {
-            tarGroupList = groupList.slice(index,index + upGroupNumber);
+            if(index === 0) {
+              tarGroupList = groupList.slice(index,index + upGroupNumber);
+            }else {
+              tarGroupList = groupList.slice(index - 1,index + upGroupNumber);
+            }
           }
           // if( itemName === "单排轮滑球" && tarGroupList[0] )
           tarGroupList.forEach((v:any) => {

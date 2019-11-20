@@ -312,11 +312,11 @@ class IndividualEnroll extends React.Component<any,any>{
         }
       },
       {
-        title: '升组项目', key: 'enrolledUploadItem', dataIndex: 'project',align: 'center',width: 200,
+        title: '已参赛升组项目', key: 'enrolledUploadItem', dataIndex: 'project',align: 'center',width: 200,
         render:(text:any):React.ReactNode => {
           const { upgrouppersonaldata } = text;
           return (
-            <div style={{fontSize: '10px'}}>
+            <div style={{fontSize: '10px',color:'#52c41a'}}>
               {upgrouppersonaldata.length !== 0 ?upgrouppersonaldata.map((v:any) => (<p key={v.id}><span>{v.name}</span></p>)) : <span key={Math.random()}>--</span>}
             </div>
           )
@@ -376,8 +376,7 @@ class IndividualEnroll extends React.Component<any,any>{
                 onChange={(value:number) => this.getSexByGroup(currentAthleteData, groupList, value)}
                 // 只有升组可升两组才可以选择
                 disabled={
-                  matchId === 12 ? individualLimitation.upGroupNumber <= 1 && groupList.length < 2
-                  : individualLimitation.upGroupNumber <= 1
+                  individualLimitation.upGroupNumber < 1
                 }
                 placeholder='请选择组别'
                 value={groupValue}
@@ -467,9 +466,8 @@ class IndividualEnroll extends React.Component<any,any>{
 }
 
 export default connect(({enroll, user, loading}:ConnectState) => {
-  let reverse_athlete:any[] = [...enroll.unit.athleteList].reverse();
   return {
-    enrollAthleteList:reverse_athlete.filter((v:any) => {
+    enrollAthleteList:enroll.unit.athleteList.filter((v:any) => {
       return v.active === 1;
     }),
     matchId: enroll.currentMatchId,

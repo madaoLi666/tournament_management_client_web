@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Carousel, Row, Col, Skeleton
+  Carousel, Row, Col, Skeleton, Tag, Button,
 } from 'antd';
 import router from 'umi/router';
 import { connect } from 'dva';
@@ -8,6 +8,7 @@ import { ColProps } from 'antd/lib/grid';
 
 // @ts-ignore
 import styles from './index.less';
+import { ConnectState } from '@/models/connect';
 
 const adjustCol: ColProps = {
   xxl: {span: 5},
@@ -67,8 +68,15 @@ class Home extends React.Component<any,any>{
               <div className={styles['text-block']}>
                 <div><b>赛事名称</b>:{v.name}</div>
                 <div><b>举办时间</b><span>:{v.rpstarttime.slice(0,10).replace(/-/g,"/")}~{v.rpendtime.slice(0,10).replace(/-/g,"/")}</span></div>
+                <div className={styles.status} style={{marginTop:5}} >{v.status === "报名中" ?
+                <Tag color={"gold"} >{v.status}</Tag> : <Tag >{v.status}</Tag>
+                }
+                {v.status === "报名中" ?
+                <Button className={styles.button} type={"primary"} onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)}>进入赛事</Button>
+                : <Button className={styles.button}  onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)}>进入赛事</Button>
+                }
+                </div>
               </div>
-              <a onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)}>进入赛事</a>
             </div>
           </Col>
         )
@@ -149,6 +157,7 @@ class Home extends React.Component<any,any>{
   }
 }
 
-export default connect(({gameList}:any) => {
+export default connect(({gameList}: ConnectState) => {
+  console.log(gameList);
   return {gameList:gameList.gameList};
 })(Home)

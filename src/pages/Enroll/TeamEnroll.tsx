@@ -177,6 +177,7 @@ class TeamEnroll extends React.Component<any,any>{
     }
     // 判断出合法的运动员列表，置入state 打开modal
     let legalAthleteList =  legalAthleteFilter(athleteList,rule);
+    // console.log(legalAthleteList);return 0;
     if(legalAthleteList.length !== 0) {
       // TODO 这里有bug，角色设置为队员，但是显示出来的是守门员
       for(let i:number = 0; i < legalAthleteList.length ; i++) {
@@ -245,7 +246,7 @@ class TeamEnroll extends React.Component<any,any>{
       r.push(
         <div key={v.player}>
           <span>姓名：{v.athlete.name}</span>&nbsp;&nbsp;|&nbsp;&nbsp;
-          <span>身份证号码：{v.athlete.idcard}</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+          {/*<span>身份证号码：{v.athlete.idcard}</span>&nbsp;&nbsp;|&nbsp;&nbsp;*/}
           <span>角色名称：{v.rolename}</span>&nbsp;&nbsp;|&nbsp;&nbsp;
           <span>性别：{sexs[index]}</span>&nbsp;&nbsp;|&nbsp;&nbsp;
           <span>所属组别：{group_ages[index]}</span>

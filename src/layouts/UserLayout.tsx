@@ -23,7 +23,7 @@ export default function LoginLayout(props: any) {
   return (
     <Layout className={styles['login-layout']} style={{ minHeight: '100vh' }}>
       <Header className={styles.header}>
-        <p><strong>轮滑赛事辅助系统平台</strong></p>
+        <p><img  src={require('@/assets/logo.png')} alt=""/><strong>轮滑赛事辅助系统平台</strong></p>
       </Header>
 
       <Content className={styles.content} >

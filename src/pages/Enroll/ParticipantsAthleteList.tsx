@@ -375,8 +375,12 @@ function ParticipantsAthleteList(props:{loading: boolean,matchId: number, unitId
   const tableColumns:ColumnProps<athleteListProps>[] = [
     {
       title: '是否参赛', dataIndex: 'active', key: 'active',align:'center',
-      render:(text:number, record: any) =>
-        <Checkbox checked={!!text} onChange={(e) => handleSelect(e.target.checked,record,e)}/>
+      render:(text:number, record: any) => {
+        return (
+          // TODO <Button size="small" type="danger" >取消参赛</Button>
+          <Checkbox checked={!!text} onChange={(e) => handleSelect(e.target.checked,record,e)}/>
+        );
+      }
     },
     { title: '运动员姓名', key: 'name', align:'center', render:(text:any,record:any) => (<span>{record.athlete.name}</span>)},
     { title: '性别', key: 'sex', dataIndex: 'sex', align:'center', render:(text:any,record:any) => (<span>{record.athlete.sex}</span>) },
@@ -395,6 +399,9 @@ function ParticipantsAthleteList(props:{loading: boolean,matchId: number, unitId
       )
     }
   ];
+  function handle_confirm_delete() {
+
+  }
   // 选中运动员是否参赛
   function handleSelect(checked: boolean, record: any, e: any ) {
     const { birthday, id } = record.athlete;
@@ -421,16 +428,15 @@ function ParticipantsAthleteList(props:{loading: boolean,matchId: number, unitId
         message.warning('请先删除该运动员参加的团体项目');
         return;
       }
-      // message.warning('取消参赛将会删除之前该运动员已报名项目的记录！如果该运动员已报了团体项目，请重新删除该团体项目再进行报名');
       // 先删除已报名的团队项目
-      props.dispatch({
-        type: 'enroll/deleteTeamProject',
-        payload: {
-          matchdata : matchId,
-          athlete : id,
-          contestant : contestantId
-        }
-      })
+      // props.dispatch({
+      //   type: 'enroll/deleteTeamProject',
+      //   payload: {
+      //     matchdata : matchId,
+      //     athlete : id,
+      //     contestant : contestantId
+      //   }
+      // });
       deleteParticipantsAthlete({matchdata: matchId, athlete: id, contestant: contestantId})
         .then(data => {
           if(data) dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: {unitId, matchId}});
@@ -579,7 +585,7 @@ function ParticipantsAthleteList(props:{loading: boolean,matchId: number, unitId
 
 export default connect(({enroll, loading}: ConnectState) => {
   return {
-    athleteList: [...enroll.unit.athleteList].reverse(),
+    athleteList: enroll.unit.athleteList,
     matchId: enroll.currentMatchId,
     unitId: enroll.unitInfo.id,
     contestantId: enroll.unit.contestantUnitData.id,
