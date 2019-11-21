@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react';
 import { Dispatch } from 'redux';
 import { FormComponentProps } from 'antd/es/form';
-import { Typography, Button, Form, Input, message, Modal, PageHeader, Upload } from 'antd';
+import { Button, Form, Input, message, Modal, PageHeader, Upload } from 'antd';
 // @ts-ignore
 import styles from './index.less';
 import {  UploadChangeParam } from 'antd/lib/upload/interface';
@@ -81,8 +81,7 @@ interface MainPartProps extends FormComponentProps {
 }
 
 function MainPart(props: MainPartProps) {
-  const [ upLoadFile, setFile ] = useState<any>({});
-  const [ visible, setvisible ] = useState(false);
+  const [ upLoadFile, setFile ] = useState<any>('');
 
   let view: HTMLDivElement | undefined = undefined;
   function getViewDom(ref: HTMLDivElement) {
@@ -110,9 +109,6 @@ function MainPart(props: MainPartProps) {
             }
           }
         })
-      setTimeout(() => {
-        setvisible(false);
-      },1000);
     })
   }
 
@@ -120,7 +116,6 @@ function MainPart(props: MainPartProps) {
     if(!legal.current) { return; }
     message.success('已成功上传营业执照，请输入主体名称后点击更改营业执照信息');
     setFile(file.originFileObj);
-    setvisible(true);
   }
 
   return (
@@ -131,7 +126,6 @@ function MainPart(props: MainPartProps) {
       <AvatarView getFile={getFile} avatar={props.businesslicense === null ?
       'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png'
       : props.businesslicense} />
-      <Modal footer={null} title={"请输入营业执照主体名称"} visible={visible} >
         <Form layout="vertical" hideRequiredMark>
           <FormItem label="主体名称" className={styles.input_view}>
             {getFieldDecorator('mainpart', {
@@ -142,7 +136,6 @@ function MainPart(props: MainPartProps) {
             更改营业执照信息
           </Button>
         </Form>
-      </Modal>
     </div>
   </div>
   )

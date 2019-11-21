@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { TreeSelect, Button, Modal, Table, Input, Select, message } from 'antd';
+import { Cascader, TreeSelect, Button, Modal, Table, Input, Select, message } from 'antd';
 import { ModalProps } from 'antd/lib/modal';
 
 import { legalAthleteFilter } from '@/utils/enroll.ts';
@@ -14,6 +14,41 @@ import { ConnectState } from '@/models/connect';
 
 const { Option } = Select;
 const { TreeNode } = TreeSelect;
+
+const options = [
+  {
+    code: 'zhejiang',
+    name: 'Zhejiang',
+    items: [
+      {
+        code: 'hangzhou',
+        name: 'Hangzhou',
+        items: [
+          {
+            code: 'xihu',
+            name: 'West Lake',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    code: 'jiangsu',
+    name: 'Jiangsu',
+    items: [
+      {
+        code: 'nanjing',
+        name: 'Nanjing',
+        items: [
+          {
+            code: 'zhonghuamen',
+            name: 'Zhong Hua Men',
+          },
+        ],
+      },
+    ],
+  },
+];
 
 class TeamEnroll extends React.Component<any,any>{
 
@@ -106,7 +141,6 @@ class TeamEnroll extends React.Component<any,any>{
   };
   // 初始化树桩选择器dom
   initialTreeDOM = (item:Array<any>):React.ReactNode => {
-
     let res:Array<React.ReactNode> = [];
     if(item && item.length !== 0) {
       for(let i:number = item.length - 1 ; i >= 0 ; i--) {
@@ -424,14 +458,19 @@ class TeamEnroll extends React.Component<any,any>{
     ];
 
 
-
     return (
       <div>
         <div>
+          {/*<Cascader*/}
+          {/*  fieldNames={{label: 'name', value: 'code', children: 'items'}}*/}
+          {/*  options={options}*/}
+          {/*  onChange={(value: Array<string>) => console.log(value)}*/}
+          {/*  placeholder="请选择"*/}
+          {/*/>*/}
           <TreeSelect style={{width: '300px'}} placeholder='请选择团队项目' onChange={this.handleTreeSelectChange}>
             {TREE_NODE}
           </TreeSelect>
-          <Button onClick={this.handleOpenDialog}>开设新队伍</Button>
+          <Button type="primary" onClick={this.handleOpenDialog}>开设新队伍</Button>
         </div>
         <div className={styles['myroll']}>
           <Table

@@ -143,8 +143,8 @@ class IndividualEnroll extends React.Component<any,any>{
   * */
   getGroupByItem = (athleteData:any, itemList: Array<any>, itemId: number, limitation:any) => {
     // isCrossGroup 是个boolean
-    const { isCrossGroup, upGroupNumber } = this.props.individualLimitation;
-    const { matchId } = this.props;
+    const { isCrossGroup } = this.props.individualLimitation;
+    const { matchId, group_age_list } = this.props;
     this.setState({itemValue:itemId});
     if(itemId) {
       // 清空下面的设置
@@ -157,7 +157,7 @@ class IndividualEnroll extends React.Component<any,any>{
       if(groupList) {
         const { upGroupNumber } = limitation;
         // 通过 年龄+组别列表+可升组数量 得到可选组别列表，例如可选青成组，少年组
-        let r = getGroupsByAge(birthday,groupList,upGroupNumber,matchId);
+        let r = getGroupsByAge(birthday,groupList,upGroupNumber, group_age_list);
         let fGroupList = [],fGroupValue = -1;
         if(r.length !== 0) {
           // 判断是否可以跨组别参赛
@@ -197,7 +197,6 @@ class IndividualEnroll extends React.Component<any,any>{
                 }
                 // FIXME 暂时不解决跨组的问题
                 if(isUpGroup) {
-                  //
                   fGroupList = r; fGroupValue = r[r.length - 2].groupId;
                 }else {
                   fGroupList = r; fGroupValue = r[r.length - 1].groupId;
@@ -207,7 +206,6 @@ class IndividualEnroll extends React.Component<any,any>{
               // 什么项目没有报名
               fGroupList = r; fGroupValue = r[r.length - 1].groupId;
             }
-            //
           }
         }
         this.setState({ groupList: fGroupList, groupValue: fGroupValue});
@@ -465,7 +463,7 @@ class IndividualEnroll extends React.Component<any,any>{
   }
 }
 
-export default connect(({enroll, user, loading}:ConnectState) => {
+export default connect(({enroll, user, loading, gameList}:ConnectState) => {
   return {
     enrollAthleteList:enroll.unit.athleteList.filter((v:any) => {
       return v.active === 1;
@@ -477,6 +475,7 @@ export default connect(({enroll, user, loading}:ConnectState) => {
     unit_account: user.unitAccount,
     person_data: user.athleteData[0],
     noticeVisible: enroll.noticeVisbile,
-    loading: loading.global
+    loading: loading.global,
+    group_age_list: gameList.group_age
   }
 })(IndividualEnroll);

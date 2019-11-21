@@ -31,6 +31,7 @@ function EnrollLayout(props: {dispatch: Dispatch, currentGameData: any,children:
             dispatch({type: 'enroll/getAllItemInfo',payload: {matchId: matchId}});
             // 获取gameList 拿本场赛事信息
             dispatch({type: 'gameList/getGameList'});
+            dispatch({type: 'gameList/getGroupAge', payload: { matchdata: matchId } });
           }else {
             message.error('请选择赛事');
             router.push('/home');

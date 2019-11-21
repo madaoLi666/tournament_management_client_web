@@ -1,5 +1,6 @@
 import { qSort, hSearch } from '@/utils/sort';
 import { message } from 'antd';
+import { GroupAgeList } from '@/models/gamelist';
 
 interface SexData {
   openprojectgroup:number,
@@ -199,37 +200,34 @@ export function getListByKey(obj: Array<any>, value: any, keyName: string ):any 
 * upGroupNumber 可升组数量 输出应该不upGroupNumber 多出1项 ,
 *                         -1 即代表不可升组
 * */
-export function getGroupsByAge(birthday:string, groupList:Array<any>, upGroupNumber: number, matchId?: 0) {
+export function getGroupsByAge(birthday:string, groupList:Array<any>, upGroupNumber: number, group_age_list: Array<GroupAgeList>) {
   qSort(groupList,0,groupList.length-1,"startTime");
-  let index:number = -1;
-  for(let i:number = groupList.length - 1; i >= 0 ;i--) {
-    // 符合条件
-    if(birthday >= groupList[i].startTime && birthday <= groupList[i].endTime) {
-      index = i;
+  /* 这里预设年龄组别不做排序了，后台设置时必须从大到小排序设置，即青成->少年->儿童 A B C */
+  let index = -1; let j = 0;
+  for(j; j < group_age_list.length ; j++) {
+    if(birthday >= group_age_list[j].starttime && birthday <= group_age_list[j].endtime ) {
+      if(j === 0) {
+        index = 0;
+      }else {
+        index = j - upGroupNumber;
+      }
       break;
     }
   }
-  if(index === -1) {
+  if( index >= group_age_list.length ) {
+    /* 如果升组后还是不符合条件，则返回空数组，例如儿童B升一组至A，报不了少年C */
+    return [];
+  }
+  if(index === -1 && j === group_age_list.length+1) {
     // 没有符合组别
     return [];
   }else {
-    if(index === 0) {
+    if(index === 0 && j === 0) {
       // 无组可升
       return groupList.slice(0,1);
-    }else if(index - upGroupNumber < 0){
-      // 溢出
-      return groupList.slice(0,index+1);
     }else {
       // 将可升组别与原组别返回
-      if(matchId !== 0 && matchId === 12) {
-        if(index === 1) {
-          return groupList.slice(index-upGroupNumber,index+1);
-        }else {
-          return groupList.slice(index-upGroupNumber+1,index+1);
-        }
-      }else {
-        return groupList.slice(index-upGroupNumber,index+1);
-      }
+      return groupList.slice(index,index+1+upGroupNumber);
     }
   }
 }
@@ -280,7 +278,7 @@ export function legalAthleteFilter(athleteList: Array<any>, rule:FilterRule,) {
    * 这里针对轮滑球来做固定的限制，青年组升成年组，不需要业余等级证
    */
   const { itemName, startTime } = rule;
-  
+
   // 整理 将 已报项目数量整理处理
   // 整理时 如果有project内的升组或未升组的项目的长度不为零，则设置外面的itemNumber upGroupItemNumber，否则设为0
   // 这里多加了判断是否是淘汰赛的规则

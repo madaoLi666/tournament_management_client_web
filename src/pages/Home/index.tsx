@@ -158,6 +158,5 @@ class Home extends React.Component<any,any>{
 }
 
 export default connect(({gameList}: ConnectState) => {
-  console.log(gameList);
   return {gameList:gameList.gameList};
 })(Home)

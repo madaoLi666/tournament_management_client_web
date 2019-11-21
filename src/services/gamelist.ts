@@ -7,3 +7,7 @@ export async function getGameList() {
 export async function getHomePic():Promise<any>{
     return axiosInstance.get('/reactfile/');
 }
+
+export async function getGroup_age(data: object): Promise<any> {
+  return axiosInstance.get('/groupage/',{ params: data });
+}
