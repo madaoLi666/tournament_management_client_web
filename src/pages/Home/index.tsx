@@ -73,7 +73,7 @@ class Home extends React.Component<any,any>{
                 }
                 {v.status === "报名中" ?
                 <Button className={styles.button} type={"primary"} onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)}>进入赛事</Button>
-                : <Button className={styles.button}  onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)}>进入赛事</Button>
+                : <Button className={styles.button}   onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)}>进入赛事</Button>
                 }
                 </div>
               </div>

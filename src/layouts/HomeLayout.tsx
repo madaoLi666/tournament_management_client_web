@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Layout, message
-} from 'antd'
+  Layout, message, Row, Col, Menu, Icon,
+} from 'antd';
 import { connect } from 'dva';
 import router from 'umi/router';
 import { Dispatch } from 'redux';
@@ -25,7 +25,7 @@ function HomeLayout(props: HomeLayoutProps) {
   ];
 
   const token = window.localStorage.getItem('TOKEN');
-
+  const [currentMenu, setCurrentMenu] = useState('home');
   function exit() {
     window.localStorage.clear();
     props.dispatch({
@@ -59,6 +59,15 @@ function HomeLayout(props: HomeLayoutProps) {
     },1000)
   },[props]);
 
+  function handleChangeMenu(e: any) {
+    setCurrentMenu(e.key);
+    if (e.key === 'home') {
+      router.push('/home')
+    }else {
+      router.push('/home/temp');
+    }
+  }
+
   if(!loading) {
     return (
       <div className={styles['mask']} hidden={loading} >
@@ -72,14 +81,15 @@ function HomeLayout(props: HomeLayoutProps) {
     <div>
       <Layout className={styles['home-layout']} >
         <Header className={styles['header']}>
-            <div style={{ float: 'left'}}>
+            <div className={styles.header_left} style={{ float: 'left'}}>
               <strong>
+              <img src={require('@/assets/logo.png')}  alt=""/>
               <span style={{width: '120px'}}><a href={"/home"} >轮滑赛事辅助系统平台</a></span>
               &nbsp;&nbsp;&nbsp;&nbsp;
-              <a onClick={() => window.open('https://www.gsta.top/nstatic/react/%E6%8A%A5%E5%90%8D%E6%AD%A5%E9%AA%A4_6fDXGU2.html')} >报名步骤查看</a>
+              <a className={styles.header_block} onClick={() => window.open('https://www.gsta.top/nstatic/react/%E6%8A%A5%E5%90%8D%E6%AD%A5%E9%AA%A4_6fDXGU2.html')} >报名步骤查看</a>
               </strong>
             </div>
-            <div style={{ float: 'right'}}>
+            <div className={styles.header_right}>
               {(token === null || token === undefined) ? (
                 <div>
                 <a onClick={() => router.push('/home')}>主页</a>
@@ -104,26 +114,34 @@ function HomeLayout(props: HomeLayoutProps) {
                 <img src={require('@/assets/logo1.png')}  alt=""/>
                 <span style={{padding:5}} ><b>广东省轮滑运动协会</b></span>
               </div>
-              <div>
+              <div className={styles.logo_my} >
                 <img src={require('@/assets/logo.png')} alt=""/>
                 <span style={{padding:5}} ><b>轮滑赛事辅助系统</b></span>
               </div>
             </div>
-            {/*<Col span={10} offset={10}>*/}
-              {/*<Search*/}
-                {/*placeholder="input search text"*/}
-                {/*onSearch={value => {}}*/}
-              {/*/>*/}
-            {/*</Col>*/}
           <div className={styles.menu}>
-            {/*<Menu mode="horizontal" >*/}
-              {/*{(menuArr.map(v => {*/}
-                {/*return (*/}
-                  {/*// @ts-ignore*/}
-                  {/*<Menu.Item key={v.key}>{v.name}</Menu.Item>*/}
-                {/*)*/}
-              {/*}))}*/}
-            {/*</Menu>*/}
+            <Menu onClick={handleChangeMenu} selectedKeys={[currentMenu]} mode={"horizontal"} >
+              <Menu.Item key={"home"} >
+                <Icon type={"home"} />
+                主页
+              </Menu.Item>
+              <Menu.Item key={"competition"} >
+                <Icon type={"crown"} />
+                赛事
+              </Menu.Item>
+              <Menu.Item key={"practice"} >
+                <Icon type={"project"} />
+                培训
+              </Menu.Item>
+              <Menu.Item key={"level"} >
+                <Icon type={"heat-map"} />
+                业余等级
+              </Menu.Item>
+              <Menu.Item key={"small_program"} >
+                <Icon type={"wechat"} />
+                小程序
+              </Menu.Item>
+            </Menu>
           </div>
           <div>
             {props.children}

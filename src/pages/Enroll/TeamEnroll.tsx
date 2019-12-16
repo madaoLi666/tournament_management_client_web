@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Cascader, TreeSelect, Button, Modal, Table, Input, Select, message } from 'antd';
+import { Cascader, Row, Col, TreeSelect, Button, Modal, Table, Input, Select, message } from 'antd';
 import { ModalProps } from 'antd/lib/modal';
 
 import { legalAthleteFilter } from '@/utils/enroll.ts';
@@ -15,6 +15,13 @@ import { ConnectState } from '@/models/connect';
 const { Option } = Select;
 const { TreeNode } = TreeSelect;
 
+/**
+<Cascader
+            fieldNames={{label: 'name', value: 'code', children: 'items'}}
+            options={options}
+            onChange={(value: Array<string>) => console.log(value)}
+            placeholder="请选择"
+          />
 const options = [
   {
     code: 'zhejiang',
@@ -49,6 +56,7 @@ const options = [
     ],
   },
 ];
+ */
 
 class TeamEnroll extends React.Component<any,any>{
 
@@ -141,6 +149,7 @@ class TeamEnroll extends React.Component<any,any>{
   };
   // 初始化树桩选择器dom
   initialTreeDOM = (item:Array<any>):React.ReactNode => {
+    // console.log(item);
     let res:Array<React.ReactNode> = [];
     if(item && item.length !== 0) {
       for(let i:number = item.length - 1 ; i >= 0 ; i--) {
@@ -415,7 +424,7 @@ class TeamEnroll extends React.Component<any,any>{
     const { teamItem, teamEnroll } = this.props;
     const { modalVisible, legalAthleteList, roleTypeList, selectedAthleteList } = this.state;
 
-    let TREE_NODE = this.initialTreeDOM(teamItem);
+    let TREE_NODE: React.ReactNode = this.initialTreeDOM(teamItem);
 
     const modalProps: ModalProps = {
       visible: modalVisible,
@@ -461,13 +470,7 @@ class TeamEnroll extends React.Component<any,any>{
     return (
       <div>
         <div>
-          {/*<Cascader*/}
-          {/*  fieldNames={{label: 'name', value: 'code', children: 'items'}}*/}
-          {/*  options={options}*/}
-          {/*  onChange={(value: Array<string>) => console.log(value)}*/}
-          {/*  placeholder="请选择"*/}
-          {/*/>*/}
-          <TreeSelect style={{width: '300px'}} placeholder='请选择团队项目' onChange={this.handleTreeSelectChange}>
+          <TreeSelect className={styles.treeSelect} placeholder='请选择团队项目' onChange={this.handleTreeSelectChange}>
             {TREE_NODE}
           </TreeSelect>
           <Button type="primary" onClick={this.handleOpenDialog}>开设新队伍</Button>

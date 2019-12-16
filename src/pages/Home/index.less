@@ -104,17 +104,34 @@
         text-overflow: ellipsis;
         white-space: nowrap;
       }
+
       .status {
-        display: flex;
-        height: 20px;
+        height: auto;
+        line-height: 29.6px;
+        font-size: 14px;
+        span {
+          vertical-align: middle;
+          font-size: 100%;
+        }
         .button {
-          height: auto;
-          font-size: 12px;
+          vertical-align: middle;
+          height: 30px;
+          font-size: 100%;
+          line-height: 22px;
+          border: 1px solid #446d88;
+          border-radius: .2em;
+          box-shadow: 0 .05em .25em gray;
+          box-sizing: border-box;
+          float: right;
+          margin-right: .1rem;
+          span {
+            display: grid;
+          }
           @media screen and (max-width: 667px) {
-            margin-left: 52%;
+            display: inline-block;
           }
           @media screen and (min-width: 667px) {
-            margin-left: 57%;
+            display: inline-block;
           }
         }
       }

@@ -12,6 +12,7 @@ const config: IConfig =  {
       routes: [
         { path: '/home', component: './Home/index.tsx', name: '主页' },
         { path: '/home/introduction', component: './Home/Introduction.tsx', name: '赛事介绍页面' },
+        { path: '/home/temp', component: './Home/tempMenu.tsx', name: '暂未开放' },
       ]
     },
     // 登陆页面
