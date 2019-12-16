@@ -64,7 +64,7 @@ const RESISTER_MODEL: Model = {
       let data = yield setAthleteRole({user_id: user_id.userId});
       if(data) {
         message.success('成功注册个人账号，请重新登录');
-        yield router.push('/user');
+        yield router.push('/user/list');
       }
     },
     // 注册单位账号

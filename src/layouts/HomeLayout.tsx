@@ -100,7 +100,7 @@ function HomeLayout(props: HomeLayoutProps) {
                 <span>
                   <a onClick={() => router.push('/home')}>主页</a>
                   &nbsp;&nbsp;
-                  <a onClick={() => router.push('/user')}>个人中心</a>
+                  <a onClick={() => router.push('/user/list')}>个人中心</a>
                   &nbsp;&nbsp;
                   <a onClick={exit}>退出登陆</a>
                 </span>

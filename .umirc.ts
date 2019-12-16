@@ -7,8 +7,16 @@ const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const config: IConfig =  {
   //
   routes:[
+    // 个人中心
+    {path: '/user', Routes: ['./src/layouts/BasicLayout.tsx'],
+      routes: [
+        { path: '/home', component: './Home/index.tsx', name: '主页', icon: 'home' },
+        { path: '/user/list', component: './PersonBackground/AthletesList.tsx', name: '运动员列表', icon: 'smile' },
+        { path: '/user/accountManagement', component: './PersonBackground/AccountManagement.tsx', name: '单位管理', icon: 'smile' },
+      ]
+    },
     // 主页
-    { path: '/home', Routes: ['./src/layouts/HomeLayout.tsx'],
+    { path: '/home', Routes: ['./src/layouts/HomeLayout.tsx','./src/pages/Authorized/Authorized.tsx'],
       routes: [
         { path: '/home', component: './Home/index.tsx', name: '主页' },
         { path: '/home/introduction', component: './Home/Introduction.tsx', name: '赛事介绍页面' },
@@ -41,11 +49,11 @@ const config: IConfig =  {
       ]
     },
     // 主用户界面 - 这个位置是动态设置的
-    {
-      path: '/user',
-      Routes: ['./src/layouts/BasicLayout.tsx','./src/pages/Authorized/Authorized.tsx'],
-      routes: []
-    },
+    // {
+    //   path: '/user',
+    //   Routes: ['./src/layouts/BasicLayout.tsx','./src/pages/Authorized/Authorized.tsx'],
+    //   routes: []
+    // },
     // 404等页面
     {
       path: '/notFound',

@@ -8,6 +8,7 @@ import {  UploadChangeParam } from 'antd/lib/upload/interface';
 import { ConnectState } from '@/models/connect';
 import { connect } from 'dva';
 import { newUnitAccount } from '@/services/register';
+import { BasicLayout } from '@ant-design/pro-layout';
 
 const FormItem = Form.Item;
 

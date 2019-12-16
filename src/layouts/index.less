@@ -55,6 +55,11 @@
     cursor: pointer;
     color: #999999;
   }
+  .headerMessage {
+    @media screen and (max-width: 667px) {
+      display: none;
+    }
+  }
   .headerMessage p {
     margin: 0%;
     height: 32px;
@@ -126,12 +131,18 @@
         color: #ffffff;
         font-size: 17px;
       }
+      .header_left a:hover {
+        color: #000000;
+      }
 
       .header_right {
         float: right;
       }
       .header_right a {
         vertical-align: middle;
+      }
+      .header_right a:hover {
+        color: #000000;
       }
 
       .mask {
@@ -278,7 +289,7 @@
       }
     }
     .menu {
-      
+
     }
   }
 

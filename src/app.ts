@@ -14,8 +14,8 @@ export const dva = {
   },
 };
 
-export function patchRoutes(routes: IRoute) {
-  routes.forEach((v:IRoute) => {
-    if(v.path === MAIN_PATH) v.routes = uRoutes;
-  });
-}
+// export function patchRoutes(routes: IRoute) {
+//   routes.forEach((v:IRoute) => {
+//     if(v.path === MAIN_PATH) v.routes = uRoutes;
+//   });
+// }

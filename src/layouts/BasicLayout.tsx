@@ -4,9 +4,17 @@ import { connect } from 'dva';
 import router from 'umi/router';
 import uRoutes from '@/config/router';
 import { Dispatch } from 'redux';
+import ProLayout,{
+  MenuDataItem,
+  BasicLayout,
+  BasicLayoutProps as ProLayoutProps,
+  Settings,
+  PageHeaderWrapper,
+} from '@ant-design/pro-layout';
 import { Layout, Menu, Breadcrumb, Drawer, Button, Avatar, Typography, Row, Col, message, Icon } from 'antd';
 // @ts-ignore
 import styles from './index.less';
+import { Link } from 'umi';
 
 const { Header, Content, Footer } = Layout;
 const { Text, Title } = Typography;
@@ -66,44 +74,86 @@ function initialMenuDOM(routes: IRoute): ReactNode{
   return menuDOM;
 }
 
-interface BasicLayoutProps {
+interface BasicLayoutProps extends ProLayoutProps {
   dispatch: Dispatch;
   children: React.ReactNode;
   userInfo: any;
   personInfo: any;
   drawer_visible: boolean;
+  breadcrumbNameMap: {
+    [path: string]: MenuDataItem;
+  };
+  settings: Settings;
+  collapsed: boolean;
 }
 
-function BasicLayout(props: BasicLayoutProps) {
+function BasicLayoutMy(props: BasicLayoutProps) {
+  const { dispatch } = props;
+
   useEffect(() => {
     props.dispatch({
       type:'user/getAccountData'
-    })
+    });
     props.dispatch({
       type:'global/person_background_drawer',
       payload: false
     })
 },[]);
 
-let leaderName:string;
-let unitName:string;
-let person_name:string;
-let athleteNumber: number;
-if(props.userInfo) {
-  // 判断是否有单位账号信息
-  leaderName = props.userInfo.athleteData[0].name;
-  unitName = props.userInfo.unitData[0].name;
-  athleteNumber = props.userInfo.unitathlete.length;
-}
-if(props.personInfo) {
-  if(props.personInfo.length !== 0) {
-    person_name = props.personInfo[0].name;
-  }
-}
+  const footerRender: BasicLayoutProps['footerRender'] = (_, defaultDom) => {
+    return (
+      <Footer style={{ textAlign: 'center' }}>
+        <span>广州青苔科技有限公司 版权所有  粤ICP备19028504号</span>
+        <div style={{width: '300px',margin:'0 auto', padding:'20px 0'}}>
+          <a
+            target="_blank"
+            href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44011802000333"
+            style={{display:'inline-block', textDecoration:'none', height: '20px', lineHeight: '20px'}}
+          >
+            <img src={require('../assets/p.png')} style={{float: 'left'}} alt="" />
+            <p style={{float: 'left', height: '20px', lineHeight: '20px', margin: '0px 0px 0px 5px', color: '#939393'}} >
+              粤公网安备 44011802000333号</p>
+          </a>
+        </div>
+      </Footer>
+    );
+  };
 
-  // 默认不显示抽屉
-  const [visible, setVisible] = React.useState(props.drawer_visible);
-  function showDrawer() {setVisible(!visible);}
+  const handleMenuCollapse = (payload: boolean): void => {
+    if(dispatch) {
+      dispatch({
+        type: 'global/changeLayoutCollapsed',
+        payload
+      })
+    }
+};
+
+  const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] => {
+    menuList.map(item => {
+      const localItem = {
+        ...item,
+        children: item.children ? menuDataRender(item.children) : []
+      };
+      return localItem;
+    });
+    return menuList;
+  };
+
+  let leaderName:string;
+  let unitName:string;
+  let person_name:string;
+  let athleteNumber: number;
+  if(props.userInfo) {
+    // 判断是否有单位账号信息
+    leaderName = props.userInfo.athleteData[0].name;
+    unitName = props.userInfo.unitData[0].name;
+    athleteNumber = props.userInfo.unitathlete.length;
+  }
+  if(props.personInfo) {
+    if(props.personInfo.length !== 0) {
+      person_name = props.personInfo[0].name;
+    }
+  }
 
   function signout() {
     // 清除TOKEN，并将store重新置空
@@ -121,72 +171,67 @@ if(props.personInfo) {
   }
 
   return (
-    <Layout style={{ minHeight: '100vh' }} className={styles['basic-layout']}>
-      <Drawer
-        title='赛事平台辅助系统'
-        placement='left'
-        closable={false}
-        onClose={showDrawer}
-        visible={visible}
-        bodyStyle={drawerStyle}
+    <Layout className={styles['basic-layout']}>
+      <BasicLayout
+        title="轮滑辅助系统平台"
+        logo={require('@/assets/logo.png')}
+        collapsed={props.collapsed}
+        onCollapse={handleMenuCollapse}
+        menuItemRender={(menuItemProps, defaultDom) => {
+          return <Link to={menuItemProps.path}>{defaultDom}</Link>;
+        }}
+        breadcrumbRender={(routers = []) => {
+          return [
+            {
+              path: '/',
+              breadcrumbName: "运动员列表"
+            },
+            ...routers,
+          ]}}
+        itemRender={(route, params, routes, paths) => {
+          const first = routes.indexOf(route) === 0;
+          return first ? (
+            <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
+          ) : (
+            <span>{route.breadcrumbName}</span>
+          );
+        }}
+        menuDataRender={menuDataRender}
+        footerRender={footerRender}
+        rightContentRender={rightProps => (
+          <div style={{display: 'inline', float: 'right'}} >
+            <Button type="link" onClick={signout} >退出账号</Button>
+            <Button type="link" onClick={() => {router.push('/home')}} >返回主页</Button>
+          </div>
+        )}
+        {...props}
+        {...props.settings}
       >
-        <div className={styles['logo']}>
-          <Menu theme='light' mode='inline'>
-            {/* 动态渲染 */}
-            {initialMenuDOM(uRoutes)}
-          </Menu>
-        </div>
-      </Drawer>
-      <Header style={{ background: '#fff', padding: 0 , height: "100%"}}>
-        <div>
-          <Icon className={styles['falist']} onClick={showDrawer} style={{fontSize:28,marginLeft:16,marginTop:16}} type="unordered-list" />
-          <Button type="link" onClick={signout} style={{float:"right",marginTop:"15px"}} >退出账号</Button>
-          <Button type="link" onClick={() => {router.push('/home')}} style={{float:"right",marginTop:"15px"}} >返回主页</Button>
-        </div>
-        <Row style={{height:130}}>
-          <Col {...autoAdjust1}>
-            <div style={{marginBlock:0}}>
-              <div className={styles['headerMessage']} style={{display:"flex",marginLeft:16}} >
-                <Avatar style={{ backgroundColor: '#87d068',marginTop:20 }} size={84} icon="user" />
-                <div style={{display:"flex",flexWrap:"wrap",width:300,marginLeft:20}}>
-                  <p style={{fontSize:18,marginTop:8}} >早安，{leaderName === undefined ? person_name : leaderName}，祝你工作顺利</p>
-                  {unitName === undefined ? null : <p><strong>赛事职务：{unitName === undefined ? null : unitName}&nbsp;领队</strong></p>}
+        <Header style={{ background: '#fff', padding: 0 , height: "100%"}}>
+          <Row style={{height:130}}>
+            <Col {...autoAdjust1}>
+              <div style={{marginBlock:0}}>
+                <div className={styles.headerMessage} style={{display:"flex",marginLeft:16}} >
+                  <Avatar style={{ backgroundColor: '#87d068',marginTop:20 }} size={84} icon="user" />
+                  <div style={{display:"flex",flexWrap:"wrap",width:300,marginLeft:20}}>
+                    <p style={{fontSize:18,marginTop:8}} >您好，{leaderName === undefined ? person_name : leaderName}，祝您工作顺利</p>
+                    {unitName === undefined ? null : <p><strong>赛事职务：{unitName === undefined ? null : unitName}&nbsp;领队</strong></p>}
+                  </div>
                 </div>
               </div>
-            </div>
-          </Col>
-          <Col {...autoAdjust2}>
-            {unitName === undefined ? null :
-              <div style={{marginLeft:30}}>
-              <Text type="secondary">在册运动员</Text>
-              <Title style={{margin:0,marginLeft:20}} level={1} >{athleteNumber === undefined ? null : athleteNumber}</Title>
-              </div>
-            }
-          </Col>
-        </Row>
-      </Header>
-      <Content style={{ margin: '0 16px' }}>
-        <Breadcrumb style={{ margin: '16px 0' }}>
-          <Breadcrumb.Item>个人中心</Breadcrumb.Item>
-        </Breadcrumb>
-        <div style={{ padding: 24, background: '#fff', minHeight: 720 }}>
-          {props.children}
-        </div>
-      </Content>
-      <Footer style={{ textAlign: 'center' }}>
-        <span>广州青苔科技有限公司 版权所有  粤ICP备19028504号</span>
-        <div style={{width: '300px',margin:'0 auto', padding:'20px 0'}}>
-            <a
-              target="_blank"
-              href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44011802000333"
-              style={{display:'inline-block', textDecoration:'none', height: '20px', lineHeight: '20px'}}
-            >
-              <img src={require('../assets/p.png')} style={{float: 'left'}} alt="" />
-              <p style={{float: 'left', height: '20px', lineHeight: '20px', margin: '0px 0px 0px 5px', color: '#939393'}} >
-              粤公网安备 44011802000333号</p>
-            </a>
-          </div>
-      </Footer>
+            </Col>
+            <Col {...autoAdjust2}>
+              {unitName === undefined ? null :
+                <div style={{marginLeft:30}}>
+                  <Text type="secondary">在册运动员</Text>
+                  <Title style={{margin:0,marginLeft:20}} level={1} >{athleteNumber === undefined ? null : athleteNumber}</Title>
+                </div>
+              }
+            </Col>
+          </Row>
+        </Header>
+        {props.children}
+      </BasicLayout>
     </Layout>
   );
 }
@@ -196,18 +241,20 @@ const mapStateToProps = (state:any) => {
     if (state.user.unitData.length === 0) {
       if(state.user.unitAccount === 1) {
         return {
+          collapsed: state.global.collapsed,
           personInfo: state.user.athleteData,
           drawer_visible: state.global.drawer_visible
         };
       }else {
-        return { drawer_visible: state.global.drawer_visible };
+        return {collapsed: state.global.collapsed,
+          drawer_visible: state.global.drawer_visible };
       }
     }
   }
   if(state.user.id !== ''){
-    return { userInfo: state.user, drawer_visible: state.global.drawer_visible};
+    return {collapsed: state.global.collapsed, userInfo: state.user, drawer_visible: state.global.drawer_visible};
   }
-  return { drawer_visible: state.global.drawer_visible }
+  return {collapsed: state.global.collapsed, drawer_visible: state.global.drawer_visible }
 };
 
-export default connect(mapStateToProps)(BasicLayout);
+export default connect(mapStateToProps)(BasicLayoutMy);
