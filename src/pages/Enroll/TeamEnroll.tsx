@@ -172,7 +172,7 @@ class TeamEnroll extends React.Component<any,any>{
               )
           }
           groupDOM.push(
-            <TreeNode title={group[j].name} value={`group-${group[j].groupId}`} key={`group-${group[j].groupId}`} selectable={false}>
+            <TreeNode size="large" title={group[j].name} value={`group-${group[j].groupId}`} key={`group-${group[j].groupId}`} selectable={false}>
               {sexDOM}
             </TreeNode>
           )
@@ -469,12 +469,13 @@ class TeamEnroll extends React.Component<any,any>{
 
     return (
       <div>
-        <div>
+        <div className={styles.treePcNode} >
           <TreeSelect className={styles.treeSelect} placeholder='请选择团队项目' onChange={this.handleTreeSelectChange}>
             {TREE_NODE}
           </TreeSelect>
           <Button type="primary" onClick={this.handleOpenDialog}>开设新队伍</Button>
         </div>
+        <Button className={styles.return} type="primary" style={{marginBottom:20,float:"left"}} onClick={() => {router.goBack()}} >返回个人报名</Button>
         <div className={styles['myroll']}>
           <Table
             style={{height:'200%'}}
@@ -485,8 +486,23 @@ class TeamEnroll extends React.Component<any,any>{
             scroll={{ x: 400}}
             loading={this.props.loading}
           />
-          <Button type="primary" style={{marginTop:20,float:"right"}} onClick={() => {router.goBack()}} >返回个人报名</Button>
-          <Button type="primary" style={{marginTop:20,float:"left"}} onClick={() => {router.push('/enroll/showEnroll')}} >下一步</Button>
+          <Button className={styles.returnDown} type="primary" style={{marginTop:20,float:"left"}} onClick={() => {router.goBack()}} >返回个人报名</Button>
+          <Button className={styles.hidePcBtn} type="primary" style={{marginTop:20,float:"right"}} onClick={() => {router.push('/enroll/showEnroll')}} >下一步</Button>
+        </div>
+        <div className={styles.treeMobNode} >
+          <Row>
+            <Col span={24} >
+              <TreeSelect size={"large"} className={styles.treeMobSelect} placeholder='请选择团队项目' onChange={this.handleTreeSelectChange}>
+                {TREE_NODE}
+              </TreeSelect>
+            </Col>
+            <Col span={12} >
+              <Button type="primary" onClick={this.handleOpenDialog}>开设新队伍</Button>
+            </Col>
+            <Col span={12} >
+              <Button style={{background: '#52C41A', color: 'white'}} onClick={() => {router.push('/enroll/showEnroll')}}>下一步</Button>
+            </Col>
+          </Row>
         </div>
         <Modal {...modalProps}>
           <Input

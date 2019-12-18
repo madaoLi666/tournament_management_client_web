@@ -11,12 +11,11 @@ const { Header, Content, Footer } = Layout;
 function EnrollLayout(props: {dispatch: Dispatch, currentGameData: any,children: React.ReactNode}) {
 
   const { currentGameData } = props;
-
+  const token = window.localStorage.getItem('TOKEN');
 
 
   useEffect(() => {
     const { dispatch } = props;
-    const token = window.localStorage.getItem('TOKEN');
     const matchId = Number(window.localStorage.getItem('MATCH_ID'));
     if(token !== null){
       // 获取账号信息
@@ -53,21 +52,59 @@ function EnrollLayout(props: {dispatch: Dispatch, currentGameData: any,children:
     }
   },[]);
 
+  function exit() {
+    window.localStorage.clear();
+    props.dispatch({
+      type: 'user/clearstate',
+      payload: ''
+    });
+    props.dispatch({
+      type: 'enroll/clearstate',
+      payload: ''
+    });
+    router.push('/home');
+    message.info('退出登陆成功');
+  }
+
   return (
     <div className={styles['enroll-layout']}>
       <Layout style={{height: '100%'}}>
-        <Header className={styles.header}>
+        <Header className={styles['header']}>
+          <div className={styles.header_left}>
+            <strong>
+              <div>
+                <img src={require('@/assets/logo.png')}  alt=""/>
+                <span ><a href={"/home"} >轮滑赛事辅助系统平台</a></span>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+              </div>
+              <a className={styles.header_block} onClick={() => window.open('https://www.gsta.top/nstatic/react/%E6%8A%A5%E5%90%8D%E6%AD%A5%E9%AA%A4_6fDXGU2.html')} >报名步骤查看</a>
+            </strong>
+          </div>
+          <div className={styles.header_right}>
+            {(token === null || token === undefined) ? (
+              <div>
+                <a onClick={() => router.push('/home')}>主页</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <a onClick={() => router.push('/login')} >你好，请登录</a>
+              </div>
+            ) : (
+              <span>
+                  <a onClick={() => router.push('/user/list')}>个人中心</a>
+                &nbsp;&nbsp;
+                &nbsp;&nbsp;
+                <a onClick={exit}>退出登陆</a>
+                </span>
+            )}
+          </div>
+        </Header>
+        <Header className={styles.header1}>
           <strong>
             <div className={styles.header_title}>
               <span>
                 {currentGameData !== undefined ? currentGameData.name : null}
               </span>
             </div>
-          &nbsp;&nbsp;&nbsp;&nbsp;
-          <a onClick={() => window.open('https://www.gsta.top/nstatic/react/%E6%8A%A5%E5%90%8D%E6%AD%A5%E9%AA%A4_6fDXGU2.html')} >报名步骤查看</a>
           </strong>
-          <Button type="link" onClick={() => router.push('/home')} style={{float:"right",marginTop:3,padding:'0px 10px 0px'}} >返回主页</Button>
-          <Icon style={{float:"right",marginTop:13,color:'blue'}} type="home" />
         </Header>
         <Content className={styles.content}>
           {props.children}

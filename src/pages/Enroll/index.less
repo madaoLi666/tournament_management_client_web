@@ -70,10 +70,27 @@
 
 }
 
+.return {
+  z-index: 10;
+  @media screen and (min-width: 667px) {
+    display: none;
+  }
+}
+
 .myroll {
   :global {
     .ant-table-placeholder{
       height: 500px;
+    }
+  }
+  .returnDown {
+    @media screen and (max-width: 667px) {
+      display: none;
+    }
+  }
+  .hidePcBtn {
+    @media screen and (max-width: 667px) {
+      display: none;
     }
   }
 }
@@ -102,16 +119,46 @@
       color: #1890ff;
       text-align: center;
       height: 40px;
-      line-height: auto;
     }
   }
 }
 
-.treeSelect {
-  @media screen and (min-width: 667px) {
-    width: 300px;
-  }
+
+.treePcNode {
   @media screen and (max-width: 667px) {
-    width: 150px;
+    display: none;
+  }
+
+  .treeSelect {
+    @media screen and (min-width: 667px) {
+      width: 300px;
+    }
+    @media screen and (max-width: 667px) {
+      width: 150px;
+    }
+  }
+}
+
+.treeMobNode {
+  @media screen and (min-width: 667px) {
+    display: none;
+  }
+  background: white;
+  border-radius: .2em;
+  border: 1px solid wheat;
+  position: fixed;
+  z-index: 999;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: visible;
+
+  .treeMobSelect {
+    width: 100%;
+  }
+  Button {
+    margin-top: 10px;
+    width: 100%;
+    height: 48px;
   }
 }

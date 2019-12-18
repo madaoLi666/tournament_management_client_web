@@ -171,7 +171,6 @@ function BasicLayoutMy(props: BasicLayoutProps) {
   }
 
   return (
-    <Layout className={styles['basic-layout']}>
       <BasicLayout
         title="轮滑辅助系统平台"
         logo={require('@/assets/logo.png')}
@@ -207,14 +206,14 @@ function BasicLayoutMy(props: BasicLayoutProps) {
         {...props}
         {...props.settings}
       >
-        <Header style={{ background: '#fff', padding: 0 , height: "100%"}}>
-          <Row style={{height:130}}>
+        <div className={styles.headerBlock} style={{ background: '#ffffff', height: "100%"}}>
+          <Row>
             <Col {...autoAdjust1}>
-              <div style={{marginBlock:0}}>
-                <div className={styles.headerMessage} style={{display:"flex",marginLeft:16}} >
-                  <Avatar style={{ backgroundColor: '#87d068',marginTop:20 }} size={84} icon="user" />
+              <div >
+                <div className={styles.headerMessage} >
+                  <Avatar className={styles.Avatar} style={{ backgroundColor: '#87d068',marginTop:16,marginBottom:16,marginLeft: 16 }} size={84} icon="user" />
                   <div style={{display:"flex",flexWrap:"wrap",width:300,marginLeft:20}}>
-                    <p style={{fontSize:18,marginTop:8}} >您好，{leaderName === undefined ? person_name : leaderName}，祝您工作顺利</p>
+                    <p style={{fontSize:18,marginTop:24}} >您好，{leaderName === undefined ? person_name : leaderName}，祝您工作顺利</p>
                     {unitName === undefined ? null : <p><strong>赛事职务：{unitName === undefined ? null : unitName}&nbsp;领队</strong></p>}
                   </div>
                 </div>
@@ -222,17 +221,17 @@ function BasicLayoutMy(props: BasicLayoutProps) {
             </Col>
             <Col {...autoAdjust2}>
               {unitName === undefined ? null :
-                <div style={{marginLeft:30}}>
+                <div className={styles.headerMessageRight}>
                   <Text type="secondary">在册运动员</Text>
-                  <Title style={{margin:0,marginLeft:20}} level={1} >{athleteNumber === undefined ? null : athleteNumber}</Title>
+                  <Title className={styles.athNum} level={1} >{athleteNumber === undefined ? null : athleteNumber}</Title>
                 </div>
               }
             </Col>
           </Row>
-        </Header>
-        {props.children}
+          <div className={styles.split} />
+          {props.children}
+        </div>
       </BasicLayout>
-    </Layout>
   );
 }
 

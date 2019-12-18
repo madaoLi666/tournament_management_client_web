@@ -50,63 +50,62 @@
     background: rgba(255, 255, 255, 0.2);
     margin: 16px;
   }
-
-  .falist:hover {
-    cursor: pointer;
-    color: #999999;
-  }
-  .headerMessage {
+}
+.headerBlock {
+  .headerMessageRight {
     @media screen and (max-width: 667px) {
-      display: none;
+      //display: none;
+      margin: 0;
+      display: flex;
+      box-sizing: border-box;
+      span {
+        font-weight: bolder;
+        padding-left: 1.5em;
+        padding-top: .3em;
+      }
+      span::after {
+        content: '：';
+      }
+      .athNum {
+        font-size: 18px;
+      }
+    }
+    margin-top: 2em;
+    vertical-align: middle;
+    .athNum {
+      margin:0;
+      marginLeft:20;
+      line-height: 10px;
+      padding: .5em;
+    }
+  }
+  @media screen and (max-width: 667px) {
+    .headerMessage {
+      .Avatar {
+        display: none;
+      }
+    }
+  }
+  @media screen and (min-width: 667px) {
+    .headerMessage {
+      display: flex;
+      marginLeft:16;
     }
   }
   .headerMessage p {
-    margin: 0%;
+    margin: 0;
     height: 32px;
   }
-
+}
+.split {
+  background-color: #F0F2F5;
+  height: 10px;
 }
 
 // 报名模块layout
 .enroll-layout {
   background-color: white;
   height: auto;
-  .header {
-    height: auto;
-    background-color: #f7f7f7;
-    line-height: 35px;
-    padding: 0 10px;
-
-    /* 标题居中样式 */
-    @media screen and (min-width: 667px) {
-      .header_title {
-        display: inline;
-      }
-    }
-    @media screen and (max-width: 667px) {
-      .header_title {
-        text-align: center;
-      }
-      a {
-        display: inline-block;
-      }
-    }
-  }
-
-  .content {
-    margin: 20px;
-    margin-block: 20px;
-    height: auto;
-  }
-
-  .footer {
-    text-align: center;
-  }
-}
-
-// 主页layout
-.home-layout {
-
   @media screen and (min-width:667px) {
     .header {
       background: linear-gradient(#58A3F7, #6633FF);
@@ -115,21 +114,27 @@
       width: 100%;
       box-shadow: 0 5px 6px -1px grey;
       line-height: 50px;
-
-      .header_left {
-        a {
-          vertical-align: middle;
-        }
-        img {
-          vertical-align: middle;
-          width: 40px;
-          height: auto;
-          margin-right: .5rem;
-        }
-      }
       > div a {
         color: #ffffff;
         font-size: 17px;
+      }
+      .header_left {
+        display: inline-block;
+        div {
+          display: inline-block;
+          img {
+            vertical-align: middle;
+            width: 40px;
+            height: auto;
+            margin-right: .5rem;
+          }
+        }
+        a {
+          vertical-align: middle;
+        }
+        .header_block {
+          vertical-align: middle;
+        }
       }
       .header_left a:hover {
         color: #000000;
@@ -196,14 +201,20 @@
       }
 
       .header_left {
+        display: block;
         vertical-align: middle;
+        line-height: 48px;
+        div {
+          display: flex;
+          //background-color: skyblue;
+          flex-direction: row;
+          justify-content: center;
+        }
         .header_block {
-          display: block;
+          float: left;
         }
         img {
-          display: none;
-          vertical-align: middle;
-          width: 40px;
+          width: 50px;
           height: auto;
           margin-right: .5rem;
         }
@@ -215,6 +226,209 @@
 
       .header_right {
         display: inline-block;
+        padding-left: 1rem;
+        font-weight: bolder;
+        height: 48px;
+        line-height: 48px;
+      }
+    }
+
+    .mask {
+      z-index: 2;
+      position: fixed;
+      background: rgba(255, 255, 255, 0.5);
+      width: 100%;
+      height: 100%;
+
+      .mask-box {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform:translate(-50%,-50%);
+        color: rgb(42, 83, 136);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-transform: uppercase;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica, sans-serif;
+        font-size: 2.5em;
+        text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+      }
+      .d {
+        animation: dots 1.5s ease-out infinite;
+      }
+
+      .d-2 {
+        animation-delay: .5s;
+      }
+
+      .d-3 {
+        animation-delay: 1s;
+      }
+    }
+  }
+  .header1 {
+    height: auto;
+    background-color: #f7f7f7;
+    line-height: 35px;
+    padding: 0 10px;
+
+    /* 标题居中样式 */
+    @media screen and (min-width: 667px) {
+      font-size: 24px;
+      margin-top: 4rem;
+      .header_title {
+        display: inline;
+      }
+    }
+    @media screen and (max-width: 667px) {
+      .header_title {
+        text-align: center;
+      }
+      a {
+        display: inline-block;
+      }
+    }
+  }
+
+  .content {
+    margin: 20px;
+    margin-block: 20px;
+    height: auto;
+  }
+
+  .footer {
+    text-align: center;
+  }
+}
+
+// 主页layout
+.home-layout {
+
+  @media screen and (min-width:667px) {
+    .header {
+      background: linear-gradient(#58A3F7, #6633FF);
+      position: fixed;
+      z-index: 1;
+      width: 100%;
+      box-shadow: 0 5px 6px -1px grey;
+      line-height: 50px;
+      > div a {
+        color: #ffffff;
+        font-size: 17px;
+      }
+      .header_left {
+        display: inline-block;
+        div {
+          display: inline-block;
+          img {
+            vertical-align: middle;
+            width: 40px;
+            height: auto;
+            margin-right: .5rem;
+          }
+        }
+        a {
+          vertical-align: middle;
+        }
+        .header_block {
+          vertical-align: middle;
+        }
+      }
+      .header_left a:hover {
+        color: #000000;
+      }
+
+      .header_right {
+        float: right;
+      }
+      .header_right a {
+        vertical-align: middle;
+      }
+      .header_right a:hover {
+        color: #000000;
+      }
+
+      .mask {
+        z-index: 2;
+        position: fixed;
+        background: rgba(255, 255, 255, 0.5);
+        width: 100%;
+        height: 100%;
+
+        .mask-box {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform:translate(-50%,-50%);
+          color: rgb(42, 83, 136);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          text-transform: uppercase;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica, sans-serif;
+          font-size: 2.5em;
+          text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        .d {
+          animation: dots 1.5s ease-out infinite;
+        }
+
+        .d-2 {
+          animation-delay: .5s;
+        }
+
+        .d-3 {
+          animation-delay: 1s;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: 667px) {
+    .header {
+      background: linear-gradient(#58A3F7, #6633FF);
+      z-index: 1;
+      width: 100%;
+      height: auto;
+      box-shadow: 0 5px 6px -1px grey;
+      line-height: 45px;
+
+      > div a {
+        color: #ffffff;
+        font-size: 16px;
+      }
+
+      .header_left {
+        display: block;
+        vertical-align: middle;
+        line-height: 48px;
+        div {
+          display: flex;
+          //background-color: skyblue;
+          flex-direction: row;
+          justify-content: center;
+        }
+        .header_block {
+          float: left;
+        }
+        img {
+          width: 50px;
+          height: auto;
+          margin-right: .5rem;
+        }
+      }
+      > div a {
+        color: #ffffff;
+        font-size: 17px;
+      }
+
+      .header_right {
+        display: inline-block;
+        padding-left: 1rem;
+        font-weight: bolder;
+        height: 48px;
+        line-height: 48px;
       }
     }
 
@@ -261,8 +475,12 @@
       padding: 4px;
       height: auto;
       line-height: 30px;
+      .logo_my {
+        display: none;
+      }
       @media screen and (max-width: 667px){
         margin: 10px 0;
+        text-align: center;
         > div {
           display: inline-block;
           width: 153px;
@@ -282,9 +500,6 @@
             width: 30px;
             height: auto;
           }
-        }
-        .logo_my {
-          display: none;
         }
       }
     }

@@ -565,12 +565,12 @@ function ParticipantsAthleteList(props:{loading: boolean,matchId: number, unitId
         <Button
           type='primary'
           onClick={judgeAthlete}
+          style={{float:'right'}}
         >
           确认运动员名单，进入个人报名通道
         </Button>
         <Button
           type='primary'
-          style={{float:'right'}}
           onClick={() => router.goBack()}
         >
           返回

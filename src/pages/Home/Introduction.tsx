@@ -134,8 +134,8 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
                 <br/>
                 {/* {currentGameData.id !== 21 ? <Button type='primary' onClick={() => {message.warning('现在不是报名时间')}}>参加报名</Button> */}
                 {/* : <Button type='primary' onClick={() => this.enterEnrollChannel()}>参加报名</Button>} */}
-                <Button type='primary' onClick={() => this.enterEnrollChannel()}>参加报名</Button>
-                {/*<Button type='primary' onClick={() => {message.warning('现在不是报名时间')}}>参加报名</Button>*/}
+                {/*<Button type='primary' onClick={() => this.enterEnrollChannel()}>参加报名</Button>*/}
+                <Button type='primary' onClick={() => {message.warning('现在不是报名时间')}}>参加报名</Button>
               </Col>
             </Row>
           </div>

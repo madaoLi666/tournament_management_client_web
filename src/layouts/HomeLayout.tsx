@@ -81,11 +81,13 @@ function HomeLayout(props: HomeLayoutProps) {
     <div>
       <Layout className={styles['home-layout']} >
         <Header className={styles['header']}>
-            <div className={styles.header_left} style={{ float: 'left'}}>
+            <div className={styles.header_left}>
               <strong>
-              <img src={require('@/assets/logo.png')}  alt=""/>
-              <span style={{width: '120px'}}><a href={"/home"} >轮滑赛事辅助系统平台</a></span>
-              &nbsp;&nbsp;&nbsp;&nbsp;
+                <div>
+                  <img src={require('@/assets/logo.png')}  alt=""/>
+                  <span ><a href={"/home"} >轮滑赛事辅助系统平台</a></span>
+                  &nbsp;&nbsp;&nbsp;&nbsp;
+                </div>
               <a className={styles.header_block} onClick={() => window.open('https://www.gsta.top/nstatic/react/%E6%8A%A5%E5%90%8D%E6%AD%A5%E9%AA%A4_6fDXGU2.html')} >报名步骤查看</a>
               </strong>
             </div>
@@ -98,9 +100,8 @@ function HomeLayout(props: HomeLayoutProps) {
                 </div>
               ) : (
                 <span>
-                  <a onClick={() => router.push('/home')}>主页</a>
-                  &nbsp;&nbsp;
                   <a onClick={() => router.push('/user/list')}>个人中心</a>
+                  &nbsp;&nbsp;
                   &nbsp;&nbsp;
                   <a onClick={exit}>退出登陆</a>
                 </span>
