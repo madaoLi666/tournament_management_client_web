@@ -22,6 +22,7 @@ interface showEnrollProps {
     teamList?: Array<any>;
     loading: boolean;
     contestantUnitData?: ContestantUnitData;
+    contestant_id: number;
 }
 interface unitInfo {
     unit_name?: string
@@ -78,7 +79,8 @@ function getManNumber(all_member: Array<any>): number{
     return all_member.length;
 }
 
-function ShowEnroll(props:showEnrollProps) {
+function ShowEnroll(props:showEnrollProps)  {
+    const { contestant_id } = props;
     const [game_name,setGame_name] = useState('');
     useEffect(() => {
         if(props.game_list.length !== 0){
@@ -97,7 +99,8 @@ function ShowEnroll(props:showEnrollProps) {
             type:'enroll/checkIsEnrollAndGetAthleteLIST',
             payload:{
                 matchId: props.current_match_id,
-                unitId: props.unit_info.id
+                unitId: props.unit_info.id,
+                contestant_id
             }
         })
     },[props.unit_info,props.current_match_id]);
@@ -275,7 +278,9 @@ let mapStateToProps = ({enroll, gameList, loading}: ConnectState) => {
         athleteList: enroll.unit.athleteList,
         teamList: enroll.unit.teamEnrollList,
         loading: loading.global,
-        contestantUnitData: unit.contestantUnitData
+        contestantUnitData: unit.contestantUnitData,
+        // 队伍id
+        contestant_id: Number(window.localStorage.getItem('currentTeamId'))
     }
 };
 

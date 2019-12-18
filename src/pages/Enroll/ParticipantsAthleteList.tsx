@@ -351,9 +351,9 @@ const AIForm = Form.create<AthleteInfoFormProps>({
   }
 })(AthleteInfoForm);
 
-function ParticipantsAthleteList(props:{loading: boolean,matchId: number, unitId: number , athleteList: Array<any>, contestantId:number , dispatch: Dispatch}) {
+function ParticipantsAthleteList(props:{contestant_id: number, loading: boolean,matchId: number, unitId: number , athleteList: Array<any>, contestantId:number , dispatch: Dispatch}) {
 
-  const { matchId, unitId, dispatch, athleteList, contestantId } = props;
+  const { matchId, unitId, dispatch, athleteList, contestantId, contestant_id } = props;
   // modal
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -414,7 +414,7 @@ function ParticipantsAthleteList(props:{loading: boolean,matchId: number, unitId
       .then(data => {
         // 无法通过 e 设置checked的值
         if(data) {
-          dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: {unitId, matchId}});
+          dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: {unitId, matchId, contestant_id}});
           message.success('确认成功');
         }
       })
@@ -437,7 +437,7 @@ function ParticipantsAthleteList(props:{loading: boolean,matchId: number, unitId
     // });
     deleteParticipantsAthlete({matchdata: matchId, athlete: id, contestant: contestantId})
       .then(data => {
-        if(data) dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: {unitId, matchId}});
+        if(data) dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: {unitId, matchId, contestant_id}});
       })
   }
   // 传入表单中
@@ -464,7 +464,7 @@ function ParticipantsAthleteList(props:{loading: boolean,matchId: number, unitId
       newUnitAthlete(formData,{headers:{"Content-Type": "multipart/form-data"}}).then(data => {
         if(data) {
           // 没有重新渲染
-          dispatch({ type: "enroll/checkIsEnrollAndGetAthleteLIST", payload: { unitId, matchId } });
+          dispatch({ type: "enroll/checkIsEnrollAndGetAthleteLIST", payload: { unitId, matchId, contestant_id } });
           message.success('注册成功');
           setVisible(false);
           setCurrentAthleteData({});
@@ -476,7 +476,7 @@ function ParticipantsAthleteList(props:{loading: boolean,matchId: number, unitId
           if(res !== "") {
             dispatch({
               type: "enroll/checkIsEnrollAndGetAthleteLIST",
-              payload: { unitId, matchId }
+              payload: { unitId, matchId, contestant_id }
             });
             message.success('修改成功！');
             setCurrentAthleteData({});
@@ -498,7 +498,7 @@ function ParticipantsAthleteList(props:{loading: boolean,matchId: number, unitId
         if(res && res !== '') {
           dispatch({
             type: 'enroll/checkIsEnrollAndGetAthleteLIST',
-            payload:{ matchId, unitId }
+            payload:{ matchId, unitId, contestant_id }
           });
           message.success('删除成功!');
         }
@@ -528,10 +528,10 @@ function ParticipantsAthleteList(props:{loading: boolean,matchId: number, unitId
   *  会导致刷新页面不执行
   */
   useEffect(() => {
-    if(matchId&&unitId) {
+    if(matchId && unitId) {
       dispatch({
         type: 'enroll/checkIsEnrollAndGetAthleteLIST',
-        payload:{ matchId, unitId }
+        payload:{ matchId, unitId, contestant_id }
       })
     }
   },[unitId,matchId]);
@@ -586,6 +586,8 @@ export default connect(({enroll, loading}: ConnectState) => {
     matchId: enroll.currentMatchId,
     unitId: enroll.unitInfo.id,
     contestantId: enroll.unit.contestantUnitData.id,
-    loading: loading.global
+    loading: loading.global,
+    // 参赛队伍id
+    contestant_id: Number(window.localStorage.getItem('currentTeamId'))
   };
 })(ParticipantsAthleteList);

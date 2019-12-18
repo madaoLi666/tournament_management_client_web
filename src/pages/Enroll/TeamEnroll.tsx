@@ -80,10 +80,10 @@ class TeamEnroll extends React.Component<any,any>{
 
   // 更新时重新获取
   componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
-    const { matchId, unitId, dispatch } = this.props;
+    const { matchId, unitId, dispatch, contestant_id } = this.props;
     if( matchId && unitId && (unitId !== prevProps.unitId || matchId !== prevProps.matchId) ) {
       //
-      dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId } });
+      dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId, contestant_id } });
     }
   }
 
@@ -383,7 +383,8 @@ class TeamEnroll extends React.Component<any,any>{
           type: 'enroll/checkIsEnrollAndGetAthleteLIST',
           payload: {
             matchId : this.props.matchId,
-            unitId : this.props.unitId
+            unitId : this.props.unitId,
+            contestant_id: this.props.contestant_id
           }
         })
       }else {
@@ -410,7 +411,7 @@ class TeamEnroll extends React.Component<any,any>{
     }
     deleteTeam({teamenroll: id}).then(data => {
       if(data) {
-        dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId }
+        dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId, contestant_id: this.props.contestant_id }
       });
         message.success('删除成功');
       }else {
@@ -526,6 +527,7 @@ class TeamEnroll extends React.Component<any,any>{
 
 export default connect(({enroll, loading}: ConnectState) => {
   const { teamItem } = enroll;
+  const currentTeamId = window.localStorage.getItem('currentTeamId');
   let filter_athlete_list: any[] = [];
   filter_athlete_list = enroll.unit.athleteList.filter((v:any) => {
     return v.active === 1;
@@ -538,6 +540,8 @@ export default connect(({enroll, loading}: ConnectState) => {
     athleteList: filter_athlete_list.map((v:any) => ({...v,role:"",groupFlag:false})),
     individualLimitation: enroll.individualLimitation,
     teamEnroll: enroll.unit.teamEnrollList,
-    loading: loading.global
+    loading: loading.global,
+    // 队伍id
+    contestant_id: Number(currentTeamId)
   };
 })(TeamEnroll)

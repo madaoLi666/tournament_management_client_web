@@ -4,6 +4,7 @@ import { getContestantUnitData , checkISEnroll, individualEnroll, getEnrolledPro
 import { getIndividualEnrollLimit, getAllItem } from '@/services/rules';
 import { convertItemData, convertAthleteList} from '@/utils/enroll';
 import { getLimitEnroll } from '@/services/enroll';
+import { EnrollTeamData } from '@/pages/Enroll/ChoiceTeam/data';
 
 /* 参赛单位信息 */
 export interface ContestantUnitData {
@@ -22,7 +23,7 @@ export interface ContestantUnitData {
 }
 
 interface UnitMes {
-  unitData: object;
+  unitData: EnrollTeamData[];
   contestantUnitData: ContestantUnitData;
   athleteList: Array<any>;
   singleEnrollList: Array<any>;
@@ -73,7 +74,7 @@ const EnrollModel: EnrollModelType = {
     currentMatchId: -1,
     unitInfo: {},
     unit: {
-      unitData:{},
+      unitData: [],
       contestantUnitData: {},
       athleteList: [],
       singleEnrollList: [],
@@ -89,33 +90,22 @@ const EnrollModel: EnrollModelType = {
   effects: {
     * getEnrollLimit({ payload, callback }, { put }) {
       let res = yield getLimitEnroll(payload);
-      if(callback) { callback(res) };
+      if(callback) { callback(res) }
     },
     // 获取参赛单位信息
     * getContestantUnitData ({ payload }, { put }) {
       const { unitId, matchId } = payload;
       let data = yield getContestantUnitData({matchdata: matchId, unitdata: unitId});
-      if(data) {
-        let uD = {
-          id: data.id,
-          leaderName: data.leader,
-          leaderPhone: data.leaderphonenumber,
-          leaderEmail: data.email,
-          coach1Name: data.coachone,
-          coach1Phone: data.coachonephonenumber,
-          coach2Name: data.coachtwo,
-          coach2Phone: data.coachtwophonenumber,
-          guaranteePic: data.dutybook
-        };
-        yield put({ type: "modifyUnitData", payload: { unitData: uD} })
+      if(data.length !== 0) {
+        yield put({ type: "modifyUnitData", payload: { unitData: data} })
       }else {
-        yield put({ type: "modifyUnitData", payload: { unitData: {}} })
+        yield put({ type: "modifyUnitData", payload: { unitData: []} })
       }
     },
     // 检查是否有报名信息，并获取运动员列表
     * checkIsEnrollAndGetAthleteLIST  ({ payload }, { put }) {
-      const { matchId, unitId } = payload;
-      let data = yield checkISEnroll({unitdata: unitId, matchdata: matchId});
+      const { matchId, unitId, contestant_id } = payload;
+      let data = yield checkISEnroll({unitdata: unitId, matchdata: matchId, contestant_id});
       // 判断数据是否存在
       if(data) {
         if(data.isEnroll === 'Y') {
@@ -128,7 +118,6 @@ const EnrollModel: EnrollModelType = {
           yield put({ type: 'modifyAthleteList', payload: { athleteList } });
           // 团队报名列表
           let teamEnroll = data.teamenrolldata;
-
           let teamEnrollData:Array<any> = [];
           for(let i:number = 0 ; i < teamEnroll.length ; i++) {
             if(Object.prototype.toString.call(teamEnroll[i].groupprojectenroll) === '[object Array]') {
@@ -272,7 +261,7 @@ const EnrollModel: EnrollModelType = {
           athleteList: [],
           singleEnrollList: [],
           teamEnrollList: [],
-          unitData: {}
+          unitData: []
         },
         individualLimitation: {},
         individualItem: [],
@@ -285,8 +274,8 @@ const EnrollModel: EnrollModelType = {
         ...state,
         noticeVisbile: false
       };
+    },
     }
-  }
 };
 
 export default EnrollModel;

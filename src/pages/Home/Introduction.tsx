@@ -61,18 +61,19 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
   enterEnrollChannel = () => {
     const { dispatch, unit_account, unitId } = this.props;
     const { currentGameData } = this.state;
+    console.log(unit_account);
     if(currentGameData.id !== undefined && currentGameData.id !== -1) {
-      if(unit_account == 0){
+      if(unit_account === 0){
         router.push('/enroll/individual');
       }
-      if(unit_account == 2){
+      if(unit_account === 2){
         // 把matchId存入本地
         window.localStorage.setItem('MATCH_ID',currentGameData.id);
         dispatch({type: 'enroll/getEnrollLimit', payload: { matchdata_id: currentGameData.id, unitdata_id: unitId },
           callback: (data: boolean) => {
             if(data) {
               dispatch({type: 'enroll/modifyCurrentMatchId', payload: {matchId: currentGameData.id}});
-              router.push('/enroll/editUnitInfo');
+              router.push('/enroll/choiceTeam');
             }else {
               Modal.warning({
                 title: '您的单位暂时报名不了本场赛事',
@@ -82,7 +83,7 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
             }
           }
         });
-      }else if(unit_account == 1){
+      }else if(unit_account === 1){
         message.info('本系统暂不支持个人报名，请联系您的单位进行报名')
         return;
       }
@@ -134,8 +135,8 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
                 <br/>
                 {/* {currentGameData.id !== 21 ? <Button type='primary' onClick={() => {message.warning('现在不是报名时间')}}>参加报名</Button> */}
                 {/* : <Button type='primary' onClick={() => this.enterEnrollChannel()}>参加报名</Button>} */}
-                {/*<Button type='primary' onClick={() => this.enterEnrollChannel()}>参加报名</Button>*/}
-                <Button type='primary' onClick={() => {message.warning('现在不是报名时间')}}>参加报名</Button>
+                <Button type='primary' onClick={() => this.enterEnrollChannel()}>参加报名</Button>
+                {/*<Button type='primary' onClick={() => {message.warning('现在不是报名时间')}}>参加报名</Button>*/}
               </Col>
             </Row>
           </div>

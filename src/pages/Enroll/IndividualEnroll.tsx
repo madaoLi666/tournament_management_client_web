@@ -43,9 +43,9 @@ class IndividualEnroll extends React.Component<any,any>{
   }
 
   componentDidMount(): void {
-    const { matchId, unitId, dispatch, noticeVisbile } = this.props;
+    const { matchId, unitId, dispatch, noticeVisbile, contestant_id } = this.props;
     if(matchId && unitId){
-      dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId } })
+      dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId, contestant_id } })
       if(noticeVisbile && matchId == 14){
         notification.info({
           description: '速度过桩淘汰赛不算入个人总项目数，若参加速度过桩个人赛后需报名淘汰赛请自行报名',
@@ -70,10 +70,10 @@ class IndividualEnroll extends React.Component<any,any>{
   }
   // 更新时重新获取
   componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
-    const { matchId, unitId, dispatch } = this.props;
+    const { matchId, unitId, dispatch, contestant_id } = this.props;
     if( matchId && unitId && (unitId !== prevProps.unitId || matchId !== prevProps.matchId) ) {
       //
-      dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId } })
+      dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId, contestant_id } })
     }
   }
 
@@ -89,7 +89,7 @@ class IndividualEnroll extends React.Component<any,any>{
   };
   // 个人报名
   handleIndividualEnroll = (athleteData: any, id: number) => {
-    const { dispatch, matchId, unitId, individualItemList } = this.props;
+    const { dispatch, matchId, unitId, individualItemList, contestant_id } = this.props;
     if(id !== -1) {
       // 加多一个前端的个人报名判断
       /*
@@ -98,7 +98,7 @@ class IndividualEnroll extends React.Component<any,any>{
       let enrollData = { player:athleteData.player, openprojectgroupsex:id };
       individualEnroll(enrollData).then(data => {
         if(data) {
-          dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload:{matchId,unitId}});
+          dispatch({type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload:{matchId,unitId, contestant_id}});
           message.success('报名成功');
           // 用for 加多一个提示样式，说淘汰赛不算入总项目
           for(let i = 0; i < individualItemList.length; i++){
@@ -123,11 +123,11 @@ class IndividualEnroll extends React.Component<any,any>{
   };
   // 删除个人报名
   handleCloseEnroll = (id:number) => {
-    const { dispatch,matchId,unitId } = this.props;
+    const { dispatch,matchId,unitId, contestant_id } = this.props;
     deleteIndividualEnroll({personalprojectenroll:id})
       .then(data => {
         if(data) {
-          dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId } })
+          dispatch({ type: 'enroll/checkIsEnrollAndGetAthleteLIST', payload: { matchId, unitId, contestant_id } })
           message.success('删除个人报名项目成功');
         }
       })
@@ -476,6 +476,8 @@ export default connect(({enroll, user, loading, gameList}:ConnectState) => {
     person_data: user.athleteData[0],
     noticeVisible: enroll.noticeVisbile,
     loading: loading.global,
-    group_age_list: gameList.group_age
+    group_age_list: gameList.group_age,
+    // 队伍id
+    contestant_id: Number(window.localStorage.getItem('currentTeamId'))
   }
 })(IndividualEnroll);

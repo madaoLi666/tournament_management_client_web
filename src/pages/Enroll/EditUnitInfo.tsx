@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from 'react';
+import React, { Component, useEffect, useRef, useState } from 'react';
 import { Form, Input, Button, Upload, message, Spin, Icon} from 'antd';
 import router from 'umi/router';
 import { connect } from 'dva';
@@ -11,27 +11,12 @@ import styles from './index.less';
 import { Dispatch } from 'redux';
 import { ConnectState } from '@/models/connect';
 
-// interface UnitInfo {
-//   // 单位id
-//   unitdata: number;
-//   // 赛事id
-//   matchdata: number;
-//   // 本场赛事单位id
-//   name: number;
-//   leader: string;
-//   leaderphonenumber: string;
-//   coachone?: string;
-//   coachonephonenumber?: string;
-//   coachtwo?: string;
-//   coachotwophonenumber?: string;
-//   dutybook: File
-// }
-
 interface UnitInfoFormProps extends FormComponentProps {
   emitData: (data: object) => void;
   // 类型未定
   unitData: any;
   loading: boolean;
+  dispatch: Dispatch;
 }
 
 const UnitInfoFormStyle: FormProps = {
@@ -51,15 +36,18 @@ const UnitInfoFormStyle: FormProps = {
 
 class UnitInfoForm extends Component<UnitInfoFormProps, any> {
 
-  state = {
-    guaranteePic: false,
-    url: '',
-    loadingHide: true,
-  };
+  constructor(props: UnitInfoFormProps) {
+    super(props);
+    this.state = {
+      guaranteePic: false,
+      url: '',
+      loading: true
+    };
+  }
 
   componentDidUpdate(prevProps: Readonly<UnitInfoFormProps>, prevState: Readonly<any>, snapshot?: any): void {
     const { guaranteePic } = this.props.unitData;
-    // guaranteepic存储的是服务器返回的url
+    // guaranteePic存储的是服务器返回的url
     if(prevState.url !== guaranteePic){
       this.setState({url: guaranteePic});
     }
@@ -81,16 +69,14 @@ class UnitInfoForm extends Component<UnitInfoFormProps, any> {
     const { guaranteePic, url } = this.state;
     // 阻止冒泡
     e.preventDefault();
-    const { emitData } = this.props;
+    const { emitData, dispatch, loading } = this.props;
     this.props.form.validateFieldsAndScroll((err: ValidateCallback<any>, values: any) => {
       if (!err) {
         // 判断用户是否上传了承诺书图片
         if (guaranteePic || url !== '') {
           // 合并在此提交出 父组件 上一层
           let formRes = { guaranteePic: guaranteePic ? guaranteePic : "" , ...values };
-          this.setState({loadingHide: true});
           emitData(formRes);
-          this.setState({loadingHide: false});
         } else {
           message.error('请上传承诺书图片后再提交单位信息');
         }
@@ -121,7 +107,7 @@ class UnitInfoForm extends Component<UnitInfoFormProps, any> {
     const { guaranteePic, url } = this.state;
     const uploadProps: UploadProps = {
       accept: 'image/png,image/jpg',
-      beforeUpload: () => (false),
+      beforeUpload: () => false,
       listType: 'picture',
       onChange: this.handleUploadChange
     };
@@ -134,10 +120,10 @@ class UnitInfoForm extends Component<UnitInfoFormProps, any> {
         <Form.Item label='单位'>
           {getFieldDecorator('unitName', {})(<Input disabled={true}/>)}
         </Form.Item>
-        <Form.Item label='参赛单位别名'>
+        <Form.Item label='参赛队伍'>
           {getFieldDecorator('unitNameAlias', {
             rules: [{ required: true, message: '请输入参赛别名，可与单位名称相同' }]
-          })(<Input placeholder='可以使用别名参赛'/>)}
+          })(<Input placeholder='请输入参赛队伍名字'/>)}
         </Form.Item>
         <Form.Item label='领队姓名'>
           {getFieldDecorator('leaderName', {
@@ -208,7 +194,7 @@ class UnitInfoForm extends Component<UnitInfoFormProps, any> {
         style={{ textAlign: 'center' }}
         >
         <br/>
-        <span style={{color:'red'}} hidden={this.state.loadingHide} >第一次上传需要几秒钟，请稍等&nbsp;&nbsp;<Spin spinning={!this.props.loading} /></span>
+        <span style={{color:'red'}} hidden={!this.props.loading}  >第一次上传需要几秒钟，请稍等&nbsp;&nbsp;<Spin spinning={!this.props.loading} /></span>
         <Button style={{ width: '100%' }} type='primary' htmlType='submit'>确认信息，进入报名</Button>
       </Form.Item>
       </Form>
@@ -226,7 +212,7 @@ const UIForm = connect(({loading}: ConnectState) => {
     if (unitData.unitNameAlias !== ""){
       return {
         unitName: createFormField({value:unitData.unitName}),
-        unitNameAlias: createFormField({value:unitData.unitName}),
+        unitNameAlias: createFormField({value:unitData.unitNameAlias}),
         leaderName: createFormField({value:unitData.leaderName}),
         leaderPhone: createFormField({value:unitData.leaderPhone}),
         leaderEmail: createFormField({value:unitData.leaderEmail}),
@@ -236,15 +222,14 @@ const UIForm = connect(({loading}: ConnectState) => {
         coach2Phone: createFormField({value:unitData.coach2Phone}),
       };
     }else { return {
-      unitName: createFormField({value:unitData.unitName}),
-      unitNameAlias: createFormField({value:unitData.unitName}),
+      unitName: createFormField({value:unitData.unitName})
     } }
   },
 })(UnitInfoForm));
 
-function EditUnitInfo(props: { unitData: any, matchId: number, dispatch: Dispatch }) {
+function EditUnitInfo(props: { unitData: any, matchId: number, dispatch: Dispatch, currentTeamId: number }) {
 
-  const { unitData, matchId, dispatch } = props;
+  const { unitData, matchId, dispatch, currentTeamId } = props;
 
   function submitData(data: any) {
     if(unitData){
@@ -252,6 +237,7 @@ function EditUnitInfo(props: { unitData: any, matchId: number, dispatch: Dispatc
       let formData = new FormData();
       formData.append('unitdata', unitData.unitId);
       formData.append('matchdata', matchId.toString());
+      formData.append('contestant_id' , currentTeamId.toString());
       formData.append('name', data.unitNameAlias === undefined ? "" : data.unitNameAlias );
       formData.append('leader', data.leaderName);
       formData.append('leaderphonenumber', data.leaderPhone);
@@ -261,7 +247,6 @@ function EditUnitInfo(props: { unitData: any, matchId: number, dispatch: Dispatc
       formData.append('coachtwo', data.coach2Name === undefined ? "" : data.coach2Name);
       formData.append('coachtwophonenumber', data.coach2Phone === undefined ? "" : data.coach2Phone);
       formData.append('dutybook', data.guaranteePic);
-
       participativeUnit(formData,{headers: {"Content-Type": "multipart/form-data"}})
         .then(async (data) => {
           // 判断请求状况
@@ -278,6 +263,7 @@ function EditUnitInfo(props: { unitData: any, matchId: number, dispatch: Dispatc
               guaranteePic: data.dutybook
             };
             // 修改unitData
+            window.localStorage.setItem('currentTeamId', String(uD.id));
             dispatch({ type: 'enroll/modifyUnitData', payload: { unitData: uD} });
             router.push('/enroll/participants');
           }
@@ -286,13 +272,17 @@ function EditUnitInfo(props: { unitData: any, matchId: number, dispatch: Dispatc
   }
 
   useEffect(() => {
-    if(unitData.unitId !== "" && unitData.unitId !== undefined) {
+    if (currentTeamId !== undefined && currentTeamId !== null) {
       dispatch({
         type: 'enroll/getContestantUnitData',
-        payload:{ matchId: matchId, unitId:unitData.unitId }
+        payload: { matchId: matchId, unitId: unitData.unitId }
       })
+    }else {
+      message.warning('请选择参赛队伍');
+      router.push('/enroll/choiceTeam');
     }
-  },[unitData.unitId,matchId]);
+
+  },[matchId, unitData.unitId]);
 
   return (
     <div className={styles['edit-unit-info']}>
@@ -300,35 +290,50 @@ function EditUnitInfo(props: { unitData: any, matchId: number, dispatch: Dispatc
         emitData={submitData}
         unitData={unitData}
       />
+      <Button className={styles.editButton} onClick={() => {router.push('/enroll/choiceTeam')}} >返回队伍选择</Button>
     </div>
   );
 }
 
-export default connect(({ enroll,user }: any) => {
-  const { unitInfo,currentMatchId } = enroll;
-  const { unitData } = enroll.unit;
-  const { athleteData } = user;
-  let targetUnitData = {
+export default connect(({ enroll,user }: ConnectState) => {
+  const currentTeamId = window.localStorage.getItem('currentTeamId');
+  const { unit, unitInfo } = enroll;
+  const { unitData } = unit;
+  // 单位名称
+  const { unitName } = unitInfo;
+  let tempUnitData = {
+    unitName,
     unitId: unitInfo.id,
-    unitName: unitInfo.unitName,
-    unitNameAlias: '',
-    leaderName: '', leaderPhone: '',
-    coach1Name: '', coach1Phone: '',
-    coach2Name: '', coach2Phone: '',
-    leaderEmail:'',
-    guaranteePic: '',
+    // 这个unitNameAlias是队伍名称，因为之前不是安装队伍来报名的，所以名字有错
+    unitNameAlias: '', leaderName: '', leaderPhone: '', leaderEmail: '',
+    coach1Name: '', coach1Phone: '', coach2Name: '', coach2Phone: '',
+    guaranteePic: ''
   };
-  // 有账号信息
-  if(athleteData !== undefined && athleteData !== null && athleteData.length !== 0 && user.email !== null && user.email !== undefined && user.email !=='') {
-    targetUnitData.leaderName = athleteData[0].name;
-    targetUnitData.leaderPhone = user.phonenumber;
-    targetUnitData.leaderEmail = user.email;
+  for (let i = 0; i < unitData.length; i++) {
+    if (unitData[i].id === Number(currentTeamId)) {
+      tempUnitData.unitNameAlias = unitData[i].name;
+      tempUnitData.leaderName = unitData[i].leader;
+      tempUnitData.leaderPhone = unitData[i].leaderphonenumber;
+      tempUnitData.leaderEmail = unitData[i].email;
+      tempUnitData.coach1Name = unitData[i].coachone;
+      tempUnitData.coach1Phone = unitData[i].coachonephonenumber;
+      tempUnitData.coach2Name = unitData[i].coachtwo;
+      tempUnitData.coach2Phone = unitData[i].coachtwophonenumber;
+      tempUnitData.guaranteePic = unitData[i].url_dutybook;
+      break;
+    }
   }
-  // 有报名信息
-  if(Object.keys(unitData).length !== 0){
-    targetUnitData = { unitId: unitInfo.id, unitName: unitInfo.unitName, ...unitData };
+  if (currentTeamId !== undefined && currentTeamId !== null) {
+    return {
+      unitData: tempUnitData,
+      matchId: enroll.currentMatchId,
+      currentTeamId: Number(currentTeamId)
+    };
   }else {
-    targetUnitData.unitNameAlias = unitInfo.unitName;
+    return {
+      unitData: tempUnitData,
+      matchId: enroll.currentMatchId,
+      currentTeamId: undefined
+    };
   }
-  return { unitData: targetUnitData, matchId:currentMatchId };
 })(EditUnitInfo);

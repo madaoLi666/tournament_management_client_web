@@ -1,14 +1,13 @@
-import React, { Fragment, useState, useEffect, useRef } from 'react';
+import React, { Fragment, useState, useRef } from 'react';
 import { Dispatch } from 'redux';
 import { FormComponentProps } from 'antd/es/form';
-import { Button, Form, Input, message, Modal, PageHeader, Upload } from 'antd';
+import { Button, Form, Input, message, PageHeader, Upload } from 'antd';
 // @ts-ignore
 import styles from './index.less';
 import {  UploadChangeParam } from 'antd/lib/upload/interface';
 import { ConnectState } from '@/models/connect';
 import { connect } from 'dva';
 import { newUnitAccount } from '@/services/register';
-import { BasicLayout } from '@ant-design/pro-layout';
 
 const FormItem = Form.Item;
 
