@@ -110,7 +110,7 @@ function EnrollLayout(props: {dispatch: Dispatch, currentGameData: any,children:
           {props.children}
         </Content>
         <Footer className={styles.footer}>
-          <span>广州青苔科技有限公司 版权所有  粤ICP备19028504号</span>
+        <span>广州青苔科技有限公司 版权所有  <a target="_blank" href='http://beian.miit.gov.cn' style={{ color: '#939393'}}>粤ICP备19028504号</a></span>
           <div style={{width: '300px',margin:'0 auto', padding:'20px 0'}}>
             <a
               target="_blank"

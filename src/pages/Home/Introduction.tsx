@@ -61,7 +61,6 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
   enterEnrollChannel = () => {
     const { dispatch, unit_account, unitId } = this.props;
     const { currentGameData } = this.state;
-    console.log(unit_account);
     if(currentGameData.id !== undefined && currentGameData.id !== -1) {
       if(unit_account === 0){
         router.push('/enroll/individual');
@@ -135,8 +134,8 @@ class IntroductionPage extends React.Component<{dispatch: Dispatch,gameList:Arra
                 <br/>
                 {/* {currentGameData.id !== 21 ? <Button type='primary' onClick={() => {message.warning('现在不是报名时间')}}>参加报名</Button> */}
                 {/* : <Button type='primary' onClick={() => this.enterEnrollChannel()}>参加报名</Button>} */}
-                <Button type='primary' onClick={() => this.enterEnrollChannel()}>参加报名</Button>
-                {/*<Button type='primary' onClick={() => {message.warning('现在不是报名时间')}}>参加报名</Button>*/}
+                {/* <Button type='primary' onClick={() => this.enterEnrollChannel()}>参加报名</Button> */}
+                <Button type='primary' onClick={() => {message.warning('现在不是报名时间')}}>参加报名</Button>
               </Col>
             </Row>
           </div>

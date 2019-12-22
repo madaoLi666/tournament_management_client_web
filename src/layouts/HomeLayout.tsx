@@ -150,7 +150,7 @@ function HomeLayout(props: HomeLayoutProps) {
         </Content>
         <Footer className={styles.footer}>
           <div>
-            <span>广州青苔科技有限公司 版权所有  粤ICP备19028504号</span>
+          <span>广州青苔科技有限公司 版权所有  <a target="_blank" href='http://beian.miit.gov.cn' style={{ color: '#939393'}}>粤ICP备19028504号</a></span>
           </div>
           <div style={{width: '300px',margin:'0 auto', padding:'20px 0'}}>
             <a
