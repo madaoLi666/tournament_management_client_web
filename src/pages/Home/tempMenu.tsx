@@ -16,6 +16,7 @@ function TempMenu(props: TempMenuProps) {
       extra={
         <Button type={"primary"} key={"console"} onClick={() => router.push('/home')} >返回主页</Button>
       }
+      style={{marginTop: '10%'}}
     />
   )
 }

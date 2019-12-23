@@ -87,7 +87,7 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
     this.setState({
       visible: true
     })
-  }
+  };
   // 对话框确定按钮
   public handleOK = () => {
     this.setState({
@@ -97,12 +97,12 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
     this.setState({
       visible: false,
     })
-  }
+  };
   public handleCancel = () => {
     this.setState({
       visible: false,
     })
-  }
+  };
   // 验证密码onBlur 类型暂时不知道，暂定any
   public handleConfirm = (e: any) => {
     const { value } = e.target;
@@ -134,7 +134,7 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
     this.setState({
       email:event.currentTarget.value
     })
-  }
+  };
   // 给上层组件传email，然后根据email调用接口
   public toParent = () => {
     if(!checkEmail.test(this.state.email)) {
@@ -214,7 +214,7 @@ class UserForm extends React.Component<UserFormProps & FormComponentProps, any> 
             {getFieldDecorator('phone_number', {
               rules:[{required: true, message: '请输入手机号码！'},{pattern:checkPhoneNumber, message:'请输入正确的手机号码！'}]
             })(<Input />)}
-          </Form.Item>  
+          </Form.Item>
           <Form.Item label='用户名'>
             {getFieldDecorator('userID', {
               rules: [{ required: true, message: '请输入用户名！' }],
@@ -301,7 +301,7 @@ class OldUserForm extends React.Component<OldUserFormProps & FormComponentProps,
         clearInterval(i);
       }
     },1000);
-  }
+  };
 
 
   render() {
@@ -364,7 +364,7 @@ class Register extends React.Component<any, any> {
       type:'register/sendVerificationCode'
     }
     )
-  }
+  };
   // 获取邮箱验证码
   public sendEmail = (email: string) => {
     const { dispatch } = this.props;
@@ -372,7 +372,7 @@ class Register extends React.Component<any, any> {
       type: 'register/sendEmailCode',
       payload: email
     })
-  }
+  };
   render() {
 
     let { TabsState } = this.state;

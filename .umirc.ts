@@ -16,7 +16,7 @@ const config: IConfig =  {
       ]
     },
     // 主页
-    { path: '/home', Routes: ['./src/layouts/HomeLayout.tsx','./src/pages/Authorized/Authorized.tsx'],
+    { path: '/home', Routes: ['./src/layouts/HomeLayout.tsx'],
       routes: [
         { path: '/home', component: './Home/index.tsx', name: '主页' },
         { path: '/home/introduction', component: './Home/Introduction.tsx', name: '赛事介绍页面' },
@@ -132,7 +132,7 @@ const config: IConfig =  {
       dva: true,
       dynamicImport: { webpackChunkName: true },
       dll: true,
-      // chunks: ['antdesigns', 'icons','umi'],
+      chunks: ['antdesigns', 'icons','umi'],
       routes: {
         exclude: [
           /models\//,

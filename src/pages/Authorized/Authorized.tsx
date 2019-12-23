@@ -13,7 +13,7 @@ class Authorized extends Component<any,any>{
     // 检查本地是否存在token
     //不存在token
     if(localToken === undefined || localToken === null) {
-      await router.push('./login');
+      await router.push('/login');
     }else{
       // 检查store中是否存在token
       if(storeToken === ''){dispatch({ type: 'user/setStoreByLocal', payload: {token: localToken}})}

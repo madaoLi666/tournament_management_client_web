@@ -84,7 +84,8 @@ function HomeLayout(props: HomeLayoutProps) {
             <div className={styles.header_left}>
               <strong>
                 <div>
-                  <img src={require('@/assets/logo.png')}  alt=""/>
+                  {/*<img src={require('@/assets/logo.png')}  alt=""/>*/}
+                  <img src={require('@/assets/logo1.png')}  alt=""/>
                   <span ><a href={"/home"} >轮滑赛事辅助系统平台</a></span>
                   &nbsp;&nbsp;&nbsp;&nbsp;
                 </div>
@@ -111,14 +112,14 @@ function HomeLayout(props: HomeLayoutProps) {
 
         <Content className={styles.content}>
             <div className={styles.logo}>
-              <div>
-                <img src={require('@/assets/logo1.png')}  alt=""/>
-                <span style={{padding:5}} ><b>广东省轮滑运动协会</b></span>
-              </div>
-              <div className={styles.logo_my} >
-                <img src={require('@/assets/logo.png')} alt=""/>
-                <span style={{padding:5}} ><b>轮滑赛事辅助系统</b></span>
-              </div>
+              {/*<div>*/}
+              {/*  <img src={require('@/assets/logo1.png')}  alt=""/>*/}
+              {/*  <span style={{padding:5}} ><b>广东省轮滑运动协会</b></span>*/}
+              {/*</div>*/}
+              {/*<div className={styles.logo_my} >*/}
+              {/*  <img src={require('@/assets/logo.png')} alt=""/>*/}
+              {/*  <span style={{padding:5}} ><b>轮滑赛事辅助系统</b></span>*/}
+              {/*</div>*/}
             </div>
           <div className={styles.menu}>
             <Menu onClick={handleChangeMenu} selectedKeys={[currentMenu]} mode={"horizontal"} >
@@ -126,22 +127,22 @@ function HomeLayout(props: HomeLayoutProps) {
                 <Icon type={"home"} />
                 主页
               </Menu.Item>
-              <Menu.Item key={"competition"} >
-                <Icon type={"crown"} />
-                赛事
-              </Menu.Item>
-              <Menu.Item key={"practice"} >
-                <Icon type={"project"} />
-                培训
-              </Menu.Item>
-              <Menu.Item key={"level"} >
-                <Icon type={"heat-map"} />
-                业余等级
-              </Menu.Item>
-              <Menu.Item key={"small_program"} >
-                <Icon type={"wechat"} />
-                小程序
-              </Menu.Item>
+              {/*<Menu.Item key={"competition"} >*/}
+              {/*  <Icon type={"crown"} />*/}
+              {/*  赛事*/}
+              {/*</Menu.Item>*/}
+              {/*<Menu.Item key={"practice"} >*/}
+              {/*  <Icon type={"project"} />*/}
+              {/*  培训*/}
+              {/*</Menu.Item>*/}
+              {/*<Menu.Item key={"level"} >*/}
+              {/*  <Icon type={"heat-map"} />*/}
+              {/*  业余等级*/}
+              {/*</Menu.Item>*/}
+              {/*<Menu.Item key={"small_program"} >*/}
+              {/*  <Icon type={"wechat"} />*/}
+              {/*  小程序*/}
+              {/*</Menu.Item>*/}
             </Menu>
           </div>
           <div>
