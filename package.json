@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "antd": "^4.0.0-rc.4",
+    "axios": "^0.19.2",
     "dva": "^2.6.0-beta.6",
     "react": "16.12.0",
     "react-dom": "16.12.0"
@@ -28,6 +29,7 @@
     "prettier": "1.19.1",
     "react-test-renderer": "^16.7.0",
     "umi": "^2.13.0",
+    "umi-plugin-antd-icon-config": "^1.0.3",
     "umi-plugin-react": "^1.8.0",
     "umi-types": "^0.3.0"
   },

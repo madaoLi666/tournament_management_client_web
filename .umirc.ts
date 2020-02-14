@@ -13,6 +13,7 @@ const config: IConfig = {
     },
   ],
   plugins: [
+    ['umi-plugin-antd-icon-config', {}],
     [
       'umi-plugin-react',
       {
