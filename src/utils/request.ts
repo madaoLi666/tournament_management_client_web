@@ -4,8 +4,8 @@ import { message } from 'antd';
 import router from 'umi/router';
 import { isIllegal } from '@/utils/judge';
 
-// const BASE_URL:string = 'https://www.gsta.top/v3';
-const BASE_URL: string = 'http://193.112.14.24/v3';
+const BASE_URL: string = 'https://www.gsta.top/v3';
+// const BASE_URL: string = 'http://193.112.14.24/v3';
 const TIMEOUT: number = 6000;
 
 let axiosInstance = axios.create({

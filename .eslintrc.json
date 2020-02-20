@@ -25,6 +25,7 @@
     "react-hooks/exhaustive-deps": "warn", // 检查 effect 的依赖
     "no-console": "off",
     "import/no-unresolved": "off",
-    "no-unused-vars": "off"
+    "no-unused-vars": "off",
+    "react/jsx-no-target-blank": "off"
   }
 }

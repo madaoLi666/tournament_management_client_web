@@ -7,10 +7,11 @@ const config: IConfig = {
   },
   routes: [
     {
-      path: '/',
-      component: '../layouts/index',
-      routes: [{ path: '/', component: '../pages/index' }],
+      path: '/login',
+      Routes: ['./src/layouts/LoginLayout.tsx'],
+      routes: [{ path: '/login', component: './Login/Login.tsx' }],
     },
+    { path: '/', redirect: '/login' },
   ],
   plugins: [
     ['umi-plugin-antd-icon-config', {}],

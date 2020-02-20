@@ -7,6 +7,7 @@
     "lint": "eslint {src,mock,tests}/**/*.{ts,tsx} --fix"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.0.0-rc.0",
     "antd": "^4.0.0-rc.4",
     "axios": "^0.19.2",
     "dva": "^2.6.0-beta.6",
