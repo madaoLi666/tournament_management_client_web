@@ -4,6 +4,8 @@ import styles from './index.less';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Dispatch, connect } from 'dva';
 import { checkPhoneNumber } from '@/utils/regulars';
+import { ConnectState } from '@/models/connect';
+import { router } from 'umi';
 
 // 登陆的信息类型，统一来包括用户名跟密码或者是手机号跟验证码
 interface LoginMsg {
@@ -15,10 +17,11 @@ const { TabPane } = Tabs;
 
 interface NormalLoginProps {
   dispatch: Dispatch;
+  loading?: boolean;
 }
 
 function NormalLogin(props: NormalLoginProps) {
-  const { dispatch } = props;
+  const { dispatch, loading } = props;
   /*
    * 'password' - 以账号名称/手机号码/邮箱登陆 + 密码 登陆
    * 'phone' - 以手机验证码方式登入
@@ -139,7 +142,8 @@ function NormalLogin(props: NormalLoginProps) {
               prefix={<LockOutlined />}
             />
             <span>
-              没有账号？<a href="/login/register">点击注册</a>
+              没有账号？
+              <a onClick={() => router.push('/login/register')}>点击注册</a>
             </span>
           </div>
         </TabPane>
@@ -189,14 +193,15 @@ function NormalLogin(props: NormalLoginProps) {
               autoComplete="off"
             />
             <span>
-              没有账号？<a href="/login/register">点击注册</a>
+              没有账号？
+              <a onClick={() => router.push('/login/register')}>点击注册</a>
             </span>
           </div>
         </TabPane>
       </Tabs>
 
       <div className={styles['login-btn']}>
-        <Button type="primary" onClick={login}>
+        <Button loading={loading} type="primary" size={'large'} onClick={login}>
           登录
         </Button>
       </div>
@@ -204,4 +209,10 @@ function NormalLogin(props: NormalLoginProps) {
   );
 }
 
-export default connect()(NormalLogin);
+const mapStateToProps = ({ loading }: ConnectState) => {
+  return {
+    loading: loading.models.login,
+  };
+};
+
+export default connect(mapStateToProps)(NormalLogin);

@@ -9,7 +9,10 @@ const config: IConfig = {
     {
       path: '/login',
       Routes: ['./src/layouts/LoginLayout.tsx'],
-      routes: [{ path: '/login', component: './Login/Login.tsx' }],
+      routes: [
+        { path: '/login', component: './Login/Login.tsx' },
+        { path: '/login/register', component: './Register/register.tsx' },
+      ],
     },
     { path: '/', redirect: '/login' },
   ],

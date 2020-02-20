@@ -6,7 +6,8 @@ export interface Loading {
   global: boolean;
   effects: { [key: string]: boolean | undefined };
   models: {
-    // global?: boolean;
+    login?: boolean; // 登录model
+    register?: boolean; // 注册model
   };
 }
 

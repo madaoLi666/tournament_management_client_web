@@ -8,7 +8,7 @@ import styles from './index.less';
 class FooterMsg extends React.PureComponent {
   render() {
     return (
-      <div className={styles.footer}>
+      <footer>
         <span>
           广州青苔科技有限公司 版权所有
           <a target="_blank" href="http://beian.miit.gov.cn">
@@ -24,7 +24,7 @@ class FooterMsg extends React.PureComponent {
             <p>粤公网安备 44011802000333号</p>
           </a>
         </div>
-      </div>
+      </footer>
     );
   }
 }

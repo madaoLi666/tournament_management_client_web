@@ -60,6 +60,8 @@ export interface UserModelType {
   reducers: {
     modifyUserInfo: Reducer<UserModelState>;
     modifyPhoneNumber: Reducer<UserModelState>;
+    modifyEmail: Reducer<UserModelState>;
+    saveInfo: Reducer<UserModelState>;
   };
 }
 
@@ -91,6 +93,22 @@ const UserModel: UserModelType = {
       return {
         ...state,
         phonenumber: payload.phonenumber,
+      };
+    },
+    modifyEmail(state, { payload }) {
+      return {
+        ...state,
+        email: payload,
+      };
+    },
+    saveInfo(state, { payload }) {
+      console.log(payload);
+      return {
+        ...state,
+        username: payload.username,
+        email: payload.email,
+        unitaccount: payload.unitaccount,
+        phonenumber: payload.phone,
       };
     },
   },

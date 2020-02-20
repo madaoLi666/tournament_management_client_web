@@ -1,8 +1,6 @@
 import React from 'react';
-import { Dispatch, connect } from 'dva';
-import { Row, Col, Card, Button } from 'antd';
-import styles from './login.less';
 import NormalLogin from './components/normalLogin';
+import LoginBlock from '@/components/LoginBlock/loginBlock';
 
 // Col 自适应
 const autoAdjust = {
@@ -14,24 +12,14 @@ const autoAdjust = {
   xxl: { span: 10 },
 };
 
-interface LoginProps {
-  dispatch: Dispatch;
-}
+interface LoginProps {}
 
 function Login(props: LoginProps) {
   return (
-    <div className={styles['login-page']}>
-      <Row justify="center">
-        <Col {...autoAdjust}>
-          <div className={styles['login-block']}>
-            <Card className={styles.cardBlock} headStyle={{ color: '#2a8ff7' }}>
-              <NormalLogin />
-            </Card>
-          </div>
-        </Col>
-      </Row>
-    </div>
+    <LoginBlock>
+      <NormalLogin />
+    </LoginBlock>
   );
 }
 
-export default connect()(Login);
+export default Login;
