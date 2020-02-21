@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, Input, Button, message } from 'antd';
 import styles from './index.less';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined, MobileOutlined } from '@ant-design/icons';
 import { Dispatch, connect } from 'dva';
 import { checkPhoneNumber } from '@/utils/regulars';
 import { ConnectState } from '@/models/connect';
@@ -160,7 +160,7 @@ function NormalLogin(props: NormalLoginProps) {
                   })
                 }
                 placeholder="请输入手机号码"
-                prefix={<UserOutlined />}
+                prefix={<MobileOutlined />}
                 autoComplete="off"
               />
               <Button

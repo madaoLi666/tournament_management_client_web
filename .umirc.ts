@@ -11,8 +11,13 @@ const config: IConfig = {
       Routes: ['./src/layouts/LoginLayout.tsx'],
       routes: [
         { path: '/login', component: './Login/Login.tsx' },
-        { path: '/login/register', component: './Register/register.tsx' },
+        { path: '/login/register', component: './Login/register.tsx' },
       ],
+    },
+    {
+      path: '/home',
+      Routes: ['./src/layouts/HomeLayout/HomeLayout.tsx'],
+      routes: [{ path: '/home', component: './Home/Home.tsx' }],
     },
     { path: '/', redirect: '/login' },
   ],

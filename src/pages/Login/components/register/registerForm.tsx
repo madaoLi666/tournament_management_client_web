@@ -5,7 +5,6 @@ import styles from './index.less';
 import { router } from 'umi';
 import { Dispatch, connect } from 'dva';
 import { personalAccountRegister } from '@/services/registerServices';
-import { ConnectState } from '@/models/connect';
 
 // 个人用户注册信息接口
 export interface PersonInfo {

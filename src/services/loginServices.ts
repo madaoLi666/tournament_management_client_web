@@ -15,3 +15,18 @@ export async function loginRequest(data: object): Promise<any> {
 export async function sendVerification2Phone(data: object): Promise<any> {
   return axiosInstance.get('/phoneCode/', { params: data });
 }
+
+// 获取账号基本信息   返回的status 1表示不是单位账号，2代表单位账号，会附带信息
+export async function accountdata(): Promise<any> {
+  return axiosInstance.get('/accountdata/');
+}
+
+// 获取验证码图片
+export async function getVerificationPic(): Promise<any> {
+  return axiosInstance.get('/bindCodeApi/');
+}
+
+// 校验手机验证码
+export async function checkVerificationCode(data: object): Promise<any> {
+  return axiosInstance.post('/phoneCode/', data);
+}

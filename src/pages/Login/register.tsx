@@ -1,8 +1,7 @@
 import React from 'react';
-import styles from './register.less';
 import LoginBlock from '@/components/LoginBlock/loginBlock';
-import RegisterForm from '@/pages/Register/components/registerForm';
-import { Card, Tabs } from 'antd';
+import RegisterForm from '@/pages/Login/components/register/registerForm';
+import { Tabs } from 'antd';
 
 const { TabPane } = Tabs;
 
