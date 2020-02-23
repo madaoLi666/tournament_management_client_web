@@ -1,0 +1,27 @@
+.listCard {
+  .btn {
+    width: 100%;
+  }
+  :global {
+    .ant-list-item-meta {
+      align-items: center;
+    }
+    @media screen and (max-width: 576px) {
+      .ant-list-item {
+        > ul {
+          flex-grow: 1;
+          margin-top: 0.5rem;
+          li,
+          button {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+  @media screen and (max-width: 576px) {
+    .badge {
+      display: none;
+    }
+  }
+}

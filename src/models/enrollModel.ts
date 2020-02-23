@@ -1,6 +1,9 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
-import { getLimitEnroll } from '@/services/enrollServices';
+import {
+  getContestantUnitData,
+  getLimitEnroll,
+} from '@/services/enrollServices';
 import { getAllItem, getIndividualEnrollLimit } from '@/services/ruleServices';
 import { convertItemData } from '@/utils/enroll';
 
@@ -62,6 +65,7 @@ export interface EnrollModelType {
     getEnrollLimit: Effect;
     getIndividualLimitation: Effect;
     getAllItemInfo: Effect;
+    getContestantUnitData: Effect;
   };
   reducers: {
     clearState: Reducer<EnrollModelState>;
@@ -127,6 +131,19 @@ const EnrollModel: EnrollModelType = {
           type: 'modifyItem',
           payload: { iI: r.iI, tI: r.tI },
         });
+      }
+    },
+    // 获取参赛单位信息
+    *getContestantUnitData({ payload }, { put }) {
+      const { unitId, matchId } = payload;
+      let data = yield getContestantUnitData({
+        matchdata: matchId,
+        unitdata: unitId,
+      });
+      if (data.length !== 0) {
+        yield put({ type: 'modifyUnitData', payload: { unitData: data } });
+      } else {
+        yield put({ type: 'modifyUnitData', payload: { unitData: [] } });
       }
     },
   },

@@ -2,12 +2,11 @@ import React, { useEffect } from 'react';
 import styles from './index.less';
 import { Dispatch, connect } from 'dva';
 import { EnrollTeamData } from '@/models/enrollModel';
-import { Avatar, Button, Card, Input, List, Radio, Badge } from 'antd';
+import { Button, Card } from 'antd';
 import { ConnectState } from '@/models/connect';
-
-const RadioButton = Radio.Button;
-const RadioGroup = Radio.Group;
-const { Search } = Input;
+import { router } from 'umi';
+import TeamList from '@/pages/Enroll/choiceTeam/components/teamList';
+import { PlusCircleOutlined } from '@ant-design/icons/lib';
 
 interface ChoiceTeamProps {
   dispatch: Dispatch;
@@ -29,10 +28,42 @@ function ChoiceTeam(props: ChoiceTeamProps) {
   } = props;
 
   useEffect(() => {
-    console.log(props);
-  }, [props]);
+    if (currentMatchId === undefined || currentMatchId === -1) {
+      return;
+    }
+    dispatch({
+      type: 'enroll/getContestantUnitData',
+      payload: { matchId: currentMatchId, unitId: unitId },
+    });
+  }, [currentMatchId, dispatch, unitId]);
 
-  return <div>123</div>;
+  /********************* 添加新队伍时触发的事件 ********************/
+  const addTeam = () => {
+    router.push('/enroll/editUnitInfo/' + String(currentMatchId) + '/new');
+  };
+
+  return (
+    <Card
+      className={styles.listCard}
+      bordered={false}
+      title={<strong>单位：{unitName}</strong>}
+    >
+      <Button
+        loading={loading}
+        type="dashed"
+        onClick={addTeam}
+        className={styles.btn}
+        icon={<PlusCircleOutlined />}
+      >
+        添加新队伍
+      </Button>
+      <TeamList
+        loading={loading}
+        currentMatchId={currentMatchId}
+        unitData={unitData}
+      />
+    </Card>
+  );
 }
 
 const mapStateToProps = ({ loading, enroll, unit }: ConnectState) => {
