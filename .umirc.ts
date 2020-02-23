@@ -30,7 +30,7 @@ const config: IConfig = {
       Routes: ['./src/layouts/EnrollLayout/enrollLayout.tsx'],
       routes: [
         {
-          path: '/enroll/choiceTeam',
+          path: '/enroll/choiceTeam/:id',
           component: './Enroll/choiceTeam/choiceTeam.tsx',
         },
       ],

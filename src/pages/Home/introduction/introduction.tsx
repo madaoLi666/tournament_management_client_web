@@ -74,7 +74,7 @@ function Introduction(props: IntroductionProps) {
               type: 'enroll/modifyCurrentMatchId',
               payload: { matchId: matchData.id },
             });
-            router.push('/enroll/choiceTeam');
+            router.push('/enroll/choiceTeam/' + matchData.id);
           } else {
             Modal.warning({
               title: '您的单位暂时报名不了本场赛事',
@@ -107,6 +107,7 @@ function Introduction(props: IntroductionProps) {
           <IntroductionContent
             handleEnroll={handleEnroll}
             matchData={matchData}
+            imgDom={<img src={matchData.image} alt="" />}
           />
         ) : (
           <Skeleton key="skeleton" active />

@@ -1,6 +1,8 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
 import { getLimitEnroll } from '@/services/enrollServices';
+import { getAllItem, getIndividualEnrollLimit } from '@/services/ruleServices';
+import { convertItemData } from '@/utils/enroll';
 
 export interface EnrollTeamData {
   status: string;
@@ -58,6 +60,8 @@ export interface EnrollModelType {
   effects: {
     // 获取本赛事本单位是否有参赛资格
     getEnrollLimit: Effect;
+    getIndividualLimitation: Effect;
+    getAllItemInfo: Effect;
   };
   reducers: {
     clearState: Reducer<EnrollModelState>;
@@ -94,6 +98,35 @@ const EnrollModel: EnrollModelType = {
       let res = yield getLimitEnroll(payload);
       if (callback) {
         callback(res);
+      }
+    },
+    // 得到个人项目限制
+    *getIndividualLimitation({ payload }, { put }) {
+      const { matchId } = payload;
+      let data = yield getIndividualEnrollLimit({ matchdata: matchId });
+      if (data) {
+        const { indivdualentrylimit } = data;
+        let r = {
+          isCrossGroup: indivdualentrylimit[0].crossgroup === 'True',
+          upGroupNumber: indivdualentrylimit[0].upgroupnumber,
+          itemLimitation: indivdualentrylimit[0].limitprojectnumber,
+        };
+        yield put({
+          type: 'modifyIndividualLimitation',
+          payload: { individualLimitation: r },
+        });
+      }
+    },
+    //获取所有项目
+    *getAllItemInfo({ payload }, { put }) {
+      const { matchId } = payload;
+      let data = yield getAllItem({ matchdata: matchId });
+      if (data) {
+        let r = convertItemData(data);
+        yield put({
+          type: 'modifyItem',
+          payload: { iI: r.iI, tI: r.tI },
+        });
       }
     },
   },
