@@ -1,0 +1,95 @@
+.menu-block {
+  margin: 2.5rem 0;
+  .tabColor {
+    :global {
+      div {
+        div {
+          div {
+            div {
+              div {
+                .ant-tabs-tab[aria-selected='true'] {
+                  color: #ffffff !important;
+                  background-color: #1890ff !important;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .tabPane {
+    color: #f5222d;
+  }
+}
+
+.pic-block {
+  padding: 1em calc(50% - 450px);
+  min-height: 30vh;
+  .img,
+  .text {
+    background: #fafafa;
+    border-radius: 2px;
+    border: 2px solid #fafafa;
+  }
+  .img {
+    img {
+      max-width: 350px;
+      max-height: 233px;
+    }
+  }
+  .text {
+    text-align: center;
+    .download {
+      background-color: #e9f563;
+      border: none;
+      font-weight: bold;
+      a:hover {
+        color: black;
+      }
+    }
+    h3 {
+      color: #1890ff;
+      font-weight: bolder;
+    }
+    button {
+      min-width: 50%;
+      display: block;
+      margin: 1rem auto 0;
+    }
+  }
+}
+
+@media screen and (min-width: 900px) {
+  .pic-block {
+    display: flex;
+  }
+  .img,
+  .text {
+    padding: 3rem;
+  }
+  .img {
+    flex: 1;
+  }
+  .text {
+    flex: 1.5;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .img,
+  .text {
+    padding: 0;
+  }
+  .img {
+    text-align: center;
+    padding-top: 1rem;
+    img {
+      max-width: 95%;
+    }
+  }
+  .text {
+    padding-bottom: 1rem;
+  }
+}

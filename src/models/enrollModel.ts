@@ -1,5 +1,6 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
+import { getLimitEnroll } from '@/services/enrollServices';
 
 export interface EnrollTeamData {
   status: string;
@@ -54,7 +55,10 @@ export interface EnrollModelState {
 export interface EnrollModelType {
   namespace: 'enroll';
   state: EnrollModelState;
-  effects: {};
+  effects: {
+    // 获取本赛事本单位是否有参赛资格
+    getEnrollLimit: Effect;
+  };
   reducers: {
     clearState: Reducer<EnrollModelState>;
     modifyUnitInfo: Reducer<EnrollModelState>;
@@ -85,7 +89,14 @@ const EnrollModel: EnrollModelType = {
     teamItem: [],
   },
 
-  effects: {},
+  effects: {
+    *getEnrollLimit({ payload, callback }, { _ }) {
+      let res = yield getLimitEnroll(payload);
+      if (callback) {
+        callback(res);
+      }
+    },
+  },
 
   reducers: {
     clearState(state, { _ }) {

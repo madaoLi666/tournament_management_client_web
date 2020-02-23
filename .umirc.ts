@@ -17,9 +17,25 @@ const config: IConfig = {
     {
       path: '/home',
       Routes: ['./src/layouts/HomeLayout/HomeLayout.tsx'],
-      routes: [{ path: '/home', component: './Home/Home.tsx' }],
+      routes: [
+        { path: '/home', component: './Home/Home.tsx' },
+        {
+          path: '/home/introduction',
+          component: './Home/introduction/introduction.tsx',
+        },
+      ],
     },
-    { path: '/', redirect: '/login' },
+    {
+      path: '/enroll',
+      Routes: ['./src/layouts/EnrollLayout/enrollLayout.tsx'],
+      routes: [
+        {
+          path: '/enroll/choiceTeam',
+          component: './Enroll/choiceTeam/choiceTeam.tsx',
+        },
+      ],
+    },
+    { path: '/', redirect: '/home' },
   ],
   plugins: [
     ['umi-plugin-antd-icon-config', {}],

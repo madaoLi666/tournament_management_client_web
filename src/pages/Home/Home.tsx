@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import styles from './home.less';
 import { ColProps } from 'antd/lib/grid';
-import { Button, Carousel, Col, Row, Skeleton, Tag } from 'antd';
+import { Button, Carousel, Col, Menu, Row, Skeleton, Tag } from 'antd';
 import { ConnectState } from '@/models/connect';
 import { connect } from 'dva';
 import { router } from 'umi';
+import {
+  CrownOutlined,
+  HeatMapOutlined,
+  ProjectOutlined,
+  WechatOutlined,
+  HomeOutlined,
+} from '@ant-design/icons';
 
 const adjustCol: ColProps = {
   xxl: { span: 5 },
@@ -57,6 +64,17 @@ function Home(props: HomeProps) {
   // 实际展示的DOM
   const [carouselDOM, setCarouselDom] = useState<React.ReactNode[]>([]);
   const [gameListDOM, setGameListDom] = useState<React.ReactNode[]>([]);
+  // 导航栏Menu
+  const [currentMenu, setCurrentMenu] = useState('home');
+
+  const handleChangeMenu = (e: any) => {
+    setCurrentMenu(e.key);
+    if (e.key === 'home') {
+      router.push('/home');
+    } else {
+      router.push('/home/temp');
+    }
+  };
 
   // 这个 useEffect处理轮播图
   useEffect(() => {
@@ -164,6 +182,34 @@ function Home(props: HomeProps) {
 
   return (
     <div className={styles['home-page']}>
+      <div>
+        <Menu
+          onClick={handleChangeMenu}
+          selectedKeys={[currentMenu]}
+          mode={'horizontal'}
+        >
+          <Menu.Item key={'home'}>
+            <HomeOutlined />
+            主页
+          </Menu.Item>
+          <Menu.Item key={'competition'}>
+            <CrownOutlined />
+            赛事
+          </Menu.Item>
+          <Menu.Item key={'practice'}>
+            <ProjectOutlined />
+            培训
+          </Menu.Item>
+          <Menu.Item key={'level'}>
+            <HeatMapOutlined />
+            业余等级
+          </Menu.Item>
+          <Menu.Item key={'small_program'}>
+            <WechatOutlined />
+            小程序
+          </Menu.Item>
+        </Menu>
+      </div>
       {/* 走马灯 */}
       <div>
         <Carousel

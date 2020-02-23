@@ -32,6 +32,7 @@ export interface ConnectState {
   gameList: GameListModelState;
   unit: UnitModelState;
   global: GlobalModelState;
+  router: any;
 }
 
 /**
