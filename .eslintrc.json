@@ -26,6 +26,7 @@
     "no-console": "off",
     "import/no-unresolved": "off",
     "no-unused-vars": "off",
-    "react/jsx-no-target-blank": "off"
+    "react/jsx-no-target-blank": "off",
+    "react/display-name": "off"
   }
 }

@@ -61,99 +61,103 @@ function UnitForm(props: UnitFormProps) {
   };
 
   return (
-    <Form
-      {...UnitInfoFormStyle}
-      form={form}
-      name={'unitForm'}
-      initialValues={initialValue}
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
-    >
-      <Form.Item label="单位" name="unitName">
-        <Input disabled />
-      </Form.Item>
-      <Form.Item
-        rules={[
-          { required: true, message: '请输入参赛别名，可与单位名称相同' },
-        ]}
-        name="unitNameAlias"
-        label="参赛队伍"
-      >
-        <Input placeholder="请输入参赛队伍名字" />
-      </Form.Item>
-      <Form.Item
-        label="领队姓名"
-        name="leaderName"
-        rules={[{ required: true, message: '请输入领队姓名' }]}
-      >
-        <Input placeholder="请输入领队姓名" />
-      </Form.Item>
-      <Form.Item
-        rules={[
-          { required: true, message: '请输入领队联系电话' },
-          { pattern: checkPhoneNumber, message: '请输入正确的国内手机号码' },
-        ]}
-        name={'leaderPhone'}
-        label="联系电话"
-      >
-        <Input placeholder="请输入领队联系电话" />
-      </Form.Item>
-      <Form.Item
-        label="领队邮箱"
-        name={'leaderEmail'}
-        rules={[
-          { required: true, message: '请输入领队邮箱' },
-          { pattern: checkEmail, message: '请输入正确的电子邮箱地址' },
-        ]}
-      >
-        <Input placeholder="请输入邮箱" />
-      </Form.Item>
-
-      <UploadForm
-        guaranteePic={initialValue.guaranteePic}
-        name={'uploadPic'}
-        label={'自愿责任书'}
-      />
-
-      <Form.Item label="教练姓名" name={'coach1Name'}>
-        <Input placeholder="选填" />
-      </Form.Item>
-      <Form.Item
-        label="联系电话"
-        name={'coach1Phone'}
-        rules={[
-          { pattern: checkPhoneNumber, message: '请输入正确的国内手机号码' },
-        ]}
-      >
-        <Input placeholder="选填" />
-      </Form.Item>
-      <Form.Item label="教练姓名" name={'coach2Name'}>
-        <Input placeholder="选填" />
-      </Form.Item>
-      <Form.Item
-        label="联系电话"
-        name={'coach2Phone'}
-        rules={[
-          { pattern: checkPhoneNumber, message: '请输入正确的国内手机号码' },
-        ]}
-      >
-        <Input placeholder="选填" />
-      </Form.Item>
+    <>
+      <span className={styles.title}>报名信息</span>
       <div className={styles.hr} />
-      <Form.Item className={styles.btn} {...tailFormItemLayout}>
-        <Button loading={loading} type="primary" htmlType="submit">
-          确认报名信息
-        </Button>
-        <Button
-          onClick={() => {
-            router.push('/enroll/choiceTeam/' + matchId);
-          }}
-          className={styles.editButton}
+      <Form
+        {...UnitInfoFormStyle}
+        form={form}
+        name={'unitForm'}
+        initialValues={initialValue}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+      >
+        <Form.Item label="单位" name="unitName">
+          <Input disabled />
+        </Form.Item>
+        <Form.Item
+          rules={[
+            { required: true, message: '请输入参赛别名，可与单位名称相同' },
+          ]}
+          name="unitNameAlias"
+          label="参赛队伍"
         >
-          返回队伍选择
-        </Button>
-      </Form.Item>
-    </Form>
+          <Input placeholder="请输入参赛队伍名字" />
+        </Form.Item>
+        <Form.Item
+          label="领队姓名"
+          name="leaderName"
+          rules={[{ required: true, message: '请输入领队姓名' }]}
+        >
+          <Input placeholder="请输入领队姓名" />
+        </Form.Item>
+        <Form.Item
+          rules={[
+            { required: true, message: '请输入领队联系电话' },
+            { pattern: checkPhoneNumber, message: '请输入正确的国内手机号码' },
+          ]}
+          name={'leaderPhone'}
+          label="联系电话"
+        >
+          <Input placeholder="请输入领队联系电话" />
+        </Form.Item>
+        <Form.Item
+          label="领队邮箱"
+          name={'leaderEmail'}
+          rules={[
+            { required: true, message: '请输入领队邮箱' },
+            { pattern: checkEmail, message: '请输入正确的电子邮箱地址' },
+          ]}
+        >
+          <Input placeholder="请输入邮箱" />
+        </Form.Item>
+
+        <UploadForm
+          guaranteePic={initialValue.guaranteePic}
+          name={'uploadPic'}
+          label={'自愿责任书'}
+        />
+
+        <Form.Item label="教练姓名" name={'coach1Name'}>
+          <Input placeholder="选填" />
+        </Form.Item>
+        <Form.Item
+          label="联系电话"
+          name={'coach1Phone'}
+          rules={[
+            { pattern: checkPhoneNumber, message: '请输入正确的国内手机号码' },
+          ]}
+        >
+          <Input placeholder="选填" />
+        </Form.Item>
+        <Form.Item label="教练姓名" name={'coach2Name'}>
+          <Input placeholder="选填" />
+        </Form.Item>
+        <Form.Item
+          label="联系电话"
+          name={'coach2Phone'}
+          rules={[
+            { pattern: checkPhoneNumber, message: '请输入正确的国内手机号码' },
+          ]}
+        >
+          <Input placeholder="选填" />
+        </Form.Item>
+        <div className={styles.hr} />
+        <Form.Item className={styles.btn} {...tailFormItemLayout}>
+          <Button loading={loading} type="primary" htmlType="submit">
+            确认报名信息
+          </Button>
+          <Button
+            onClick={() => {
+              router.push('/enroll/choiceTeam/' + matchId);
+            }}
+            className={styles.editButton}
+          >
+            返回队伍选择
+          </Button>
+        </Form.Item>
+      </Form>
+    </>
   );
 }
 

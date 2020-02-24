@@ -37,6 +37,11 @@ const config: IConfig = {
           path: '/enroll/editUnitInfo/:matchId',
           component: './Enroll/unitInfo/unitInfo.tsx',
         },
+        {
+          path: '/enroll/participants/:matchId',
+          component:
+            './Enroll/ParticipantsAthleteList/ParticipantsAthleteList.tsx',
+        },
       ],
     },
     { path: '/', redirect: '/home' },

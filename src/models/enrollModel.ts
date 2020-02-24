@@ -1,11 +1,13 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
 import {
+  checkISEnroll,
   getContestantUnitData,
   getLimitEnroll,
 } from '@/services/enrollServices';
 import { getAllItem, getIndividualEnrollLimit } from '@/services/ruleServices';
-import { convertItemData } from '@/utils/enroll';
+import { convertAthleteList, convertItemData } from '@/utils/enroll';
+import { message } from 'antd';
 
 export interface EnrollTeamData {
   status: string;
@@ -66,6 +68,7 @@ export interface EnrollModelType {
     getIndividualLimitation: Effect;
     getAllItemInfo: Effect;
     getContestantUnitData: Effect;
+    checkIsEnrollAndGetAthleteLIST: Effect;
   };
   reducers: {
     clearState: Reducer<EnrollModelState>;
@@ -146,6 +149,59 @@ const EnrollModel: EnrollModelType = {
         yield put({ type: 'modifyUnitData', payload: { unitData: [] } });
       }
     },
+    // 检查是否有报名信息，并获取运动员列表
+    *checkIsEnrollAndGetAthleteLIST({ payload }, { put }) {
+      const { matchId, unitId, contestant_id } = payload;
+      let data = yield checkISEnroll({
+        unitdata: unitId,
+        matchdata: matchId,
+        contestant_id,
+      });
+      // 判断数据是否存在
+      if (data) {
+        if (data.isEnroll === 'Y') {
+          // 参赛单位信息
+          let contestantUnitData = data.contestant;
+          yield put({
+            type: 'modifyContestantUnitData',
+            payload: { contestantUnitData },
+          });
+          // 运动员列表
+          let athleteList = data.unitathlete;
+          convertAthleteList(athleteList, data.teamenrolldata);
+          yield put({ type: 'modifyAthleteList', payload: { athleteList } });
+          // 团队报名列表
+          let teamEnroll = data.teamenrolldata;
+          let teamEnrollData: Array<any> = [];
+          for (let i: number = 0; i < teamEnroll.length; i++) {
+            if (
+              Object.prototype.toString.call(
+                teamEnroll[i].groupprojectenroll,
+              ) === '[object Array]'
+            ) {
+              for (
+                let j: number = 0;
+                j < teamEnroll[i].groupprojectenroll.length;
+                j++
+              ) {
+                teamEnrollData.push({
+                  itemGroupSexName: teamEnroll[i].groupprojectenroll[j].name,
+                  open_group_id:
+                    teamEnroll[i].groupprojectenroll[j].openprojectgroupsex_id,
+                  // 用于删除项目
+                  id: teamEnroll[i].groupprojectenroll[j].id,
+                  teamName: teamEnroll[i].name,
+                  member: teamEnroll[i].teammember,
+                });
+              }
+            }
+          }
+          yield put({ type: 'modifyTeamEnroll', payload: { teamEnrollData } });
+        } else {
+          message.error('[enrollModel]data.isEnroll is false');
+        }
+      }
+    },
   },
 
   reducers: {
@@ -189,26 +245,22 @@ const EnrollModel: EnrollModelType = {
       };
     },
     modifyUnitData(state, { payload }) {
-      // FIXED
       const { unitData } = payload;
-      let unit: any;
-      if (state !== undefined) {
-        unit = state.unit;
-      }
-      return {
-        ...state,
+      return Object.assign({}, state, {
         unit: {
-          ...unit,
+          ...state?.unit,
           unitData: unitData,
         },
-      };
+      });
     },
     modifyAthleteList(state, { payload }) {
       const { athleteList } = payload;
-      return {
-        ...state,
-        unit: athleteList,
-      };
+      return Object.assign({}, state, {
+        unit: {
+          ...state?.unit,
+          athleteList: athleteList,
+        },
+      });
     },
     modifyIndividualLimitation(state, { payload }) {
       const { individualLimitation } = payload;
@@ -227,25 +279,21 @@ const EnrollModel: EnrollModelType = {
     },
     modifyContestantUnitData(state, { payload }) {
       const { contestantUnitData } = payload;
-      let unit: any;
-      if (state?.unit) {
-        unit.contestantUnitData = contestantUnitData;
-      }
-      return {
-        ...state,
-        unit,
-      };
+      return Object.assign({}, state, {
+        unit: {
+          ...state?.unit,
+          contestantUnitData: contestantUnitData,
+        },
+      });
     },
     modifyTeamEnroll(state, { payload }) {
       const { teamEnrollData } = payload;
-      let unit: any;
-      if (state?.unit) {
-        unit.teamEnrollList = teamEnrollData;
-      }
-      return {
-        ...state,
-        unit,
-      };
+      return Object.assign({}, state, {
+        unit: {
+          ...state?.unit,
+          teamEnrollList: teamEnrollData,
+        },
+      });
     },
   },
 };
