@@ -2,11 +2,13 @@ import React, { useEffect } from 'react';
 import styles from './index.less';
 import { Dispatch, connect } from 'dva';
 import { EnrollTeamData } from '@/models/enrollModel';
-import { Button, Card } from 'antd';
+import { Button, Card, Form, Input } from 'antd';
 import { ConnectState } from '@/models/connect';
 import { router } from 'umi';
 import TeamList from '@/pages/Enroll/choiceTeam/components/teamList';
 import { PlusCircleOutlined } from '@ant-design/icons/lib';
+import FormBuilder from '@/components/FormBuilder/Form';
+import _ from 'lodash';
 
 interface ChoiceTeamProps {
   dispatch: Dispatch;
@@ -35,11 +37,16 @@ function ChoiceTeam(props: ChoiceTeamProps) {
       type: 'enroll/getContestantUnitData',
       payload: { matchId: currentMatchId, unitId: unitId },
     });
-  }, [currentMatchId, dispatch, unitId]);
+  }, [currentMatchId, unitId]);
 
   /********************* 添加新队伍时触发的事件 ********************/
   const addTeam = () => {
-    router.push('/enroll/editUnitInfo/' + String(currentMatchId) + '/new');
+    router.push({
+      pathname: '/enroll/editUnitInfo/' + String(currentMatchId),
+      query: {
+        teamId: '0',
+      },
+    });
   };
 
   return (
@@ -67,7 +74,7 @@ function ChoiceTeam(props: ChoiceTeamProps) {
 }
 
 const mapStateToProps = ({ loading, enroll, unit }: ConnectState) => {
-  let unitData: any;
+  let unitData: any = [];
   if (enroll.unit) {
     unitData = enroll.unit.unitData;
   }

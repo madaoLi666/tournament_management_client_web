@@ -33,9 +33,12 @@ function TeamList(props: TeamListProps) {
       message.error('[teamList]currentMatchId is undefined!');
       return;
     }
-    router.push(
-      '/enroll/editUnitInfo/' + String(currentMatchId) + '/' + String(id),
-    );
+    router.push({
+      pathname: '/enroll/editUnitInfo/' + String(currentMatchId),
+      query: {
+        teamId: String(id),
+      },
+    });
   };
 
   return (

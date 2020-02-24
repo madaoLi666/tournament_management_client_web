@@ -15,7 +15,7 @@ export interface Loading {
   models: {
     login?: boolean; // 登录model
     register?: boolean; // 注册model
-    enroll?: boolean;
+    enroll: boolean;
     user?: boolean;
     gameList?: boolean;
     unit?: boolean;

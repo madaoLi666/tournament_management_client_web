@@ -30,8 +30,12 @@ const config: IConfig = {
       Routes: ['./src/layouts/EnrollLayout/enrollLayout.tsx'],
       routes: [
         {
-          path: '/enroll/choiceTeam/:id',
+          path: '/enroll/choiceTeam/:matchId',
           component: './Enroll/choiceTeam/choiceTeam.tsx',
+        },
+        {
+          path: '/enroll/editUnitInfo/:matchId',
+          component: './Enroll/unitInfo/unitInfo.tsx',
         },
       ],
     },
