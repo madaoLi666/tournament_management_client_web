@@ -51,11 +51,11 @@ function AddressInput(props: AddressInputProps) {
   return (
     <Form.Item label="地址">
       <Input.Group compact>
-        <Form.Item name={'province'}>
+        <Form.Item style={{ width: '40%' }} name={['residence', 'city']}>
           <Cascader placeholder={'选填'} options={residences} />
         </Form.Item>
-        <Form.Item name={'address'}>
-          <Input style={{ width: '100%' }} placeholder="选填" />
+        <Form.Item style={{ width: '60%' }} name={['residence', 'address']}>
+          <Input placeholder="选填" />
         </Form.Item>
       </Input.Group>
     </Form.Item>

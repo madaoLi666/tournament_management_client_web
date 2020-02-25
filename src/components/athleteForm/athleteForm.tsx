@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import React, { forwardRef, useState } from 'react';
 import { FormProps } from 'antd/lib/form';
-import { Button, Form, Input, Modal, Select } from 'antd';
+import { Button, Form, Input, Select } from 'antd';
 import styles from './index.less';
-import { checkEmail, checkIDCard } from '@/utils/regulars';
+import { checkEmail, checkIDCard, checkPhoneNumber } from '@/utils/regulars';
 import AddressInput from '@/components/AddressInput/addressInput';
 import { DatePicker } from '@/components/DayJs';
 import moment from 'dayjs';
+import UploadForm from '@/components/UploadForm/uploadForm';
 
 // 表单样式
 const formStyle: FormProps = {
   layout: 'horizontal',
-  labelCol: { span: 4 },
-  wrapperCol: { span: 20 },
+  labelCol: { span: 8 },
+  wrapperCol: { span: 12 },
   colon: true,
   labelAlign: 'right',
 };
@@ -20,12 +21,13 @@ const { Item } = Form;
 
 interface AthleteFormProps {
   isAdd: boolean; // 是否新增运动员
-  form: any;
+  initialValue: any;
+  formRef: any;
 }
 
 // 表单
 function AthleteForm(props: AthleteFormProps) {
-  const { isAdd, form } = props;
+  const { isAdd, initialValue, formRef } = props;
   // 控制身份证类别
   const [isHongKong, setIsHongKong] = useState(false);
 
@@ -40,7 +42,7 @@ function AthleteForm(props: AthleteFormProps) {
     } else {
       setIsHongKong(true);
     }
-    form.resetFields(['identifyNumber', 'sex', 'birthday']);
+    formRef.current.resetFields(['identifyNumber', 'sex', 'birthday']);
   };
 
   const handleIDCardChange = (event: any) => {
@@ -51,7 +53,7 @@ function AthleteForm(props: AthleteFormProps) {
     }
     // 未满18位
     if (idCard.length !== 18) {
-      form.setFieldsValue({
+      formRef.current.setFieldsValue({
         sex: null,
         birthday: null,
       });
@@ -59,7 +61,7 @@ function AthleteForm(props: AthleteFormProps) {
     }
     if (checkIDCard.test(idCard) && !isHongKong) {
       const birthday = `${idCard.slice(6, 10)}${idCard.slice(10, 12)}${idCard.slice(12, 14)}`;
-      form.setFieldsValue({
+      formRef.current.setFieldsValue({
         sex: idCard.slice(-2, -1) % 2 === 1 ? '男' : '女',
         birthday: moment(birthday),
       });
@@ -67,17 +69,35 @@ function AthleteForm(props: AthleteFormProps) {
     }
   };
 
+  // 处理initialValue
+  const mapStateToProps = (initialValue: any): any => {
+    if (initialValue) {
+      const { athlete } = initialValue;
+      const residence = {
+        city: athlete.province !== null ? athlete.province.split('-').slice(0, 3) : [],
+        address: athlete.address !== null ? athlete.address : '',
+      };
+      return {
+        name: athlete.name,
+        idCardType: athlete.idcardtype,
+        identifyNumber: athlete.idcard,
+        sex: athlete.sex,
+        birthday: moment(athlete.birthday),
+        phone: athlete.phonenumber === null ? '' : athlete.phonenumber,
+        email: athlete.email === null ? '' : athlete.email,
+        residence: residence,
+      };
+    }
+    return {};
+  };
+
   return (
     <Form
       {...formStyle}
-      initialValues={{
-        idCardType: '身份证',
-        province: null,
-        address: null,
-      }}
+      ref={formRef}
+      initialValues={mapStateToProps(initialValue)}
       scrollToFirstError
       onFinish={onFinish}
-      form={form}
     >
       <Item label="姓名" name={'name'} rules={[{ required: true, message: '请输入运动员姓名' }]}>
         <Input placeholder="请输入真实姓名" />
@@ -131,7 +151,7 @@ function AthleteForm(props: AthleteFormProps) {
       <Item
         label="联系电话"
         name={'phone'}
-        rules={[{ pattern: checkEmail, message: '请输入正确的手机号码' }]}
+        rules={[{ pattern: checkPhoneNumber, message: '请输入正确的手机号码' }]}
       >
         <Input placeholder="选填" />
       </Item>
@@ -143,14 +163,12 @@ function AthleteForm(props: AthleteFormProps) {
         <Input placeholder="选填" />
       </Item>
       <AddressInput />
-      {/*<Item label="地址" name={'residence'}>*/}
-      {/*  <Input />*/}
-      {/*</Item>*/}
-      <Item labelCol={{ span: 0 }} wrapperCol={{ span: 24 }}>
-        <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
-          提交信息
-        </Button>
-      </Item>
+      <UploadForm
+        guaranteePic={initialValue ? initialValue.athlete.face : null}
+        name={'uploadPic'}
+        label={'运动员照片（选填）'}
+        required={false}
+      />
     </Form>
   );
 }

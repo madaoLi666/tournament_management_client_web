@@ -7,6 +7,7 @@ interface UploadFormProps {
   name: string;
   label: string;
   guaranteePic: string | null;
+  required: boolean;
 }
 
 /*
@@ -23,7 +24,7 @@ interface UploadFormProps {
  */
 
 export default function UploadForm(props: UploadFormProps) {
-  const { name, label, guaranteePic } = props;
+  const { name, label, guaranteePic, required } = props;
 
   const [needUpload, setNeedUpload] = useState(false);
 
@@ -61,14 +62,9 @@ export default function UploadForm(props: UploadFormProps) {
       label={label}
       valuePropName="fileList"
       getValueFromEvent={normFile}
-      required
+      required={required}
     >
-      <Upload
-        accept={'image/*'}
-        name="file"
-        action="/upload.do"
-        listType="picture"
-      >
+      <Upload accept={'image/*'} name="file" action="/upload.do" listType="picture">
         {needUpload ? (
           <Button>
             <UploadOutlined />

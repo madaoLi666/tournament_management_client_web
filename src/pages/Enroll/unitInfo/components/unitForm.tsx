@@ -74,9 +74,7 @@ function UnitForm(props: UnitFormProps) {
           <Input disabled />
         </Form.Item>
         <Form.Item
-          rules={[
-            { required: true, message: '请输入参赛别名，可与单位名称相同' },
-          ]}
+          rules={[{ required: true, message: '请输入参赛别名，可与单位名称相同' }]}
           name="unitNameAlias"
           label="参赛队伍"
         >
@@ -114,6 +112,7 @@ function UnitForm(props: UnitFormProps) {
           guaranteePic={initialValue.guaranteePic}
           name={'uploadPic'}
           label={'自愿责任书'}
+          required={true}
         />
 
         <Form.Item label="教练姓名" name={'coach1Name'}>
@@ -122,9 +121,7 @@ function UnitForm(props: UnitFormProps) {
         <Form.Item
           label="联系电话"
           name={'coach1Phone'}
-          rules={[
-            { pattern: checkPhoneNumber, message: '请输入正确的国内手机号码' },
-          ]}
+          rules={[{ pattern: checkPhoneNumber, message: '请输入正确的国内手机号码' }]}
         >
           <Input placeholder="选填" />
         </Form.Item>
@@ -134,9 +131,7 @@ function UnitForm(props: UnitFormProps) {
         <Form.Item
           label="联系电话"
           name={'coach2Phone'}
-          rules={[
-            { pattern: checkPhoneNumber, message: '请输入正确的国内手机号码' },
-          ]}
+          rules={[{ pattern: checkPhoneNumber, message: '请输入正确的国内手机号码' }]}
         >
           <Input placeholder="选填" />
         </Form.Item>
