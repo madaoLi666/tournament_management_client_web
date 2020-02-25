@@ -62,8 +62,6 @@ function UnitForm(props: UnitFormProps) {
 
   return (
     <>
-      <span className={styles.title}>报名信息</span>
-      <div className={styles.hr} />
       <Form
         {...UnitInfoFormStyle}
         form={form}

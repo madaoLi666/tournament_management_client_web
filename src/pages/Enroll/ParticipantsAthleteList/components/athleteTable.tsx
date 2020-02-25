@@ -30,20 +30,14 @@ interface AthleteTableProps {
   matchId?: number;
   unitId: number;
   contestant_id: number;
+  modifyAthlete: Function;
 }
 
 function AthleteTable(props: AthleteTableProps) {
-  const {
-    dispatch,
-    dataSource,
-    loading,
-    contestant_id,
-    matchId,
-    unitId,
-  } = props;
+  const { dispatch, dataSource, loading, contestant_id, matchId, unitId, modifyAthlete } = props;
 
   // 选中运动员是否参赛
-  function handle_add(record: any, e: React.MouseEvent) {
+  const handle_add = (record: any, e: React.MouseEvent) => {
     const { birthday, id } = record.athlete;
     // 选中
     let reqData = {
@@ -62,9 +56,9 @@ function AthleteTable(props: AthleteTableProps) {
         message.success('确认成功');
       }
     });
-  }
+  };
 
-  function handle_delete(record: any, e: React.MouseEvent) {
+  const handle_delete = (record: any, e: React.MouseEvent) => {
     const { id } = record.athlete;
     // 先检查这个人是否有已经参加比赛的项目
     if (record.teamname.length !== 0) {
@@ -82,10 +76,10 @@ function AthleteTable(props: AthleteTableProps) {
           payload: { unitId, matchId, contestant_id },
         });
     });
-  }
+  };
 
   const editAthleteData = (record: any) => {
-    console.log(record);
+    modifyAthlete(record);
   };
 
   const handlerDelete = (id: number | string) => {
@@ -108,11 +102,7 @@ function AthleteTable(props: AthleteTableProps) {
       align: 'center',
       render: (text: number, record: any) => {
         return record.active === 1 ? (
-          <Button
-            onClick={event => handle_delete(record, event)}
-            size="small"
-            type="danger"
-          >
+          <Button onClick={event => handle_delete(record, event)} size="small" type="danger">
             取消参赛
           </Button>
         ) : (
@@ -127,6 +117,7 @@ function AthleteTable(props: AthleteTableProps) {
         );
       },
       fixed: 'left',
+      width: 100,
     },
     {
       title: '运动员姓名',
@@ -152,9 +143,7 @@ function AthleteTable(props: AthleteTableProps) {
       title: '出生年月日',
       key: 'birthday',
       align: 'center',
-      render: (text: any, record: any) => (
-        <span>{record.athlete.birthday.slice(0, 10)}</span>
-      ),
+      render: (text: any, record: any) => <span>{record.athlete.birthday.slice(0, 10)}</span>,
     },
     {
       title: '操作',
@@ -184,13 +173,13 @@ function AthleteTable(props: AthleteTableProps) {
       ),
     },
   ];
-  // TODO 设置一下width看看
   return (
     <Table
       columns={tableColumns}
       dataSource={dataSource}
       size={'middle'}
       className={styles.antTableSmall}
+      scroll={{ x: 800 }}
       rowKey={record => record.id}
       loading={loading}
     />

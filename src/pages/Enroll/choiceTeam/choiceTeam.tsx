@@ -20,14 +20,7 @@ interface ChoiceTeamProps {
 }
 
 function ChoiceTeam(props: ChoiceTeamProps) {
-  const {
-    loading,
-    currentMatchId,
-    unitName,
-    unitId,
-    unitData,
-    dispatch,
-  } = props;
+  const { loading, currentMatchId, unitName, unitId, unitData, dispatch } = props;
 
   useEffect(() => {
     if (currentMatchId === undefined || currentMatchId === -1) {
@@ -50,11 +43,7 @@ function ChoiceTeam(props: ChoiceTeamProps) {
   };
 
   return (
-    <Card
-      className={styles.listCard}
-      bordered={false}
-      title={<strong>单位：{unitName}</strong>}
-    >
+    <Card className={styles.listCard} bordered={false} title={<strong>单位：{unitName}</strong>}>
       <Button
         loading={loading}
         type="dashed"
@@ -64,11 +53,7 @@ function ChoiceTeam(props: ChoiceTeamProps) {
       >
         添加新队伍
       </Button>
-      <TeamList
-        loading={loading}
-        currentMatchId={currentMatchId}
-        unitData={unitData}
-      />
+      <TeamList loading={loading} currentMatchId={currentMatchId} unitData={unitData} />
     </Card>
   );
 }

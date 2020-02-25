@@ -7,6 +7,7 @@ import { router } from 'umi';
 import { message } from 'antd';
 import { EnrollTeamData } from '@/models/enrollModel';
 import { participativeUnit } from '@/services/enrollServices';
+import EnrollHeader from '@/pages/Enroll/components/enrollHeader';
 
 interface UnitInfoProps {
   dispatch: Dispatch;
@@ -101,7 +102,8 @@ function UnitInfo(props: UnitInfoProps) {
     return <div>loading</div>;
   } else {
     return (
-      <div className={styles.form}>
+      <div>
+        <EnrollHeader title={'报名信息'} />
         <UnitForm
           matchId={String(matchId)}
           loading={formLoading}
