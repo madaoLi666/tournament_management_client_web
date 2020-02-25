@@ -39,8 +39,11 @@ const config: IConfig = {
         },
         {
           path: '/enroll/participants/:matchId',
-          component:
-            './Enroll/ParticipantsAthleteList/ParticipantsAthleteList.tsx',
+          component: './Enroll/ParticipantsAthleteList/ParticipantsAthleteList.tsx',
+        },
+        {
+          path: '/enroll/individual/:matchId',
+          component: './Enroll/individual/individual.tsx',
         },
       ],
     },

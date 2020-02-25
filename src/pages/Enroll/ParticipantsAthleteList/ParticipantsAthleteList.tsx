@@ -30,7 +30,7 @@ function ParticipantsAthleteList(props: ParticipantsAthleteListProps) {
         payload: { matchId, unitId, contestant_id },
       });
     }
-  }, [contestant_id, matchId]);
+  }, [contestant_id, matchId, contestant_id]);
 
   const add_athlete = () => {
     setAddVisible(true);
@@ -143,7 +143,7 @@ function ParticipantsAthleteList(props: ParticipantsAthleteListProps) {
                 return;
               }
               router.push({
-                pathname: '/enroll/individual' + String(matchId),
+                pathname: '/enroll/individual/' + String(matchId),
                 query: {
                   teamId: String(contestant_id),
                 },

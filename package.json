@@ -30,7 +30,7 @@
     "husky": "^0.14.3",
     "prettier": "1.19.1",
     "react-test-renderer": "^16.7.0",
-    "umi": "^2.13.0",
+    "umi": "^2.13.3",
     "umi-plugin-antd-icon-config": "^1.0.3",
     "umi-plugin-react": "^1.8.0",
     "umi-types": "^0.3.0"
