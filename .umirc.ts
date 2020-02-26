@@ -45,6 +45,10 @@ const config: IConfig = {
           path: '/enroll/individual/:matchId',
           component: './Enroll/individual/individual.tsx',
         },
+        {
+          path: '/enroll/team/:matchId',
+          component: './Enroll/teamEnroll/teamEnroll.tsx',
+        },
       ],
     },
     { path: '/', redirect: '/home' },

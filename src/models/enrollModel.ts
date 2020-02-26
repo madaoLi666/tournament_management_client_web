@@ -1,10 +1,6 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
-import {
-  checkISEnroll,
-  getContestantUnitData,
-  getLimitEnroll,
-} from '@/services/enrollServices';
+import { checkISEnroll, getContestantUnitData, getLimitEnroll } from '@/services/enrollServices';
 import { getAllItem, getIndividualEnrollLimit } from '@/services/ruleServices';
 import { convertAthleteList, convertItemData } from '@/utils/enroll';
 import { message } from 'antd';
@@ -152,6 +148,9 @@ const EnrollModel: EnrollModelType = {
     // 检查是否有报名信息，并获取运动员列表
     *checkIsEnrollAndGetAthleteLIST({ payload }, { put }) {
       const { matchId, unitId, contestant_id } = payload;
+      if (!matchId || !unitId || !contestant_id) {
+        return;
+      }
       let data = yield checkISEnroll({
         unitdata: unitId,
         matchdata: matchId,
@@ -175,19 +174,12 @@ const EnrollModel: EnrollModelType = {
           let teamEnrollData: Array<any> = [];
           for (let i: number = 0; i < teamEnroll.length; i++) {
             if (
-              Object.prototype.toString.call(
-                teamEnroll[i].groupprojectenroll,
-              ) === '[object Array]'
+              Object.prototype.toString.call(teamEnroll[i].groupprojectenroll) === '[object Array]'
             ) {
-              for (
-                let j: number = 0;
-                j < teamEnroll[i].groupprojectenroll.length;
-                j++
-              ) {
+              for (let j: number = 0; j < teamEnroll[i].groupprojectenroll.length; j++) {
                 teamEnrollData.push({
                   itemGroupSexName: teamEnroll[i].groupprojectenroll[j].name,
-                  open_group_id:
-                    teamEnroll[i].groupprojectenroll[j].openprojectgroupsex_id,
+                  open_group_id: teamEnroll[i].groupprojectenroll[j].openprojectgroupsex_id,
                   // 用于删除项目
                   id: teamEnroll[i].groupprojectenroll[j].id,
                   teamName: teamEnroll[i].name,
