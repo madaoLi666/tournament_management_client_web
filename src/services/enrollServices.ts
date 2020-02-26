@@ -2,10 +2,7 @@ import axiosInstance from '@/utils/request.ts';
 
 // 参赛单位
 // 修改 或 创建
-export async function participativeUnit(
-  data: FormData,
-  opt: object,
-): Promise<any> {
+export async function participativeUnit(data: FormData, opt: object): Promise<any> {
   return axiosInstance.post('/contestant/', data, opt);
 }
 
@@ -15,10 +12,7 @@ export async function getContestantUnitData(data: object): Promise<any> {
 }
 
 // 添加运动员
-export async function newUnitAthlete(
-  data: FormData,
-  opt: object,
-): Promise<any> {
+export async function newUnitAthlete(data: FormData, opt: object): Promise<any> {
   return axiosInstance.post('/unitathlete/', data, opt);
 }
 
@@ -50,7 +44,7 @@ export async function deleteIndividualEnroll(data: object): Promise<any> {
   return axiosInstance.delete('/personalprojectenroll/', { data });
 }
 // 团队报名
-export async function teamEnroll(data: object): Promise<any> {
+export async function handleTeamEnroll(data: object): Promise<any> {
   return axiosInstance.post('/teamenroll/', data);
 }
 // 删除队伍参赛项目

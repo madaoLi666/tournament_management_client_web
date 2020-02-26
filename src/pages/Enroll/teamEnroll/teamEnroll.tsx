@@ -3,14 +3,12 @@ import styles from './index.less';
 import { ConnectState } from '@/models/connect';
 import { connect, Dispatch } from 'dva';
 import EnrollHeader from '@/pages/Enroll/components/enrollHeader';
-import { Button, Cascader, message, Select, Table } from 'antd';
-import { deleteTeam } from '@/services/enrollServices';
+import { Button, Cascader, message, Table } from 'antd';
+import { deleteTeam, handleTeamEnroll } from '@/services/enrollServices';
 import TeamModal from '@/pages/Enroll/teamEnroll/components/teamModal';
 import { TeamItem, TeamProjectItem } from '@/pages/Enroll/teamData';
 import { selectTeam } from '@/utils/enroll';
-import any = jasmine.any;
-
-const { Option } = Select;
+import { router } from 'umi';
 
 interface TeamEnrollProps {
   teamEnroll?: Array<any>;
@@ -37,6 +35,7 @@ function TeamEnroll(props: TeamEnrollProps) {
     teamItem,
   } = props;
 
+  const [tableLoading, setTableLoading] = useState(false);
   useEffect(() => {
     if (matchId && unitId) {
       dispatch({
@@ -60,26 +59,32 @@ function TeamEnroll(props: TeamEnrollProps) {
   // 删除队伍函数
   const handleDeleteTeamEnroll = (id: number) => {
     if (!teamEnroll) {
+      message.error('[teamEnroll] teamEnroll is undefined');
       console.error('[teamEnroll] teamEnroll is undefined');
       return;
     }
+    setTableLoading(true);
     for (let i: number = 0; i < teamEnroll.length; i++) {
       if (teamEnroll[i].id === id) {
         id = teamEnroll[i].member[0].teamenroll;
         break;
       }
     }
-    deleteTeam({ teamenroll: id }).then(data => {
-      if (data) {
-        dispatch({
-          type: 'enroll/checkIsEnrollAndGetAthleteLIST',
-          payload: { matchId, unitId, contestant_id: contestant_id },
-        });
-        message.success('删除成功');
-      } else {
-        message.error('删除失败！');
-      }
-    });
+    deleteTeam({ teamenroll: id })
+      .then(data => {
+        if (data) {
+          dispatch({
+            type: 'enroll/checkIsEnrollAndGetAthleteLIST',
+            payload: { matchId, unitId, contestant_id: contestant_id },
+          });
+          message.success('删除成功');
+        } else {
+          message.error('删除失败！');
+        }
+      })
+      .finally(() => {
+        setTableLoading(false);
+      });
   };
   // 表格折叠函数
   const renderExpandedRow = (record: any): React.ReactNode => {
@@ -115,7 +120,7 @@ function TeamEnroll(props: TeamEnrollProps) {
     return r;
   };
 
-  /*============================ New Select ======================================*/
+  /*============================ Select ======================================*/
   const [teamEnrollData, setTeamEnrollData] = useState<any[]>([]);
   const [currentItemGroupSexID, setCurrentItemGroupSexID] = useState<any>(-1);
   // 在这里初始化选择器
@@ -200,14 +205,15 @@ function TeamEnroll(props: TeamEnrollProps) {
     openDialog(groups[2], { ...rule, ...individualLimitation });
   };
 
-  /*************** modal *******************/
+  /************************** modal ********************************/
   const [modalVisible, setModalVisible] = useState(false);
   const modalRef = useRef<any>();
-
+  // 关闭模态框
   const closeModal = () => {
+    modalRef.current.closeModal();
     setModalVisible(false);
   };
-
+  // 打开模态框
   const openDialog = (currentItemGroupSexID: any, rule: any) => {
     if (currentItemGroupSexID === -1) {
       // 判断当前id是否合法
@@ -216,6 +222,40 @@ function TeamEnroll(props: TeamEnrollProps) {
     }
     modalRef.current.setInitialState(teamEnroll, athleteList, currentItemGroupSexID, rule);
     setModalVisible(true);
+  };
+  // 处理队伍报名
+  const onEnroll = () => {
+    const reqData = modalRef.current.handleEnroll(currentItemGroupSexID);
+    if (!reqData.name) {
+      return;
+    }
+    setTableLoading(true);
+    let postData = {
+      ...reqData,
+      matchdata: matchId,
+      contestant: contestant_id,
+    };
+    handleTeamEnroll(postData)
+      .then((res: any) => {
+        if (res) {
+          message.success('报名成功');
+          dispatch({
+            type: 'enroll/checkIsEnrollAndGetAthleteLIST',
+            payload: {
+              matchId: matchId,
+              unitId: unitId,
+              contestant_id: contestant_id,
+            },
+          });
+          setModalVisible(false);
+          modalRef.current.closeModal();
+        } else {
+          message.error('报名失败');
+        }
+      })
+      .finally(() => {
+        setTableLoading(false);
+      });
   };
 
   return (
@@ -228,6 +268,7 @@ function TeamEnroll(props: TeamEnrollProps) {
             options={teamEnrollData}
             onChange={clickItem}
             placeholder="开设新队伍"
+            className={styles.select}
           />
         }
       />
@@ -237,9 +278,44 @@ function TeamEnroll(props: TeamEnrollProps) {
         expandedRowRender={renderExpandedRow}
         rowKey={(record: any) => record.id}
         size={'small'}
-        loading={loading}
+        loading={loading || tableLoading}
       />
-      <TeamModal ref={modalRef} onCancel={closeModal} visible={modalVisible} />
+      <TeamModal
+        loading={tableLoading}
+        onEnroll={onEnroll}
+        ref={modalRef}
+        onCancel={closeModal}
+        visible={modalVisible}
+      />
+      <div className={styles.hr} />
+      <div className={styles.btn}>
+        <Button
+          loading={loading}
+          onClick={() => {
+            router.push({
+              pathname: '/enroll/showEnroll/' + String(matchId),
+              query: {
+                teamId: String(contestant_id),
+              },
+            });
+          }}
+          type="primary"
+        >
+          确认报名
+        </Button>
+        <Button
+          onClick={() => {
+            router.push({
+              pathname: '/enroll/individual/' + String(matchId),
+              query: {
+                teamId: String(contestant_id),
+              },
+            });
+          }}
+        >
+          返回
+        </Button>
+      </div>
     </div>
   );
 }

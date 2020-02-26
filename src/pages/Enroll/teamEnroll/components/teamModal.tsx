@@ -9,17 +9,19 @@ const { Option } = Select;
 interface TeamModalProps {
   visible: boolean;
   onCancel(): void;
+  onEnroll(): void;
+  loading: boolean;
 }
 
 function TeamModal(props: TeamModalProps, refs: any) {
-  const { visible } = props;
+  const { visible, onCancel, onEnroll, loading } = props;
   // 角色设置列表
   const [roleTypeList, setRoleTypeList] = useState<any>([]);
   const [teamName, setTeamName] = useState('');
   const [legalAthleteList, setLegalAthleteList] = useState<any>([]);
   // 规则 用于legalAthleteFilter 和 勾选后的判断
   const [rule, setRule] = useState<any>({});
-  const [selectedAthleteList, setSelectedAthleteList] = useState([]);
+  const [selectedAthleteList, setSelectedAthleteList] = useState<any>([]);
 
   // 人员table
   const tableColumns = [
@@ -57,14 +59,13 @@ function TeamModal(props: TeamModalProps, refs: any) {
   ];
 
   const handleRoleTypeSelect = (value: number, index: number) => {
-    // let { legalAthleteList } = this.state;
-    // legalAthleteList[index].role = value;
-    // this.setState({ legalAthleteList });
+    let tempAthleteList = Object.assign([], legalAthleteList);
+    tempAthleteList[index].role = value;
+    setLegalAthleteList(tempAthleteList);
   };
 
   const handleCheckboxSelect = (record: any, selected: boolean) => {
-    // TODO 这里可能需要深复制
-    let tempAthleteList = selectedAthleteList as any;
+    let tempAthleteList = Object.assign([], selectedAthleteList);
     let index = -1;
     for (let i: number = tempAthleteList.length - 1; i >= 0; i--) {
       if (tempAthleteList[i] === record.id) {
@@ -79,24 +80,24 @@ function TeamModal(props: TeamModalProps, refs: any) {
     }
     setSelectedAthleteList(tempAthleteList);
   };
+
   const handleCheckSelectAll = (selected: boolean) => {
     if (selected) {
-      // 当反选后 如果错误 执行了这个会有bug
-      const tempAthleteList = legalAthleteList.map((v: any) => v.id);
-      setLegalAthleteList(tempAthleteList);
+      let tempAthleteList = Object.assign([], legalAthleteList);
+      const tempIdList = tempAthleteList.map((v: any) => v.id);
+      setSelectedAthleteList(tempIdList);
     } else if (!selected) {
       setSelectedAthleteList([]);
     }
   };
 
   const rowSelection: TableRowSelection<any> = {
-    fixed: true,
     onSelect: handleCheckboxSelect,
     onSelectAll: handleCheckSelectAll,
     selectedRowKeys: selectedAthleteList,
   };
 
-  // 父组件在打开modal时调用该方法，设置state
+  // 传递给父组件的方法
   useImperativeHandle(refs, () => ({
     setInitialState: (
       teamEnroll: any,
@@ -139,10 +140,91 @@ function TeamModal(props: TeamModalProps, refs: any) {
     setTeamRule: (data: any) => {
       setRule(data);
     },
+    closeModal: () => {
+      setTeamName('');
+      setSelectedAthleteList([]);
+    },
+    handleEnroll: (currentItemGroupSexID: any): object => {
+      if (teamName === '' || teamName === undefined) {
+        message.warn('请先填写队名');
+        return {};
+      }
+      // 判断人数是否符合
+      const { maxTeamNumberLimitation, minTeamNumberLimitation } = rule;
+      if (
+        selectedAthleteList.length < minTeamNumberLimitation ||
+        selectedAthleteList.length > maxTeamNumberLimitation
+      ) {
+        message.warn('队伍人数不符合报名要求');
+        return {};
+      }
+      // 判断性别 应该与生成数据一齐做
+      let m: number = 0,
+        w: number = 0;
+      let player: Array<any> = [];
+      selectedAthleteList.forEach((v: number) => {
+        for (let i: number = legalAthleteList.length - 1; i >= 0; i--) {
+          if (v === legalAthleteList[i].id) {
+            player.push({
+              player: legalAthleteList[i].player,
+              roletype: legalAthleteList[i].role,
+            });
+            if (legalAthleteList[i].athlete.sex === '男') m += 1;
+            if (legalAthleteList[i].athlete.sex === '女') w += 1;
+            break;
+          }
+        }
+      });
+      // 对rule中 sexType 进行性别判别
+      /*
+       * 全男/全女在filter中已经筛选
+       * */
+      const { sexType } = rule;
+      if (sexType !== 1 && sexType !== 2 && sexType !== 3) {
+        if (sexType === 4 && (m === 0 || w === 0)) {
+          message.warn('男性或女性至少存在一个');
+          return {};
+        }
+        if (sexType === 5 && (m !== 1 || w !== 1)) {
+          message.warn('此项目为男女混双，参赛队伍组成必须为一男一女');
+          return {};
+        }
+        // scale
+        if (sexType === 6) {
+          console.log('[teamModal]sexType = 6');
+        }
+      }
+      // 这里给轮滑球一个写死先，因为赛事设置中并没有设置，轮滑球项目中，必须要有两名守门员
+      if (rule.itemName == '单排轮滑球') {
+        let sum = 0;
+        for (let i = 0; i < player.length; i++) {
+          if (player[i].roletype == 11) {
+            sum++;
+          }
+        }
+        if (sum != 2) {
+          message.warning('队伍中必须有两名守门员');
+          return {};
+        }
+      }
+      return {
+        name: teamName,
+        openprojectgroupsex: currentItemGroupSexID,
+        player,
+      };
+    },
   }));
 
   return (
-    <Modal onCancel={props.onCancel} visible={visible}>
+    <Modal
+      onOk={onEnroll}
+      onCancel={onCancel}
+      visible={visible}
+      title={'选择队员进行团队报名'}
+      okText={'报名'}
+      cancelText={'取消'}
+      confirmLoading={loading}
+    >
       <Input
         placeholder="请输入队伍名称"
         value={teamName}
@@ -152,6 +234,7 @@ function TeamModal(props: TeamModalProps, refs: any) {
         columns={tableColumns}
         dataSource={legalAthleteList}
         rowSelection={rowSelection}
+        size={'small'}
         rowKey={(record: any) => record.id}
       />
     </Modal>
