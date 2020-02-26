@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './index.less';
 import { ConnectState } from '@/models/connect';
 import { connect, Dispatch } from 'dva';
 import EnrollHeader from '@/pages/Enroll/components/enrollHeader';
-import { Button, message, Select, Table } from 'antd';
+import { Button, Cascader, message, Select, Table } from 'antd';
 import { deleteTeam } from '@/services/enrollServices';
 import TeamModal from '@/pages/Enroll/teamEnroll/components/teamModal';
+import { TeamItem, TeamProjectItem } from '@/pages/Enroll/teamData';
+import { selectTeam } from '@/utils/enroll';
+import any = jasmine.any;
 
 const { Option } = Select;
 
@@ -112,11 +115,107 @@ function TeamEnroll(props: TeamEnrollProps) {
     return r;
   };
 
+  /*============================ New Select ======================================*/
+  const [teamEnrollData, setTeamEnrollData] = useState<any[]>([]);
+  const [currentItemGroupSexID, setCurrentItemGroupSexID] = useState<any>(-1);
+  // 在这里初始化选择器
+  useEffect(() => {
+    if (!teamItem) {
+      return;
+    }
+    let tempTeamItem: Array<TeamProjectItem> = [];
+    if (teamItem.length !== 0) {
+      // 将信息push进数组中
+      const team = teamItem as TeamItem[];
+      tempTeamItem = selectTeam(team);
+    }
+    setTeamEnrollData(tempTeamItem);
+  }, [teamItem]);
+  // 监听点击事件
+  const clickItem = (groups: string[]) => {
+    if (groups === undefined || groups === null) {
+      console.error('[队伍选择器点击时]groups is undefined:' + JSON.stringify(groups));
+      message.error('[队伍选择器点击时]groups is undefined:' + JSON.stringify(groups));
+    }
+    if (groups.length === 0) {
+      return;
+    }
+    if (groups.length < 3) {
+      message.warning('[队伍选择器]请选择完成的项目组别！');
+    }
+    if (!teamItem) {
+      console.log('teamItem is undefined');
+      return;
+    }
+    // 取最后的ItemGroupSexID - 即 服务端 project_group_sexId
+    setCurrentItemGroupSexID(groups[2]);
+    // 根据id设置 group 规则
+    let rule = {
+      itemName: '',
+      startTime: '',
+      endTime: '',
+      unitMaxEnrollNumber: 0,
+      unitMinEnrollNumber: 0,
+      sexType: 0,
+      isIncludeEnrollLimitation: false,
+      scale: '',
+      groupList: Array,
+      minTeamNumberLimitation: 0,
+      maxTeamNumberLimitation: 0,
+    };
+    for (let i: number = 0; i < teamItem.length; i++) {
+      // 项目id相同
+      if (teamItem[i].itemId === Number(groups[0])) {
+        modalRef.current.setRoleType(teamItem[i].roleTypeList);
+        rule.itemName = teamItem[i].name;
+        rule.groupList = teamItem[i].groupData;
+        const g = teamItem[i].groupData;
+        for (let j: number = 0; j < g.length; j++) {
+          // 组别id相同
+          // 获取组别层规则
+          if (g[j].groupId === Number(groups[1])) {
+            rule.startTime = g[j].startTime;
+            rule.endTime = g[j].endTime;
+            const s = g[j].sexData;
+            for (let k: number = 0; k < s.length; k++) {
+              // 性别id相同
+              // 获取性别层规则
+              if (s[k].sexId === Number(groups[2])) {
+                rule.unitMinEnrollNumber = s[k].unitMinEnrollNumber;
+                rule.unitMaxEnrollNumber = s[k].unitMaxEnrollNumber;
+                rule.isIncludeEnrollLimitation = s[k].isIncludeEnrollLimitation;
+                rule.sexType = s[k].sex;
+                rule.scale = s[k].scale;
+                rule.minTeamNumberLimitation = s[k].minTeamNumberLimitation;
+                rule.maxTeamNumberLimitation = s[k].maxTeamNumberLimitation;
+                break;
+              }
+            }
+            break;
+          }
+        }
+      }
+    }
+    modalRef.current.setTeamRule({ ...rule, ...individualLimitation });
+    openDialog(groups[2], { ...rule, ...individualLimitation });
+  };
+
   /*************** modal *******************/
   const [modalVisible, setModalVisible] = useState(false);
+  const modalRef = useRef<any>();
 
   const closeModal = () => {
     setModalVisible(false);
+  };
+
+  const openDialog = (currentItemGroupSexID: any, rule: any) => {
+    if (currentItemGroupSexID === -1) {
+      // 判断当前id是否合法
+      message.warn('请先进行选择项目');
+      return false;
+    }
+    modalRef.current.setInitialState(teamEnroll, athleteList, currentItemGroupSexID, rule);
+    setModalVisible(true);
   };
 
   return (
@@ -124,9 +223,12 @@ function TeamEnroll(props: TeamEnrollProps) {
       <EnrollHeader
         title={'团队赛报名'}
         buttonDom={
-          <Button onClick={() => setModalVisible(true)} type="primary">
-            开设队伍
-          </Button>
+          <Cascader
+            fieldNames={{ label: 'itemName', value: 'itemId', children: 'items' }}
+            options={teamEnrollData}
+            onChange={clickItem}
+            placeholder="开设新队伍"
+          />
         }
       />
       <Table
@@ -137,7 +239,7 @@ function TeamEnroll(props: TeamEnrollProps) {
         size={'small'}
         loading={loading}
       />
-      <TeamModal onCancel={closeModal} visible={modalVisible} />
+      <TeamModal ref={modalRef} onCancel={closeModal} visible={modalVisible} />
     </div>
   );
 }
