@@ -4,6 +4,8 @@ import EnrollHeader from '@/pages/Enroll/components/enrollHeader';
 import IndividualTable from '@/pages/Enroll/individual/components/individualTable';
 import { ConnectState } from '@/models/connect';
 import { connect, Dispatch } from 'dva';
+import { Button, message } from 'antd';
+import { router } from 'umi';
 
 interface IndividualProps {
   loading: boolean;
@@ -12,9 +14,9 @@ interface IndividualProps {
   dispatch: Dispatch;
   contestant_id?: number;
   enrollAthleteList: any;
-
   individualItemList: any;
   individualLimitation: any;
+  group_age_list: any;
 }
 
 function Individual(props: IndividualProps) {
@@ -27,6 +29,7 @@ function Individual(props: IndividualProps) {
     enrollAthleteList,
     individualItemList,
     individualLimitation,
+    group_age_list,
   } = props;
 
   useEffect(() => {
@@ -44,7 +47,46 @@ function Individual(props: IndividualProps) {
     return (
       <div>
         <EnrollHeader title={'个人项目报名'} />
-        <IndividualTable enrollAthleteList={enrollAthleteList} loading={loading} />
+        <IndividualTable
+          individualItemList={individualItemList}
+          individualLimitation={individualLimitation}
+          enrollAthleteList={enrollAthleteList}
+          loading={loading}
+          group_age_list={group_age_list}
+          matchId={matchId}
+          unitId={unitId}
+          contestant_id={contestant_id}
+          dispatch={dispatch}
+        />
+        <div className={styles.hr} />
+        <div className={styles.btn}>
+          <Button
+            loading={loading}
+            onClick={() => {
+              router.push({
+                pathname: '/enroll/team/' + String(matchId),
+                query: {
+                  teamId: String(contestant_id),
+                },
+              });
+            }}
+            type="primary"
+          >
+            进入团队赛报名
+          </Button>
+          <Button
+            onClick={() => {
+              router.push({
+                pathname: '/enroll/participants/' + String(matchId),
+                query: {
+                  teamId: String(contestant_id),
+                },
+              });
+            }}
+          >
+            返回
+          </Button>
+        </div>
       </div>
     );
   }
