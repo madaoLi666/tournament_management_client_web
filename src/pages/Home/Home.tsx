@@ -86,9 +86,7 @@ function Home(props: HomeProps) {
       ));
       setCarouselDom(tempDom);
     } else {
-      const tempDom = new_homePicArr.map((v: string) => (
-        <Skeleton key="skeleton1" active />
-      ));
+      const tempDom = new_homePicArr.map((v: string) => <Skeleton key="skeleton1" active />);
       setCarouselDom(tempDom);
     }
   }, [homeImgArr]);
@@ -108,9 +106,7 @@ function Home(props: HomeProps) {
               <div className={styles['img-block']}>
                 <img
                   src={small_new_homePicArr[index]}
-                  onClick={() =>
-                    router.push(`/home/introduction?name=${encodeURI(v.name)}`)
-                  }
+                  onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)}
                   alt=""
                 />
               </div>
@@ -135,22 +131,14 @@ function Home(props: HomeProps) {
                     <Button
                       className={styles.button}
                       type={'primary'}
-                      onClick={() =>
-                        router.push(
-                          `/home/introduction?name=${encodeURI(v.name)}`,
-                        )
-                      }
+                      onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)}
                     >
                       进入赛事
                     </Button>
                   ) : (
                     <Button
                       className={styles.button}
-                      onClick={() =>
-                        router.push(
-                          `/home/introduction?name=${encodeURI(v.name)}`,
-                        )
-                      }
+                      onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)}
                     >
                       进入赛事
                     </Button>
@@ -183,11 +171,7 @@ function Home(props: HomeProps) {
   return (
     <div className={styles['home-page']}>
       <div>
-        <Menu
-          onClick={handleChangeMenu}
-          selectedKeys={[currentMenu]}
-          mode={'horizontal'}
-        >
+        <Menu onClick={handleChangeMenu} selectedKeys={[currentMenu]} mode={'horizontal'}>
           <Menu.Item key={'home'}>
             <HomeOutlined />
             主页
@@ -212,11 +196,7 @@ function Home(props: HomeProps) {
       </div>
       {/* 走马灯 */}
       <div>
-        <Carousel
-          autoplay={true}
-          afterChange={() => {}}
-          className={styles.carousel}
-        >
+        <Carousel autoplay={true} afterChange={() => {}} className={styles.carousel}>
           {carouselDOM}
         </Carousel>
       </div>
@@ -234,12 +214,7 @@ function Home(props: HomeProps) {
           <img src={item} onLoad={onLoad.bind(event, item)} key={i} alt="" />
         ))}
         {small_new_homePicArr.map((item, i) => (
-          <img
-            src={item}
-            onLoad={onLoadMatch.bind(event, item)}
-            key={i}
-            alt=""
-          />
+          <img src={item} onLoad={onLoadMatch.bind(event, item)} key={i} alt="" />
         ))}
       </div>
     </div>

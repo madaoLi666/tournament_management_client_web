@@ -3,11 +3,9 @@ import styles from './index.less';
 import { ConnectState } from '@/models/connect';
 import { connect, Dispatch } from 'dva';
 import AthleteTable from '@/pages/Enroll/ParticipantsAthleteList/components/athleteTable';
-import { Button, message, Table } from 'antd';
+import { Button, message } from 'antd';
 import EnrollHeader from '@/pages/Enroll/components/enrollHeader';
-import AthleteForm from '@/components/athleteForm/athleteForm';
 import ModalForm, { AthleteFormValues } from '@/components/athleteForm/modalForm';
-import { updatePlayer } from '@/services/athleteServices';
 import { newUnitAthlete } from '@/services/enrollServices';
 import { router } from 'umi';
 
@@ -108,31 +106,34 @@ function ParticipantsAthleteList(props: ParticipantsAthleteListProps) {
     return <div>loading</div>;
   } else {
     return (
-      <div>
-        <EnrollHeader
-          title={'运动员列表'}
-          buttonDom={
-            <Button type="primary" onClick={add_athlete}>
-              添加运动员
-            </Button>
-          }
-        />
-        <AthleteTable
-          matchId={matchId}
-          unitId={unitId}
-          contestant_id={contestant_id}
-          loading={loading}
-          dataSource={athleteList}
-        />
-        <ModalForm
-          title={'新增运动员'}
-          initialValue={null}
-          isAdd={true}
-          onCancel={onCancel}
-          onCreate={onCreate}
-          visible={addVisible}
-          loading={confirmLoading}
-        />
+      <div className={styles.main}>
+        <div className={styles.content}>
+          <EnrollHeader
+            title={'运动员列表'}
+            buttonDom={
+              <Button type="primary" onClick={add_athlete}>
+                添加运动员
+              </Button>
+            }
+          />
+          <AthleteTable
+            matchId={matchId}
+            unitId={unitId}
+            contestant_id={contestant_id}
+            loading={loading}
+            dataSource={athleteList}
+          />
+          <ModalForm
+            title={'新增运动员'}
+            initialValue={null}
+            isAdd={true}
+            onCancel={onCancel}
+            onCreate={onCreate}
+            visible={addVisible}
+            loading={confirmLoading}
+          />
+        </div>
+
         <div className={styles.hr} />
         <div className={styles.btn}>
           <Button

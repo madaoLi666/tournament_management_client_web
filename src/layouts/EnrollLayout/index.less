@@ -1,13 +1,25 @@
 .enroll {
   min-height: 100vh;
+  :global {
+    .ant-layout-header {
+      color: white;
+      background: linear-gradient(#58a3f7, #6633ff);
+      line-height: 50px;
+    }
+
+    @media screen and (max-width: 576px) {
+      .ant-layout-header {
+        padding: 0 1.5rem;
+      }
+    }
+  }
 
   .matchName {
     background-color: white;
     padding: 0 1rem;
     min-height: 4rem;
-    font: 600 1em/1.8 PingFang SC, Lantinghei SC, Microsoft Yahei,
-      Hiragino Sans GB, Microsoft Sans Serif, WenQuanYi Micro Hei, Helvetica,
-      sans-serif;
+    font: 600 1em/1.8 PingFang SC, Lantinghei SC, Microsoft Yahei, Hiragino Sans GB,
+      Microsoft Sans Serif, WenQuanYi Micro Hei, Helvetica, sans-serif;
     font-size: 120%;
     border-bottom: 1px solid #e2e2e2;
     display: flex;

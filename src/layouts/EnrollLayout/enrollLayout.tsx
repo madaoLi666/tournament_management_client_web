@@ -76,11 +76,7 @@ function EnrollLayout(props: EnrollLayoutProps) {
     <Layout className={styles.enroll}>
       <HeaderMsg />
       <div className={styles.matchName}>
-        {currentGameData ? (
-          <div>{currentGameData.name}</div>
-        ) : (
-          <span>loading</span>
-        )}
+        {currentGameData ? <div>{currentGameData.name}</div> : <span>loading</span>}
       </div>
       <Content className={styles.content}>{props.children}</Content>
 
@@ -95,9 +91,7 @@ const mapStateToProps = ({ router, gameList }: ConnectState) => {
   const matchId = router.location.pathname.split('/').pop();
   let currentGameData: any;
   if (gameList.gameList && gameList.gameList?.length !== 0) {
-    currentGameData = gameList.gameList.filter(
-      (v: any) => v.id === Number(matchId),
-    )[0];
+    currentGameData = gameList.gameList.filter((v: any) => v.id === Number(matchId))[0];
   }
 
   return {

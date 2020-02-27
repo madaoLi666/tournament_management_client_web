@@ -45,19 +45,21 @@ function Individual(props: IndividualProps) {
     return <div>loading</div>;
   } else {
     return (
-      <div>
-        <EnrollHeader title={'个人项目报名'} />
-        <IndividualTable
-          individualItemList={individualItemList}
-          individualLimitation={individualLimitation}
-          enrollAthleteList={enrollAthleteList}
-          loading={loading}
-          group_age_list={group_age_list}
-          matchId={matchId}
-          unitId={unitId}
-          contestant_id={contestant_id}
-          dispatch={dispatch}
-        />
+      <div className={styles.main}>
+        <div className={styles.content}>
+          <EnrollHeader title={'个人项目报名'} />
+          <IndividualTable
+            individualItemList={individualItemList}
+            individualLimitation={individualLimitation}
+            enrollAthleteList={enrollAthleteList}
+            loading={loading}
+            group_age_list={group_age_list}
+            matchId={matchId}
+            unitId={unitId}
+            contestant_id={contestant_id}
+            dispatch={dispatch}
+          />
+        </div>
         <div className={styles.hr} />
         <div className={styles.btn}>
           <Button

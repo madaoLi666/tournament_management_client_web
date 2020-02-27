@@ -1,14 +1,24 @@
-.hr {
-  border: 1px solid #f0f2f5;
-  width: 100%;
-  margin-bottom: 1rem;
-}
+.main {
+  display: flex;
+  flex-flow: column;
+  min-height: 80vh;
 
-.btn {
-  float: right;
-  margin-bottom: 1rem;
-  button {
-    margin-left: 1rem;
+  .content {
+    flex: 1;
+  }
+
+  .hr {
+    border: 1px solid #f0f2f5;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .btn {
+    align-self: flex-end;
+    margin-bottom: 1rem;
+    button {
+      margin-left: 1rem;
+    }
   }
 }
 

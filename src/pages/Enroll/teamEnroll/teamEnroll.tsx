@@ -259,34 +259,36 @@ function TeamEnroll(props: TeamEnrollProps) {
   };
 
   return (
-    <div>
-      <EnrollHeader
-        title={'团队赛报名'}
-        buttonDom={
-          <Cascader
-            fieldNames={{ label: 'itemName', value: 'itemId', children: 'items' }}
-            options={teamEnrollData}
-            onChange={clickItem}
-            placeholder="开设新队伍"
-            className={styles.select}
-          />
-        }
-      />
-      <Table
-        dataSource={teamEnroll}
-        columns={showTableColumns}
-        expandedRowRender={renderExpandedRow}
-        rowKey={(record: any) => record.id}
-        size={'small'}
-        loading={loading || tableLoading}
-      />
-      <TeamModal
-        loading={tableLoading}
-        onEnroll={onEnroll}
-        ref={modalRef}
-        onCancel={closeModal}
-        visible={modalVisible}
-      />
+    <div className={styles.main}>
+      <div className={styles.content}>
+        <EnrollHeader
+          title={'团队赛报名'}
+          buttonDom={
+            <Cascader
+              fieldNames={{ label: 'itemName', value: 'itemId', children: 'items' }}
+              options={teamEnrollData}
+              onChange={clickItem}
+              placeholder="开设新队伍"
+              className={styles.select}
+            />
+          }
+        />
+        <Table
+          dataSource={teamEnroll}
+          columns={showTableColumns}
+          expandedRowRender={renderExpandedRow}
+          rowKey={(record: any) => record.id}
+          size={'small'}
+          loading={loading || tableLoading}
+        />
+        <TeamModal
+          loading={tableLoading}
+          onEnroll={onEnroll}
+          ref={modalRef}
+          onCancel={closeModal}
+          visible={modalVisible}
+        />
+      </div>
       <div className={styles.hr} />
       <div className={styles.btn}>
         <Button

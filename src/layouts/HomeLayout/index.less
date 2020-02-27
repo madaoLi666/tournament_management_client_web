@@ -1,6 +1,18 @@
 .homeLayout {
   min-height: 100vh;
+  :global {
+    .ant-layout-header {
+      color: white;
+      background: linear-gradient(#58a3f7, #6633ff);
+      line-height: 50px;
+    }
 
+    @media screen and (max-width: 576px) {
+      .ant-layout-header {
+        padding: 0 1.5rem;
+      }
+    }
+  }
   .content {
     background-color: white;
 

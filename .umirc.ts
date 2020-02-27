@@ -1,4 +1,5 @@
 import { IConfig } from 'umi-types';
+import * as webpack from 'webpack';
 
 const config: IConfig = {
   treeShaking: true,
@@ -51,6 +52,19 @@ const config: IConfig = {
         },
       ],
     },
+    {
+      path: '/user',
+      Routes: ['./src/layouts/PersonLayout/PersonLayout.tsx'],
+      routes: [
+        { path: '/home', component: './Home/Home.tsx', name: '主页', icon: 'home' },
+        {
+          path: '/user/list',
+          component: './PersonBackground/AthleteList.tsx',
+          name: '运动员管理',
+          icon: 'smile',
+        },
+      ],
+    },
     { path: '/', redirect: '/home' },
   ],
   plugins: [
@@ -60,10 +74,9 @@ const config: IConfig = {
       {
         antd: true,
         dva: true,
-        dynamicImport: { webpackChunkName: true },
+        dynamicImport: { webpackChunkName: true, level: 3, loadingComponent: './pages/index.tsx' },
         title: '轮滑赛事辅助系统',
         dll: true,
-
         routes: {
           exclude: [
             /models\//,

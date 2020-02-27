@@ -34,11 +34,7 @@ function HeaderMsg(props: HeaderMsgProps) {
       <div className={styles.header_left}>
         <strong>
           <div>
-            <img
-              onClick={() => router.push('/home')}
-              src={require('@/assets/logo1.png')}
-              alt=""
-            />
+            <img onClick={() => router.push('/home')} src={require('@/assets/logo1.png')} alt="" />
             <span className={styles.title}>
               <a onClick={() => router.push('/home')}>轮滑赛事辅助系统平台</a>
             </span>
