@@ -2,7 +2,6 @@ import { Reducer } from 'redux';
 
 export interface GlobalModelState {
   showModal?: boolean;
-  drawer_visible?: boolean;
   collapsed?: boolean;
 }
 
@@ -12,7 +11,6 @@ export interface GlobalModelType {
   effects: {};
   reducers: {
     closeModal: Reducer<GlobalModelState>;
-    person_background_drawer: Reducer<GlobalModelState>;
     changeLayoutCollapsed: Reducer<GlobalModelState>;
   };
 }
@@ -22,7 +20,6 @@ const GlobalModel: GlobalModelType = {
 
   state: {
     showModal: true,
-    drawer_visible: true,
     collapsed: true,
   },
   effects: {},
@@ -37,12 +34,6 @@ const GlobalModel: GlobalModelType = {
       return {
         ...state,
         showModal: payload,
-      };
-    },
-    person_background_drawer(state, { payload }) {
-      return {
-        ...state,
-        drawer_visible: payload,
       };
     },
   },

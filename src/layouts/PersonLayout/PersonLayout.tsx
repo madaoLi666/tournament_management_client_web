@@ -88,22 +88,18 @@ function PersonLayout(props: PersonLayoutProps) {
         return [
           {
             path: '/',
-            breadcrumbName: '运动员列表',
+            breadcrumbName: '个人中心',
           },
           ...routers,
         ];
       }}
       itemRender={(route, params, routes, paths) => {
         const first = routes.indexOf(route) === 0;
-        return first ? (
-          <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
-        ) : (
-          <span>{route.breadcrumbName}</span>
-        );
+        return first ? <span>{route.breadcrumbName}</span> : <span>{route.breadcrumbName}</span>;
       }}
       menuDataRender={menuDataRender}
       rightContentRender={rightProps => (
-        <div style={{ display: 'inline', float: 'right' }}>
+        <div className={styles.rightProps}>
           <Button type="link" onClick={signout}>
             退出账号
           </Button>
@@ -125,7 +121,7 @@ function PersonLayout(props: PersonLayoutProps) {
 }
 
 const mapStateToProps = ({ global }: ConnectState) => {
-  return { collapsed: global.collapsed, drawer_visible: global.drawer_visible };
+  return { collapsed: global.collapsed };
 };
 
 export default connect(mapStateToProps)(PersonLayout);

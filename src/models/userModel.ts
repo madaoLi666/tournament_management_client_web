@@ -30,16 +30,16 @@ export interface UnitData {
 // 运动员信息
 export interface AthleteData {
   address?: string | null;
-  birthday?: string;
+  birthday: string;
   emergencycontactpeople?: string | null;
   emergencycontactpeoplephone?: string | null;
   face?: string | null;
-  idcard?: string;
+  idcard: string;
   idcardtype?: string;
-  name?: string;
-  phonenumber?: string | null;
+  name: string;
+  phonenumber?: string;
   province?: string | null;
-  sex?: string;
+  sex: string;
   user?: number;
   id?: number;
 }
