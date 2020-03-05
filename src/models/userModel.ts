@@ -42,6 +42,7 @@ export interface AthleteData {
   sex: string;
   user?: number;
   id?: number;
+  email?: string;
 }
 
 export interface UserModelState {

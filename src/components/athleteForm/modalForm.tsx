@@ -17,6 +17,8 @@ export interface AthleteFormValues {
   };
   uploadPic?: any;
   image?: any;
+  emergencyContactPhone?: string;
+  emergencyContact?: string;
 }
 
 interface ModalProps {
@@ -26,13 +28,15 @@ interface ModalProps {
   onCancel: () => void;
   title: string; // modal的标题
   initialValue: any; // 初始化值
+  haveContact?: boolean; // 表单是否有紧急联系人
+
   loading: boolean;
 }
 
 // 模态框包裹的表单
 const ModalForm: React.FC<ModalProps> = (props: ModalProps) => {
-  const { visible, onCancel, onCreate, isAdd, title, initialValue, loading } = props;
-
+  const { visible, onCancel, onCreate, isAdd, title, initialValue, loading, haveContact } = props;
+  // form实例，代替const form = useForm();
   const formRef = useRef({});
 
   const clearForm = () => {
@@ -62,7 +66,14 @@ const ModalForm: React.FC<ModalProps> = (props: ModalProps) => {
           });
       }}
     >
-      {visible && <AthleteForm formRef={formRef} initialValue={initialValue} isAdd={isAdd} />}
+      {visible && (
+        <AthleteForm
+          haveContact={haveContact}
+          formRef={formRef}
+          initialValue={initialValue}
+          isAdd={isAdd}
+        />
+      )}
     </Modal>
   );
 };

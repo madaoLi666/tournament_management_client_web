@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './index.less';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { ConnectState } from '@/models/connect';
-import { connect } from 'dva';
+import { connect, Dispatch } from 'dva';
 import { AthleteData, UnitData } from '@/models/userModel';
 import AthleteListTable, { Athlete } from '@/pages/PersonBackground/components/athleteListTable';
 import PageLoading from '@/pages';
@@ -13,10 +13,11 @@ interface AthleteListProps {
   athletes?: AthleteData[];
   unitData?: UnitData[];
   loading: boolean;
+  dispatch: Dispatch;
 }
 
 function AthleteList(props: AthleteListProps) {
-  const { id, athletes, loading, unitAccount, unitData } = props;
+  const { athletes, loading, unitAccount, unitData, dispatch } = props;
 
   // 表格dataSource
   const [data, setData] = useState<Athlete[]>([]);
@@ -48,20 +49,25 @@ function AthleteList(props: AthleteListProps) {
         setData((prevState: any) => {
           let tempState = Object.assign([], prevState);
           tempState.push({
-            key: (index + 1).toString(),
+            id: item.athlete.id,
             name: item.athlete.name,
-            identifyID: item.athlete.idcard,
+            idcard: item.athlete.idcard,
+            idcardtype: item.athlete.idcardtype,
             sex: item.athlete.sex,
             birthday: item.athlete.birthday.substr(0, 10),
-            phone: item.athlete.phonenumber,
+            phonenumber: item.athlete.phonenumber,
             emergencyContact: item.athlete.emergencycontactpeople,
             emergencyContactPhone: item.athlete.emergencycontactpeoplephone,
+            province: item.athlete.province,
+            address: item.athlete.address,
+            face: item.athlete.face,
+            email: item.athlete.email,
           });
           return tempState;
         });
       });
     }
-  }, [unitAccount, unitData]);
+  }, [athletes, unitAccount, unitData]);
 
   if (!unitAccount || !unitData) {
     return <PageLoading />;
@@ -69,7 +75,13 @@ function AthleteList(props: AthleteListProps) {
     return (
       <div>
         <PageHeaderWrapper />
-        <AthleteListTable loading={loading} unitAccount={unitAccount} dataSource={data} />
+        <AthleteListTable
+          unitId={unitData[0].id}
+          loading={loading}
+          unitAccount={unitAccount}
+          dataSource={data}
+          dispatch={dispatch}
+        />
       </div>
     );
   }
