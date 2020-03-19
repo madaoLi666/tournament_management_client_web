@@ -10,7 +10,7 @@ import PageLoading from '@/pages';
 interface AthleteListProps {
   id?: string;
   unitAccount?: number;
-  athletes?: AthleteData[];
+  athletes?: any[];
   unitData?: UnitData[];
   loading: boolean;
   dispatch: Dispatch;
@@ -19,57 +19,7 @@ interface AthleteListProps {
 function AthleteList(props: AthleteListProps) {
   const { athletes, loading, unitAccount, unitData, dispatch } = props;
 
-  // 表格dataSource
-  const [data, setData] = useState<Athlete[]>([]);
-
-  useEffect(() => {
-    if (!unitData || !unitAccount || !athletes) {
-      return;
-    }
-    if (unitAccount === 1) {
-      athletes.forEach((item, index) => {
-        setData((prevState: any) => {
-          let tempState = Object.assign([], prevState);
-          tempState.push({
-            key: (index + 1).toString(),
-            name: item.name,
-            identifyID: item.idcard,
-            sex: item.sex,
-            birthday: item.birthday.substr(0, 10),
-            phone: item.phonenumber,
-            emergencyContact: item.emergencycontactpeople,
-            emergencyContactPhone: item.emergencycontactpeoplephone,
-          });
-          return tempState;
-        });
-      });
-      // 是单位账号
-    } else if (unitData.length !== 0 && unitData[0].unitathlete) {
-      unitData[0].unitathlete.forEach((item, index) => {
-        setData((prevState: any) => {
-          let tempState = Object.assign([], prevState);
-          tempState.push({
-            id: item.athlete.id,
-            name: item.athlete.name,
-            idcard: item.athlete.idcard,
-            idcardtype: item.athlete.idcardtype,
-            sex: item.athlete.sex,
-            birthday: item.athlete.birthday.substr(0, 10),
-            phonenumber: item.athlete.phonenumber,
-            emergencyContact: item.athlete.emergencycontactpeople,
-            emergencyContactPhone: item.athlete.emergencycontactpeoplephone,
-            province: item.athlete.province,
-            address: item.athlete.address,
-            face: item.athlete.face,
-            email: item.athlete.email,
-          });
-          return tempState;
-        });
-      });
-    }
-  }, [athletes, unitAccount, unitData]);
-
-  if (!unitAccount || !unitData) {
+  if (!unitAccount || !unitData || !athletes) {
     return <PageLoading />;
   } else {
     return (
@@ -80,8 +30,7 @@ function AthleteList(props: AthleteListProps) {
           unitId={unitData[0].id}
           loading={loading}
           unitAccount={unitAccount}
-          dataSource={data}
-          dispatch={dispatch}
+          dataSource={athletes}
         />
       </div>
     );
@@ -89,11 +38,59 @@ function AthleteList(props: AthleteListProps) {
 }
 
 const mapStateToProps = ({ user, loading }: ConnectState) => {
+  const unitAccount = user.unitAccount;
+  const unitData = user.unitData;
+  const athletes = user.athleteData;
+  let dataSource: any[] = [];
+
+  if (!unitData || !unitAccount || !athletes) {
+    return {
+      id: user.id,
+      unitAccount,
+      athletes: undefined,
+      unitData: undefined,
+      loading: loading.global,
+    };
+  }
+  if (unitAccount === 1) {
+    athletes.forEach((item, index) => {
+      dataSource.push({
+        key: (index + 1).toString(),
+        name: item.name,
+        identifyID: item.idcard,
+        sex: item.sex,
+        birthday: item.birthday.substr(0, 10),
+        phone: item.phonenumber,
+        emergencyContact: item.emergencycontactpeople,
+        emergencyContactPhone: item.emergencycontactpeoplephone,
+      });
+    });
+    // 是单位账号
+  } else if (unitData.length !== 0 && unitData[0].unitathlete) {
+    unitData[0].unitathlete.forEach((item, index) => {
+      dataSource.push({
+        id: item.athlete.id,
+        name: item.athlete.name,
+        idcard: item.athlete.idcard,
+        idcardtype: item.athlete.idcardtype,
+        sex: item.athlete.sex,
+        birthday: item.athlete.birthday.substr(0, 10),
+        phonenumber: item.athlete.phonenumber,
+        emergencyContact: item.athlete.emergencycontactpeople,
+        emergencyContactPhone: item.athlete.emergencycontactpeoplephone,
+        province: item.athlete.province,
+        address: item.athlete.address,
+        face: item.athlete.face,
+        email: item.athlete.email,
+      });
+    });
+  }
+
   return {
     id: user.id,
-    unitAccount: user.unitAccount,
-    athletes: user.athleteData,
-    unitData: user.unitData,
+    unitAccount,
+    athletes: dataSource,
+    unitData,
     loading: loading.global,
   };
 };

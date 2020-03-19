@@ -4,7 +4,7 @@ import { Button, message, Table } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
 import ModalForm, { AthleteFormValues } from '@/components/athleteForm/modalForm';
 import { addplayer, updatePlayer } from '@/services/athleteServices';
-import { Dispatch } from 'dva';
+import { Dispatch, connect } from 'dva';
 
 // 表格接口 key 是编号
 export interface Athlete {
@@ -180,4 +180,4 @@ function AthleteListTable(props: AthleteListTableProps) {
   );
 }
 
-export default AthleteListTable;
+export default connect()(AthleteListTable);
