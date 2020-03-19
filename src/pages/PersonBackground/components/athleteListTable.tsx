@@ -156,7 +156,7 @@ function AthleteListTable(props: AthleteListTableProps) {
 
   return (
     <div>
-      <Button type="primary" onClick={addAthlete}>
+      <Button type="primary" style={{ marginBottom: '1rem' }} onClick={addAthlete}>
         添加运动员
       </Button>
       <Table

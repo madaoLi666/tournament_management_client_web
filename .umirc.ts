@@ -24,6 +24,7 @@ const config: IConfig = {
           path: '/home/introduction',
           component: './Home/introduction/introduction.tsx',
         },
+        { path: '/home/temp', component: './404.tsx' },
       ],
     },
     {
