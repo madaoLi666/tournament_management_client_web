@@ -75,7 +75,7 @@ const config: IConfig = {
       {
         antd: true,
         dva: true,
-        dynamicImport: { webpackChunkName: true, level: 3, loadingComponent: './pages/index.tsx' },
+        dynamicImport: { webpackChunkName: true, loadingComponent: './pages/index.tsx' },
         title: '轮滑赛事辅助系统',
         dll: true,
         routes: {
