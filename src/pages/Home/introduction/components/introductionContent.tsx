@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './index.less';
 import { Button, message } from 'antd';
 import { connect } from 'dva';
 import { ConnectState } from '@/models/connect';
+import dayjs from 'dayjs';
 
 interface IntroductionContentProps {
   matchData?: any;
@@ -20,8 +21,7 @@ function IntroductionContent(props: IntroductionContentProps) {
 
   const ENROLL_DOM = (
     <h4>
-      报名时间：{matchData.enrollstarttime.slice(0, 10)}至
-      {matchData.enrollendtime.slice(0, 10)}
+      报名时间：{matchData.enrollstarttime.slice(0, 10)}至{matchData.enrollendtime.slice(0, 10)}
     </h4>
   );
 
@@ -44,10 +44,20 @@ function IntroductionContent(props: IntroductionContentProps) {
         <Button className={styles.download}>
           <a href={download_url[0]['saveaddress']}>下载参赛自愿责任书</a>
         </Button>
-        <Button loading={loading} type="primary" onClick={handleEnroll}>
-          参加报名
-        </Button>
-        {/* <Button type='primary' onClick={() => { message.warning('现在不是报名时间') }}>参加报名</Button> */}
+        {!dayjs(matchData.enrollendtime).isBefore(dayjs()) ? (
+          <Button
+            type="primary"
+            onClick={() => {
+              message.warning('现在不是报名时间');
+            }}
+          >
+            参加报名
+          </Button>
+        ) : (
+          <Button loading={loading} type="primary" onClick={handleEnroll}>
+            参加报名
+          </Button>
+        )}
       </div>
     </header>
   );

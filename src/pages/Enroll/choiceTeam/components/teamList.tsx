@@ -20,10 +20,7 @@ function TeamList(props: TeamListProps) {
   /********************* 队伍列表主体 ********************/
   const ListContent = ({ data: { status } }: { data: EnrollTeamData }) => (
     <div className={styles.badge}>
-      <Badge
-        status={status === '已结束' ? 'default' : 'success'}
-        text={status}
-      />
+      <Badge status={status === '已结束' ? 'default' : 'success'} text={status} />
     </div>
   );
   /********************* 进入editUnitInfo页面，绑定队伍的id ********************/
@@ -46,7 +43,7 @@ function TeamList(props: TeamListProps) {
       size="large"
       rowKey="id"
       loading={loading}
-      pagination={paginationProps}
+      // pagination={paginationProps}
       dataSource={unitData}
       renderItem={item => (
         <List.Item
@@ -64,13 +61,9 @@ function TeamList(props: TeamListProps) {
           ]}
         >
           <List.Item.Meta
-            avatar={
-              <Avatar src={item.url_dutybook} shape="square" size="large" />
-            }
+            avatar={<Avatar src={item.url_dutybook} shape="square" size="large" />}
             title={<a>{item.name}</a>}
-            description={
-              item.leader + ' | ' + item.leaderphonenumber + ' | ' + item.email
-            }
+            description={item.leader + ' | ' + item.leaderphonenumber + ' | ' + item.email}
           />
           <ListContent data={item} />
         </List.Item>

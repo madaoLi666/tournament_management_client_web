@@ -17,10 +17,11 @@ interface ChoiceTeamProps {
   unitId: number;
   unitData: EnrollTeamData[];
   unitName: string | null | undefined;
+  gameList: any;
 }
 
 function ChoiceTeam(props: ChoiceTeamProps) {
-  const { loading, currentMatchId, unitName, unitId, unitData, dispatch } = props;
+  const { loading, currentMatchId, unitName, unitId, unitData, dispatch, gameList } = props;
 
   useEffect(() => {
     if (currentMatchId === undefined || currentMatchId === -1) {
@@ -43,22 +44,37 @@ function ChoiceTeam(props: ChoiceTeamProps) {
   };
 
   return (
-    <Card className={styles.listCard} bordered={false} title={<strong>单位：{unitName}</strong>}>
-      <Button
-        loading={loading}
-        type="dashed"
-        onClick={addTeam}
-        className={styles.btn}
-        icon={<PlusCircleOutlined />}
-      >
-        添加新队伍
-      </Button>
-      <TeamList loading={loading} currentMatchId={currentMatchId} unitData={unitData} />
-    </Card>
+    <div className={styles.listCard}>
+      <Card className={styles.content} bordered={false} title={<strong>单位：{unitName}</strong>}>
+        <Button
+          loading={loading}
+          type="dashed"
+          onClick={addTeam}
+          className={styles.btn}
+          icon={<PlusCircleOutlined />}
+        >
+          添加新队伍
+        </Button>
+        <TeamList loading={loading} currentMatchId={currentMatchId} unitData={unitData} />
+      </Card>
+      <div className={styles.editButton}>
+        <Button
+          onClick={() => {
+            for (let match of gameList) {
+              if (match.id == currentMatchId) {
+                router.push(`/home/introduction?name=${match.name}`);
+              }
+            }
+          }}
+        >
+          返回
+        </Button>
+      </div>
+    </div>
   );
 }
 
-const mapStateToProps = ({ loading, enroll, unit }: ConnectState) => {
+const mapStateToProps = ({ loading, enroll, unit, gameList }: ConnectState) => {
   let unitData: any = [];
   if (enroll.unit) {
     unitData = enroll.unit.unitData;
@@ -70,6 +86,7 @@ const mapStateToProps = ({ loading, enroll, unit }: ConnectState) => {
     unitId: enroll.unitInfo.id,
     unitData,
     unitName: unit.mainpart,
+    gameList: gameList.gameList,
   };
 };
 

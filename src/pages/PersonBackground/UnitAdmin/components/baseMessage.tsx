@@ -6,6 +6,7 @@ import { checkPhoneNumber } from '@/utils/regulars';
 import AddressInput from '@/components/AddressInput/addressInput';
 import { CurrentAccount } from '@/pages/PersonBackground/UnitAdmin/unitAdmin';
 import { Dispatch, connect } from 'dva';
+import { ConnectState } from '@/models/connect';
 
 const { Item } = Form;
 
@@ -14,10 +15,11 @@ interface BaseMessageProps {
   unitdata_id: number;
   dispatch: Dispatch;
   currentAccount: any;
+  loading: boolean;
 }
 
 function BaseMessage(props: BaseMessageProps) {
-  const { currentAccountName, unitdata_id, dispatch, currentAccount } = props;
+  const { currentAccountName, unitdata_id, dispatch, currentAccount, loading } = props;
   const [form] = Form.useForm();
   const [validStatus, setValidStatus] = useState<
     '' | 'error' | 'success' | 'warning' | 'validating'
@@ -56,7 +58,7 @@ function BaseMessage(props: BaseMessageProps) {
         email: currentAccount.email,
         postalcode: currentAccount.postalcode,
         residence: {
-          // city: currentAccount.province,
+          city: currentAccount.province.split('-').slice(0, 3),
           address: currentAccount.address,
         },
       };
@@ -139,10 +141,17 @@ function BaseMessage(props: BaseMessageProps) {
         <Input />
       </Item>
       <AddressInput />
-      <Button type="primary" htmlType={'submit'}>
+      <Button type="primary" htmlType={'submit'} loading={loading}>
         更改基本信息
       </Button>
     </Form>
   );
 }
-export default connect()(BaseMessage);
+
+const mapStateToProps = ({ loading }: ConnectState) => {
+  return {
+    loading: loading.global,
+  };
+};
+
+export default connect(mapStateToProps)(BaseMessage);

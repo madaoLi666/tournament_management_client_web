@@ -1,4 +1,12 @@
 .listCard {
+  display: flex;
+  flex-flow: column;
+  min-height: 80vh;
+
+  .content {
+    flex: 1;
+  }
+
   .btn {
     width: 100%;
   }
@@ -23,5 +31,22 @@
     .badge {
       display: none;
     }
+  }
+
+  .editButton {
+    align-self: flex-end;
+    margin-bottom: 1rem;
+    padding: 24px;
+    :global {
+      .ant-form-item-control-input {
+        margin: 0 auto;
+      }
+    }
+  }
+
+  .hr {
+    border: 1px solid #f0f2f5;
+    width: 100%;
+    margin-bottom: 1rem;
   }
 }
