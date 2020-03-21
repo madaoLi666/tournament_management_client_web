@@ -29,7 +29,6 @@ const UnitModel: UnitModelType = {
   },
   effects: {
     *changeUnitMainPart({ payload, callback }, { put }) {
-      console.log(payload);
       let res = yield modifyMainPart(payload);
       if (res) {
         message.success(res);

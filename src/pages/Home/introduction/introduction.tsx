@@ -49,13 +49,12 @@ function Introduction(props: IntroductionProps) {
   // 报名处理函数
   const handleEnroll = () => {
     if (matchData.id === undefined || matchData.id === -1) {
-      message.error(
-        '[introduction] id is null:' + JSON.stringify(matchData.id),
-      );
+      message.error('[introduction] id is null:' + JSON.stringify(matchData.id));
       return;
     }
     if (unit_account === 0) {
-      router.push('/enroll/individual');
+      message.warning('请先补全参赛单位信息后再进行报名！');
+      // TODO
       return;
     }
     if (unit_account === 1) {
@@ -87,14 +86,8 @@ function Introduction(props: IntroductionProps) {
       });
     } else {
       // 如果连2都不等于，那传入错误
-      message.error(
-        '[introduction]enroll unit_account error:' +
-          JSON.stringify(unit_account),
-      );
-      console.error(
-        '[introduction]enroll unit_account error:' +
-          JSON.stringify(unit_account),
-      );
+      message.error('[introduction]enroll unit_account error:' + JSON.stringify(unit_account));
+      console.error('[introduction]enroll unit_account error:' + JSON.stringify(unit_account));
     }
   };
 
@@ -115,9 +108,7 @@ function Introduction(props: IntroductionProps) {
         {/*这里是隐藏加载图片,img原本是空字符,等待useEffect中赋值后,这里开始渲染*/}
         <IntroductionFooter matchData={matchData} />
         <div className={styles['hidden']}>
-          {img === '' ? null : (
-            <img src={img} onLoad={onLoad.bind(event)} alt="" />
-          )}
+          {img === '' ? null : <img src={img} onLoad={onLoad.bind(event)} alt="" />}
         </div>
       </div>
     );

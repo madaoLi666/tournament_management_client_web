@@ -54,6 +54,7 @@ const config: IConfig = {
       ],
     },
     {
+      // TODO 加一个Layout检测unitData为空且unitAccount为0的账号
       path: '/user',
       Routes: ['./src/layouts/PersonLayout/PersonLayout.tsx'],
       routes: [
@@ -63,6 +64,12 @@ const config: IConfig = {
           component: './PersonBackground/AthleteList.tsx',
           name: '运动员管理',
           icon: 'smile',
+        },
+        {
+          path: '/user/unitAdmin',
+          component: './PersonBackground/UnitAdmin/unitAdmin.tsx',
+          name: '单位信息管理',
+          icon: 'lock',
         },
       ],
     },

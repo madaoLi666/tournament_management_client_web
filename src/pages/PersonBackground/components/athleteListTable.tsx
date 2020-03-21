@@ -9,7 +9,7 @@ import { Dispatch, connect } from 'dva';
 // 表格接口 key 是编号
 export interface Athlete {
   key: string;
-  id: string;
+  id: number;
   name: string;
   identifyID: string;
   sex: string;
@@ -31,14 +31,27 @@ interface AthleteListTableProps {
 function AthleteListTable(props: AthleteListTableProps) {
   const { loading, unitAccount, dataSource, unitId, dispatch } = props;
 
+  // 修改运动员信息按钮触发函数
   const editAthlete = (record: any) => {
     setInitialValue(record);
     setModalTitle('修改运动员：' + record.name);
     setIsAdd(false);
     setVisible(true);
   };
-
-  const deleteAthlete = (key: string) => {};
+  // 删除运动员按钮触发事件
+  const deleteAthlete = (id: number) => {
+    dispatch({
+      type: 'user/deleteAthlete',
+      payload: id,
+    });
+  };
+  // 添加运动员按钮触发事件
+  const addAthlete = () => {
+    setInitialValue(null);
+    setModalTitle('添加运动员');
+    setIsAdd(true);
+    setVisible(true);
+  };
 
   // modal props
   const [visible, setVisible] = useState(false);
@@ -111,13 +124,6 @@ function AthleteListTable(props: AthleteListTableProps) {
     });
     res.finally(() => {});
   };
-  // 添加运动员按钮触发事件
-  const addAthlete = () => {
-    setInitialValue(null);
-    setModalTitle('添加运动员');
-    setIsAdd(true);
-    setVisible(true);
-  };
   // 修改/删除Node
   const changeOrDelDOM = (text: any, record: Athlete) => {
     return (
@@ -136,7 +142,7 @@ function AthleteListTable(props: AthleteListTableProps) {
             href="#"
             style={{ color: '#f5222d' }}
             onClick={() => {
-              deleteAthlete(record.key);
+              deleteAthlete(record.id);
             }}
           >
             删除

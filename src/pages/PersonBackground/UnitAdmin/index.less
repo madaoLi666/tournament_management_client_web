@@ -1,0 +1,44 @@
+.back {
+  background-color: white;
+  margin-top: 1rem;
+
+  > span {
+    font-size: 20px;
+    font-weight: bolder;
+    display: inline-block;
+    padding: 1rem;
+  }
+
+  > form {
+    @media screen and (min-width: 576px) {
+      margin: 0 auto;
+    }
+    @media screen and (max-width: 576px) {
+      margin: 0 1rem;
+    }
+    display: table;
+    button {
+      float: right;
+      margin-bottom: 1rem;
+    }
+
+    :global {
+      .ant-form-item-control-input-content {
+        > span {
+          float: right;
+        }
+      }
+    }
+  }
+
+  .avatar {
+    img {
+      max-width: 250px;
+    }
+  }
+
+  .uploadBtn {
+    float: none;
+    margin: 0;
+  }
+}

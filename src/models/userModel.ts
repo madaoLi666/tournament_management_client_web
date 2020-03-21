@@ -4,6 +4,8 @@ import { accountdata } from '@/services/loginServices';
 import { isIllegal } from '@/utils/judge';
 import { message } from 'antd';
 import { router } from 'umi';
+import { deletePlayer } from '@/services/athleteServices';
+import { modifyUnitData } from '@/services/unitServices';
 
 // 单位账号的data
 export interface UnitData {
@@ -64,6 +66,8 @@ export interface UserModelType {
   state: UserModelState;
   effects: {
     getAccountData: Effect;
+    deleteAthlete: Effect;
+    changeUnitBasicData: Effect;
   };
   reducers: {
     modifyUserInfo: Reducer<UserModelState>;
@@ -98,6 +102,7 @@ const UserModel: UserModelType = {
     *getAccountData({ payload, callback }, { put }) {
       let data = yield accountdata();
       if (data) {
+        // TODO data.unitAccount = 0
         // ===2 代表是单位账号，还要多一项操作是调用获取单位账号下的运动员信息的接口
         if (data.unitaccount === 2) {
           if (!isIllegal(1, data, 1)) {
@@ -138,6 +143,24 @@ const UserModel: UserModelType = {
         }
       }
     },
+    *deleteAthlete({ payload }, { put, select }) {
+      let unitData: UnitData = yield select((state: any) => state.user.unitData[0]);
+      const data = yield deletePlayer({
+        unitdata: String(unitData.id),
+        athlete: String(payload),
+      });
+      if (data) {
+        message.success('删除成功');
+        yield put({ type: 'getAccountData' });
+      }
+    },
+    *changeUnitBasicData({ payload, callback }, { put }) {
+      let res = yield modifyUnitData(payload);
+      if (res) {
+        message.success(res);
+        yield put({ type: 'modifyUnitBasicData', payload: payload });
+      }
+    },
   },
   reducers: {
     modifyUserInfo(state, { payload }) {
@@ -159,7 +182,6 @@ const UserModel: UserModelType = {
       };
     },
     saveInfo(state, { payload }) {
-      console.log(payload);
       return {
         ...state,
         username: payload.username,
