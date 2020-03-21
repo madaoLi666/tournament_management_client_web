@@ -104,7 +104,7 @@ function TeamModal(props: TeamModalProps, refs: any) {
       athleteList: any,
       currentItemGroupSexID: any,
       tempRule: any,
-    ) => {
+    ): boolean => {
       //1. 按照相应规则，过滤合法运动员
       //2. 设置如legalAthleteList中
       //3. 开启模态框
@@ -119,19 +119,22 @@ function TeamModal(props: TeamModalProps, refs: any) {
         }
         if (temp_teams === tempRule.unitMaxEnrollNumber) {
           message.error('本单位该项目该组别的数量已报满!');
-          return;
+          setLegalAthleteList([]);
+          return false;
         }
       }
       // 判断出合法的运动员列表，置入state 打开modal
       let legalAthleteList = legalAthleteFilter(athleteList, tempRule);
       if (legalAthleteList.length !== 0) {
-        // TODO 这里有bug，角色设置为队员，但是显示出来的是守门员
         for (let i: number = 0; i < legalAthleteList.length; i++) {
           legalAthleteList[i].role = 3;
         }
         setLegalAthleteList(legalAthleteList);
+        return true;
       } else {
         message.error('队伍中缺少符合该组别条件的人员');
+        setLegalAthleteList([]);
+        return false;
       }
     },
     setRoleType: (data: any) => {

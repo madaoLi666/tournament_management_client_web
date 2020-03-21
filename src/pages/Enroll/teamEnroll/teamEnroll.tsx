@@ -220,8 +220,15 @@ function TeamEnroll(props: TeamEnrollProps) {
       message.warn('请先进行选择项目');
       return false;
     }
-    modalRef.current.setInitialState(teamEnroll, athleteList, currentItemGroupSexID, rule);
-    setModalVisible(true);
+    const isShouldOpen = modalRef.current.setInitialState(
+      teamEnroll,
+      athleteList,
+      currentItemGroupSexID,
+      rule,
+    );
+    if (isShouldOpen) {
+      setModalVisible(true);
+    }
   };
   // 处理队伍报名
   const onEnroll = () => {
