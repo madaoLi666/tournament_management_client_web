@@ -62,7 +62,9 @@ const ModalForm: React.FC<ModalProps> = (props: ModalProps) => {
             onCreate(values);
           })
           .catch((info: any) => {
-            message.error(info.errorFields[0].errors[0]);
+            if (info.errorFields) {
+              message.error(info.errorFields[0].errors[0]);
+            }
           });
       }}
     >

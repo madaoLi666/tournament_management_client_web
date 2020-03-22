@@ -54,6 +54,11 @@ const config: IConfig = {
       ],
     },
     {
+      path: '/complete',
+      Routes: ['./src/layouts/PersonLayout/PersonLayout.tsx'],
+      routes: [{ path: '/complete/:stepId', component: './CompleteUnit/stepForm.tsx' }],
+    },
+    {
       // TODO 加一个Layout检测unitData为空且unitAccount为0的账号
       path: '/user',
       Routes: ['./src/layouts/PersonLayout/PersonLayout.tsx'],
