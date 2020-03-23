@@ -12,6 +12,7 @@ const RESIDENCE_DATA = require('../../assets/residence.json');
 
 interface AddressInputProps {
   form?: any;
+  require?: boolean;
 }
 
 const changeResidenceData2Option = (data: any): Array<CascaderOptionType> | undefined => {
@@ -46,16 +47,26 @@ const changeResidenceData2Option = (data: any): Array<CascaderOptionType> | unde
 };
 
 function AddressInput(props: AddressInputProps) {
+  const { require } = props;
   const residences = changeResidenceData2Option(RESIDENCE_DATA);
 
   return (
-    <Form.Item label="地址">
+    // 这个 style 是因为有重复的两个 Item 标签，所以清除一个的 marginBottom
+    <Form.Item label="地址" required={!!require} style={{ marginBottom: 0 }}>
       <Input.Group compact>
-        <Form.Item style={{ width: '40%' }} name={['residence', 'city']}>
-          <Cascader placeholder={'选填'} options={residences} />
+        <Form.Item
+          style={{ width: '40%' }}
+          name={['residence', 'city']}
+          rules={require ? [{ type: 'array', required: true, message: '请选择所在地' }] : []}
+        >
+          <Cascader placeholder={require ? '请选择' : '选填'} options={residences} />
         </Form.Item>
-        <Form.Item style={{ width: '60%' }} name={['residence', 'address']}>
-          <Input placeholder="选填" />
+        <Form.Item
+          style={{ width: '60%' }}
+          name={['residence', 'address']}
+          rules={require ? [{ required: true, message: '请输入地址信息' }] : []}
+        >
+          <Input placeholder={require ? '请输入地址信息' : '选填'} />
         </Form.Item>
       </Input.Group>
     </Form.Item>

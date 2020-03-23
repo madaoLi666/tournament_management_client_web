@@ -1,10 +1,9 @@
-import React, { forwardRef, useState } from 'react';
+import React from 'react';
 import { FormProps } from 'antd/lib/form';
-import { Button, Form, Input, Select } from 'antd';
+import { Form, Input } from 'antd';
 import styles from './index.less';
-import { checkEmail, checkIDCard, checkPhoneNumber } from '@/utils/regulars';
+import { checkEmail, checkPhoneNumber } from '@/utils/regulars';
 import AddressInput from '@/components/AddressInput/addressInput';
-import { DatePicker } from '@/components/DayJs';
 import moment from 'dayjs';
 import UploadForm from '@/components/UploadForm/uploadForm';
 import IdForm from '@/components/athleteForm/components/idForm';

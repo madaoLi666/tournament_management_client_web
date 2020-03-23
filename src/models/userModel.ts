@@ -48,7 +48,7 @@ export interface AthleteData {
 }
 
 export interface UserModelState {
-  id?: string;
+  id?: number;
   unitData?: Array<UnitData>;
   athleteData?: Array<AthleteData>;
   // 这个是判断个人账号与单位账号的，1代表个人，2代表单位
@@ -85,7 +85,7 @@ const UserModel: UserModelType = {
   namespace: 'user',
   state: {
     // 单位账号state
-    id: '',
+    id: 0,
     unitData: [],
     athleteData: [],
     // 这个是判断个人账号与单位账号的，1代表个人，2代表单位
@@ -194,7 +194,7 @@ const UserModel: UserModelType = {
     clearState(state, { _ }) {
       return {
         ...state,
-        id: '',
+        id: 0,
         unitData: [],
         athleteData: [],
         unitAccount: 0,

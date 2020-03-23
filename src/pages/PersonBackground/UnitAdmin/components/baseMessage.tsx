@@ -140,7 +140,7 @@ function BaseMessage(props: BaseMessageProps) {
       >
         <Input />
       </Item>
-      <AddressInput />
+      <AddressInput require={true} />
       <Button type="primary" htmlType={'submit'} loading={loading}>
         更改基本信息
       </Button>

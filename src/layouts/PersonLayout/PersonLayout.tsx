@@ -42,7 +42,7 @@ function PersonLayout(props: PersonLayoutProps) {
         path?: string;
         children: MenuDataItem[];
         authority?: string[] | string;
-        icon?: string;
+        icon?: React.ReactNode;
         name?: string;
         parentKeys?: string[];
         hideChildrenInMenu?: boolean;
