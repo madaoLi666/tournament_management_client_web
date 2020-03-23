@@ -9,7 +9,7 @@ const { Item } = Form;
 interface MainpartMessageProps {
   dispatch: Dispatch;
   current_main_part?: string;
-  businesslicense: string;
+  businesslicense: string | null;
   unitdata_id?: number;
   loading?: boolean;
 }

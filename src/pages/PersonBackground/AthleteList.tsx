@@ -8,7 +8,7 @@ import AthleteListTable, { Athlete } from '@/pages/PersonBackground/components/a
 import PageLoading from '@/pages';
 
 interface AthleteListProps {
-  id?: string;
+  id?: number;
   unitAccount?: number;
   athletes?: any[];
   unitData?: UnitData[];

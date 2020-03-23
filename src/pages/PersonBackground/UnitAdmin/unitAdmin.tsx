@@ -34,7 +34,7 @@ interface UnitAdminProps {
 function UnitAdmin(props: UnitAdminProps) {
   const { dispatch, businesslicense, currentAccount, mainpart, unitdata_id, loading } = props;
 
-  if (!mainpart || !businesslicense || !unitdata_id || !currentAccount) {
+  if (!unitdata_id || !currentAccount) {
     return <div>loading</div>;
   } else {
     return (
@@ -53,7 +53,7 @@ function UnitAdmin(props: UnitAdminProps) {
           <MainPartMessage
             loading={loading}
             unitdata_id={unitdata_id}
-            businesslicense={businesslicense}
+            businesslicense={businesslicense ? businesslicense : null}
             current_main_part={mainpart}
           />
         </div>

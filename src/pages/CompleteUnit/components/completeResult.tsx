@@ -1,11 +1,22 @@
 import React, { useEffect } from 'react';
-import { Button, Result } from 'antd';
+import { Button, message, Result } from 'antd';
 import { router } from 'umi';
+import { ConnectState } from '@/models/connect';
+import { connect } from 'dva';
 
-export default function CompleteResult() {
-  // TODO 检测是否填完
-
-  useEffect(() => {}, []);
+function CompleteResult(props: { unitAccount?: number }) {
+  // 检测是否已经完成了补全
+  useEffect(() => {
+    if (props.unitAccount && props.unitAccount === 0) {
+      message.warning('请先补全信息');
+      router.push({
+        pathname: '/complete',
+        query: {
+          type: 0,
+        },
+      });
+    }
+  }, [props.unitAccount]);
 
   return (
     <Result
@@ -23,3 +34,9 @@ export default function CompleteResult() {
     />
   );
 }
+
+const mapStateToProps = ({ user }: ConnectState) => {
+  return { unitAccount: user.unitAccount };
+};
+
+export default connect(mapStateToProps)(CompleteResult);

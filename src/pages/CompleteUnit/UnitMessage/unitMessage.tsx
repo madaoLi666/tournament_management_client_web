@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '../index.less';
 import { connect, Dispatch } from 'dva';
 import LoginBlock from '@/components/LoginBlock/loginBlock';
@@ -9,6 +9,7 @@ import { checkPhoneNumber } from '@/utils/regulars';
 import AddressInput from '@/components/AddressInput/addressInput';
 import { ConnectState } from '@/models/connect';
 import { checkUnitIsPay, getQRCodeForUnitRegister } from '@/services/payServices';
+import { router } from 'umi';
 
 const { TabPane } = Tabs;
 const { Item } = Form;
@@ -17,6 +18,8 @@ interface UnitMessageProps {
   dispatch: Dispatch;
   loading: boolean;
   userId?: number;
+  unitId?: number;
+  history: any;
 }
 
 const BasicInfoSupplementStyle = {
@@ -40,7 +43,7 @@ const BasicInfoSupplementStyle = {
 };
 
 function UnitMessage(props: UnitMessageProps) {
-  const { dispatch, userId, loading } = props;
+  const { dispatch, userId, loading, unitId, history } = props;
   const [validStatus, setValidStatus] = useState<
     '' | 'error' | 'success' | 'warning' | 'validating'
   >('');
@@ -60,8 +63,6 @@ function UnitMessage(props: UnitMessageProps) {
   // 判断是否已经支付费用
   async function checkoutIsPay(): Promise<any> {
     let res = await checkUnitIsPay({ user: userId });
-    // TODO 卡在这里 一直没有正确的res
-    console.log(res);
     if (res) {
       await dispatch({ type: 'complete/modifyUnitRegisterPayCode', payload: { payCode: res } });
       return true;
@@ -115,6 +116,20 @@ function UnitMessage(props: UnitMessageProps) {
       });
     }
   }
+
+  useEffect(() => {
+    const route = history.location.pathname;
+    const type = history.location.query.type;
+    if (unitId && unitId != 0 && route === '/complete' && type === 1) {
+      message.info('您已完成账号注册！');
+      router.push({
+        pathname: '/complete',
+        query: {
+          type: 2,
+        },
+      });
+    }
+  }, [unitId]);
 
   return (
     <LoginBlock>
@@ -260,6 +275,14 @@ function UnitMessage(props: UnitMessageProps) {
 }
 
 const mapStateToProps = ({ user, loading }: ConnectState) => {
+  if (user.unitData && user.unitData[0].id) {
+    const unit = user.unitData[0];
+    return {
+      userId: user.id,
+      loading: loading.global,
+      unitId: unit.id,
+    };
+  }
   return {
     userId: user.id,
     loading: loading.global,

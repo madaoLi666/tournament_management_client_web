@@ -54,7 +54,12 @@ function Introduction(props: IntroductionProps) {
     }
     if (unit_account === 0) {
       message.warning('请先补全参赛单位信息后再进行报名！');
-      // TODO
+      router.push({
+        pathname: '/complete',
+        query: {
+          type: 0,
+        },
+      });
       return;
     }
     if (unit_account === 1) {

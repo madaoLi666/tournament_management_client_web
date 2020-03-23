@@ -39,7 +39,12 @@ const CompleteModel: CompleteModelType = {
       //设置成功 跳转至角色设置中
       if (data) {
         message.success('完善成功!');
-        router.push('/complete/1');
+        router.push({
+          pathname: '/complete',
+          query: {
+            type: 1,
+          },
+        });
       }
     },
     *registerUnitAccount({ payload }, { select, put }) {
@@ -56,7 +61,11 @@ const CompleteModel: CompleteModelType = {
         email: unitData.email,
         postalcode: unitData.postalCode,
         province:
-          unitData.residence.city[0] + unitData.residence.city[1] + unitData.residence.city[2],
+          unitData.residence.city[0] +
+          '-' +
+          unitData.residence.city[1] +
+          '-' +
+          unitData.residence.city[2],
         address: unitData.residence.address,
         password: unitData.password,
         user: unitData.userId,

@@ -56,12 +56,14 @@ const config: IConfig = {
     {
       path: '/complete',
       Routes: ['./src/layouts/PersonLayout/PersonLayout.tsx'],
-      routes: [{ path: '/complete/:stepId', component: './CompleteUnit/stepForm.tsx' }],
+      routes: [{ path: '/complete', component: './CompleteUnit/stepForm.tsx' }],
     },
     {
-      // TODO 加一个Layout检测unitData为空且unitAccount为0的账号
       path: '/user',
-      Routes: ['./src/layouts/PersonLayout/PersonLayout.tsx'],
+      Routes: [
+        './src/layouts/PersonLayout/PersonLayout.tsx',
+        './src/pages/Authorized/Authorized.tsx',
+      ],
       routes: [
         { path: '/home', component: './Home/Home.tsx', name: '主页', icon: 'home' },
         {

@@ -16,32 +16,32 @@ interface StepFormProps {
   dispatch: Dispatch;
 }
 
-// 步骤选项
-const steps = [
-  {
-    title: '完善基本信息',
-    content: <IndividualMessage />,
-  },
-  // {
-  //   title: '选择您的身份',
-  //   content: <SetRole />,
-  // },
-  {
-    title: '完善单位信息',
-    content: <UnitMessage />,
-  },
-  {
-    title: '完成',
-    content: <CompleteResult />,
-  },
-];
-
 function StepForm(props: StepFormProps) {
   const { history, dispatch } = props;
   const [current, setCurrent] = useState(0);
 
+  // 步骤选项
+  const steps = [
+    {
+      title: '完善基本信息',
+      content: <IndividualMessage />,
+    },
+    // {
+    //   title: '选择您的身份',
+    //   content: <SetRole />,
+    // },
+    {
+      title: '完善单位信息',
+      content: <UnitMessage history={history} />,
+    },
+    {
+      title: '完成',
+      content: <CompleteResult />,
+    },
+  ];
+
   useEffect(() => {
-    const currentStep = history.location.pathname.split('/').pop();
+    const currentStep = history.location.query.type;
     if (isNaN(currentStep) || currentStep < 0 || currentStep > 2) {
       message.error('请检查页面地址是否正确!');
       return;

@@ -102,7 +102,6 @@ const UserModel: UserModelType = {
     *getAccountData({ payload, callback }, { put }) {
       let data = yield accountdata();
       if (data) {
-        // TODO data.unitAccount = 0
         // ===2 代表是单位账号，还要多一项操作是调用获取单位账号下的运动员信息的接口
         if (data.unitaccount === 2) {
           if (!isIllegal(1, data, 1)) {
@@ -131,7 +130,7 @@ const UserModel: UserModelType = {
             callback(true);
           }
         } else {
-          // 代表是个人账号
+          // 代表是个人账号和未补全的账号
           yield put({ type: 'savePerson', payload: data });
           if (callback) {
             callback(true);
