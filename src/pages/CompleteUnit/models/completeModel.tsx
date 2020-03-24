@@ -73,8 +73,13 @@ const CompleteModel: CompleteModelType = {
       };
       let data = yield registerUnitAccount(requestData);
       if (data) {
-        message.success('成功注册单位账号，请重新登陆');
-        router.push('/login');
+        message.success('已完善单位信息');
+        router.push({
+          pathname: '/complete',
+          query: {
+            type: 2,
+          },
+        });
       } else {
         message.error('注册单位失败，请检查网络状况与付款状况');
       }

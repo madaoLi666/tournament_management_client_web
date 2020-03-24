@@ -13,10 +13,11 @@ interface IntroductionProps {
   unit_account?: number;
   unitId?: number;
   history: any;
+  userId?: number;
 }
 
 function Introduction(props: IntroductionProps) {
-  const { dispatch, matchData, history, unit_account, unitId } = props;
+  const { dispatch, matchData, history, unit_account, unitId, userId } = props;
 
   // 预加载的DOM
   const [img, setImg] = useState('');
@@ -50,6 +51,12 @@ function Introduction(props: IntroductionProps) {
   const handleEnroll = () => {
     if (matchData.id === undefined || matchData.id === -1) {
       message.error('[introduction] id is null:' + JSON.stringify(matchData.id));
+      return;
+    }
+    if (!userId) {
+      // 一次请求都没发生过，即没有登录
+      message.info('请先登录账号后进行报名');
+      router.push('/login');
       return;
     }
     if (unit_account === 0) {
@@ -151,6 +158,7 @@ export default connect(({ gameList, enroll, user, router }: ConnectState) => {
   return {
     matchData: matchData,
     unitId: enroll.unitInfo.id,
+    userId: user.id,
     unit_account: user.unitAccount,
   };
 })(Introduction);

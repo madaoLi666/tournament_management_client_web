@@ -10,6 +10,7 @@ import AddressInput from '@/components/AddressInput/addressInput';
 import { ConnectState } from '@/models/connect';
 import { checkUnitIsPay, getQRCodeForUnitRegister } from '@/services/payServices';
 import { router } from 'umi';
+import useToggle from '@/components/hooks/useToggle';
 
 const { TabPane } = Tabs;
 const { Item } = Form;
@@ -52,6 +53,8 @@ function UnitMessage(props: UnitMessageProps) {
   const [visible, setVisible] = useState(false);
   // 图片
   const [picUrl, setPicUrl] = useState('');
+  // Button loading state
+  const { state, toggle } = useToggle();
 
   // 校验单位名称是否重复
   async function checkUnitName(
@@ -99,6 +102,7 @@ function UnitMessage(props: UnitMessageProps) {
 
   async function onFinish(data: any) {
     // 发起请求检查是否支付了费用
+    toggle();
     let isPay = await checkoutIsPay().then(res => res);
     if (!isPay) {
       // 获取支付二维码
@@ -109,7 +113,9 @@ function UnitMessage(props: UnitMessageProps) {
       } else {
         message.error('获取支付二维码失败');
       }
+      toggle();
     } else {
+      toggle();
       dispatch({
         type: 'complete/registerUnitAccount',
         payload: { unitData: { userId: userId, ...data } },
@@ -249,7 +255,7 @@ function UnitMessage(props: UnitMessageProps) {
             >
               <Input placeholder="请输入邮政编码" />
             </Item>
-            <Button type="primary" htmlType={'submit'} loading={loading} block>
+            <Button type="primary" htmlType={'submit'} loading={state} block>
               确定
             </Button>
           </Form>

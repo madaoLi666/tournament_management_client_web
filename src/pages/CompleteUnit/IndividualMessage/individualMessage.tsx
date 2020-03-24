@@ -95,7 +95,8 @@ function IndividualMessage(props: IndividualMessageProps) {
 }
 
 const mapStateToProps = ({ user, loading }: ConnectState) => {
-  if (user.athleteData && user.athleteData[0].id) {
+  // user.id != 0代表一次请求都没发过，即没有登录
+  if (user.id !== 0 && user.athleteData && user.athleteData[0].id) {
     return {
       userId: user.id,
       loading: loading.global,
