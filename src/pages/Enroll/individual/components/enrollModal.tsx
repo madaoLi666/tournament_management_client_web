@@ -221,16 +221,17 @@ function EnrollModal(props: EnrollModalProps, refs: any) {
           placeholder="请选择组别"
           value={groupValue}
         >
-          {groupList.length === 0
-            ? null
-            : groupList.map((v: any) => (
-                <Option value={v.groupId} key={v.groupId}>
-                  {v.name}
-                </Option>
-              ))}
-          <Option value={-1} key={-1}>
-            无可选组别
-          </Option>
+          {groupList.length === 0 ? (
+            <Option value={-1} key={-1} disabled>
+              无可选组别
+            </Option>
+          ) : (
+            groupList.map((v: any) => (
+              <Option value={v.groupId} key={v.groupId}>
+                {v.name}
+              </Option>
+            ))
+          )}
         </Select>
         <Select
           onChange={(value: any) => {

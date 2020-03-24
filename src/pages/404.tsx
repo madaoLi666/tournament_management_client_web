@@ -12,7 +12,7 @@ export default () => {
         <Button
           type="primary"
           onClick={() => {
-            router.goBack();
+            router.push('/home');
           }}
         >
           回到主页

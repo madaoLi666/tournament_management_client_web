@@ -119,6 +119,10 @@ function IndividualTable(props: IndividualTableProps) {
   };
   // 报名提交触发事件
   const onEnroll = (athleteData: any, id: number) => {
+    if (id === -1) {
+      message.warning('请选择正确的报名信息');
+      return;
+    }
     setConfirmLoading(true);
     if (id !== -1) {
       /*
@@ -148,16 +152,17 @@ function IndividualTable(props: IndividualTableProps) {
     deleteIndividualEnroll({ personalprojectenroll: id })
       .then(data => {
         if (data) {
-          dispatch({
-            type: 'enroll/checkIsEnrollAndGetAthleteLIST',
-            payload: { matchId, unitId, contestant_id },
-          });
           message.success('删除成功');
         } else {
-          message.error('删除失败！请重新刷新页面以获取原来的数据');
+          // message.error('删除失败！请重新刷新页面以获取原来的数据');
+          message.error('删除失败！');
         }
       })
       .finally(() => {
+        dispatch({
+          type: 'enroll/checkIsEnrollAndGetAthleteLIST',
+          payload: { matchId, unitId, contestant_id },
+        });
         setConfirmLoading(false);
       });
   };
