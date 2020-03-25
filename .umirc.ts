@@ -78,6 +78,12 @@ const config: IConfig = {
           name: '单位信息管理',
           icon: 'lock',
         },
+        {
+          path: '/user/account',
+          component: './PersonBackground/AccountMessage/accountMessage.tsx',
+          name: '账单信息',
+          icon: 'account-book',
+        },
       ],
     },
     { path: '/', redirect: '/home' },

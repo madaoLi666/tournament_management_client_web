@@ -154,8 +154,8 @@ function IndividualTable(props: IndividualTableProps) {
         if (data) {
           message.success('删除成功');
         } else {
-          // message.error('删除失败！请重新刷新页面以获取原来的数据');
-          message.error('删除失败！');
+          message.error('删除失败！请重新刷新页面以获取原来的数据');
+          // message.error('删除失败！');
         }
       })
       .finally(() => {

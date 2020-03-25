@@ -99,7 +99,7 @@ const UserModel: UserModelType = {
   },
   effects: {
     // 获取账号基本信息
-    *getAccountData({ payload, callback }, { put }) {
+    *getAccountData({ callback }, { put }) {
       let data = yield accountdata();
       if (data) {
         // ===2 代表是单位账号，还要多一项操作是调用获取单位账号下的运动员信息的接口

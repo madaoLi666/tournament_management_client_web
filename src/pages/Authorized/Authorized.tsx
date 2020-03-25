@@ -7,10 +7,11 @@ import { ConnectState } from '@/models/connect';
 interface AuthorizedProps {
   children: React.ReactNode;
   unitAccount?: number;
+  dispatch: Dispatch;
 }
 
 function Authorized(props: AuthorizedProps) {
-  const { unitAccount } = props;
+  const { unitAccount, dispatch } = props;
 
   useEffect(() => {
     if (unitAccount !== undefined && unitAccount === 0) {
@@ -20,6 +21,9 @@ function Authorized(props: AuthorizedProps) {
         query: {
           type: 0,
         },
+      });
+      dispatch({
+        type: '/user/getAccountData',
       });
     }
   }, [unitAccount]);
