@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from '../index.less';
 import { connect, Dispatch } from 'dva';
 import LoginBlock from '@/components/LoginBlock/loginBlock';
@@ -59,13 +59,17 @@ function IndividualMessage(props: IndividualMessageProps) {
 
   useEffect(() => {
     // 因为这三个组件是同时加载的，所以加个判断是否补全了第一个先
-    if (!userData) {
-      router.push({
-        pathname: '/complete',
-        query: {
-          type: 0,
-        },
-      });
+    // if (!userData) {
+    //   router.push({
+    //     pathname: '/complete',
+    //     query: {
+    //       type: 0,
+    //     },
+    //   });
+    // }
+    // 用这种方式设置表单初始值，不可以用initialValues
+    if (formRef.current) {
+      formRef.current.setFieldsValue(userData);
     }
   }, [userData]);
 
@@ -74,7 +78,7 @@ function IndividualMessage(props: IndividualMessageProps) {
       <Tabs>
         <TabPane tab={<div>基本信息</div>} key="1">
           <Form
-            initialValues={userData ? userData : null}
+            // initialValues={userData}
             onFinish={onFinish}
             ref={formRef}
             {...BasicInfoSupplementStyle}
@@ -96,6 +100,7 @@ function IndividualMessage(props: IndividualMessageProps) {
 
 const mapStateToProps = ({ user, loading }: ConnectState) => {
   // user.id != 0代表一次请求都没发过，即没有登录
+  // console.log(user);
   if (user.id !== 0 && user.athleteData && user.athleteData[0].id) {
     return {
       userId: user.id,
@@ -113,6 +118,7 @@ const mapStateToProps = ({ user, loading }: ConnectState) => {
   return {
     userId: user.id,
     loading: loading.global,
+    userData: {},
   };
 };
 

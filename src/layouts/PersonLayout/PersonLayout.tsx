@@ -10,10 +10,13 @@ interface PersonLayoutProps {
   dispatch: Dispatch;
   children: React.ReactNode;
   collapsed?: boolean;
+  loading: boolean;
+  unitAccount?: number;
+  history: any;
 }
 
 function PersonLayout(props: PersonLayoutProps) {
-  const { dispatch, collapsed } = props;
+  const { dispatch, collapsed, loading, unitAccount, history } = props;
 
   useEffect(() => {
     dispatch({
@@ -24,6 +27,26 @@ function PersonLayout(props: PersonLayoutProps) {
       payload: false,
     });
   }, []);
+
+  // 如果没有补全信息进入个人中心，则先补全信息
+  useEffect(() => {
+    const route = history.location.pathname.split('/');
+    if (
+      unitAccount !== undefined &&
+      unitAccount === 0 &&
+      !loading &&
+      route[1] &&
+      route[1] === 'user'
+    ) {
+      message.warning('请先补全信息');
+      router.push({
+        pathname: '/complete',
+        query: {
+          type: 0,
+        },
+      });
+    }
+  }, [unitAccount, loading, history]);
 
   const handleMenuCollapse = (payload: boolean): void => {
     if (dispatch) {
@@ -120,8 +143,8 @@ function PersonLayout(props: PersonLayoutProps) {
   );
 }
 
-const mapStateToProps = ({ global }: ConnectState) => {
-  return { collapsed: global.collapsed };
+const mapStateToProps = ({ global, user, loading }: ConnectState) => {
+  return { collapsed: global.collapsed, unitAccount: user.unitAccount, loading: loading.global };
 };
 
 export default connect(mapStateToProps)(PersonLayout);

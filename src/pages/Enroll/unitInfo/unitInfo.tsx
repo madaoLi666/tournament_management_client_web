@@ -29,25 +29,16 @@ function UnitInfo(props: UnitInfoProps) {
       formData.append('unitdata', initialValue.unitId);
       formData.append('matchdata', matchId.toString());
       formData.append('contestant_id', currentTeamId.toString());
-      formData.append(
-        'name',
-        data.unitNameAlias === undefined ? '' : data.unitNameAlias,
-      );
+      formData.append('name', data.unitNameAlias === undefined ? '' : data.unitNameAlias);
       formData.append('leader', data.leaderName);
       formData.append('leaderphonenumber', data.leaderPhone);
       formData.append('email', data.leaderEmail);
-      formData.append(
-        'coachone',
-        data.coach1Name === undefined ? '' : data.coach1Name,
-      );
+      formData.append('coachone', data.coach1Name === undefined ? '' : data.coach1Name);
       formData.append(
         'coachonephonenumber',
         data.coach1Phone === undefined ? '' : data.coach1Phone,
       );
-      formData.append(
-        'coachtwo',
-        data.coach2Name === undefined ? '' : data.coach2Name,
-      );
+      formData.append('coachtwo', data.coach2Name === undefined ? '' : data.coach2Name);
       formData.append(
         'coachtwophonenumber',
         data.coach2Phone === undefined ? '' : data.coach2Phone,

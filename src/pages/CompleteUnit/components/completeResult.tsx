@@ -4,20 +4,7 @@ import { router } from 'umi';
 import { ConnectState } from '@/models/connect';
 import { connect } from 'dva';
 
-function CompleteResult(props: { unitAccount?: number }) {
-  // 检测是否已经完成了补全
-  useEffect(() => {
-    if (props.unitAccount && props.unitAccount === 0) {
-      message.warning('请先补全信息');
-      router.push({
-        pathname: '/complete',
-        query: {
-          type: 0,
-        },
-      });
-    }
-  }, [props.unitAccount]);
-
+function CompleteResult(props: { unitAccount?: number; loading: boolean }) {
   return (
     <Result
       status="success"
@@ -35,8 +22,8 @@ function CompleteResult(props: { unitAccount?: number }) {
   );
 }
 
-const mapStateToProps = ({ user }: ConnectState) => {
-  return { unitAccount: user.unitAccount };
+const mapStateToProps = ({ user, loading }: ConnectState) => {
+  return { unitAccount: user.unitAccount, loading: loading.global };
 };
 
 export default connect(mapStateToProps)(CompleteResult);

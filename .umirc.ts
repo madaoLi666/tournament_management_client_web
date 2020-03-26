@@ -60,10 +60,7 @@ const config: IConfig = {
     },
     {
       path: '/user',
-      Routes: [
-        './src/layouts/PersonLayout/PersonLayout.tsx',
-        './src/pages/Authorized/Authorized.tsx',
-      ],
+      Routes: ['./src/layouts/PersonLayout/PersonLayout.tsx'],
       routes: [
         { path: '/home', component: './Home/Home.tsx', name: '主页', icon: 'home' },
         {

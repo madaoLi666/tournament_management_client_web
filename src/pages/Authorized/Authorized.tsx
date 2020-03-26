@@ -26,7 +26,7 @@ function Authorized(props: AuthorizedProps) {
         type: '/user/getAccountData',
       });
     }
-  }, [unitAccount]);
+  }, [unitAccount, dispatch]);
 
   return <>{props.children}</>;
 }

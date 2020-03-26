@@ -123,20 +123,6 @@ function UnitMessage(props: UnitMessageProps) {
     }
   }
 
-  useEffect(() => {
-    const route = history.location.pathname;
-    const type = history.location.query.type;
-    if (unitId && unitId != 0 && route === '/complete' && type === 1) {
-      message.info('您已完成账号注册！');
-      router.push({
-        pathname: '/complete',
-        query: {
-          type: 2,
-        },
-      });
-    }
-  }, [unitId]);
-
   return (
     <LoginBlock>
       <Tabs>
