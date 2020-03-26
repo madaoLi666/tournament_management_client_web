@@ -3,6 +3,7 @@ import styles from './index.less';
 import { router } from 'umi';
 import { Layout, message } from 'antd';
 import { connect, Dispatch } from 'dva';
+import AvatarDropDown from '@/pages/Home/components/avatarDropDown';
 
 const { Header } = Layout;
 
@@ -53,25 +54,7 @@ function HeaderMsg(props: HeaderMsgProps) {
         </strong>
       </div>
       <div className={styles.header_right}>
-        {token === null || token === undefined ? (
-          <div>
-            <a className={styles.exit} onClick={() => router.push('/home')}>
-              主页
-            </a>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <a className={styles.login} onClick={() => router.push('/login')}>
-              登录
-            </a>
-          </div>
-        ) : (
-          <span>
-            <a onClick={() => router.push('/user/list')}>个人中心</a>
-            &nbsp;&nbsp; &nbsp;&nbsp;
-            <a className={styles.exit} onClick={exit}>
-              退出登陆
-            </a>
-          </span>
-        )}
+        <AvatarDropDown />
       </div>
     </Header>
   );

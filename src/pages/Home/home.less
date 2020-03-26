@@ -104,3 +104,60 @@
     }
   }
 }
+
+@import '~antd/es/style/themes/default.less';
+@pro-header-hover-bg: rgba(0, 0, 0, 0.025);
+.menu {
+  @media screen and (max-width: 576px) {
+    width: 100vh;
+  }
+  :global(.anticon) {
+    margin-right: 8px;
+  }
+  :global(.ant-dropdown-menu-item) {
+    min-width: 160px;
+  }
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  @media screen and (min-width: 330px) {
+    padding: 0 12px;
+  }
+  @media screen and (max-width: 330px) {
+    padding: 0 0.3rem;
+  }
+  cursor: pointer;
+  transition: all 0.3s;
+  > span {
+    color: @text-color;
+    vertical-align: middle;
+  }
+  &:hover {
+    background-color: #1890ff;
+    background: #1890ff linear-gradient(hsla(0, 0%, 100%, 0.2), transparent);
+  }
+  &:global(.opened) {
+    background: @pro-header-hover-bg;
+  }
+  .name {
+    @media screen and (max-width: 330px) {
+      display: none;
+    }
+    padding-right: 1rem;
+    padding-left: 0.5rem;
+    font-size: 17px;
+    color: #ffffff;
+  }
+}
+.account {
+  .avatar {
+    margin: ~'calc((@{layout-header-height} - 24px) / 2)' 0;
+    margin-right: 8px;
+    color: @primary-color;
+    vertical-align: top;
+    background: rgba(255, 255, 255, 0.85);
+  }
+}
