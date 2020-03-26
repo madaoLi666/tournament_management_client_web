@@ -58,15 +58,6 @@ function IndividualMessage(props: IndividualMessageProps) {
   };
 
   useEffect(() => {
-    // 因为这三个组件是同时加载的，所以加个判断是否补全了第一个先
-    // if (!userData) {
-    //   router.push({
-    //     pathname: '/complete',
-    //     query: {
-    //       type: 0,
-    //     },
-    //   });
-    // }
     // 用这种方式设置表单初始值，不可以用initialValues
     if (formRef.current) {
       formRef.current.setFieldsValue(userData);

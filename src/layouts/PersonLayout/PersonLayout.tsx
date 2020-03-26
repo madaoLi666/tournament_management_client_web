@@ -10,13 +10,13 @@ interface PersonLayoutProps {
   dispatch: Dispatch;
   children: React.ReactNode;
   collapsed?: boolean;
-  loading: boolean;
+  getAccountLoading?: boolean;
   unitAccount?: number;
   history: any;
 }
 
 function PersonLayout(props: PersonLayoutProps) {
-  const { dispatch, collapsed, loading, unitAccount, history } = props;
+  const { dispatch, collapsed, getAccountLoading, unitAccount, history } = props;
 
   useEffect(() => {
     dispatch({
@@ -34,7 +34,8 @@ function PersonLayout(props: PersonLayoutProps) {
     if (
       unitAccount !== undefined &&
       unitAccount === 0 &&
-      !loading &&
+      getAccountLoading !== undefined &&
+      !getAccountLoading &&
       route[1] &&
       route[1] === 'user'
     ) {
@@ -46,7 +47,7 @@ function PersonLayout(props: PersonLayoutProps) {
         },
       });
     }
-  }, [unitAccount, loading, history]);
+  }, [unitAccount, getAccountLoading, history]);
 
   const handleMenuCollapse = (payload: boolean): void => {
     if (dispatch) {
@@ -144,7 +145,11 @@ function PersonLayout(props: PersonLayoutProps) {
 }
 
 const mapStateToProps = ({ global, user, loading }: ConnectState) => {
-  return { collapsed: global.collapsed, unitAccount: user.unitAccount, loading: loading.global };
+  return {
+    collapsed: global.collapsed,
+    unitAccount: user.unitAccount,
+    getAccountLoading: loading.effects['user/getAccountData'],
+  };
 };
 
 export default connect(mapStateToProps)(PersonLayout);
