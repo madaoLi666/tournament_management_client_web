@@ -6,13 +6,15 @@
     z-index: 1;
     width: 100%;
     box-shadow: 3px 3px 6px -3px rgba(0, 0, 0, 0.5);
-    line-height: 50px;
+
     > div a {
       color: #ffffff;
-      font-size: 17px;
+      font-size: 18px;
     }
     .header_left {
       display: inline-block;
+      line-height: 4rem;
+      height: 100%;
       strong {
         display: flex;
         align-items: center;
@@ -21,13 +23,18 @@
         transition: all 0.3s;
       }
       div {
-        display: inline-block;
+        display: flex;
+        align-items: center;
         img {
+          flex: 1;
           vertical-align: middle;
-          width: 40px;
-          height: auto;
+          width: 28px;
+          height: 28px;
           margin-right: 0.5rem;
           cursor: pointer;
+        }
+        .title {
+          line-height: 1.5;
         }
       }
       a {
@@ -69,7 +76,6 @@
       font-size: 16px;
     }
 
-    .title,
     .exit {
       display: none;
     }
@@ -80,12 +86,19 @@
 
         > div {
           text-align: center;
+          line-height: 1.5;
+          display: flex;
+          align-items: center;
+
+          .title {
+            margin-left: 0.3rem;
+          }
         }
       }
 
       img {
-        width: 30px;
-        height: 30px;
+        width: 28px;
+        height: 28px;
       }
     }
     > div a {

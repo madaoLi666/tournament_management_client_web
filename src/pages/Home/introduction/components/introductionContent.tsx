@@ -21,7 +21,7 @@ function IntroductionContent(props: IntroductionContentProps) {
 
   const ENROLL_DOM = (
     <h4>
-      报名时间：{matchData.enrollstarttime.slice(0, 10)}至{matchData.enrollendtime.slice(0, 10)}
+      {matchData.enrollstarttime.slice(0, 10)}至{matchData.enrollendtime.slice(0, 10)}
     </h4>
   );
 
@@ -37,9 +37,9 @@ function IntroductionContent(props: IntroductionContentProps) {
     <header className={styles['pic-block']}>
       <div className={styles.img}>{imgDom}</div>
       <div className={styles.text}>
-        <h3>赛事名称:</h3>
+        <h3>赛事名称：</h3>
         <h4>{matchData.name}</h4>
-        <h3>报名时间</h3>
+        <h3>报名时间：</h3>
         {ENROLL_DOM}
         <Button className={styles.download}>
           <a href={download_url[0]['saveaddress']}>下载参赛自愿责任书</a>

@@ -39,9 +39,8 @@ function HeaderMsg(props: HeaderMsgProps) {
             <span className={styles.title}>
               <a onClick={() => router.push('/home')}>轮滑赛事辅助系统平台</a>
             </span>
-            &nbsp;&nbsp;&nbsp;&nbsp;
           </div>
-          <a
+          {/* <a
             className={styles.header_block}
             onClick={() =>
               window.open(
@@ -50,7 +49,7 @@ function HeaderMsg(props: HeaderMsgProps) {
             }
           >
             报名步骤查看
-          </a>
+          </a> */}
         </strong>
       </div>
       <div className={styles.header_right}>
