@@ -8,6 +8,7 @@ import { RegisterModelState } from '@/pages/Login/models/registerModel';
 import { GameListModelState } from '@/models/gameListModel';
 import { UnitModelState } from '@/models/unitModel';
 import { GlobalModelState } from '@/models/globalModel';
+import { AccountModelState } from '@/pages/PersonBackground/models/accountModel';
 
 export interface Loading {
   global: boolean;
@@ -20,6 +21,7 @@ export interface Loading {
     gameList?: boolean;
     unit?: boolean;
     global?: boolean;
+    account?: boolean;
   };
 }
 
@@ -32,6 +34,7 @@ export interface ConnectState {
   gameList: GameListModelState;
   unit: UnitModelState;
   global: GlobalModelState;
+  account: AccountModelState;
   router: any;
 }
 

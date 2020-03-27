@@ -1,0 +1,44 @@
+.list {
+  //background-color: skyblue;
+  margin-bottom: 1rem;
+  :global {
+    // 清除 li display: flex样式
+    .ant-list-item {
+      display: block;
+      background-color: white;
+      margin-bottom: 1rem;
+      box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .billHeader {
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 0.5rem;
+    padding-left: 1rem;
+
+    > span:nth-last-child(1) {
+      margin-left: 1rem;
+    }
+  }
+
+  .billContent {
+    display: flex;
+    justify-content: space-between;
+
+    > div {
+      flex: 1;
+      border-right: 2px solid gray;
+      text-align: center;
+      align-self: center;
+      margin-top: 1rem;
+    }
+
+    div:nth-child(2) {
+      color: red;
+    }
+
+    div:nth-last-child(1) {
+      border: none;
+    }
+  }
+}

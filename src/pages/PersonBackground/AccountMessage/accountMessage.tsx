@@ -1,11 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './index.less';
+import AccountList from '@/pages/PersonBackground/AccountMessage/components/accoutList';
+import { ConnectProps, ConnectState } from '@/models/connect';
+import { connect } from 'dva';
 
-interface AccountMessageProps {}
+interface AccountMessageProps extends Partial<ConnectProps> {}
 
 function AccountMessage(props: AccountMessageProps) {
-  console.log('hello World');
-  return <p>123</p>;
+  const { dispatch } = props;
+
+  useEffect(() => {
+    if (dispatch) {
+      dispatch({
+        type: 'account/getAccountBill',
+      });
+    }
+  }, [dispatch]);
+
+  return <AccountList />;
 }
 
-export default AccountMessage;
+const mapStateToProps = ({ account }: ConnectState) => {
+  return account;
+};
+
+export default connect(mapStateToProps)(AccountMessage);
