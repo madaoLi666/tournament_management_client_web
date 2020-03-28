@@ -9,10 +9,11 @@ import { router } from 'umi';
 
 interface AvatarDropDownProps extends Partial<ConnectProps> {
   currentUser?: string;
+  color?: string; // 在个人中心里面的字体颜色和主页的主体颜色不同
 }
 
 function AvatarDropDown(props: AvatarDropDownProps) {
-  const { dispatch, currentUser } = props;
+  const { dispatch, currentUser, color } = props;
 
   const exit = () => {
     if (!dispatch) {
@@ -82,7 +83,11 @@ function AvatarDropDown(props: AvatarDropDownProps) {
           src={'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'}
           alt="avatar"
         />
-        <span onClick={onLogin} className={styles.name}>
+        <span
+          onClick={onLogin}
+          className={styles.name}
+          style={color ? { color: 'rgba(0, 0, 0, 0.65)' } : { color: '#ffffff' }}
+        >
           {currentUser ? currentUser : '登录'}
         </span>
       </span>

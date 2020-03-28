@@ -5,6 +5,7 @@ import { connect, Dispatch } from 'dva';
 import { BasicLayout, MenuDataItem } from '@ant-design/pro-layout';
 import { message, Button } from 'antd';
 import { Link, router } from 'umi';
+import AvatarDropDown from '@/pages/Home/components/avatarDropDown';
 
 interface PersonLayoutProps {
   dispatch: Dispatch;
@@ -124,7 +125,8 @@ function PersonLayout(props: PersonLayoutProps) {
       menuDataRender={menuDataRender}
       rightContentRender={rightProps => (
         <div className={styles.rightProps}>
-          <Button type="link" onClick={signout}>
+          <AvatarDropDown color={'person'} />
+          {/* <Button type="link" onClick={signout}>
             退出账号
           </Button>
           <Button
@@ -134,7 +136,7 @@ function PersonLayout(props: PersonLayoutProps) {
             }}
           >
             返回主页
-          </Button>
+          </Button> */}
         </div>
       )}
       {...props}
