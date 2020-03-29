@@ -81,6 +81,12 @@ const config: IConfig = {
           name: '账单信息',
           icon: 'account-book',
         },
+        {
+          path: '/user/operation',
+          component: './PersonBackground/OperationLog/operationLog.tsx',
+          name: '操作日志',
+          icon: 'lock',
+        },
       ],
     },
     { path: '/', redirect: '/home' },
