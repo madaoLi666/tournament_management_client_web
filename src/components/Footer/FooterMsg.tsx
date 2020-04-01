@@ -5,6 +5,8 @@ import styles from './index.less';
  * 定义了底部的公共样式组件
  */
 
+const p = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/p.png';
+
 class FooterMsg extends React.PureComponent {
   render() {
     return (
@@ -20,7 +22,7 @@ class FooterMsg extends React.PureComponent {
             target="_blank"
             href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44011802000333"
           >
-            <img src={require('../../assets/p.png')} alt="" />
+            <img src={p} alt="" />
             <p>粤公网安备 44011802000333号</p>
           </a>
         </div>

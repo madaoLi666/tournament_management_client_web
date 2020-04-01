@@ -44,7 +44,7 @@ function OperationLog(props: any) {
   ];
 
   const searchForm = (
-    <div style={{ marginTop: '1.5rem' }}>
+    <div style={{ marginTop: '1.5rem', display: 'none' }}>
       <Form form={form} style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Form.Item name="name">
           <Input.Search placeholder="操作名" style={{ width: 240 }} onSearch={submit} />
@@ -57,7 +57,14 @@ function OperationLog(props: any) {
     <div className={styles.log}>
       <PageHeaderWrapper />
       {searchForm}
-      <Table columns={columns} size={'small'} bordered rowKey="time" {...tableProps} />
+      <Table
+        style={{ marginTop: '1.5rem' }}
+        columns={columns}
+        size={'small'}
+        bordered
+        rowKey="time"
+        {...tableProps}
+      />
     </div>
   );
 }

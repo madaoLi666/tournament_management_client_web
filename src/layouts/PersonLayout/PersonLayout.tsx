@@ -7,6 +7,8 @@ import { message, Button } from 'antd';
 import { Link, router } from 'umi';
 import AvatarDropDown from '@/pages/Home/components/avatarDropDown';
 
+const logo = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/logo.png';
+
 interface PersonLayoutProps {
   dispatch: Dispatch;
   children: React.ReactNode;
@@ -101,7 +103,7 @@ function PersonLayout(props: PersonLayoutProps) {
   return (
     <BasicLayout
       title="轮滑辅助系统平台"
-      logo={require('@/assets/logo.png')}
+      logo={logo}
       collapsed={collapsed}
       onCollapse={handleMenuCollapse}
       theme="light"

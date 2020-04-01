@@ -62,7 +62,6 @@ const config: IConfig = {
       path: '/user',
       Routes: ['./src/layouts/PersonLayout/PersonLayout.tsx'],
       routes: [
-        { path: '/home', component: './Home/Home.tsx', name: '主页', icon: 'home' },
         {
           path: '/user/list',
           component: './PersonBackground/AthleteList.tsx',
