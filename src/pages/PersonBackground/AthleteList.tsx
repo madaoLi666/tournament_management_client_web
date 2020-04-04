@@ -82,6 +82,8 @@ const mapStateToProps = ({ user, loading }: ConnectState) => {
         address: item.athlete.address,
         face: item.athlete.face,
         email: item.athlete.email,
+        unitdata_id: item.unitdata_id,
+        unitathlete_id: item.unitathlete_id,
       });
     });
   }

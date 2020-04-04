@@ -7,7 +7,8 @@ import AvatarDropDown from '@/pages/Home/components/avatarDropDown';
 
 const { Header } = Layout;
 
-const GDLogo = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/logo1.png';
+// 广东省轮滑协会logo
+const GDLogo = 'http://cos.gsta.top/img/logo2.png';
 
 interface HeaderMsgProps {
   dispatch: Dispatch;

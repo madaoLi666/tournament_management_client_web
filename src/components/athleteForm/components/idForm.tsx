@@ -76,7 +76,7 @@ function IdForm(props: IdFormProps) {
         label="证件号码"
         name={'identifyNumber'}
         rules={
-          isHongKong
+          isHongKong || !isAdd
             ? [{ required: true, message: '请填写证件号码' }]
             : [
                 { required: true, message: '请填写证件号码' },

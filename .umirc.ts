@@ -84,7 +84,7 @@ const config: IConfig = {
           path: '/user/operation',
           component: './PersonBackground/OperationLog/operationLog.tsx',
           name: '操作日志',
-          icon: 'lock',
+          icon: 'property-safety',
         },
       ],
     },

@@ -76,7 +76,7 @@ function AvatarDropDown(props: AvatarDropDownProps) {
 
   return (
     <Dropdown overlay={menuDom}>
-      <span className={`${styles.action} ${styles.account}`}>
+      <span className={`${styles.action} ${styles.account}`} onClick={onLogin}>
         <Avatar
           size="small"
           className={styles.avatar}
@@ -84,7 +84,6 @@ function AvatarDropDown(props: AvatarDropDownProps) {
           alt="avatar"
         />
         <span
-          onClick={onLogin}
           className={styles.name}
           style={color ? { color: 'rgba(0, 0, 0, 0.65)' } : { color: '#ffffff' }}
         >

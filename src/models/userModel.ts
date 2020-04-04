@@ -21,10 +21,10 @@ export interface UnitData {
   unitathlete?:
     | {
         athlete: AthleteData;
-        id: number;
         starttime: string;
         status: number;
-        unitdata: number;
+        unitdata_id: number;
+        unitathlete_id: number;
       }[]
     | null;
 }

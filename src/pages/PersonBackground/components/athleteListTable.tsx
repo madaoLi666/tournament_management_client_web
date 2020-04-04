@@ -92,11 +92,7 @@ function AthleteListTable(props: AthleteListTableProps) {
       formData.append('province', '');
       formData.append('address', '');
     }
-    formData.append('idcard', data.identifyNumber);
     formData.append('name', data.name);
-    formData.append('idcardtype', data.idCardType);
-    formData.append('sex', data.sex);
-    formData.append('birthday', data.birthday.format('YYYY-MM-DD hh:mm:ss'));
     formData.append('phonenumber', data.phone !== undefined ? data.phone : '');
     formData.append('email', data.email !== undefined ? data.email : '');
     formData.append('face', data.image.originFileObj !== undefined ? data.image.originFileObj : '');
@@ -106,6 +102,15 @@ function AthleteListTable(props: AthleteListTableProps) {
       data.emergencyContactPhone ? data.emergencyContactPhone : '',
     );
     formData.append('unitdata', unitId ? String(unitId) : '');
+    if (isAdd) {
+      formData.append('idcardtype', data.idCardType);
+      formData.append('sex', data.sex);
+      formData.append('birthday', data.birthday.format('YYYY-MM-DD hh:mm:ss'));
+      formData.append('idcard', data.identifyNumber);
+    } else if (initialValue !== null) {
+      formData.append('unitathlete_id', initialValue.unitathlete_id);
+      formData.append('unitdata_id', initialValue.unitdata_id);
+    }
 
     let res: Promise<any>;
     if (isAdd) {
@@ -162,7 +167,7 @@ function AthleteListTable(props: AthleteListTableProps) {
 
   return (
     <div>
-      <Button type="primary" style={{ marginBottom: '1rem' }} onClick={addAthlete}>
+      <Button type="primary" className={styles.addBtn} onClick={addAthlete}>
         添加运动员
       </Button>
       <Table

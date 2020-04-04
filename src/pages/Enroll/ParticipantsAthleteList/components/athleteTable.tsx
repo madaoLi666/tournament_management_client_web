@@ -14,6 +14,7 @@ import { updatePlayer } from '@/services/athleteServices';
 interface AthleteList {
   key: string;
   id: string;
+  unitathlete_id: number;
   name?: string;
   active?: any;
   identifyID?: string;
@@ -200,7 +201,7 @@ function AthleteTable(props: AthleteTableProps) {
   // modal框控制
   const [modifyVisible, setModifyVisible] = useState(false);
   // 要修改的运动员数据
-  const [athleteInitial, setAthlete] = useState(null);
+  const [athleteInitial, setAthlete] = useState<any>(null);
 
   const onCancel = () => {
     if (modifyVisible) {
@@ -237,7 +238,7 @@ function AthleteTable(props: AthleteTableProps) {
       formData.append('province', '');
       formData.append('address', '');
     }
-    formData.append('idcard', data.identifyNumber);
+    // formData.append('idcard', data.identifyNumber);
     formData.append('name', data.name);
     formData.append('idcardtype', data.idCardType);
     formData.append('sex', data.sex);
@@ -246,6 +247,8 @@ function AthleteTable(props: AthleteTableProps) {
     formData.append('email', data.email !== undefined ? data.email : '');
     formData.append('face', data.image.originFileObj !== undefined ? data.image.originFileObj : '');
     formData.append('unitdata', unitId.toString());
+    formData.append('unitathlete_id', athleteInitial === null ? 0 : athleteInitial.unitathlete_id);
+    formData.append('unitdata_id', athleteInitial === null ? 0 : athleteInitial.unitdata_id);
     // 修改运动员数据
     updatePlayer(formData)
       .then(res => {
@@ -272,7 +275,7 @@ function AthleteTable(props: AthleteTableProps) {
         size={'small'}
         className={styles.antTableSmall}
         scroll={{ x: 800 }}
-        rowKey={record => record.id}
+        rowKey={record => record.unitathlete_id}
         loading={loading}
       />
       <ModalForm
