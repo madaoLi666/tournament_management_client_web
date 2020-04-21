@@ -267,7 +267,7 @@ function UnitMessage(props: UnitMessageProps) {
 }
 
 const mapStateToProps = ({ user, loading }: ConnectState) => {
-  if (user.unitData && user.unitData[0].id) {
+  if (user.unitData && user.unitData.length !== 0) {
     const unit = user.unitData[0];
     return {
       userId: user.id,
