@@ -26,7 +26,7 @@ const CompleteModel: CompleteModelType = {
     unitRegisterPayCode: '',
   },
   effects: {
-    *addAthleteBaseInfo({ payload }, { _ }) {
+    *addAthleteBaseInfo({ payload, callback }, { _ }) {
       const requestData = {
         idcardtype: payload.idCardType,
         idcard: payload.identifyNumber,
@@ -37,7 +37,7 @@ const CompleteModel: CompleteModelType = {
       };
       let data = yield addAthleteInfo(requestData);
       //设置成功 跳转至角色设置中
-      if (data) {
+      if (data && callback) {
         message.success('完善成功!');
         router.push({
           pathname: '/complete',
@@ -45,9 +45,10 @@ const CompleteModel: CompleteModelType = {
             type: 1,
           },
         });
+        callback(true);
       }
     },
-    *registerUnitAccount({ payload }, { select, put }) {
+    *registerUnitAccount({ payload, callback }, { select, put }) {
       const { unitData } = payload;
       let payCode = yield select(({ complete }: any) => {
         return complete.unitRegisterPayCode;
@@ -72,7 +73,7 @@ const CompleteModel: CompleteModelType = {
         user_id,
       };
       let data = yield registerUnitAccount(requestData);
-      if (data) {
+      if (data && callback) {
         message.success('已完善单位信息');
         router.push({
           pathname: '/complete',
@@ -80,6 +81,7 @@ const CompleteModel: CompleteModelType = {
             type: 2,
           },
         });
+        callback(true);
       } else {
         message.error('注册单位失败，请检查网络状况与付款状况');
       }

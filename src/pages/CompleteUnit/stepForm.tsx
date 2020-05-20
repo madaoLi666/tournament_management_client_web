@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './index.less';
-import { Button, message, Steps } from 'antd';
+import { message, Steps } from 'antd';
 import IndividualMessage from '@/pages/CompleteUnit/IndividualMessage/individualMessage';
 import { connect, Dispatch } from 'dva';
 import { ConnectState } from '@/models/connect';
@@ -23,11 +23,20 @@ function StepForm(props: StepFormProps) {
   const { history, dispatch, loading, userData, unitData } = props;
   const [current, setCurrent] = useState(0);
 
+  // 子组件调用 setCurrent
+  const childSetCurrent = (type: number) => {
+    if (type !== undefined) {
+      setCurrent(type);
+    } else {
+      console.error('type is undefined!');
+    }
+  };
+
   // 步骤选项
   const steps = [
     {
       title: '完善基本信息',
-      content: <IndividualMessage />,
+      content: <IndividualMessage setCurrent={childSetCurrent} />,
     },
     // {
     //   title: '选择您的身份',
@@ -35,14 +44,13 @@ function StepForm(props: StepFormProps) {
     // },
     {
       title: '完善单位信息',
-      content: <UnitMessage history={history} />,
+      content: <UnitMessage history={history} setCurrent={childSetCurrent} />,
     },
     {
       title: '完成',
       content: <CompleteResult />,
     },
   ];
-  // 13428362404
   useEffect(() => {
     const currentStep = history.location.query.type;
     const route = history.location.pathname;

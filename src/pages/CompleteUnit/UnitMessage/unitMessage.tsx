@@ -21,6 +21,7 @@ interface UnitMessageProps {
   userId?: number;
   unitId?: number;
   history: any;
+  setCurrent(type: number): void;
 }
 
 const BasicInfoSupplementStyle = {
@@ -44,7 +45,7 @@ const BasicInfoSupplementStyle = {
 };
 
 function UnitMessage(props: UnitMessageProps) {
-  const { dispatch, userId, loading, unitId, history } = props;
+  const { dispatch, userId, setCurrent } = props;
   const [validStatus, setValidStatus] = useState<
     '' | 'error' | 'success' | 'warning' | 'validating'
   >('');
@@ -119,6 +120,11 @@ function UnitMessage(props: UnitMessageProps) {
       dispatch({
         type: 'complete/registerUnitAccount',
         payload: { unitData: { userId: userId, ...data } },
+        callback: (data: any) => {
+          if (data) {
+            setCurrent(2);
+          }
+        },
       });
     }
   }

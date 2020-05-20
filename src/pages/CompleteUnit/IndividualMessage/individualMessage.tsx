@@ -37,10 +37,11 @@ interface IndividualMessageProps {
   userId?: number;
   loading: boolean;
   userData?: any;
+  setCurrent(type: number): void;
 }
 
 function IndividualMessage(props: IndividualMessageProps) {
-  const { dispatch, userId, loading, userData } = props;
+  const { dispatch, userId, loading, userData, setCurrent } = props;
   const formRef = useRef<any>({});
 
   const onFinish = (value: any) => {
@@ -50,6 +51,12 @@ function IndividualMessage(props: IndividualMessageProps) {
         payload: {
           ...value,
           user: userId,
+        },
+        callback: (data: any) => {
+          // 如果完善成功
+          if (data) {
+            setCurrent(1);
+          }
         },
       });
     } else {
