@@ -44,7 +44,7 @@ function IntroductionContent(props: IntroductionContentProps) {
         <Button className={styles.download}>
           <a href={download_url[0]['saveaddress']}>下载参赛自愿责任书</a>
         </Button>
-        {!dayjs(matchData.enrollendtime).isBefore(dayjs()) ? (
+        {dayjs(matchData.enrollendtime).isBefore(dayjs()) ? (
           <Button
             type="primary"
             onClick={() => {
