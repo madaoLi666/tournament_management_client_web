@@ -1,0 +1,210 @@
+.newLayout {
+  :global {
+    background: white;
+  }
+  .hr {
+    border: 1px solid #f0f2f5;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .edit-unit-info {
+    padding: 10px;
+    width: 80%;
+    margin: 0 auto;
+  }
+
+  .participants-athlete-list {
+    .n-block {
+      width: 100%;
+      padding: 10px 0;
+      margin: 10px auto;
+    }
+  }
+
+  .require {
+    :global {
+      .ant-form-item-label {
+        label::before {
+          display: inline-block;
+          margin-right: 4px;
+          color: #f5222d;
+          font-size: 14px;
+          font-family: SimSun, sans-serif;
+          line-height: 1;
+          content: '*';
+        }
+      }
+    }
+  }
+
+  .p-upload-block {
+    text-align: center;
+    border: 1px #eeeeee solid;
+    position: relative;
+
+    >div:first-child {
+      width: 100%;
+      position: absolute;
+      top: 50%;
+      transform: translate(0, -50%);
+    }
+  }
+
+  .individual-enroll {
+    .rule-block {}
+
+    .table-block {}
+
+    .enroll-block {}
+
+    .tag-block {}
+  }
+
+  .r {
+    width: 100%;
+
+    >div {
+      display: inline-block;
+      width: 40%;
+      margin: 10px 10px;
+    }
+  }
+
+  .ant-layout-content {}
+
+  .return {
+    z-index: 10;
+
+    @media screen and (min-width: 667px) {
+      display: none;
+    }
+  }
+
+  .myroll {
+    :global {
+      .ant-table-placeholder {
+        height: 500px;
+        z-index: 0;
+      }
+    }
+
+    .returnDown {
+      @media screen and (max-width: 667px) {
+        display: none;
+      }
+    }
+
+    .hidePcBtn {
+      @media screen and (max-width: 667px) {
+        display: none;
+      }
+    }
+  }
+
+  .show-enroll-content {
+
+    .show-person {
+      background-color: #ffffff;
+
+      p {
+        color: #1890ff;
+        text-align: center;
+        height: 40px;
+      }
+    }
+
+    .show-team {
+      background-color: #ffffff;
+
+      p {
+        color: #1890ff;
+        text-align: center;
+        height: 40px;
+      }
+    }
+  }
+
+
+  .treePcNode {
+    @media screen and (max-width: 667px) {
+      display: none;
+    }
+
+    @media screen and (min-width: 667px) {
+      >span {
+        width: 250px;
+        margin-bottom: 1rem;
+
+        input::placeholder {
+          color: #1890ff;
+        }
+      }
+    }
+
+    .treeSelect {
+      @media screen and (min-width: 667px) {
+        width: 300px;
+      }
+
+      @media screen and (max-width: 667px) {
+        width: 150px;
+      }
+    }
+  }
+
+  .treeMobNode {
+    @media screen and (min-width: 667px) {
+      display: none;
+    }
+
+    background: white;
+    border-radius: .2em;
+    position: fixed;
+    z-index: 999;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    overflow: visible;
+
+    .treeMobSelect {
+      width: 100%;
+    }
+
+    .mobileBottom {
+      width: 100%;
+      height: 48px;
+      color: white;
+
+      :global {
+        .ant-cascader-input {
+          height: inherit;
+          background-color: #1890ff !important;
+        }
+
+        input::placeholder {
+          color: white;
+        }
+      }
+    }
+  }
+
+  .edit-unit-info {
+    @media screen and (min-width: 667px) {
+      width: 50%;
+    }
+
+    .editButton {
+      width: 100%;
+    }
+  }
+
+  .btn {
+    align-self: flex-end;
+    margin-bottom: 1rem;
+    button {
+      margin-left: 1rem;
+    }
+  }
+
+}

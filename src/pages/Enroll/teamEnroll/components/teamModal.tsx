@@ -68,13 +68,13 @@ function TeamModal(props: TeamModalProps, refs: any) {
     let tempAthleteList = Object.assign([], selectedAthleteList);
     let index = -1;
     for (let i: number = tempAthleteList.length - 1; i >= 0; i--) {
-      if (tempAthleteList[i] === record.id) {
+      if (tempAthleteList[i] === record.unitathlete_id) {
         index = i;
         break;
       }
     }
     if (selected && index === -1) {
-      tempAthleteList.push(record.id);
+      tempAthleteList.push(record.unitathlete_id);
     } else if (!selected && index !== -1) {
       tempAthleteList.splice(index, 1);
     }
@@ -84,7 +84,7 @@ function TeamModal(props: TeamModalProps, refs: any) {
   const handleCheckSelectAll = (selected: boolean) => {
     if (selected) {
       let tempAthleteList = Object.assign([], legalAthleteList);
-      const tempIdList = tempAthleteList.map((v: any) => v.id);
+      const tempIdList = tempAthleteList.map((v: any) => v.unitathlete_id);
       setSelectedAthleteList(tempIdList);
     } else if (!selected) {
       setSelectedAthleteList([]);
@@ -167,7 +167,7 @@ function TeamModal(props: TeamModalProps, refs: any) {
       let player: Array<any> = [];
       selectedAthleteList.forEach((v: number) => {
         for (let i: number = legalAthleteList.length - 1; i >= 0; i--) {
-          if (v === legalAthleteList[i].id) {
+          if (v === legalAthleteList[i].unitathlete_id) {
             player.push({
               player: legalAthleteList[i].player,
               roletype: legalAthleteList[i].role,
@@ -238,7 +238,10 @@ function TeamModal(props: TeamModalProps, refs: any) {
         dataSource={legalAthleteList}
         rowSelection={rowSelection}
         size={'small'}
-        rowKey={(record: any) => record.id}
+        rowKey={(record: any) => {
+          // console.log(record);
+          return record.unitathlete_id;
+        }}
       />
     </Modal>
   );

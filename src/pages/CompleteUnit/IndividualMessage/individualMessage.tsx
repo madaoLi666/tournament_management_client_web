@@ -35,7 +35,7 @@ const BasicInfoSupplementStyle = {
 interface IndividualMessageProps {
   dispatch: Dispatch;
   userId?: number;
-  loading: boolean;
+  loading?: boolean;
   userData?: any;
   setCurrent(type: number): void;
 }
@@ -53,10 +53,9 @@ function IndividualMessage(props: IndividualMessageProps) {
           user: userId,
         },
         callback: (data: any) => {
-          // 如果完善成功
-          if (data) {
-            setCurrent(1);
-          }
+          dispatch({
+            type: 'user/getAccountData',
+          });
         },
       });
     } else {
@@ -98,7 +97,7 @@ function IndividualMessage(props: IndividualMessageProps) {
 
 const mapStateToProps = ({ user, loading }: ConnectState) => {
   // user.id != 0代表一次请求都没发过，即没有登录
-  // console.log(user);
+  // console.log(loading);
   if (user.id !== 0 && user.athleteData && user.athleteData[0].id) {
     return {
       userId: user.id,
@@ -115,7 +114,7 @@ const mapStateToProps = ({ user, loading }: ConnectState) => {
 
   return {
     userId: user.id,
-    loading: loading.global,
+    loading: loading.effects['complete/addAthleteBaseInfo'],
     userData: {},
   };
 };

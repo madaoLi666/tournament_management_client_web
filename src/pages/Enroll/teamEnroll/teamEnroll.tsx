@@ -99,7 +99,7 @@ function TeamEnroll(props: TeamEnrollProps) {
 
     for (let j: number = 0; j < member.length; j++) {
       for (let i: number = 0; i < athleteList.length; i++) {
-        if (member[j].athlete.idcard === athleteList[i].athlete.idcard) {
+        if (member[j].athlete.idcard.slice(-6) === athleteList[i].athlete.idcard.slice(-6)) {
           sexs[j] = athleteList[i].athlete.sex;
           group_ages[j] = athleteList[i].groupage;
           break;
@@ -108,11 +108,12 @@ function TeamEnroll(props: TeamEnrollProps) {
     }
     let r: Array<React.ReactNode> = [];
     member.forEach((v: any, index: any) => {
+      console.log(group_ages);
       r.push(
         <div key={v.player}>
           <span>姓名：{v.athlete.name}</span>&nbsp;&nbsp;|&nbsp;&nbsp;
           <span>角色名称：{v.rolename}</span>&nbsp;&nbsp;|&nbsp;&nbsp;
-          <span>性别：{sexs[index]}</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+          <span>性别：{v.athlete.sex}</span>&nbsp;&nbsp;|&nbsp;&nbsp;
           <span>所属组别：{group_ages[index]}</span>
         </div>,
       );
@@ -284,7 +285,10 @@ function TeamEnroll(props: TeamEnrollProps) {
           dataSource={teamEnroll}
           columns={showTableColumns}
           expandedRowRender={renderExpandedRow}
-          rowKey={(record: any) => record.id}
+          rowKey={(record: any) => {
+            // console.log(record);
+            return record.id;
+          }}
           size={'small'}
           loading={loading || tableLoading}
         />
@@ -336,7 +340,6 @@ const mapStateToProps = ({ loading, enroll, router }: ConnectState) => {
   filter_athlete_list = enroll.unit?.athleteList.filter((v: any) => {
     return v.active === 1;
   });
-
   return {
     teamItem: teamItem,
     matchId: String(enroll.currentMatchId),

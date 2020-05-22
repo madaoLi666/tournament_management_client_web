@@ -25,6 +25,7 @@ function StepForm(props: StepFormProps) {
 
   // 子组件调用 setCurrent
   const childSetCurrent = (type: number) => {
+    console.log(type);
     if (type !== undefined) {
       setCurrent(type);
     } else {
@@ -92,9 +93,9 @@ function StepForm(props: StepFormProps) {
       });
     }
   }, [
-    history.location.pathname,
-    dispatch,
-    history.location.query.type,
+    // history.location.pathname,
+    // dispatch,
+    // history.location.query.type,
     loading,
     unitData,
     userData,
@@ -113,6 +114,7 @@ function StepForm(props: StepFormProps) {
 }
 
 const mapStateToProps = ({ user, loading }: ConnectState) => {
+  // console.log(user);
   return {
     loading: loading.global,
     unitData: user.unitData,

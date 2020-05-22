@@ -121,11 +121,10 @@ function UnitMessage(props: UnitMessageProps) {
         type: 'complete/registerUnitAccount',
         payload: { unitData: { userId: userId, ...data } },
         callback: (data: any) => {
-          if (data) {
-            setCurrent(2);
-          }
+          toggle();
         },
       });
+      // setCurrent(2);
     }
   }
 

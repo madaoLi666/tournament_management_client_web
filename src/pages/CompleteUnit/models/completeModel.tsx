@@ -37,15 +37,11 @@ const CompleteModel: CompleteModelType = {
       };
       let data = yield addAthleteInfo(requestData);
       //设置成功 跳转至角色设置中
-      if (data && callback) {
+      if (data) {
         message.success('完善成功!');
-        router.push({
-          pathname: '/complete',
-          query: {
-            type: 1,
-          },
-        });
-        callback(true);
+        if (callback) {
+          callback(true);
+        }
       }
     },
     *registerUnitAccount({ payload, callback }, { select, put }) {
@@ -73,15 +69,14 @@ const CompleteModel: CompleteModelType = {
         user_id,
       };
       let data = yield registerUnitAccount(requestData);
-      if (data && callback) {
+      if (data) {
         message.success('已完善单位信息');
-        router.push({
-          pathname: '/complete',
-          query: {
-            type: 2,
-          },
+        yield put({
+          type: 'user/getAccountData',
         });
-        callback(true);
+        if (callback) {
+          callback(true);
+        }
       } else {
         message.error('注册单位失败，请检查网络状况与付款状况');
       }

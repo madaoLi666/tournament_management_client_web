@@ -51,6 +51,13 @@ const config: IConfig = {
           path: '/enroll/team/:matchId',
           component: './Enroll/teamEnroll/teamEnroll.tsx',
         },
+        {
+          path: '/enroll/showEnroll/:matchId',
+          component: './Enroll/showEnroll/showEnroll.tsx'
+        },
+        {
+          path: '/enroll/success/:matchId', component: './Enroll/enrollSuccess/enrollSuccess.tsx'
+        }
       ],
     },
     {
