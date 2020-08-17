@@ -30,6 +30,9 @@ const new_homePicArr: string[] = [
 ];
 // 赛事图
 const small_new_homePicArr: string[] = [
+  'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/WechatIMG3586.jpeg',
+  'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/WechatIMG178.jpeg',
+  'http://cos.gsta.top/2020shaoguanyaoqing.jpeg',
   'http://cos.gsta.top/zhiyoushi-1.png',
   'http://cos.gsta.top/ziyoushi.jpeg',
   'http://cos.gsta.top/lunhuaqiu.jpeg',
@@ -96,6 +99,7 @@ function Home(props: HomeProps) {
     if (gameList === undefined) {
       return;
     }
+    // console.log(gameList);
     // 如果加载完全了，即图片数相等，然后push进去
     if (matchImgArr.length === small_new_homePicArr.length) {
       let tempGameListDom: React.ReactNode[] = [];

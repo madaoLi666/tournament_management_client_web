@@ -93,6 +93,7 @@ function EnrollModal(props: EnrollModalProps, refs: any) {
         const { upGroupNumber } = limitation;
         // 通过 年龄+组别列表+可升组数量 得到可选组别列表，例如可选青成组，少年组
         let r = getGroupsByAge(birthday, groupList, upGroupNumber, group_age_list);
+        // console.log(r);
         let fGroupList = [],
           fGroupValue = -1;
         if (r.length !== 0) {
@@ -152,6 +153,9 @@ function EnrollModal(props: EnrollModalProps, refs: any) {
         }
         setGroupList(fGroupList);
         setGroupValue(fGroupValue);
+        // console.log(athleteData);
+        // console.log(fGroupList);
+        // console.log(fGroupValue);
         getSexByGroup(athleteData, fGroupList, fGroupValue);
       } else {
         message.warn('此项目没有适合该名运动员的组别');

@@ -125,6 +125,7 @@ function TeamModal(props: TeamModalProps, refs: any) {
       }
       // 判断出合法的运动员列表，置入state 打开modal
       let legalAthleteList = legalAthleteFilter(athleteList, tempRule);
+      // console.log(legalAthleteList);
       if (legalAthleteList.length !== 0) {
         for (let i: number = 0; i < legalAthleteList.length; i++) {
           legalAthleteList[i].role = 3;

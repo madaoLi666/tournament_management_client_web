@@ -44,7 +44,7 @@ function UnitForm(props: UnitFormProps) {
   const onFinish = (values: any) => {
     if (!initialValue.guaranteePic && !values.uploadPic) {
       // 如果原来没有而且现在提交的表单也没有,那么是没有上传文件
-      message.warning('请先上传自愿责任书!');
+      message.warning('请先上传已签名的自愿责任书图片!');
       return;
     }
     // 如果原先就有值，则返回空字符，否则返回originFileObj
@@ -111,7 +111,7 @@ function UnitForm(props: UnitFormProps) {
         <UploadForm
           guaranteePic={initialValue.guaranteePic}
           name={'uploadPic'}
-          label={'自愿责任书'}
+          label={'自愿责任书图片'}
           required={true}
         />
 

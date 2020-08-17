@@ -53,11 +53,12 @@ const config: IConfig = {
         },
         {
           path: '/enroll/showEnroll/:matchId',
-          component: './Enroll/showEnroll/showEnroll.tsx'
+          component: './Enroll/showEnroll/showEnroll.tsx',
         },
         {
-          path: '/enroll/success/:matchId', component: './Enroll/enrollSuccess/enrollSuccess.tsx'
-        }
+          path: '/enroll/success/:matchId',
+          component: './Enroll/enrollSuccess/enrollSuccess.tsx',
+        },
       ],
     },
     {
@@ -94,6 +95,10 @@ const config: IConfig = {
           icon: 'property-safety',
         },
       ],
+    },
+    {
+      path: '/download',
+      routes: [{ path: '/download', component: './Download/staticDownload.tsx', name: '下载' }],
     },
     { path: '/', redirect: '/home' },
   ],

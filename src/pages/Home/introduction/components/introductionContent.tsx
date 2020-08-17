@@ -14,11 +14,11 @@ interface IntroductionContentProps {
 
 function IntroductionContent(props: IntroductionContentProps) {
   const { matchData, loading, imgDom } = props;
-
-  const download_url = matchData.matchannex.filter((v: any) => {
-    return v.name.split('.')[0] === '自愿参赛责任书2019';
-  });
-
+  let download_url = matchData.matchannex[0];
+  // 这里是忘记改了责任书的内容,一个赛事添加了两份责任书,选第二份
+  if (matchData && matchData.id === 23) {
+    download_url = matchData.matchannex[1];
+  }
   const ENROLL_DOM = (
     <h4>
       {matchData.enrollstarttime.slice(0, 10)}至{matchData.enrollendtime.slice(0, 10)}
@@ -42,19 +42,20 @@ function IntroductionContent(props: IntroductionContentProps) {
         <h3>报名时间：</h3>
         {ENROLL_DOM}
         <Button className={styles.download}>
-          <a href={download_url[0]['saveaddress']}>下载参赛自愿责任书</a>
+          <a href={download_url['saveaddress']}>下载参赛自愿责任书</a>
         </Button>
-        {!dayjs(matchData.enrollendtime).isBefore(dayjs()) ? (
+        {!dayjs(matchData.enrollendtime).isBefore(dayjs()) ||
+        dayjs(matchData.enrollendtime).isSame(dayjs(), 'day') ? (
+          <Button loading={loading} type="primary" onClick={handleEnroll}>
+            参加报名
+          </Button>
+        ) : (
           <Button
             type="primary"
             onClick={() => {
               message.warning('现在不是报名时间');
             }}
           >
-            参加报名
-          </Button>
-        ) : (
-          <Button loading={loading} type="primary" onClick={handleEnroll}>
             参加报名
           </Button>
         )}

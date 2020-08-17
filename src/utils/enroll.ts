@@ -1,12 +1,7 @@
 import { qSort, hSearch } from '@/utils/sort';
 import { message } from 'antd';
 import { GroupAgeList } from '@/models/gameListModel';
-import {
-  TeamProjectItem,
-  TeamItem,
-  GroupItem,
-  sexItem,
-} from '@/pages/Enroll/teamData';
+import { TeamProjectItem, TeamItem, GroupItem, sexItem } from '@/pages/Enroll/teamData';
 
 interface SexData {
   openprojectgroup: number;
@@ -156,10 +151,7 @@ export function convertItemData(itemList: Array<ItemData>): any {
 }
 
 // 整合来源于服务区的运动员列表数据 - 将运动员的团体项目也放入个人信息中方便之后的统计于判断
-export function convertAthleteList(
-  athleteList: Array<any>,
-  teamEnrollList: Array<any>,
-): any {
+export function convertAthleteList(athleteList: Array<any>, teamEnrollList: Array<any>): any {
   /* 先注释快排，因为想点击参赛后运动员位置不变 */
   // qSort(athleteList,0,athleteList.length - 1,'player');
   // 遍历所有队伍
@@ -167,28 +159,19 @@ export function convertAthleteList(
     // 遍历队伍成员
     for (let k: number = teamEnrollList[i].teammember.length - 1; k >= 0; k--) {
       let index: number = -1;
-      index = hSearch(
-        athleteList,
-        'player',
-        teamEnrollList[i].teammember[k].player,
-      );
+      // @ts-ignore
+      index = hSearch(athleteList, 'player', teamEnrollList[i].teammember[k].player);
       if (index) {
         athleteList[index].project.teamproject = [];
         const birthday = athleteList[index].athlete.birthday.substr(0, 10);
         // 在运动员信息中加入teamproject
         // console.log(teamEnrollList[i]);
-        for (
-          let j: number = teamEnrollList[i].groupprojectenroll.length - 1;
-          j >= 0;
-          j--
-        ) {
+        for (let j: number = teamEnrollList[i].groupprojectenroll.length - 1; j >= 0; j--) {
           athleteList[index].project.teamproject.push({
             ...teamEnrollList[i].groupprojectenroll[j],
             isUpGroup: !(
-              birthday <=
-                teamEnrollList[i].groupprojectenroll[j].endtime.substr(0, 10) &&
-              birthday >=
-                teamEnrollList[i].groupprojectenroll[j].starttime.substr(0, 10)
+              birthday <= teamEnrollList[i].groupprojectenroll[j].endtime.substr(0, 10) &&
+              birthday >= teamEnrollList[i].groupprojectenroll[j].starttime.substr(0, 10)
             ),
           });
         }
@@ -205,11 +188,7 @@ export function convertAthleteList(
  * value 寻找值
  * keyName 键值名
  * */
-export function getListByKey(
-  obj: Array<any>,
-  value: any,
-  keyName: string,
-): any {
+export function getListByKey(obj: Array<any>, value: any, keyName: string): any {
   for (let i: number = obj.length - 1; i >= 0; i--) {
     if (obj[i][keyName] === value) {
       return obj[i];
@@ -233,13 +212,14 @@ export function getGroupsByAge(
 ) {
   qSort(groupList, 0, groupList.length - 1, 'startTime');
   /* 这里预设年龄组别不做排序了，后台设置时必须从大到小排序设置，即青成->少年->儿童 A B C */
+  // console.log(birthday);
+  // console.log(groupList);
+  // console.log(upGroupNumber);
+  // console.log(group_age_list);
   let index = -1;
   let j = 0;
   for (j; j < group_age_list.length; j++) {
-    if (
-      birthday >= group_age_list[j].starttime &&
-      birthday <= group_age_list[j].endtime
-    ) {
+    if (birthday >= group_age_list[j].starttime && birthday <= group_age_list[j].endtime) {
       if (j === 0) {
         index = 0;
       } else {
@@ -260,8 +240,32 @@ export function getGroupsByAge(
       // 无组可升
       return groupList.slice(0, 1);
     } else {
-      // 将可升组别与原组别返回
-      return groupList.slice(index, index + 1 + upGroupNumber);
+      /* 如果groupList的长度 小于 groupAgeList 的长度，证明这个项目没有全部的年龄组别 */
+      if (groupList.length < group_age_list.length) {
+        // 先通过原index在groupAgeList的组别匹配出groupList相应的index2
+        const group_name = group_age_list[index].cn_name; // 儿童C组
+        let n = 0;
+        for (n; n < groupList.length; n++) {
+          if (groupList[n].name === group_name) {
+            break;
+          }
+        }
+        // 如果升的组比如少年C组，不在原项目组别比如只有儿童组时
+        if (n === groupList.length) {
+          // 找是否有符合本身年龄段的组别
+          for (let k = 0; k < groupList.length; k++) {
+            if (groupList[k].startTime <= birthday && groupList[k].endTime >= birthday) {
+              return groupList.slice(k, upGroupNumber);
+            }
+          }
+          return [];
+        } else {
+          return groupList.slice(n, n + 1 + upGroupNumber);
+        }
+      } else {
+        // 将可升组别与原组别返回
+        return groupList.slice(index, index + 1 + upGroupNumber);
+      }
     }
   }
 }
@@ -311,8 +315,9 @@ export function legalAthleteFilter(athleteList: Array<any>, rule: FilterRule) {
   /**
    * 这里针对轮滑球来做固定的限制，青年组升成年组，不需要业余等级证
    */
-  const { itemName, startTime } = rule;
-
+  const { itemName, startTime, endTime } = rule;
+  // console.log(athleteList);
+  // console.log(rule);
   // 整理 将 已报项目数量整理处理
   // 整理时 如果有project内的升组或未升组的项目的长度不为零，则设置外面的itemNumber upGroupItemNumber，否则设为0
   // 这里多加了判断是否是淘汰赛的规则
@@ -325,9 +330,7 @@ export function legalAthleteFilter(athleteList: Array<any>, rule: FilterRule) {
     }
     m.itemNumber = sum;
     m.upGroupItemNumber =
-      m.project.upgrouppersonaldata.length !== 0
-        ? m.project.upgrouppersonaldata.length
-        : 0;
+      m.project.upgrouppersonaldata.length !== 0 ? m.project.upgrouppersonaldata.length : 0;
     m.groupFlag = false;
   });
   const { sexType } = rule;
@@ -345,16 +348,12 @@ export function legalAthleteFilter(athleteList: Array<any>, rule: FilterRule) {
     // sexType = 4  =》 至少要有一男一女
     // 在本函数的最后处理了
   }
-  // 2 个人限报数量
-  const { itemLimitation } = rule;
-  if (itemLimitation !== 0) {
+  // 2 个人限报数量 isIncludeEnrollLimitation是否计入个人项目
+  const { itemLimitation, isIncludeEnrollLimitation } = rule;
+  if (itemLimitation !== 0 && isIncludeEnrollLimitation) {
     athleteList = athleteList.filter((v: any) => {
-      return (
-        v.itemNumber + v.upGroupItemNumber + v.teamname.length < itemLimitation
-      );
+      return v.itemNumber + v.upGroupItemNumber + v.teamname.length < itemLimitation;
     });
-  } else {
-    console.log('itemLimitation is 0');
   }
   // 3是否已报本项目
   if (itemName !== '' && itemName) {
@@ -373,6 +372,7 @@ export function legalAthleteFilter(athleteList: Array<any>, rule: FilterRule) {
   } else {
     console.log('itemName is lost');
   }
+  // console.log(athleteList);
   /*============================== 4 升组逻辑判断 ==============================*/
   /*
    *  1）判别运动员组别是否高于开设项目组别 - 使用生日判别 ->2）
@@ -385,8 +385,10 @@ export function legalAthleteFilter(athleteList: Array<any>, rule: FilterRule) {
    * */
   // 1
   athleteList = athleteList.filter(
-    (v: any) => v.athlete.birthday.substr(0, 10) >= startTime,
+    (v: any) =>
+      v.athlete.birthday.substr(0, 10) >= startTime && v.athlete.birthday.substr(0, 10) <= endTime,
   );
+  // console.log(athleteList);
   // 2
   const { upGroupNumber, groupList } = rule;
   if (!rule.isCrossGroup) {
@@ -405,11 +407,7 @@ export function legalAthleteFilter(athleteList: Array<any>, rule: FilterRule) {
         }
       }
       /** 单排轮滑球的特例需求，青年组升组到成年组不需要证书 */
-      if (
-        itemName === '单排轮滑球' &&
-        startTime == '1960-01-01' &&
-        index !== -1
-      ) {
+      if (itemName === '单排轮滑球' && startTime == '1960-01-01' && index !== -1) {
         if (index + upGroupNumber > groupList.length) {
           // 向下取组到底部 全取
           tarGroupList = groupList.slice(index, groupList.length - 1);
@@ -430,9 +428,9 @@ export function legalAthleteFilter(athleteList: Array<any>, rule: FilterRule) {
           tarGroupList = groupList.slice(index, groupList.length - 1);
         } else {
           if (index === 0) {
-            tarGroupList = groupList.slice(index, index + upGroupNumber);
+            tarGroupList = groupList.slice(index, index + upGroupNumber + 1);
           } else {
-            tarGroupList = groupList.slice(index - 1, index + upGroupNumber);
+            tarGroupList = groupList.slice(index, index + upGroupNumber + 1);
           }
         }
         // if( itemName === "单排轮滑球" && tarGroupList[0] )
@@ -538,10 +536,7 @@ export function selectTeam(
   return teamProjects;
 }
 // 原理同上面的函数
-function selectGroup(
-  groups: GroupItem[],
-  teamProjects: TeamProjectItem[] = [],
-): TeamProjectItem[] {
+function selectGroup(groups: GroupItem[], teamProjects: TeamProjectItem[] = []): TeamProjectItem[] {
   for (let i = 0; i < groups.length; i++) {
     let tempTeamProject: TeamProjectItem = {
       itemId: 0,
@@ -556,10 +551,7 @@ function selectGroup(
   return teamProjects;
 }
 // 原理同上面的函数
-function selectSex(
-  sexData: sexItem[],
-  teamProjects: TeamProjectItem[] = [],
-): TeamProjectItem[] {
+function selectSex(sexData: sexItem[], teamProjects: TeamProjectItem[] = []): TeamProjectItem[] {
   for (let i = 0; i < sexData.length; i++) {
     let tempTeamProject: TeamProjectItem = {
       itemId: 0,
