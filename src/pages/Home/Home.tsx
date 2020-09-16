@@ -30,6 +30,7 @@ const new_homePicArr: string[] = [
 ];
 // 赛事图
 const small_new_homePicArr: string[] = [
+  'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/WechatIMG3604.png',
   'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/WechatIMG3586.jpeg',
   'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/WechatIMG178.jpeg',
   'http://cos.gsta.top/2020shaoguanyaoqing.jpeg',
@@ -74,6 +75,8 @@ function Home(props: HomeProps) {
     setCurrentMenu(e.key);
     if (e.key === 'home') {
       router.push('/home');
+    } else if (e.key === 'train') {
+      router.push('/home/train');
     } else {
       router.push('/home/temp');
     }
@@ -184,7 +187,7 @@ function Home(props: HomeProps) {
             <CrownOutlined />
             赛事
           </Menu.Item>
-          <Menu.Item key={'practice'}>
+          <Menu.Item key={'train'}>
             <ProjectOutlined />
             培训
           </Menu.Item>

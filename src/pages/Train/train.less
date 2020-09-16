@@ -1,0 +1,51 @@
+.download {
+  display: block;
+  padding: 0% 3%;
+  background-color: #ffffff;
+  height: 75vh;
+
+  .header {
+    display: flex;
+  }
+
+  .list {
+    margin-top: 3%;
+  }
+}
+
+.logo {
+  margin: 5px 0;
+  padding: 4px;
+  height: auto;
+  line-height: 30px;
+  @media screen and (max-width: 667px) {
+    > div {
+      display: inline-block;
+      width: 153px;
+
+      img {
+        width: 30px;
+        height: auto;
+      }
+    }
+  }
+  @media screen and (min-width: 667px) {
+    > div {
+      display: inline-block;
+      width: 200px;
+      img {
+        width: 30px;
+        height: auto;
+      }
+    }
+  }
+}
+
+.footer {
+  padding: 30px;
+  background-color: white;
+  text-align: center;
+  font-size: 12px;
+  color: #999999;
+  height: 100%;
+}

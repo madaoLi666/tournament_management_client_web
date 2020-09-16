@@ -14,6 +14,8 @@ const h21 = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/html/21.
 const h22 = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/html/22.html';
 const h23 = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/html/23.html';
 const h24 = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/html/24.html';
+// const h25 = require('../../assets/25.html');
+const h25 = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/html/25.html';
 
 interface Props {
   index: any;
@@ -36,6 +38,8 @@ export default function StaticHtmlPage(props: Props) {
     r = h23;
   } else if (index === 24) {
     r = h24;
+  } else if (index === 25) {
+    r = h25;
   }
   return (
     <div>
