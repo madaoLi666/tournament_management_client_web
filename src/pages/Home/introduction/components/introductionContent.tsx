@@ -19,6 +19,9 @@ function IntroductionContent(props: IntroductionContentProps) {
   if (matchData && matchData.id === 23) {
     download_url = matchData.matchannex[1];
   }
+  if (matchData && matchData.id === 27) {
+    download_url = matchData.matchannex[1];
+  }
   const ENROLL_DOM = (
     <h4>
       {matchData.enrollstarttime.slice(0, 10)}至{matchData.enrollendtime.slice(0, 10)}

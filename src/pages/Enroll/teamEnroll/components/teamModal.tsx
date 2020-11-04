@@ -39,10 +39,12 @@ function TeamModal(props: TeamModalProps, refs: any) {
       title: '选择角色',
       dataIndex: 'role',
       key: 'role',
-      render: (text: any, _: any, index: number) => (
+      render: (text: any, record: any, index: number) => {
+        // console.log(record.unitathlete_id);
+        return(
         <Select
           defaultValue={roleTypeList.length === 0 ? '' : roleTypeList[0].cn_name}
-          onChange={(value: number) => handleRoleTypeSelect(value, index)}
+          onChange={(value: number) => handleRoleTypeSelect(value, record.unitathlete_id)}
         >
           {roleTypeList.length !== 0 ? (
             roleTypeList.map((v: any) => (
@@ -54,13 +56,19 @@ function TeamModal(props: TeamModalProps, refs: any) {
             <Option value={-1}>无数据</Option>
           )}
         </Select>
-      ),
+      )
+      },
     },
   ];
 
-  const handleRoleTypeSelect = (value: number, index: number) => {
+  const handleRoleTypeSelect = (value: number, unitathlete_id: number) => {
+    // console.log(index);
     let tempAthleteList = Object.assign([], legalAthleteList);
-    tempAthleteList[index].role = value;
+    for (let i = 0; i < tempAthleteList.length; i++) {
+      if(tempAthleteList[i].unitathlete_id === unitathlete_id) {
+        tempAthleteList[i].role = value;
+      }
+    }
     setLegalAthleteList(tempAthleteList);
   };
 
@@ -202,7 +210,7 @@ function TeamModal(props: TeamModalProps, refs: any) {
       if (rule.itemName == '单排轮滑球') {
         let sum = 0;
         for (let i = 0; i < player.length; i++) {
-          if (player[i].roletype == 11) {
+          if (player[i].roletype !== 3) {
             sum++;
           }
         }

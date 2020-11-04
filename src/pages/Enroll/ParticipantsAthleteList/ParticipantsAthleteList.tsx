@@ -139,9 +139,22 @@ function ParticipantsAthleteList(props: ParticipantsAthleteListProps) {
           <Button
             loading={loading}
             onClick={() => {
+              // TODO 这里没有限制到接受最少几个人报名
+              if (String(matchId) === '26') {
+                const countActive = athleteList.filter((v: any) => {
+                  return v.active === 1;
+                });
+                if (countActive.length < 5) {
+                  message.warn('不接受个人报名和人数少于5人的运动队报名，请先确认运动员参赛');
+                  return;
+                }
+              }
               if (athleteList?.length === 0) {
-                message.warn('请添加运动员并确认参赛后再进行报名');
+                message.warn('请添加运动员后再进行报名');
                 return;
+              }
+              if (String(matchId) === '27') {
+                message.info('请在此处点击报名添加一名随队裁判！');
               }
               router.push({
                 pathname: '/enroll/individual/' + String(matchId),
@@ -175,7 +188,6 @@ function ParticipantsAthleteList(props: ParticipantsAthleteListProps) {
 const mapStateToProps = ({ enroll, loading, router }: ConnectState) => {
   const teamId = router.location.query.teamId;
   let unit = enroll.unit;
-
   return {
     athleteList: unit?.athleteList,
     matchId: enroll.currentMatchId,

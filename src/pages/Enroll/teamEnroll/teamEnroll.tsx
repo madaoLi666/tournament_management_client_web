@@ -108,7 +108,7 @@ function TeamEnroll(props: TeamEnrollProps) {
     }
     let r: Array<React.ReactNode> = [];
     member.forEach((v: any, index: any) => {
-      console.log(group_ages);
+      // console.log(group_ages);
       r.push(
         <div key={v.player}>
           <span>姓名：{v.athlete.name}</span>&nbsp;&nbsp;|&nbsp;&nbsp;

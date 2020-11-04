@@ -16,6 +16,11 @@ const h23 = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/html/23.
 const h24 = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/html/24.html';
 // const h25 = require('../../assets/25.html');
 const h25 = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/html/25.html';
+const h26 = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/html/26.html';
+const h27 = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/html/27.html';
+const h30 = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/html/30.html';
+const h29 = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/html/29.html';
+const h28 = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/html/28.html';
 
 interface Props {
   index: any;
@@ -40,6 +45,16 @@ export default function StaticHtmlPage(props: Props) {
     r = h24;
   } else if (index === 25) {
     r = h25;
+  } else if (index === 26) {
+    r = h26;
+  } else if (index === 27) {
+    r = h27;
+  } else if (index === 28) {
+    r = h28;
+  } else if (index === 29) {
+    r = h29;
+  } else if (index === 30) {
+    r = h30;
   }
   return (
     <div>
