@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styles from './index.less';
-import { Button, message, Modal, Skeleton } from 'antd';
+import { Button, Input, message, Modal, Skeleton } from 'antd';
 import { Dispatch, connect } from 'dva';
 import { ConnectState } from '@/models/connect';
 import IntroductionFooter from '@/pages/Home/introduction/components/introductionFooter';
 import IntroductionContent from '@/pages/Home/introduction/components/introductionContent';
 import { router } from 'umi';
+import { EditOutlined } from '@ant-design/icons';
 
 interface IntroductionProps {
   dispatch: Dispatch;
@@ -22,6 +23,24 @@ function Introduction(props: IntroductionProps) {
   // 预加载的DOM
   const [img, setImg] = useState('');
   const [isLoad, setLoad] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+  const onSearch = (value: string) => {
+    if (value === '950308') {
+      handleOk();
+      router.push('/enroll/choiceTeam/' + matchData.id);
+    } else {
+      message.error('邀请码错误');
+    }
+  }
 
   // 预加载轮播图图片加载完成后的执行,表明已经加载完成,可以渲染原本内容了
   const onLoad = () => {
@@ -85,7 +104,11 @@ function Introduction(props: IntroductionProps) {
               type: 'enroll/modifyCurrentMatchId',
               payload: { matchId: matchData.id },
             });
-            router.push('/enroll/choiceTeam/' + matchData.id);
+            if (matchData.id === 29) {
+              showModal();
+            }else {
+              router.push('/enroll/choiceTeam/' + matchData.id);
+            }
           } else {
             Modal.warning({
               title: '您的单位暂时报名不了本场赛事',
@@ -118,6 +141,16 @@ function Introduction(props: IntroductionProps) {
           <Skeleton key="skeleton" active />
         )}
         {/*这里是隐藏加载图片,img原本是空字符,等待useEffect中赋值后,这里开始渲染*/}
+        <Modal
+        title=""
+        visible={isModalVisible}
+        footer={null}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>此赛事为邀请赛，请提交邀请码验证参赛！</p>
+        <Input.Search onSearch={onSearch} prefix={<EditOutlined />} enterButton="验证" placeholder="邀请码" />
+      </Modal>
         <IntroductionFooter matchData={matchData} />
         <div className={styles['hidden']}>
           {img === '' ? null : <img src={img} onLoad={onLoad.bind(event)} alt="" />}

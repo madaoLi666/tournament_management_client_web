@@ -30,6 +30,8 @@ const new_homePicArr: string[] = [
 ];
 // 赛事图
 const small_new_homePicArr: string[] = [
+  'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/1204.png',
+  'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/1128.png',
   'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/2020LunHua.jpg',
   'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/2020SuHua.jpg',
   'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/WechatIMG3604.png',
