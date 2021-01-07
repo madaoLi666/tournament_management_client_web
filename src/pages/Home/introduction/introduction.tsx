@@ -24,6 +24,7 @@ function Introduction(props: IntroductionProps) {
   const [img, setImg] = useState('');
   const [isLoad, setLoad] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible2, setIsModalVisible2] = useState(false);
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -33,9 +34,18 @@ function Introduction(props: IntroductionProps) {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+  const showModal2 = () => {
+    setIsModalVisible2(true);
+  };
+  const handleOk2 = () => {
+    setIsModalVisible2(false);
+  };
+  const handleCancel2 = () => {
+    setIsModalVisible2(false);
+  };
   const onSearch = (value: string) => {
     if (value === '950308') {
-      handleOk();
+      handleOk2();
       router.push('/enroll/choiceTeam/' + matchData.id);
     } else {
       message.error('邀请码错误');
@@ -64,6 +74,9 @@ function Introduction(props: IntroductionProps) {
       return;
     }
     setImg(matchData.image);
+    if(matchData.id && matchData.id === 28) {
+      showModal2();
+    }
   }, [history.location, matchData]);
 
   // 报名处理函数
@@ -145,11 +158,20 @@ function Introduction(props: IntroductionProps) {
         title=""
         visible={isModalVisible}
         footer={null}
-        onOk={handleOk}
+        onOk={handleOk2}
         onCancel={handleCancel}
       >
         <p>此赛事为邀请赛，请提交邀请码验证参赛！</p>
         <Input.Search onSearch={onSearch} prefix={<EditOutlined />} enterButton="验证" placeholder="邀请码" />
+      </Modal>
+      <Modal
+        title="比赛延长通知"
+        visible={isModalVisible2}
+        onOk={handleOk2}
+        onCancel={handleCancel2}
+      >
+        <p>各单位：
+原定2020年12月18-20日在惠州市举行的2020年广东省滑板锦标赛，经组委会研究决定，现延期至2021年1月15-17日举行，报名时间顺延至2021年1月8日23：59截止。具体事宜请关注“广省省社会体育网”、“广东省社会体育中心微信公众号”等网络媒介，并互相转告，不便之外，敬请谅解。</p>
       </Modal>
         <IntroductionFooter matchData={matchData} />
         <div className={styles['hidden']}>
