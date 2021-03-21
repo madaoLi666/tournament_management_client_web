@@ -164,7 +164,7 @@ function Introduction(props: IntroductionProps) {
         <p>此赛事为邀请赛，请提交邀请码验证参赛！</p>
         <Input.Search onSearch={onSearch} prefix={<EditOutlined />} enterButton="验证" placeholder="邀请码" />
       </Modal>
-      <Modal
+      {/* <Modal
         title="比赛延长通知"
         visible={isModalVisible2}
         onOk={handleOk2}
@@ -172,7 +172,7 @@ function Introduction(props: IntroductionProps) {
       >
         <p>各单位：
 原定2020年12月18-20日在惠州市举行的2020年广东省滑板锦标赛，经组委会研究决定，现延期至2021年1月15-17日举行，报名时间顺延至2021年1月8日23：59截止。具体事宜请关注“广省省社会体育网”、“广东省社会体育中心微信公众号”等网络媒介，并互相转告，不便之外，敬请谅解。</p>
-      </Modal>
+      </Modal> */}
         <IntroductionFooter matchData={matchData} />
         <div className={styles['hidden']}>
           {img === '' ? null : <img src={img} onLoad={onLoad.bind(event)} alt="" />}

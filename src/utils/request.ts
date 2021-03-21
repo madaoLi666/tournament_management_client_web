@@ -17,6 +17,8 @@ let axiosInstance = axios.create({
       message.warning('登录过期，请重新登录账号');
       window.localStorage.clear();
       router.push('/login');
+      // 刷新缓存
+      location.reload();
       return false;
     }
     if (status < 200 || status > 301) {

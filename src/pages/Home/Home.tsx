@@ -27,6 +27,7 @@ const new_homePicArr: string[] = [
   'http://cos.gsta.top/1.jpg',
   'http://cos.gsta.top/2.jpg',
   'http://cos.gsta.top/3.jpg',
+  // 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/Home/2.jpg'
 ];
 // 赛事图
 const small_new_homePicArr: string[] = [
@@ -91,7 +92,7 @@ function Home(props: HomeProps) {
     if (homeImgArr.length === new_homePicArr.length) {
       const tempDom = new_homePicArr.map((v: string) => (
         <div className={styles['carousel-item']} key={v.slice(-13, -5)}>
-          <img src={v} alt="" />
+          <img src={v} alt=""/>
         </div>
       ));
       setCarouselDom(tempDom);
@@ -207,7 +208,7 @@ function Home(props: HomeProps) {
       </div>
       {/* 走马灯 */}
       <div>
-        <Carousel autoplay={true} afterChange={() => {}} className={styles.carousel}>
+        <Carousel autoplay={true} className={styles.carousel}>
           {carouselDOM}
         </Carousel>
       </div>

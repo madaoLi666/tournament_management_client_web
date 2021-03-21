@@ -2,6 +2,14 @@ import React from 'react';
 import { Cascader, Form, Input } from 'antd';
 import { CascaderOptionType } from 'antd/lib/cascader';
 
+/** object如下
+ * residence: {
+ *   city: { 
+ *     area
+ *   }
+ * } 
+ */
+
 const RESIDENCE_DATA = require('../../assets/residence.json');
 
 /*

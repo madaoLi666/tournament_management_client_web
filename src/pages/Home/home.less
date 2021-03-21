@@ -6,14 +6,10 @@
   .carousel {
     margin-top: 1rem;
     display: block;
-    text-align: center;
     background-color: #ffffff;
     // 这里图片大小的设置需要注意一下
     .carousel-item {
-      height: auto;
       display: block;
-      align-items: center;
-      justify-content: center;
       @media screen and (max-width: 667px) {
         img {
           margin: 0 auto;
@@ -26,35 +22,35 @@
         img {
           margin: 0 auto;
           display: block;
-          width: 80%;
-          height: 520px;
+          width: 100%;
+          height: 60vh;
+          background-size: cover;
         }
       }
     }
   }
   // 赛事列表
   .match-block {
-    margin-top: 40px;
     h3 {
       color: #2a82e4;
       text-align: center;
       margin: 20px auto;
     }
     .match-list {
-      margin-top: 20px;
       text-align: center;
     }
   }
 
   .game-list-block {
     border: 1px solid #eeeeee;
-    box-shadow: 1px 1px 5px #000000;
+    // box-shadow: 1px 1px 5px #000000;
+    box-shadow: 3px 3px 6px -3px rgba(0, 0, 0, 0.5);
     padding: 10px;
     text-align: left;
     font-size: 12px;
     margin: 10px 0;
     .img-block {
-      height: auto;
+      height: 28vh;
       img:hover {
         cursor: pointer;
       }
@@ -86,18 +82,12 @@
           height: 30px;
           font-size: 100%;
           border-radius: 0.2em;
-          box-shadow: 3px 3px 6px -3px rgba(0, 0, 0, 0.5);
+          // box-shadow: 3px 3px 6px -3px rgba(0, 0, 0, 0.5);
           box-sizing: border-box;
           float: right;
           margin-right: 0.1rem;
           span {
             display: grid;
-          }
-          @media screen and (max-width: 667px) {
-            display: inline-block;
-          }
-          @media screen and (min-width: 667px) {
-            display: inline-block;
           }
         }
       }
