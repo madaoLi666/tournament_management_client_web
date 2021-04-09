@@ -5,7 +5,7 @@ import FooterMsg from '@/components/Footer/FooterMsg';
 
 const { Header, Content, Footer } = Layout;
 
-const logo = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/logo.png';
+const logo = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/logo2.png';
 
 export default function LoginLayout(props: any) {
   const { children } = props;

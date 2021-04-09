@@ -7,7 +7,8 @@ import { message, Button } from 'antd';
 import { Link, router } from 'umi';
 import AvatarDropDown from '@/pages/Home/components/avatarDropDown';
 
-const logo = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/logo.png';
+// const logo = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/logo.png';
+const logo = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/logo2.png';
 
 interface PersonLayoutProps {
   dispatch: Dispatch;

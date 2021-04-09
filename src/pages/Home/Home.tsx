@@ -24,10 +24,8 @@ const adjustCol: ColProps = {
 
 // 轮播图
 const new_homePicArr: string[] = [
-  'http://cos.gsta.top/1.jpg',
-  'http://cos.gsta.top/2.jpg',
-  'http://cos.gsta.top/3.jpg',
-  // 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/Home/2.jpg'
+  'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/1.jpg',
+  'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/2.jpg',
 ];
 // 赛事图
 const small_new_homePicArr: string[] = [
@@ -38,11 +36,11 @@ const small_new_homePicArr: string[] = [
   'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/WechatIMG3604.png',
   'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/WechatIMG3586.jpeg',
   'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/WechatIMG178.jpeg',
-  'http://cos.gsta.top/2020shaoguanyaoqing.jpeg',
-  'http://cos.gsta.top/zhiyoushi-1.png',
-  'http://cos.gsta.top/ziyoushi.jpeg',
-  'http://cos.gsta.top/lunhuaqiu.jpeg',
-  'http://cos.gsta.top/sudulunhua.jpeg',
+  'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/2020shaoguanyaoqing.jpeg',
+  'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/zhiyoushi-1.png',
+  'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/ziyoushi.jpeg',
+  'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/lunhuaqiu.jpeg',
+  'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/sudulunhua.jpeg',
 ];
 
 interface HomeProps {
@@ -92,7 +90,7 @@ function Home(props: HomeProps) {
     if (homeImgArr.length === new_homePicArr.length) {
       const tempDom = new_homePicArr.map((v: string) => (
         <div className={styles['carousel-item']} key={v.slice(-13, -5)}>
-          <img src={v} alt=""/>
+          <img style={{ backgroundImage: `url(${v})` }} src={v} alt="" />
         </div>
       ));
       setCarouselDom(tempDom);

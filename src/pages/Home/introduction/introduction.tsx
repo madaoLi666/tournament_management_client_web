@@ -50,7 +50,7 @@ function Introduction(props: IntroductionProps) {
     } else {
       message.error('邀请码错误');
     }
-  }
+  };
 
   // 预加载轮播图图片加载完成后的执行,表明已经加载完成,可以渲染原本内容了
   const onLoad = () => {
@@ -74,7 +74,7 @@ function Introduction(props: IntroductionProps) {
       return;
     }
     setImg(matchData.image);
-    if(matchData.id && matchData.id === 28) {
+    if (matchData.id && matchData.id === 28) {
       showModal2();
     }
   }, [history.location, matchData]);
@@ -119,7 +119,7 @@ function Introduction(props: IntroductionProps) {
             });
             if (matchData.id === 29) {
               showModal();
-            }else {
+            } else {
               router.push('/enroll/choiceTeam/' + matchData.id);
             }
           } else {
@@ -155,16 +155,21 @@ function Introduction(props: IntroductionProps) {
         )}
         {/*这里是隐藏加载图片,img原本是空字符,等待useEffect中赋值后,这里开始渲染*/}
         <Modal
-        title=""
-        visible={isModalVisible}
-        footer={null}
-        onOk={handleOk2}
-        onCancel={handleCancel}
-      >
-        <p>此赛事为邀请赛，请提交邀请码验证参赛！</p>
-        <Input.Search onSearch={onSearch} prefix={<EditOutlined />} enterButton="验证" placeholder="邀请码" />
-      </Modal>
-      {/* <Modal
+          title=""
+          visible={isModalVisible}
+          footer={null}
+          onOk={handleOk2}
+          onCancel={handleCancel}
+        >
+          <p>此赛事为邀请赛，请提交邀请码验证参赛！</p>
+          <Input.Search
+            onSearch={onSearch}
+            prefix={<EditOutlined />}
+            enterButton="验证"
+            placeholder="邀请码"
+          />
+        </Modal>
+        {/* <Modal
         title="比赛延长通知"
         visible={isModalVisible2}
         onOk={handleOk2}
@@ -198,13 +203,17 @@ export default connect(({ gameList, enroll, user, router }: ConnectState) => {
     if (index !== -1) {
       // 这边要暂时写死，因为需要修改数据库中的图片路径才行
       if (list[index].id === 12) {
-        list[index].image = 'http://cos.gsta.top/sudulunhua.jpeg';
+        list[index].image =
+          'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/sudulunhua.jpeg';
       } else if (list[index].id === 13) {
-        list[index].image = 'http://cos.gsta.top/lunhuaqiu.jpeg';
+        list[index].image =
+          'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/lunhuaqiu.jpeg';
       } else if (list[index].id === 14) {
-        list[index].image = 'http://cos.gsta.top/ziyoushi.jpeg';
+        list[index].image =
+          'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/ziyoushi.jpeg';
       } else if (list[index].id === 21) {
-        list[index].image = 'http://cos.gsta.top/zhiyoushi-1.png';
+        list[index].image =
+          'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/zhiyoushi-1.png';
       }
       matchData = list[index];
     }

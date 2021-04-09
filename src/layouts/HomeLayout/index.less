@@ -6,24 +6,26 @@
       background: linear-gradient(#58a3f7, #6633ff);
       line-height: 40px;
     }
-
     @media screen and (max-width: 576px) {
       .ant-layout-header {
         padding: 0 1.5rem;
       }
     }
+    .ant-layout-content {
+      min-height: 75vh;
+    }
   }
   .content {
     background-color: white;
-    // box-shadow: 3px 3px 6px -3px rgba(0, 0, 0, 0.5);
-    // box-shadow: 4px 0 5px -5px rgb(0 0 0 / 5%), -4px 0 5px -5px rgb(0 0 0 / 5%);
-    // box-shadow: 0 2px 4px 0 rgb(0 0 0 / 5%);
+    box-shadow: 5px 0 3px -6px black,
+    -5px 0 3px -6px black;
+    border: 1px rgba(0,0,0,10%) solid;
     @media screen and (max-width: 576px) {
       padding: 0 0.5rem;
     }
     @media screen and (min-width: 576px) {
       max-width: 80vw;
-      margin: 0 auto;
+      margin: 0.6em auto;
       padding: 0 1rem;
       // .homeContent {
       //   margin-top: 1.5rem;

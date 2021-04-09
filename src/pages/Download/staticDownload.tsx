@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import styles from './index.less';
-import { getHomePic } from '@/services/gameListService.ts';
+import { getHomePic } from '@/services/gameListService';
 import { List, PageHeader, Typography } from 'antd';
 
 const p = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/p.png';
@@ -66,7 +66,10 @@ function StaticDownload() {
   const logo: React.ReactNode = (
     <div className={styles.logo}>
       <div style={{ width: '100%' }}>
-        <img src="http://cos.gsta.top/img/logo.png" alt="" />
+        <img
+          src="https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/logo2.png"
+          alt=""
+        />
         <span>
           <b style={{ marginLeft: 5 }}>轮滑赛事辅助系统</b>
         </span>
@@ -79,7 +82,7 @@ function StaticDownload() {
   const [files_1102, setFiles_1102] = React.useState([]);
   const [files_0705, setFiles_0705] = React.useState([]);
   useEffect(() => {
-    getHomePic().then(data => {
+    getHomePic().then((data: any) => {
       if (data) {
         setFiles(data.filter((m: any) => m.id >= 16 && m.id <= 19).map((v: any) => v.file));
         setFiles_1102(data.filter((m: any) => m.id >= 20 && m.id <= 23).map((v: any) => v.file));

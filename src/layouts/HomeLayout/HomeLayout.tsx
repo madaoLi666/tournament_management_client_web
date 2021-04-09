@@ -28,7 +28,7 @@ function HomeLayout(props: HomeLayoutProps) {
   }, []);
 
   return (
-    <Layout className={styles.homeLayout}>
+    <Layout style={{ backgroundColor: 'white' }} className={styles.homeLayout}>
       <HeaderMsg />
 
       <Content className={styles.content}>
