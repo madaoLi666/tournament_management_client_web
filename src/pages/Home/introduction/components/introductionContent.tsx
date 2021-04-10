@@ -47,7 +47,7 @@ function IntroductionContent(props: IntroductionContentProps) {
         <Button className={styles.download}>
           <a href={download_url['saveaddress']}>下载参赛自愿责任书</a>
         </Button>
-        {!dayjs(matchData.enrollendtime).isBefore(dayjs()) ||
+        {dayjs(matchData.enrollendtime).isBefore(dayjs()) ||
         dayjs(matchData.enrollendtime).isSame(dayjs(), 'day') ? (
           <Button loading={loading} type="primary" onClick={handleEnroll}>
             参加报名

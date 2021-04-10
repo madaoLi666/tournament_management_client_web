@@ -12,12 +12,7 @@ export function qSort(
   }
 }
 
-function partition(
-  arr: Array<any>,
-  l: number,
-  h: number,
-  keyName: string | undefined,
-) {
+function partition(arr: Array<any>, l: number, h: number, keyName: string | undefined) {
   let temp = -1;
   if (keyName === undefined || keyName === '') {
     let p = arr[l];
@@ -56,15 +51,16 @@ function partition(
   }
 }
 
-// 折半查找
-// 仅使用于可以进行正常大小比较的查找
-// arr 是已经 ！！！升序 排序好的数组
+/* 折半查找，仅适用于可以进行正常大小比较的查找
+ * arr是升序的已经排序好的数组
+ */
 export function hSearch(arr: Array<any>, key: string, value: number | string) {
   let high: number = arr.length - 1,
     low = 0,
     mid = -1;
   if (high !== -1) {
     while (low <= high) {
+      // Math.ceil() 返回大于或等于一个给定数字的最小整数
       mid = Math.ceil((low + high) / 2);
       if (arr[mid][key] === value) {
         return mid;
@@ -75,4 +71,5 @@ export function hSearch(arr: Array<any>, key: string, value: number | string) {
       }
     }
   }
+  return undefined;
 }

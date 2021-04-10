@@ -1,9 +1,7 @@
 import { Reducer } from 'redux';
 import { Effect } from 'dva';
 import { accountdata } from '@/services/loginServices';
-import { isIllegal } from '@/utils/judge';
 import { message } from 'antd';
-import { router } from 'umi';
 import { deletePlayer } from '@/services/athleteServices';
 import { modifyUnitData } from '@/services/unitServices';
 
@@ -104,14 +102,6 @@ const UserModel: UserModelType = {
       if (data) {
         // ===2 代表是单位账号，还要多一项操作是调用获取单位账号下的运动员信息的接口
         if (data.unitaccount === 2) {
-          // if (!isIllegal(1, data, 1)) {
-          //   message.error('此账号存在问题，请联系本公司！');
-          //   window.localStorage.clear();
-          //   router.push('/home');
-          //   if (callback) {
-          //     callback(undefined);
-          //   }
-          // }
           yield put({ type: 'saveUnitAccount', payload: data });
           // 将unitData 设置
           yield put({

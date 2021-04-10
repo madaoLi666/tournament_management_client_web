@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { message } from 'antd';
 import router from 'umi/router';
@@ -17,7 +16,6 @@ let axiosInstance = axios.create({
       message.warning('登录过期，请重新登录账号');
       window.localStorage.clear();
       router.push('/login');
-      // 刷新缓存
       location.reload();
       return false;
     }
@@ -63,9 +61,11 @@ axiosInstance.interceptors.response.use((response: AxiosResponse): any => {
   // 判断data中是否有值
   if (!isIllegal(1, data, 'notice') && !isIllegal(1, data, 'error')) {
     return data.data;
-  } else if (isIllegal(0, data.error)) {
+  }
+  if (isIllegal(0, data.error)) {
     message.error(JSON.stringify(data.error));
-  } else if (isIllegal(0, data.notice)) {
+  }
+  if (isIllegal(0, data.notice)) {
     message.error(JSON.stringify(data.notice));
   }
   return false;

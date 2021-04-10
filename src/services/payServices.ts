@@ -1,4 +1,4 @@
-import axiosInstance from '@/utils/request.ts';
+import axiosInstance from '@/utils/request';
 
 // 都是依照token
 export async function getQRCodeForUnitRegister(data: object): Promise<any> {

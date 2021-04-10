@@ -1,4 +1,4 @@
-import axiosInstance from '@/utils/request.ts';
+import axiosInstance from '@/utils/request';
 
 // 请求发送邮箱验证码
 export async function sendEmailVerificationCode(data: object): Promise<any> {

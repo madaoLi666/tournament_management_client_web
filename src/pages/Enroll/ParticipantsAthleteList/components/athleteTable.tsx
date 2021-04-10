@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from '../index.less';
 import { Table, Button, message } from 'antd';
 import { ColumnProps } from 'antd/lib/table/Column';
@@ -52,6 +52,7 @@ function AthleteTable(props: AthleteTableProps) {
             loading={buttonLoading}
             onClick={event => handle_delete(record, event)}
             size="small"
+            // @ts-ignore
             type="danger"
           >
             取消参赛

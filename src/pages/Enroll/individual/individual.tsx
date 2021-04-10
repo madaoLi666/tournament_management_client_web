@@ -4,7 +4,7 @@ import EnrollHeader from '@/pages/Enroll/components/enrollHeader';
 import IndividualTable from '@/pages/Enroll/individual/components/individualTable';
 import { ConnectState } from '@/models/connect';
 import { connect, Dispatch } from 'dva';
-import { Button, message } from 'antd';
+import { Button } from 'antd';
 import { router } from 'umi';
 
 interface IndividualProps {

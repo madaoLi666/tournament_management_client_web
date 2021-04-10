@@ -28,7 +28,8 @@ function ParticipantsAthleteList(props: ParticipantsAthleteListProps) {
         payload: { matchId, unitId, contestant_id },
       });
     }
-  }, [contestant_id, matchId, contestant_id]);
+    return () => {};
+  }, [contestant_id, matchId, unitId]);
 
   const add_athlete = () => {
     setAddVisible(true);

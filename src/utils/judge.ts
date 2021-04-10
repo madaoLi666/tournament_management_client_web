@@ -1,33 +1,21 @@
 /*
- * 功能
+ * 判断某个value是否是空值或者其内部是否包含空值
  *
- * type - -1
- *   经过所以value判断
  * type - 0
  *   判断value值为基本数据类型，是否为undefined、null、或为""值
  * type - 1  输入value为obj
  *   1）传入单个key即只判断 value[key]
- *   2）传入多个即判断多个 / 如输入 1（number）即判断此对象中所以全部
+ *   2）传入多个key即判断多个
+ *   3) 输入 1 即判断此对象中全部属性
  *   判断value对象中是否存在key值 - 即判断value.key 是否为undefined、null
  * type - 2  输入value为数组
  *   1）判断数组是否为长度是否为0
  *   2）判断数组中是否有undefined、null、或为""值
- *
  * */
 
-export function isIllegal(
-  type: number,
-  value: any,
-  key?: string | Array<string> | 1,
-): boolean {
+export function isIllegal(type: number, value: any, key?: string | Array<string> | 1): boolean {
   let flag: boolean = true;
   switch (type) {
-    case -1:
-      for (let i: number = 0; i <= 2; i++) {
-        flag = isIllegal(i, value, 1);
-        if (!flag) break;
-      }
-      break;
     case 0:
       // 基本类型
       if (Object.prototype.toString.call(value) === '[object Array]') {
@@ -54,10 +42,7 @@ export function isIllegal(
           } else {
             flag = false;
           }
-        } else if (
-          key !== undefined &&
-          Object.prototype.toString.call(key) === '[object Array]'
-        ) {
+        } else if (key !== undefined && Object.prototype.toString.call(key) === '[object Array]') {
           // 判断key数组中的键值
           for (let i: number = key.length - 1; i >= 0; i--) {
             flag = isIllegal(0, value[key[i]]);

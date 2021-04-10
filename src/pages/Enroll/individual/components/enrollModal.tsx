@@ -168,8 +168,7 @@ function EnrollModal(props: EnrollModalProps, refs: any) {
     }
   };
 
-  // 选中组别后 判别
-  /*
+  /* 选中组别后 判别
    * athleteData - 运动员信息
    * groupList - 当前可选组别列表
    * groupId   - 选中组别列表

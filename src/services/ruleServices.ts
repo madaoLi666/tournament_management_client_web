@@ -1,4 +1,4 @@
-import axiosInstance from '@/utils/request.ts';
+import axiosInstance from '@/utils/request';
 
 // 获取参赛条件现在
 export async function getIndividualEnrollLimit(data: object): Promise<any> {

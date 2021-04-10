@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './index.less';
 import { router } from 'umi';
-import { Layout, message } from 'antd';
-import { connect, Dispatch } from 'dva';
+import { Layout } from 'antd';
+import { connect } from 'dva';
 import AvatarDropDown from '@/pages/Home/components/avatarDropDown';
 
 const { Header } = Layout;
@@ -10,29 +10,7 @@ const { Header } = Layout;
 // 广东省轮滑协会logo
 const GDLogo = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/logo2.png';
 
-interface HeaderMsgProps {
-  dispatch: Dispatch;
-}
-
-function HeaderMsg(props: HeaderMsgProps) {
-  const { dispatch } = props;
-  const [token, setToken] = useState(window.localStorage.getItem('TOKEN'));
-
-  const exit = () => {
-    window.localStorage.clear();
-    setToken(null);
-    props.dispatch({
-      type: 'user/clearState',
-      payload: '',
-    });
-    props.dispatch({
-      type: 'enroll/clearState',
-      payload: '',
-    });
-    router.push('/home');
-    message.info('退出登录成功');
-  };
-
+function HeaderMsg() {
   return (
     <Header className={styles.header}>
       <div className={styles.header_left}>

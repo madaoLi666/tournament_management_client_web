@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { Form, message, Modal } from 'antd';
 import AthleteForm from '@/components/athleteForm/athleteForm';
 

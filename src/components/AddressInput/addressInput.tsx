@@ -4,10 +4,10 @@ import { CascaderOptionType } from 'antd/lib/cascader';
 
 /** object如下
  * residence: {
- *   city: { 
+ *   city: {
  *     area
  *   }
- * } 
+ * }
  */
 
 const RESIDENCE_DATA = require('../../assets/residence.json');
@@ -59,7 +59,6 @@ function AddressInput(props: AddressInputProps) {
   const residences = changeResidenceData2Option(RESIDENCE_DATA);
 
   return (
-    // 这个 style 是因为有重复的两个 Item 标签，所以清除一个的 marginBottom
     <Form.Item label="地址" required={!!require} style={{ marginBottom: 0 }}>
       <Input.Group compact>
         <Form.Item

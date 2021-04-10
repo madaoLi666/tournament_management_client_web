@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FormProps } from 'antd/lib/form';
 import { Form, Input } from 'antd';
 import styles from './index.less';
@@ -31,33 +31,22 @@ interface AthleteFormProps {
 function AthleteForm(props: AthleteFormProps) {
   const { isAdd, initialValue, formRef, haveContact } = props;
 
-  // 处理initialValue
-  const mapStateToProps = (initialValue: any): any => {
-    // 报名通道的情况
-    if (initialValue && !haveContact) {
-      const { athlete } = initialValue;
-      const residence = {
-        city: athlete.province !== null ? athlete.province.split('-').slice(0, 3) : [],
-        address: athlete.address !== null ? athlete.address : '',
-      };
-      return {
-        name: athlete.name,
-        idCardType: athlete.idcardtype,
-        identifyNumber: athlete.idcard,
-        sex: athlete.sex,
-        birthday: moment(athlete.birthday),
-        phone: athlete.phonenumber === null ? '' : athlete.phonenumber,
-        email: athlete.email === null ? '' : athlete.email,
-        residence: residence,
-      };
+  useEffect(() => {
+    if (initialValue === undefined) {
+      return;
+    }
+    // 新增运动员
+    if (isAdd) {
+      formRef.current.resetFields();
+      return;
     }
     // 个人中心的情况
-    if (initialValue && haveContact) {
+    if (haveContact) {
       const residence = {
         city: initialValue.province !== null ? initialValue.province.split('-').slice(0, 3) : [],
         address: initialValue.address !== null ? initialValue.address : '',
       };
-      return {
+      const formValue = {
         name: initialValue.name,
         idCardType: initialValue.idcardtype,
         identifyNumber: initialValue.idcard,
@@ -69,17 +58,31 @@ function AthleteForm(props: AthleteFormProps) {
         emergencyContact: initialValue.emergencyContact,
         emergencyContactPhone: initialValue.emergencyContactPhone,
       };
+      formRef.current.setFieldsValue(formValue);
     }
-    return {};
-  };
+    // 报名通道的情况
+    if (!haveContact) {
+      const { athlete } = initialValue;
+      const residence = {
+        city: athlete.province !== null ? athlete.province.split('-').slice(0, 3) : [],
+        address: athlete.address !== null ? athlete.address : '',
+      };
+      const formValue = {
+        name: athlete.name,
+        idCardType: athlete.idcardtype,
+        identifyNumber: athlete.idcard,
+        sex: athlete.sex,
+        birthday: moment(athlete.birthday),
+        phone: athlete.phonenumber === null ? '' : athlete.phonenumber,
+        email: athlete.email === null ? '' : athlete.email,
+        residence: residence,
+      };
+      formRef.current.setFieldsValue(formValue);
+    }
+  }, [formRef, haveContact, initialValue, isAdd]);
 
   return (
-    <Form
-      {...formStyle}
-      ref={formRef}
-      initialValues={mapStateToProps(initialValue)}
-      scrollToFirstError
-    >
+    <Form {...formStyle} ref={formRef} scrollToFirstError>
       <Item label="姓名" name={'name'} rules={[{ required: true, message: '请输入运动员姓名' }]}>
         <Input placeholder="请输入真实姓名" />
       </Item>

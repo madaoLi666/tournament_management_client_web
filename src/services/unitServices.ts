@@ -1,4 +1,4 @@
-import axiosInstance from '@/utils/request.ts';
+import axiosInstance from '@/utils/request';
 
 export async function modifyUnitData(data: object): Promise<any> {
   return axiosInstance.post('/basicunitdata/', data);

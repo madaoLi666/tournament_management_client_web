@@ -41,22 +41,22 @@ function TeamModal(props: TeamModalProps, refs: any) {
       key: 'role',
       render: (text: any, record: any, index: number) => {
         // console.log(record.unitathlete_id);
-        return(
-        <Select
-          defaultValue={roleTypeList.length === 0 ? '' : roleTypeList[0].cn_name}
-          onChange={(value: number) => handleRoleTypeSelect(value, record.unitathlete_id)}
-        >
-          {roleTypeList.length !== 0 ? (
-            roleTypeList.map((v: any) => (
-              <Option value={v.id} key={v.id}>
-                {v['cn_name']}
-              </Option>
-            ))
-          ) : (
-            <Option value={-1}>无数据</Option>
-          )}
-        </Select>
-      )
+        return (
+          <Select
+            defaultValue={roleTypeList.length === 0 ? '' : roleTypeList[0].cn_name}
+            onChange={(value: number) => handleRoleTypeSelect(value, record.unitathlete_id)}
+          >
+            {roleTypeList.length !== 0 ? (
+              roleTypeList.map((v: any) => (
+                <Option value={v.id} key={v.id}>
+                  {v['cn_name']}
+                </Option>
+              ))
+            ) : (
+              <Option value={-1}>无数据</Option>
+            )}
+          </Select>
+        );
       },
     },
   ];
@@ -65,7 +65,7 @@ function TeamModal(props: TeamModalProps, refs: any) {
     // console.log(index);
     let tempAthleteList = Object.assign([], legalAthleteList);
     for (let i = 0; i < tempAthleteList.length; i++) {
-      if(tempAthleteList[i].unitathlete_id === unitathlete_id) {
+      if (tempAthleteList[i].unitathlete_id === unitathlete_id) {
         tempAthleteList[i].role = value;
       }
     }
@@ -206,7 +206,7 @@ function TeamModal(props: TeamModalProps, refs: any) {
           console.log('[teamModal]sexType = 6');
         }
       }
-      // 这里给轮滑球一个写死先，因为赛事设置中并没有设置，轮滑球项目中，必须要有两名守门员
+      // 这里轮滑球特殊处理，因为赛事设置中并没有设置，轮滑球项目中，必须要有两名守门员
       if (rule.itemName == '单排轮滑球') {
         let sum = 0;
         for (let i = 0; i < player.length; i++) {
@@ -248,7 +248,6 @@ function TeamModal(props: TeamModalProps, refs: any) {
         rowSelection={rowSelection}
         size={'small'}
         rowKey={(record: any) => {
-          // console.log(record);
           return record.unitathlete_id;
         }}
       />

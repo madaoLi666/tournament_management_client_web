@@ -68,8 +68,8 @@ interface ItemData {
   matchbaseproject: number;
   matchcompetitiontype: number;
   matchdata: number;
-  // 总人数限制
-  number: 999;
+  // 总人数限制，一般是999
+  number: number;
   roletype: object;
   // group
   openprojectgroup: Array<GroupData>;
@@ -150,7 +150,7 @@ export function convertItemData(itemList: Array<ItemData>): any {
   return { iI, tI };
 }
 
-// 整合来源于服务区的运动员列表数据 - 将运动员的团体项目也放入个人信息中方便之后的统计于判断
+// 整合来自服务器的运动员列表数据 - 将运动员的团体项目也放入个人信息中方便之后的统计于判断
 export function convertAthleteList(athleteList: Array<any>, teamEnrollList: Array<any>): any {
   /* 先注释快排，因为想点击参赛后运动员位置不变 */
   // qSort(athleteList,0,athleteList.length - 1,'player');
@@ -158,8 +158,7 @@ export function convertAthleteList(athleteList: Array<any>, teamEnrollList: Arra
   for (let i: number = teamEnrollList.length - 1; i >= 0; i--) {
     // 遍历队伍成员
     for (let k: number = teamEnrollList[i].teammember.length - 1; k >= 0; k--) {
-      let index: number = -1;
-      // @ts-ignore
+      let index: number | undefined = -1;
       index = hSearch(athleteList, 'player', teamEnrollList[i].teammember[k].player);
       if (index) {
         athleteList[index].project.teamproject = [];
@@ -182,23 +181,21 @@ export function convertAthleteList(athleteList: Array<any>, teamEnrollList: Arra
   // athleteList.reverse();
 }
 
-// 获取列表方式
-/*
- * obj 需要获取的数组对象
+/* 查找数组的某个特定项
+ * arr 需要获取的数组对象
  * value 寻找值
  * keyName 键值名
  * */
-export function getListByKey(obj: Array<any>, value: any, keyName: string): any {
-  for (let i: number = obj.length - 1; i >= 0; i--) {
-    if (obj[i][keyName] === value) {
-      return obj[i];
+export function getListByKey(arr: Array<any>, value: any, keyName: string): any {
+  for (let i: number = arr.length - 1; i >= 0; i--) {
+    if (arr[i][keyName] === value) {
+      return arr[i];
     }
   }
   return false;
 }
 
-// 根据运动员 年龄信息 获取适合组别
-/*
+/* 根据运动员 年龄信息 获取适合组别
  * birthday 出生年月日
  * groupList 组别列表
  * upGroupNumber 可升组数量 输出应该不upGroupNumber 多出1项 ,
@@ -270,8 +267,7 @@ export function getGroupsByAge(
   }
 }
 
-// 根据 性别 获取适合的性别组别
-/*
+/* 根据 性别 获取适合的性别组别
  * sex 性别string
  * sexList
  * */
@@ -339,14 +335,14 @@ export function legalAthleteFilter(athleteList: Array<any>, rule: FilterRule) {
    *  3、是否已有本团体项目的报名
    *  4、依照 是否可跨组参赛/是否可以升组/组别列表 判断是否合法
    * */
-  // 1 性别判断
+
+  /* 1 性别判断
+   * sexType = 4  =》 至少要有一男一女,在本函数的最后处理了;
+   */
   if (sexType === 1) {
     athleteList = athleteList.filter((v: any) => v.athlete.sex === '男');
   } else if (sexType === 2) {
     athleteList = athleteList.filter((v: any) => v.athlete.sex === '女');
-  } else if (sexType === 4) {
-    // sexType = 4  =》 至少要有一男一女
-    // 在本函数的最后处理了
   }
   // 2 个人限报数量 isIncludeEnrollLimitation是否计入个人项目
   const { itemLimitation, isIncludeEnrollLimitation } = rule;
@@ -378,25 +374,26 @@ export function legalAthleteFilter(athleteList: Array<any>, rule: FilterRule) {
    *  1）判别运动员组别是否高于开设项目组别 - 使用生日判别 ->2）
    *  2）是否可以跨组参赛   否->3） 是->6）
    *  3）是否有已报项目     否->4)  是->5）
-   *  4）向下取组 -> null
-   *  5）根据已报项目得到组别，检查合法性 -> null
+   *  4）向下取组
+   *  5）根据已报项目得到组别，检查合法性
    *  6）根据groupList取判别原本组别，并获取可报组别列表 ->7）
-   *  7）判别开设组别是否被其列表包含 -> null
+   *  7）判别开设组别是否被其列表包含
    * */
-  // 1
+
+  /********* 1 *********/
   athleteList = athleteList.filter(
     (v: any) =>
       v.athlete.birthday.substr(0, 10) >= startTime && v.athlete.birthday.substr(0, 10) <= endTime,
   );
-  // console.log(athleteList);
-  // 2
+
+  /********* 2 *********/
   const { upGroupNumber, groupList } = rule;
   if (!rule.isCrossGroup) {
     // 不可以跨组
     for (let i = athleteList.length - 1; i >= 0; i--) {
-      // 3
+      /********* 3 *********/
       // if(athleteList[i].itemNumber === 0 && athleteList[i].upGroupItemNumber === 0) {
-      // 4
+      /********* 4 *********/
       // 以组别列表筛选出适合的
       let index = -1,
         tarGroupList;
@@ -433,7 +430,6 @@ export function legalAthleteFilter(athleteList: Array<any>, rule: FilterRule) {
             tarGroupList = groupList.slice(index, index + upGroupNumber + 1);
           }
         }
-        // if( itemName === "单排轮滑球" && tarGroupList[0] )
         tarGroupList.forEach((v: any) => {
           if (
             v.startTime <= athleteList[i].athlete.birthday.substr(0, 10) &&
@@ -448,12 +444,11 @@ export function legalAthleteFilter(athleteList: Array<any>, rule: FilterRule) {
       //   // 这里是，已经报了一个项目（包括团体加个人）的
       //   // 在 personaldata 和 upgouppersonaldata 中 仅仅会用一个有值
       //   let cGroup;
-      //   console.log(123);
       // }
     }
   } else if (rule.isCrossGroup) {
-    //  可以跨组参赛  不需要理会是否有报名项目， 只需要向下取出groupList判别合法即可
-    // 6  与 4 判断相同
+    // 可以跨组参赛  不需要理会是否有报名项目,只需要向下取出groupList判别合法即可
+    // 6 与 4 判断相同
     // 以组别列表筛选出适合的
     for (let i = athleteList.length - 1; i >= 0; i--) {
       let index = -1,
@@ -465,7 +460,6 @@ export function legalAthleteFilter(athleteList: Array<any>, rule: FilterRule) {
         }
       }
       if (index !== -1) {
-        // 这个位置可能有bug
         if (index + upGroupNumber > groupList.length) {
           // 向下取组到底部 全取
           tarGroupList = groupList.slice(index, groupList.length - 1);
@@ -486,7 +480,7 @@ export function legalAthleteFilter(athleteList: Array<any>, rule: FilterRule) {
     console.log('isCrossGroup is illegal');
   }
 
-  // 这里等筛选好人再做SexType = 4 的判断
+  // 这里等筛选好人再做SexType = 4 的判断，比较准确
   let my_athlete_list: any[] = athleteList.filter((v: any) => v.groupFlag);
   if (rule.sexType === 4) {
     let man_flag: boolean = false;
@@ -507,19 +501,13 @@ export function legalAthleteFilter(athleteList: Array<any>, rule: FilterRule) {
   return my_athlete_list;
 }
 
-// 判断报名人员性别是否符合要求
-/*
- * athlete
- * */
-
-/** 团队报名使用，下面的三个函数其实都是类似的，只不过由于每种数据的属性名不同而分开
+/** 团队报名使用，下面的三个函数都是类似的，只不过由于每种数据的属性名不同而分开
  * 通过团队项目数组匹配出选择器需要的格式数组,即由 itemId,itemName,items组成
  */
 export function selectTeam(
   teams: TeamItem[],
   teamProjects: TeamProjectItem[] = [],
 ): TeamProjectItem[] {
-  // console.log(teams);
   // 遍历数组，然后每个都push进去
   for (let i = 0; i < teams.length; i++) {
     // 先创建一个临时对象

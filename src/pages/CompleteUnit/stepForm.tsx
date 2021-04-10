@@ -39,10 +39,6 @@ function StepForm(props: StepFormProps) {
       title: '完善基本信息',
       content: <IndividualMessage setCurrent={childSetCurrent} />,
     },
-    // {
-    //   title: '选择您的身份',
-    //   content: <SetRole />,
-    // },
     {
       title: '完善单位信息',
       content: <UnitMessage history={history} setCurrent={childSetCurrent} />,

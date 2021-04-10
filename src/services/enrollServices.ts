@@ -1,4 +1,4 @@
-import axiosInstance from '@/utils/request.ts';
+import axiosInstance from '@/utils/request';
 
 // 参赛单位
 // 修改 或 创建

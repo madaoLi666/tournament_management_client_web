@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styles from '../index.less';
 import { connect, Dispatch } from 'dva';
 import LoginBlock from '@/components/LoginBlock/loginBlock';
@@ -6,7 +6,6 @@ import { Button, Form, Input, message, Tabs } from 'antd';
 import IdForm from '@/components/athleteForm/components/idForm';
 import moment from 'dayjs';
 import { ConnectState } from '@/models/connect';
-import { router } from 'umi';
 
 const { Item } = Form;
 const { TabPane } = Tabs;
@@ -74,13 +73,7 @@ function IndividualMessage(props: IndividualMessageProps) {
     <LoginBlock>
       <Tabs>
         <TabPane tab={<div>基本信息</div>} key="1">
-          <Form
-            // initialValues={userData}
-            onFinish={onFinish}
-            ref={formRef}
-            {...BasicInfoSupplementStyle}
-            labelAlign="right"
-          >
+          <Form onFinish={onFinish} ref={formRef} {...BasicInfoSupplementStyle} labelAlign="right">
             <Item label="姓名" name="name" rules={[{ required: true, message: '请输入真实姓名' }]}>
               <Input placeholder={'请输入您的真实姓名'} />
             </Item>
@@ -97,7 +90,6 @@ function IndividualMessage(props: IndividualMessageProps) {
 
 const mapStateToProps = ({ user, loading }: ConnectState) => {
   // user.id != 0代表一次请求都没发过，即没有登录
-  // console.log(loading);
   if (user.id !== 0 && user.athleteData && user.athleteData[0].id) {
     return {
       userId: user.id,

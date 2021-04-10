@@ -275,6 +275,7 @@ function TeamEnroll(props: TeamEnrollProps) {
             <Cascader
               fieldNames={{ label: 'itemName', value: 'itemId', children: 'items' }}
               options={teamEnrollData}
+              // @ts-ignore
               onChange={clickItem}
               placeholder="开设新队伍"
               className={styles.select}
