@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import styles from './index.less';
 import { message, Steps } from 'antd';
 import IndividualMessage from '@/pages/CompleteUnit/IndividualMessage/individualMessage';
 import { connect, Dispatch } from 'dva';
 import { ConnectState } from '@/models/connect';
 import { router } from 'umi';
-import SetRole from '@/pages/CompleteUnit/SetRole/setRole';
 import UnitMessage from '@/pages/CompleteUnit/UnitMessage/unitMessage';
 import CompleteResult from '@/pages/CompleteUnit/components/completeResult';
+import { useChangeCurrent, useCurrent } from './context/StepContext';
 
 const { Step } = Steps;
 
@@ -21,27 +21,19 @@ interface StepFormProps {
 
 function StepForm(props: StepFormProps) {
   const { history, dispatch, loading, userData, unitData } = props;
-  const [current, setCurrent] = useState(0);
-
-  // 子组件调用 setCurrent
-  const childSetCurrent = (type: number) => {
-    console.log(type);
-    if (type !== undefined) {
-      setCurrent(type);
-    } else {
-      console.error('type is undefined!');
-    }
-  };
+  // const [current, setCurrent] = useState(0);
+  const current = useCurrent();
+  const changeCurrent = useChangeCurrent();
 
   // 步骤选项
   const steps = [
     {
       title: '完善基本信息',
-      content: <IndividualMessage setCurrent={childSetCurrent} />,
+      content: <IndividualMessage />,
     },
     {
       title: '完善单位信息',
-      content: <UnitMessage history={history} setCurrent={childSetCurrent} />,
+      content: <UnitMessage history={history} />,
     },
     {
       title: '完成',
@@ -49,13 +41,16 @@ function StepForm(props: StepFormProps) {
     },
   ];
   useEffect(() => {
+    if (!dispatch || !history) {
+      return;
+    }
     const currentStep = history.location.query.type;
     const route = history.location.pathname;
     if (route === '/complete' && (isNaN(currentStep) || currentStep < 0 || currentStep > 2)) {
       message.error('请检查页面地址是否正确!');
       return;
     }
-    // 要加个 !loading，表示数据已经加载完毕
+    // 要加个 loading，表示数据已经加载完毕
     if (!loading) {
       if (!userData.length || userData.length === 0) {
         router.push({
@@ -64,7 +59,7 @@ function StepForm(props: StepFormProps) {
             type: 0,
           },
         });
-        setCurrent(0);
+        changeCurrent(0);
       } else if (!unitData.length || unitData.length === 0) {
         router.push({
           pathname: '/complete',
@@ -72,7 +67,7 @@ function StepForm(props: StepFormProps) {
             type: 1,
           },
         });
-        setCurrent(1);
+        changeCurrent(1);
       } else {
         router.push({
           pathname: '/complete',
@@ -80,22 +75,16 @@ function StepForm(props: StepFormProps) {
             type: 2,
           },
         });
-        setCurrent(2);
+        changeCurrent(2);
       }
+
       // 收起左侧栏
       dispatch({
         type: 'global/changeLayoutCollapsed',
         payload: true,
       });
     }
-  }, [
-    // history.location.pathname,
-    // dispatch,
-    // history.location.query.type,
-    loading,
-    unitData,
-    userData,
-  ]);
+  }, [loading, unitData, userData]);
 
   return (
     <div className={styles.main}>
@@ -110,7 +99,6 @@ function StepForm(props: StepFormProps) {
 }
 
 const mapStateToProps = ({ user, loading }: ConnectState) => {
-  // console.log(user);
   return {
     loading: loading.global,
     unitData: user.unitData,

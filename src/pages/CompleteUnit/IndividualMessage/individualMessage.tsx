@@ -36,11 +36,11 @@ interface IndividualMessageProps {
   userId?: number;
   loading?: boolean;
   userData?: any;
-  setCurrent(type: number): void;
+  // setCurrent(type: number): void;
 }
 
 function IndividualMessage(props: IndividualMessageProps) {
-  const { dispatch, userId, loading, userData, setCurrent } = props;
+  const { dispatch, userId, loading, userData } = props;
   const formRef = useRef<any>({});
 
   const onFinish = (value: any) => {

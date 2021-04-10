@@ -10,10 +10,10 @@
     "@ant-design/icons": "^4.0.2",
     "@ant-design/pro-layout": "^5.0.6",
     "@umijs/hooks": "^1.8.0",
-    "antd": "^4.0.3",
+    "antd": "4.15.0",
     "axios": "^0.19.2",
     "dayjs": "^1.8.20",
-    "dva": "^2.6.0-beta.6",
+    "dva": "2.6.0-beta.22",
     "react": "16.12.0",
     "react-dom": "16.12.0"
   },

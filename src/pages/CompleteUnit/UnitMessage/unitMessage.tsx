@@ -11,6 +11,7 @@ import { ConnectState } from '@/models/connect';
 import { checkUnitIsPay, getQRCodeForUnitRegister } from '@/services/payServices';
 import { router } from 'umi';
 import useToggle from '@/components/hooks/useToggle';
+import { useChangeCurrent } from '../context/StepContext';
 
 const { TabPane } = Tabs;
 const { Item } = Form;
@@ -21,7 +22,7 @@ interface UnitMessageProps {
   userId?: number;
   unitId?: number;
   history: any;
-  setCurrent(type: number): void;
+  // setCurrent(type: number): void;
 }
 
 const BasicInfoSupplementStyle = {
@@ -45,10 +46,11 @@ const BasicInfoSupplementStyle = {
 };
 
 function UnitMessage(props: UnitMessageProps) {
-  const { dispatch, userId, setCurrent } = props;
+  const { dispatch, userId } = props;
   const [validStatus, setValidStatus] = useState<
     '' | 'error' | 'success' | 'warning' | 'validating'
   >('');
+  const changeCurrent = useChangeCurrent();
 
   // modal的visible
   const [visible, setVisible] = useState(false);
@@ -124,7 +126,6 @@ function UnitMessage(props: UnitMessageProps) {
           toggle();
         },
       });
-      // setCurrent(2);
     }
   }
 

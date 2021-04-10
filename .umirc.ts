@@ -68,7 +68,7 @@ const config: IConfig = {
     {
       path: '/complete',
       Routes: ['./src/layouts/PersonLayout/PersonLayout.tsx'],
-      routes: [{ path: '/complete', component: './CompleteUnit/stepForm.tsx' }],
+      routes: [{ path: '/complete', component: './CompleteUnit/CompleteUnit.tsx' }],
     },
     {
       path: '/user',

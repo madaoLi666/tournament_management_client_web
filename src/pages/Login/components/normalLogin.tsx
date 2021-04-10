@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useReducer } from 'react';
 import { Tabs, Input, Button, message } from 'antd';
 import styles from './index.less';
 import { UserOutlined, LockOutlined, MobileOutlined } from '@ant-design/icons';
@@ -6,105 +6,136 @@ import { Dispatch, connect } from 'dva';
 import { checkPhoneNumber } from '@/utils/regulars';
 import { ConnectState } from '@/models/connect';
 import { router } from 'umi';
+const { TabPane } = Tabs;
 
-// 登陆的信息类型，统一来包括用户名跟密码或者是手机号跟验证码
-interface LoginMsg {
+interface LoginState {
+  /* loginType
+   * 'password' - 以账号名称/手机号码/邮箱登陆 + 密码 登陆
+   * 'phone' - 以手机验证码方式登入
+   */
+  loginType: string;
   username: string;
   password: string;
 }
-
-const { TabPane } = Tabs;
 
 interface NormalLoginProps {
   dispatch: Dispatch;
   loading?: boolean;
 }
 
+const ACTIONS = {
+  SET_LOGIN_TYPE: 'setLoginType',
+  SET_LOGIN_MESSAGE: 'setLoginMessage',
+};
+
+function reducer(state: LoginState, action: any) {
+  switch (action.type) {
+    case ACTIONS.SET_LOGIN_MESSAGE:
+      return {
+        ...state,
+        username: action.payload.username,
+        password: action.payload.password,
+      };
+    case ACTIONS.SET_LOGIN_TYPE:
+      return {
+        ...state,
+        loginType: action.payload,
+      };
+    default:
+      return state;
+  }
+}
+
 function NormalLogin(props: NormalLoginProps) {
   const { dispatch, loading } = props;
-  /*
-   * 'password' - 以账号名称/手机号码/邮箱登陆 + 密码 登陆
-   * 'phone' - 以手机验证码方式登入
-   */
-  const [loginType, setLoginType] = useState('password');
 
-  // 用户输入的登录信息
-  const [loginMsg, setLoginMsg] = useState<LoginMsg>({
+  const [loginState, loginDispatch] = useReducer(reducer, {
+    loginType: 'password',
     username: '',
     password: '',
   });
 
   const [timeInterval, setTimeInterval] = useState(0);
 
-  // 切换tabs时触发的函数
+  // 切换tabs触发的函数
   function handleTabChange(key: string) {
-    setLoginType(key);
+    loginDispatch({ type: ACTIONS.SET_LOGIN_TYPE, payload: key });
     // 切换时清空输入
-    setLoginMsg({ username: '', password: '' });
+    loginDispatch({ type: ACTIONS.SET_LOGIN_MESSAGE, payload: { username: '', password: '' } });
   }
 
-  // 点击登录时触发的函数
+  // 登录触发的函数
   function login() {
-    if (loginType === 'password') {
-      if (loginMsg.username === '' || loginMsg.username === undefined) {
+    if (loginState.loginType === 'password') {
+      if (loginState.username === '' || loginState.username === undefined) {
         message.warning('请填写用户名！');
         return;
       }
-      if (loginMsg.password === '' || loginMsg.password === undefined) {
+      if (loginState.password === '' || loginState.password === undefined) {
         message.warning('请填写密码！');
         return;
       }
-    } else if (loginType === 'phone') {
-      if (loginMsg.username === '' || loginMsg.username === undefined) {
+    }
+    if (loginState.loginType === 'phone') {
+      if (loginState.username === '' || loginState.username === undefined) {
         message.warning('请填写手机号！');
         return;
       }
-      if (loginMsg.password === '' || loginMsg.password === undefined) {
+      if (loginState.password === '' || loginState.password === undefined) {
         message.warning('请填写验证码！');
         return;
       }
-      if (!checkPhoneNumber.test(loginMsg.username)) {
+      if (!checkPhoneNumber.test(loginState.username)) {
         message.warning('请输入正确的手机号码！');
         return;
       }
-    } else {
+    }
+    if (loginState.loginType !== 'password' && loginState.loginType !== 'phone') {
       console.error('[normalLogin] loginMsg is undefined!');
       message.error('[normalLogin] loginMsg is undefined!');
+      return;
     }
-    dispatch({ type: 'login/sendLoginRequest', payload: loginMsg });
+    dispatch({
+      type: 'login/sendLoginRequest',
+      payload: {
+        username: loginState.username,
+        password: loginState.password,
+      },
+    });
   }
 
-  // 发送验证码操作 类型不定
+  // 发送验证码,用一个ref保存定时器,方便在useEffect中清除
+  const intervalRef = useRef<any>();
   function sendCode() {
     // 60秒可发送一次
-    const timeInterval: number = 60000;
-    if (checkPhoneNumber.test(loginMsg.username)) {
-      props.dispatch({
+    const timeInterval = 60000;
+    if (checkPhoneNumber.test(loginState.username)) {
+      dispatch({
         type: 'login/sendPhoneNumberForCode',
         payload: {
-          phonenumber: loginMsg.username,
+          phonenumber: loginState.username,
         },
       });
-      // 设置state中
       setTimeInterval(timeInterval);
       // 计时 用于防止用户多次发送验证码
-      let i = setInterval(() => {
+      intervalRef.current = setInterval(() => {
         setTimeInterval(timeInterval => {
           if (timeInterval === 0) {
-            clearInterval(i);
+            clearInterval(intervalRef.current);
             return 0;
           }
           return timeInterval - 1000;
         });
       }, 1000);
-    } else {
+    }
+    if (!checkPhoneNumber.test(loginState.username)) {
       message.warning('请输入正确的手机号码');
     }
   }
 
   useEffect(() => {
     return () => {
-      clearInterval();
+      clearInterval(intervalRef.current);
     };
   }, []);
 
@@ -114,11 +145,14 @@ function NormalLogin(props: NormalLoginProps) {
         <TabPane tab="密码登录" key="password">
           <div className={styles['form-input-block']}>
             <Input
-              value={loginMsg.username}
+              value={loginState.username}
               onChange={event =>
-                setLoginMsg({
-                  username: event.currentTarget.value,
-                  password: loginMsg.password,
+                loginDispatch({
+                  type: ACTIONS.SET_LOGIN_MESSAGE,
+                  payload: {
+                    username: event.currentTarget.value,
+                    password: loginState.password,
+                  },
                 })
               }
               placeholder="请输入账号/手机号码/电子邮箱"
@@ -126,11 +160,14 @@ function NormalLogin(props: NormalLoginProps) {
               autoComplete="off"
             />
             <Input.Password
-              value={loginMsg.password}
+              value={loginState.password}
               onChange={event =>
-                setLoginMsg({
-                  username: loginMsg.username,
-                  password: event.currentTarget.value,
+                loginDispatch({
+                  type: ACTIONS.SET_LOGIN_MESSAGE,
+                  payload: {
+                    username: loginState.username,
+                    password: event.currentTarget.value,
+                  },
                 })
               }
               onKeyDown={(event: React.KeyboardEvent<any>) => {
@@ -152,22 +189,21 @@ function NormalLogin(props: NormalLoginProps) {
             <Input.Group compact={true}>
               <Input
                 id="phoneNumber"
-                value={loginMsg.username}
+                value={loginState.username}
                 onChange={event =>
-                  setLoginMsg({
-                    username: event.currentTarget.value,
-                    password: loginMsg.password,
+                  loginDispatch({
+                    type: ACTIONS.SET_LOGIN_MESSAGE,
+                    payload: {
+                      username: event.currentTarget.value,
+                      password: loginState.password,
+                    },
                   })
                 }
                 placeholder="请输入手机号码"
                 prefix={<MobileOutlined />}
                 autoComplete="off"
               />
-              <Button
-                type="primary"
-                onClick={sendCode}
-                disabled={timeInterval !== 0}
-              >
+              <Button type="primary" onClick={sendCode} disabled={timeInterval !== 0}>
                 {timeInterval === 0 ? (
                   <span>发送验证码</span>
                 ) : (
@@ -176,11 +212,14 @@ function NormalLogin(props: NormalLoginProps) {
               </Button>
             </Input.Group>
             <Input
-              value={loginMsg.password}
+              value={loginState.password}
               onChange={event =>
-                setLoginMsg({
-                  username: loginMsg.username,
-                  password: event.currentTarget.value,
+                loginDispatch({
+                  type: ACTIONS.SET_LOGIN_MESSAGE,
+                  payload: {
+                    username: loginState.username,
+                    password: event.currentTarget.value,
+                  },
                 })
               }
               onKeyDown={(event: React.KeyboardEvent<any>) => {

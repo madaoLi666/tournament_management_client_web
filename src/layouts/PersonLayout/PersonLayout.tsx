@@ -3,11 +3,10 @@ import styles from './index.less';
 import { ConnectState } from '@/models/connect';
 import { connect, Dispatch } from 'dva';
 import { BasicLayout, MenuDataItem } from '@ant-design/pro-layout';
-import { message, Button } from 'antd';
+import { message } from 'antd';
 import { Link, router } from 'umi';
 import AvatarDropDown from '@/pages/Home/components/avatarDropDown';
 
-// const logo = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/logo.png';
 const logo = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/logo2.png';
 
 interface PersonLayoutProps {
@@ -65,17 +64,17 @@ function PersonLayout(props: PersonLayoutProps) {
   const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] => {
     menuList.map(item => {
       let localItem: {
-        [p: string]: any;
-        hideInMenu?: boolean;
-        path?: string;
-        children: MenuDataItem[];
         authority?: string[] | string;
-        icon?: React.ReactNode;
-        name?: string;
-        parentKeys?: string[];
+        children?: MenuDataItem[];
         hideChildrenInMenu?: boolean;
-        locale?: string;
+        hideInMenu?: boolean;
+        icon?: React.ReactNode;
+        locale?: string | false;
+        name?: string;
         key?: string;
+        path?: string;
+        [key: string]: any;
+        parentKeys?: string[];
       };
       localItem = {
         ...item,
@@ -112,15 +111,6 @@ function PersonLayout(props: PersonLayoutProps) {
         // @ts-ignore
         return <Link to={menuItemProps.path}>{defaultDom}</Link>;
       }}
-      breadcrumbRender={(routers = []) => {
-        return [
-          {
-            path: '/',
-            breadcrumbName: '个人中心',
-          },
-          ...routers,
-        ];
-      }}
       itemRender={(route, params, routes, paths) => {
         const first = routes.indexOf(route) === 0;
         return first ? <span>{route.breadcrumbName}</span> : <span>{route.breadcrumbName}</span>;
@@ -129,17 +119,6 @@ function PersonLayout(props: PersonLayoutProps) {
       rightContentRender={rightProps => (
         <div className={styles.rightProps}>
           <AvatarDropDown color={'person'} />
-          {/* <Button type="link" onClick={signout}>
-            退出账号
-          </Button>
-          <Button
-            type="link"
-            onClick={() => {
-              router.push('/home');
-            }}
-          >
-            返回主页
-          </Button> */}
         </div>
       )}
       {...props}
