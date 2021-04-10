@@ -140,7 +140,7 @@ function ParticipantsAthleteList(props: ParticipantsAthleteListProps) {
           <Button
             loading={loading}
             onClick={() => {
-              // TODO 这里没有限制到接受最少几个人报名
+              // 这里没有限制到接受最少几个人报名
               if (String(matchId) === '26') {
                 const countActive = athleteList.filter((v: any) => {
                   return v.active === 1;

@@ -3,7 +3,6 @@ import styles from '../home.less';
 import { connect } from 'dva';
 import { ConnectState, ConnectProps } from '@/models/connect';
 import { Menu, message, Dropdown, Avatar } from 'antd';
-import { ClickParam } from 'antd/lib/menu';
 import { UserOutlined, LogoutOutlined, HomeOutlined } from '@ant-design/icons';
 import { router } from 'umi';
 
@@ -33,7 +32,7 @@ function AvatarDropDown(props: AvatarDropDownProps) {
     message.info('退出登录成功');
   };
 
-  const onMenuClick = (event: ClickParam) => {
+  const onMenuClick = (event: any) => {
     const { key } = event;
     if (key === 'center') {
       router.push('/user/list');

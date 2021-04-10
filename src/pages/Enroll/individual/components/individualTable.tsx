@@ -174,7 +174,9 @@ function IndividualTable(props: IndividualTableProps) {
         dataSource={enrollAthleteList}
         columns={tableColumns}
         size={'small'}
-        rowKey={record => record.id}
+        rowKey={record => {
+          return record.unitathlete_id;
+        }}
         scroll={{ x: 980 }}
       />
       <EnrollModal

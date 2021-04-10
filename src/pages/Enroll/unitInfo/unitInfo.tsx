@@ -60,11 +60,6 @@ function UnitInfo(props: UnitInfoProps) {
             coach2Phone: data.coachtwophonenumber,
             guaranteePic: data.dutybook,
           };
-          // 修改unitData
-          dispatch({
-            type: 'enroll/modifyUnitData',
-            payload: { unitData: uD },
-          });
           router.push({
             pathname: '/enroll/participants/' + String(matchId),
             query: {

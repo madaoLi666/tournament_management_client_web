@@ -267,7 +267,6 @@ function AthleteTable(props: AthleteTableProps) {
         setLoading(false);
       });
   };
-
   return (
     <>
       <Table

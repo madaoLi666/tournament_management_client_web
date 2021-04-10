@@ -287,7 +287,6 @@ function TeamEnroll(props: TeamEnrollProps) {
           columns={showTableColumns}
           expandedRowRender={renderExpandedRow}
           rowKey={(record: any) => {
-            // console.log(record);
             return record.id;
           }}
           size={'small'}

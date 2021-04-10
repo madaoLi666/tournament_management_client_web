@@ -12,11 +12,6 @@ interface TeamListProps {
 
 function TeamList(props: TeamListProps) {
   const { loading, unitData, currentMatchId } = props;
-  /********************* 分页选项 ********************/
-  const paginationProps = {
-    pageSize: 5,
-    total: unitData.length,
-  };
   /********************* 队伍列表主体 ********************/
   const ListContent = ({ data: { status } }: { data: EnrollTeamData }) => (
     <div className={styles.badge}>
@@ -43,7 +38,6 @@ function TeamList(props: TeamListProps) {
       size="large"
       rowKey="id"
       loading={loading}
-      // pagination={paginationProps}
       dataSource={unitData}
       renderItem={item => (
         <List.Item

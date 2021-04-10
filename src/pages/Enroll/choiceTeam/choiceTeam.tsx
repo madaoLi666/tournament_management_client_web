@@ -7,7 +7,6 @@ import { ConnectState } from '@/models/connect';
 import { router } from 'umi';
 import TeamList from '@/pages/Enroll/choiceTeam/components/teamList';
 import { PlusCircleOutlined } from '@ant-design/icons/lib';
-import FormBuilder from '@/components/FormBuilder/Form';
 import _ from 'lodash';
 
 interface ChoiceTeamProps {
@@ -75,10 +74,12 @@ function ChoiceTeam(props: ChoiceTeamProps) {
 }
 
 const mapStateToProps = ({ loading, enroll, unit, gameList }: ConnectState) => {
-  let unitData: any = [];
+  let unitData: EnrollTeamData[] = [];
   if (enroll.unit) {
     unitData = enroll.unit.unitData;
   }
+
+  // console.log(unitData);
 
   return {
     loading: loading.global,
