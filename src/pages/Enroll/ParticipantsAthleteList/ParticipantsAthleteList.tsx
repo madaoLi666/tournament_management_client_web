@@ -22,7 +22,7 @@ function ParticipantsAthleteList(props: ParticipantsAthleteListProps) {
   const { matchId, unitId, dispatch, athleteList, contestant_id, loading } = props;
 
   useEffect(() => {
-    if (matchId && unitId && contestant_id) {
+    if (matchId && unitId && contestant_id && matchId > 0) {
       dispatch({
         type: 'enroll/checkIsEnrollAndGetAthleteLIST',
         payload: { matchId, unitId, contestant_id },

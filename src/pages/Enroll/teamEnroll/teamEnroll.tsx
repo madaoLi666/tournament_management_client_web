@@ -37,7 +37,7 @@ function TeamEnroll(props: TeamEnrollProps) {
 
   const [tableLoading, setTableLoading] = useState(false);
   useEffect(() => {
-    if (matchId && unitId) {
+    if (matchId && unitId && Number(matchId) > 0) {
       dispatch({
         type: 'enroll/checkIsEnrollAndGetAthleteLIST',
         payload: { matchId, unitId, contestant_id },
