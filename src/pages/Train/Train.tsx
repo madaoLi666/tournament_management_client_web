@@ -2,8 +2,10 @@ import { getHomePic } from '@/services/gameListService';
 import { List, PageHeader, Typography } from 'antd';
 import { connect } from 'dva';
 import React, { useState, useEffect } from 'react';
-import styles from './train.less';
+import AmateurlevelSearch from '@/pages/AmateurLevel/AmateurLevelSearch';
+
 import { router } from 'umi';
+import styles from './train.less';
 
 const data_0913 = [
   {
@@ -65,7 +67,8 @@ function Train() {
           title="返回主页"
         />
       </header>
-      <List
+      <AmateurlevelSearch/>
+      {/* <List
         header={
           <div style={{ textAlign: 'center' }}>
             <strong>关于举办《广东省轮滑技术水平等级测试（20201024期）》的通知</strong>
@@ -99,7 +102,7 @@ function Train() {
             {item.title}
           </List.Item>
         )}
-      />
+      /> */}
     </div>
   );
 }
