@@ -24,13 +24,13 @@ const AmateurlevelSearchForm = (props: AmateurlevelSearchFormProps): JSX.Element
     const { submit } = props;
     if(idcard){
       submit({
-        "idcard": btoa(idcard)
+        "idcard": idcard
       })
       setIdCard('')
     }
     if(serialNumber){
       submit({
-        "serial_number": btoa(serialNumber)
+        "serial_number": serialNumber
       })
       setSerialNumber('')
     }
