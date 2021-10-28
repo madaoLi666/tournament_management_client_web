@@ -24,13 +24,15 @@ const AmateurlevelSearchForm = (props: AmateurlevelSearchFormProps): JSX.Element
     const { submit } = props;
     if(idcard){
       submit({
-        "idcard": idcard
+        "idcard": btoa(idcard)
       })
+      setIdCard('')
     }
     if(serialNumber){
       submit({
-        "serial_number": serialNumber
+        "serial_number": btoa(serialNumber)
       })
+      setSerialNumber('')
     }
   }
 
@@ -44,6 +46,7 @@ const AmateurlevelSearchForm = (props: AmateurlevelSearchFormProps): JSX.Element
           disabled={!!serialNumber}
         />
       </div>
+      <b>或</b>
       <div>
         <Input 
           placeholder="请输入考评编号"

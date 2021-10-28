@@ -9,6 +9,9 @@ function AmateurLevelSearch(){
   const [data, setData] = useState([])
 
   const search = (reqData: any) => {
+    for(let key in reqData){
+      reqData[key] = btoa(reqData[key])
+    }
     amateurlevelRawScoreSearch(reqData).then((res: any) => {
       setData(res)
     })
@@ -16,6 +19,7 @@ function AmateurLevelSearch(){
 
   return (
     <div className={styles['amateur-level-search']}>
+      <p>广东省轮滑技术水平等级测试 - 评定查询平台</p>
       <AmateurlevelSearchForm submit={search}/>
       <AmateurLevelSearchTable data={data}/>
     </div>
