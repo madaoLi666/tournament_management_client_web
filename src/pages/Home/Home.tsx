@@ -105,9 +105,8 @@ function Home(props: HomeProps) {
     if (gameList === undefined) {
       return;
     }
-    // console.log(gameList);
     // 如果加载完全了，即图片数相等，然后push进去
-    if (matchImgArr.length === small_new_homePicArr.length) {
+    // if (matchImgArr.length === small_new_homePicArr.length) {
       let tempGameListDom: React.ReactNode[] = [];
       gameList.forEach((v: any, index: any) => {
         tempGameListDom.push(
@@ -115,7 +114,7 @@ function Home(props: HomeProps) {
             <div className={styles['game-list-block']}>
               <div className={styles['img-block']}>
                 <img
-                  src={small_new_homePicArr[index]}
+                  src={v?.image}
                   onClick={() => router.push(`/home/introduction?name=${encodeURI(v.name)}`)}
                   alt=""
                 />
@@ -161,21 +160,22 @@ function Home(props: HomeProps) {
       });
       setGameListDom(tempGameListDom);
       // 还没有加载完全图片时，返回加载中
-    } else {
-      let tempGameListDom: React.ReactNode[] = [];
-      gameList.forEach((v: any, index: any) => {
-        tempGameListDom.push(
-          <Col key={v.id} {...adjustCol}>
-            <div className={styles['game-list-block']}>
-              <div className={styles['img-block']}>
-                <Skeleton key="skeleton" active />
-              </div>
-            </div>
-          </Col>,
-        );
-      });
-      setGameListDom(tempGameListDom);
-    }
+    // } 
+    // else {
+    //   let tempGameListDom: React.ReactNode[] = [];
+    //   gameList.forEach((v: any, index: any) => {
+    //     tempGameListDom.push(
+    //       <Col key={v.id} {...adjustCol}>
+    //         <div className={styles['game-list-block']}>
+    //           <div className={styles['img-block']}>
+    //             <Skeleton key="skeleton" active />
+    //           </div>
+    //         </div>
+    //       </Col>,
+    //     );
+    //   });
+    //   setGameListDom(tempGameListDom);
+    // }
   }, [gameList, gameListDOM.length, matchImgArr]);
 
   return (
@@ -222,9 +222,6 @@ function Home(props: HomeProps) {
       <div className={styles['hidden']}>
         {new_homePicArr.map((item, i) => (
           <img src={item} onLoad={onLoad.bind(event, item)} key={i} alt="" />
-        ))}
-        {small_new_homePicArr.map((item, i) => (
-          <img src={item} onLoad={onLoadMatch.bind(event, item)} key={i} alt="" />
         ))}
       </div>
     </div>
