@@ -45,6 +45,8 @@ const BasicInfoSupplementStyle = {
   colon: true,
 };
 
+var intervalForCheckingPay: any;
+
 function UnitMessage(props: UnitMessageProps) {
   const { dispatch, userId } = props;
   const [validStatus, setValidStatus] = useState<
@@ -91,20 +93,30 @@ function UnitMessage(props: UnitMessageProps) {
 
     // 打开modal展示图片同时进行轮询
     setVisible(true);
-    let i = setInterval(() => {
+    intervalForCheckingPay = setInterval(() => {
       checkoutIsPay().then(res => {
         if (res) {
           // 如果支付了 先关闭模态框
           setVisible(false);
-          clearInterval(i);
+          clearInterval(intervalForCheckingPay);
           dispatch({ type: 'complete/registerUnitAccount', payload: { unitData: unitData } });
         }
       });
     }, 2000);
   };
 
-  async function onFinish(data: any) {
+  // 关闭模态框
+  const handleModalCancel = () => {
+    setVisible(false);
+    clearInterval(intervalForCheckingPay);
+    toggle();
+  }
+
+  const onFinish = async  (data: any) => {
     // 发起请求检查是否支付了费用
+    if(validStatus !== "success"){
+      return;
+    }
     toggle();
     let isPay = await checkoutIsPay().then(res => res);
     if (!isPay) {
@@ -257,9 +269,7 @@ function UnitMessage(props: UnitMessageProps) {
         visible={visible}
         style={{ textAlign: 'center' }}
         footer={null}
-        onCancel={() => {
-          setVisible(false);
-        }}
+        onCancel={handleModalCancel}
       >
         <div>
           <img src={picUrl} alt="" />
