@@ -91,18 +91,7 @@ function StaticDownload(props: any) {
     if(downloadFileList) {
       return;
     }
-    getHomePic().then(data => {
-      if(!data) {
-        console.error('文件获取失败');
-        return;
-      }
-      dispatch({
-        type: "download/modifyDownloadFileList",
-        payload: {
-          downloadFileList: data
-        }
-      })
-    });
+    dispatch({ type: "download/getDownloadFileList" })
   }, []);
 
   useEffect(() => {

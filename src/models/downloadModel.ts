@@ -1,5 +1,6 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
+import { getHomePic } from '@/services/gameListService';
 
 interface DownLoadModelState {
   downloadFileList: null | Array<{
@@ -13,7 +14,7 @@ export interface DownLoadModelType {
   namespace: "download",
   state: DownLoadModelState,
   effects: {
-
+    getDownloadFileList: Effect
   },
   reducers: {
     modifyDownloadFileList: Reducer<DownLoadModelState>
@@ -26,7 +27,20 @@ const DownLoadModel: DownLoadModelType = {
     downloadFileList: null
   },
   effects: {
-
+    *getDownloadFileList( _action, { put }) {
+      getHomePic().then(data => {
+        if(!data) {
+          console.error('文件获取失败');
+          return;
+        }
+        put({
+          type: "modifyDownloadFileList",
+          payload: {
+            downloadFileList: data
+          }
+        })
+      });
+    }
   },
   reducers: {
     modifyDownloadFileList(state, { payload }) {

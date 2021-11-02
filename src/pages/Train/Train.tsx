@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { List, PageHeader, Typography } from 'antd';
 import { connect } from 'dva';
 
-import { getHomePic } from '@/services/gameListService';
 import AmateurlevelSearch from '@/pages/AmateurLevel/AmateurLevelSearch';
 
 import { router } from 'umi';
@@ -52,18 +51,7 @@ function Train(props: any) {
     if(downloadFileList) {
       return;
     }
-    getHomePic().then(data => {
-      if(!data) {
-        console.error('文件获取失败');
-        return;
-      }
-      dispatch({
-        type: "download/modifyDownloadFileList",
-        payload: {
-          downloadFileList: data
-        }
-      })
-    });
+    dispatch({ type: "download/getDownloadFileList" })
   }, []);
 
   useEffect(() => {
@@ -85,7 +73,7 @@ function Train(props: any) {
         />
       </header>
       <AmateurlevelSearch/>
-      {/* <List
+      <List
         header={
           <div style={{ textAlign: 'center' }}>
             <strong>关于举办《广东省轮滑技术水平等级测试（20201024期）》的通知</strong>
@@ -119,7 +107,7 @@ function Train(props: any) {
             {item.title}
           </List.Item>
         )}
-      /> */}
+      />
     </div>
   );
 }
