@@ -1,67 +1,72 @@
 import React, { useEffect } from 'react';
-import styles from './index.less';
-import { getHomePic } from '@/services/gameListService';
 import { List, PageHeader, Typography } from 'antd';
+import { connect } from 'dva';
+
+import { getHomePic } from '@/services/gameListService';
+import styles from './index.less';
 
 const p = 'https://react-image-1256530695.cos.ap-chengdu.myqcloud.com/img/p.png';
 
-function StaticDownload() {
-  const data = [
-    {
-      title: '粤轮协【2019】24号 关于举办《广东省轮滑技术水平等级测试（20191027期）》的通知',
-      id: 0,
-    },
-    {
-      title: '附件2 广东省轮滑技术水平等级测试(20191027期）内容和标准',
-      id: 1,
-    },
-    {
-      title: '附件3：广东省轮滑技术水平等级测试（20191027期）报名表',
-      id: 2,
-    },
-    {
-      title: '附件4：越级申请表（20191027期）',
-      id: 3,
-    },
-  ];
+const data = [
+  {
+    title: '粤轮协【2019】24号 关于举办《广东省轮滑技术水平等级测试（20191027期）》的通知',
+    id: 0,
+  },
+  {
+    title: '附件2 广东省轮滑技术水平等级测试(20191027期）内容和标准',
+    id: 1,
+  },
+  {
+    title: '附件3：广东省轮滑技术水平等级测试（20191027期）报名表',
+    id: 2,
+  },
+  {
+    title: '附件4：越级申请表（20191027期）',
+    id: 3,
+  },
+];
 
-  const data1 = [
-    {
-      title: '粤轮协【2019】25号 关于举办《广东省轮滑技术水平等级测试（20191102期）》的通知',
-      id: 0,
-    },
-    {
-      title: '附件2 广东省轮滑技术水平等级测试内容和标准（20191102期）',
-      id: 1,
-    },
-    {
-      title: '附件3：广东省轮滑技术水平等级测试（20191102期）报名表',
-      id: 2,
-    },
-    {
-      title: '附件4：越级申请表（20191102期）',
-      id: 3,
-    },
-  ];
+const data1 = [
+  {
+    title: '粤轮协【2019】25号 关于举办《广东省轮滑技术水平等级测试（20191102期）》的通知',
+    id: 0,
+  },
+  {
+    title: '附件2 广东省轮滑技术水平等级测试内容和标准（20191102期）',
+    id: 1,
+  },
+  {
+    title: '附件3：广东省轮滑技术水平等级测试（20191102期）报名表',
+    id: 2,
+  },
+  {
+    title: '附件4：越级申请表（20191102期）',
+    id: 3,
+  },
+];
 
-  const data_0705 = [
-    {
-      title: '关于举办《广东省轮滑技术水平等级测试（20200705期）》的通知',
-      id: 0,
-    },
-    {
-      title: '附件2、广东省轮滑技术水平等级测试（20200705期）内容和标准',
-      id: 1,
-    },
-    {
-      title: '附件3：广东省轮滑技术水平等级测试（20200705期）报名表',
-      id: 2,
-    },
-    {
-      title: '附件4：越级申请表（20200705期）',
-      id: 3,
-    },
-  ];
+const data_0705 = [
+  {
+    title: '关于举办《广东省轮滑技术水平等级测试（20200705期）》的通知',
+    id: 0,
+  },
+  {
+    title: '附件2、广东省轮滑技术水平等级测试（20200705期）内容和标准',
+    id: 1,
+  },
+  {
+    title: '附件3：广东省轮滑技术水平等级测试（20200705期）报名表',
+    id: 2,
+  },
+  {
+    title: '附件4：越级申请表（20200705期）',
+    id: 3,
+  },
+];
+
+function StaticDownload(props: any) {
+  
+  const { downloadFileList, dispatch } = props;
 
   const logo: React.ReactNode = (
     <div className={styles.logo}>
@@ -81,17 +86,32 @@ function StaticDownload() {
   const [files, setFiles] = React.useState([]);
   const [files_1102, setFiles_1102] = React.useState([]);
   const [files_0705, setFiles_0705] = React.useState([]);
+
   useEffect(() => {
-    getHomePic().then((data: any) => {
-      if (data) {
-        setFiles(data.filter((m: any) => m.id >= 16 && m.id <= 19).map((v: any) => v.file));
-        setFiles_1102(data.filter((m: any) => m.id >= 20 && m.id <= 23).map((v: any) => v.file));
-        setFiles_0705(data.filter((m: any) => m.id >= 63 && m.id <= 66).map((v: any) => v.file));
-      } else {
-        console.log('文件获取失败');
+    if(downloadFileList) {
+      return;
+    }
+    getHomePic().then(data => {
+      if(!data) {
+        console.error('文件获取失败');
+        return;
       }
+      dispatch({
+        type: "download/modifyDownloadFileList",
+        payload: {
+          downloadFileList: data
+        }
+      })
     });
   }, []);
+
+  useEffect(() => {
+    if (downloadFileList) {
+      setFiles(downloadFileList.filter((m: any) => m.id >= 16 && m.id <= 19).map((v: any) => v.file));
+      setFiles_1102(downloadFileList.filter((m: any) => m.id >= 20 && m.id <= 23).map((v: any) => v.file));
+      setFiles_0705(downloadFileList.filter((m: any) => m.id >= 63 && m.id <= 66).map((v: any) => v.file));
+    }
+  }, [downloadFileList]);
 
   return (
     <div className={styles['download']}>
@@ -191,4 +211,8 @@ function StaticDownload() {
     </div>
   );
 }
-export default StaticDownload;
+export default connect((model: any) => {
+  return{
+    downloadFileList: model?.download?.downloadFileList
+  }
+})(StaticDownload);

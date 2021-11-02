@@ -1,7 +1,8 @@
-import { getHomePic } from '@/services/gameListService';
+import React, { useState, useEffect } from 'react';
 import { List, PageHeader, Typography } from 'antd';
 import { connect } from 'dva';
-import React, { useState, useEffect } from 'react';
+
+import { getHomePic } from '@/services/gameListService';
 import AmateurlevelSearch from '@/pages/AmateurLevel/AmateurLevelSearch';
 
 import { router } from 'umi';
@@ -41,20 +42,36 @@ const data_1008 = [
   },
 ];
 
-function Train() {
+function Train(props: any) {
+  const { downloadFileList, dispatch } = props;
+
   const [files_0913, setFiles_0913] = useState([]);
   const [files_1008, setFiles_1008] = useState([]);
 
   useEffect(() => {
+    if(downloadFileList) {
+      return;
+    }
     getHomePic().then(data => {
-      if (data) {
-        setFiles_0913(data.filter((m: any) => m.id >= 67 && m.id <= 69).map((v: any) => v.file));
-        setFiles_1008(data.filter((m: any) => m.id >= 70 && m.id <= 73).map((v: any) => v.file));
-      } else {
+      if(!data) {
         console.error('文件获取失败');
+        return;
       }
+      dispatch({
+        type: "download/modifyDownloadFileList",
+        payload: {
+          downloadFileList: data
+        }
+      })
     });
   }, []);
+
+  useEffect(() => {
+    if (downloadFileList) {
+      setFiles_0913(downloadFileList.filter((m: any) => m.id >= 67 && m.id <= 69).map((v: any) => v.file));
+      setFiles_1008(downloadFileList.filter((m: any) => m.id >= 70 && m.id <= 73).map((v: any) => v.file));
+    }
+  }, [downloadFileList])
 
   return (
     <div className={styles['download']}>
@@ -107,4 +124,8 @@ function Train() {
   );
 }
 
-export default connect()(Train);
+export default connect((model: any) => {
+  return{
+    downloadFileList: model?.download?.downloadFileList
+  }
+})(Train);
