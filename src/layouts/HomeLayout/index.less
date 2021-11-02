@@ -1,5 +1,4 @@
 .homeLayout {
-  min-height: 100vh;
   :global {
     .ant-layout-header {
       color: white;
@@ -16,6 +15,7 @@
     }
   }
   .content {
+    height: auto;
     background-color: white;
     box-shadow: 5px 0 3px -6px black,
     -5px 0 3px -6px black;
@@ -25,7 +25,6 @@
     }
     @media screen and (min-width: 576px) {
       width: 100%;
-      height: 100%;
       margin: 0.6em auto;
       padding: 0 1rem;
       // .homeContent {
