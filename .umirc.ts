@@ -25,6 +25,10 @@ const config: IConfig = {
           component: './Home/introduction/introduction.tsx',
         },
         {
+          path: '/home/amateurlevel',
+          component: './AmateurLevel/index.tsx',
+        },
+        {
           path: '/home/train',
           component: './Train/Train.tsx',
         },

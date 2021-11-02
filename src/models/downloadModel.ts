@@ -28,18 +28,17 @@ const DownLoadModel: DownLoadModelType = {
   },
   effects: {
     *getDownloadFileList( _action, { put }) {
-      getHomePic().then(data => {
-        if(!data) {
-          console.error('文件获取失败');
-          return;
+      const data = yield getHomePic();
+      if(!data) {
+        console.error('文件获取失败');
+        return;
+      }
+      yield put({
+        type: "modifyDownloadFileList",
+        payload: {
+          downloadFileList: data
         }
-        put({
-          type: "modifyDownloadFileList",
-          payload: {
-            downloadFileList: data
-          }
-        })
-      });
+      })
     }
   },
   reducers: {

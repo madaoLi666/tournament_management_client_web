@@ -79,6 +79,8 @@ function Home(props: HomeProps) {
     if (e.key === 'home') {
       router.push('/home');
     } else if (e.key === 'level') {
+      router.push('/home/amateurlevel');
+    } else if (e.key === 'train'){
       router.push('/home/train');
     } else {
       router.push('/home/temp');
