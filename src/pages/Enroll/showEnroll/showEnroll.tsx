@@ -1,28 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { ConnectState } from '@/models/connect';
 import { connect, Dispatch } from 'dva';
-import { ContestantUnitData } from '@/models/enrollModel';
+import { ContestantUnitData, TeamEnrollLimitation } from '@/models/enrollModel';
 import { personProject, teamProject, unitInfo } from '@/pages/Enroll/showEnroll/components/data';
 import { getArray, getArray1, getManNumber } from '@/pages/Enroll/showEnroll/components/dataDeal';
 import { sendEmail } from '@/services/enrollServices';
 import router from 'umi/router';
 import { Layout, PageHeader, Descriptions, Table, Comment, Button, message } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
+import { throttle } from '@/utils/index'
 import styles from './index.less';
 
 const { Header, Content, Footer } = Layout;
 
 interface ShowEnrollProps {
-  current_match_id?: number | undefined;
-  unit_info?: any;
-  game_list?: Array<any>;
-  dispatch: Dispatch;
-  contestant?: any;
-  athleteList?: any;
-  teamList?: Array<any>;
-  loading: boolean;
-  contestantUnitData?: ContestantUnitData;
-  contestant_id: number;
+  current_match_id?: number | undefined,
+  unit_info?: any,
+  game_list?: Array<any>,
+  dispatch: Dispatch,
+  contestant?: any,
+  athleteList?: any,
+  teamList?: Array<any>,
+  loading: boolean,
+  contestantUnitData?: ContestantUnitData,
+  contestant_id: number,
+  teamEnrollLimitation: TeamEnrollLimitation | null
 }
 
 function ShowEnroll(props: ShowEnrollProps) {
@@ -37,9 +39,26 @@ function ShowEnroll(props: ShowEnrollProps) {
     loading,
     teamList,
     unit_info,
+    teamEnrollLimitation
   } = props;
 
   const [game_name, setGame_name] = useState('');
+
+  // enroll number
+  const [enrollNumber, setEnrollNumber] = useState<number>(0)
+  useEffect(() => {
+    // throttle, because the props change will make a new dispatch, althought dva has help us to debounce
+    if(!teamEnrollLimitation && Number(current_match_id) > 0){
+      (throttle(() => {
+        dispatch({
+          type: 'enroll/getTeamLimitation',
+          payload: { matchdata: Number(current_match_id) }
+        })
+      }, 500))()
+    }
+  }, [current_match_id])
+
+
   useEffect(() => {
     if (game_list && game_list.length !== 0) {
       for (let i = 0; i < game_list.length; i++) {
@@ -95,14 +114,19 @@ function ShowEnroll(props: ShowEnrollProps) {
   const [athlete_list, setAthlete_list] = useState<personProject[]>();
   useEffect(() => {
     const { athleteList } = props;
+    // 用来统计报名人数
+    let enrollCount = 0;
     if (athleteList === undefined || athleteList.length === 0) {
       return;
     }
     // 筛选出选中的先
     let person_athlete_list: Array<any> = athleteList.filter((v: any) => v.active == 1);
-    person_athlete_list = person_athlete_list.filter(
-      (v: any) => v.project.personaldata.length + v.project.upgrouppersonaldata.length !== 0,
-    );
+    person_athlete_list = person_athlete_list.filter((v: any) => {
+      if(v.project.personaldata.length + v.project.upgrouppersonaldata.length + v.project.teamproject.length !== 0){
+        enrollCount++;
+      }
+      return v.project.personaldata.length + v.project.upgrouppersonaldata.length !== 0;
+    });
     let temp_list = new Array<personProject>();
     for (let i = 0; i < person_athlete_list.length; i++) {
       let temp_athlete: personProject = {
@@ -119,6 +143,7 @@ function ShowEnroll(props: ShowEnrollProps) {
       temp_list.push(temp_athlete);
     }
     setAthlete_list(temp_list);
+    setEnrollNumber(enrollCount);
   }, [athleteList]);
 
   const [team_list, setTeam_list] = useState<teamProject[]>();
@@ -209,6 +234,10 @@ function ShowEnroll(props: ShowEnrollProps) {
     { key: 'woman', dataIndex: 'woman', title: '女', align: 'center' },
   ];
 
+  const leastnumber = teamEnrollLimitation?.leastnumber || 0;
+  const mostnumber = teamEnrollLimitation?.mostnumber || 999;
+  const confirmBtnDisable = enrollNumber < leastnumber || enrollNumber > mostnumber;
+
   return (
     <Layout className={styles['newLayout']}>
       <Comment
@@ -264,6 +293,11 @@ function ShowEnroll(props: ShowEnrollProps) {
         </div>
       </Content>
       <div className={styles.hr} />
+      {confirmBtnDisable && (
+        <div className={styles.errorText}>
+          {`当前总参数人数为${enrollNumber}，本场赛事参赛人数至少为${leastnumber}，至多为${mostnumber}，请返回调整`}
+        </div>
+      )}
       <div className={styles.btn}>
         <Button
           loading={loading}
@@ -277,6 +311,7 @@ function ShowEnroll(props: ShowEnrollProps) {
             });
           }}
           type="primary"
+          disabled={confirmBtnDisable}
         >
           提交本《确认书》
         </Button>
@@ -311,6 +346,7 @@ const mapStateToProps = ({ router, enroll, loading, gameList }: ConnectState) =>
     contestantUnitData: unit?.contestantUnitData,
     // 队伍id
     contestant_id: Number(teamId),
+    teamEnrollLimitation: enroll.teamEnrollLimitation
   };
 };
 

@@ -1,7 +1,7 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
 import { checkISEnroll, getContestantUnitData, getLimitEnroll } from '@/services/enrollServices';
-import { getAllItem, getIndividualEnrollLimit } from '@/services/ruleServices';
+import { getAllItem, getIndividualEnrollLimit, getTeamEnrollLimitation } from '@/services/ruleServices';
 import { convertAthleteList, convertItemData } from '@/utils/enroll';
 import { message } from 'antd';
 
@@ -46,13 +46,28 @@ interface UnitMes {
   teamEnrollList: Array<any>;
 }
 
+export interface TeamEnrollLimitation {
+  blacklist: number,
+  id: number,
+  leastnumber: number,
+  matchdata: number,
+  membershipbond: number,
+  membershipservicefee: number,
+  membershipunitverification: number,
+  mostnumber: number,
+  teamnumber: number,
+  unmembershipbond: number,
+  unmembershipservicefee: number
+}
+
 export interface EnrollModelState {
-  currentMatchId?: number;
-  unitInfo?: any;
-  unit?: UnitMes;
-  individualLimitation?: object;
-  individualItem?: Array<any>;
-  teamItem?: Array<any>;
+  currentMatchId?: number,
+  unitInfo?: any,
+  unit?: UnitMes,
+  individualLimitation?: object,
+  individualItem?: Array<any>,
+  teamItem?: Array<any>,
+  teamEnrollLimitation: null | TeamEnrollLimitation
 }
 
 export interface EnrollModelType {
@@ -60,22 +75,24 @@ export interface EnrollModelType {
   state: EnrollModelState;
   effects: {
     // 获取本赛事本单位是否有参赛资格
-    getEnrollLimit: Effect;
-    getIndividualLimitation: Effect;
-    getAllItemInfo: Effect;
-    getContestantUnitData: Effect;
-    checkIsEnrollAndGetAthleteLIST: Effect;
+    getEnrollLimit: Effect,
+    getIndividualLimitation: Effect,
+    getAllItemInfo: Effect,
+    getContestantUnitData: Effect,
+    checkIsEnrollAndGetAthleteLIST: Effect,
+    getTeamLimitation: Effect
   };
   reducers: {
-    clearState: Reducer<EnrollModelState>;
-    modifyUnitInfo: Reducer<EnrollModelState>;
-    modifyCurrentMatchId: Reducer<EnrollModelState>;
-    modifyUnitData: Reducer<EnrollModelState>;
-    modifyAthleteList: Reducer<EnrollModelState>;
-    modifyIndividualLimitation: Reducer<EnrollModelState>;
-    modifyItem: Reducer<EnrollModelState>;
-    modifyContestantUnitData: Reducer<EnrollModelState>;
-    modifyTeamEnroll: Reducer<EnrollModelState>;
+    clearState: Reducer<EnrollModelState>,
+    modifyUnitInfo: Reducer<EnrollModelState>,
+    modifyCurrentMatchId: Reducer<EnrollModelState>,
+    modifyUnitData: Reducer<EnrollModelState>,
+    modifyAthleteList: Reducer<EnrollModelState>,
+    modifyIndividualLimitation: Reducer<EnrollModelState>,
+    modifyItem: Reducer<EnrollModelState>,
+    modifyContestantUnitData: Reducer<EnrollModelState>,
+    modifyTeamEnroll: Reducer<EnrollModelState>,
+    modifyTeamEnrollLimitation: Reducer<EnrollModelState>
   };
 }
 
@@ -94,6 +111,7 @@ const EnrollModel: EnrollModelType = {
     individualLimitation: {},
     individualItem: [],
     teamItem: [],
+    teamEnrollLimitation: null
   },
 
   effects: {
@@ -194,10 +212,24 @@ const EnrollModel: EnrollModelType = {
         }
       }
     },
+    *getTeamLimitation({ payload }, { call, put }){
+      const { matchdata } = payload;
+      if(!matchdata) {
+        return;
+      }
+      const data = yield getTeamEnrollLimitation({matchdata});
+      if(data && data.length) {
+        yield put({
+          type: "modifyTeamEnrollLimitation",
+          payload: { teamEnrollLimitation: data[0] }
+        })
+      }
+    }
   },
 
   reducers: {
     clearState(state, { _ }) {
+      console.warn(1)
       return {
         ...state,
         currentMatchId: -1,
@@ -212,6 +244,7 @@ const EnrollModel: EnrollModelType = {
         individualLimitation: {},
         individualItem: [],
         teamItem: [],
+        teamEnrollLimitation: null
       };
     },
     modifyUnitInfo(state, { payload }) {
@@ -287,6 +320,12 @@ const EnrollModel: EnrollModelType = {
         },
       });
     },
+    modifyTeamEnrollLimitation(state, { payload }) {
+      return {
+        ...state,
+        teamEnrollLimitation: payload?.teamEnrollLimitation
+      }
+    }
   },
 };
 

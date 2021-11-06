@@ -8,18 +8,20 @@ import EnrollHeader from '@/pages/Enroll/components/enrollHeader';
 import ModalForm, { AthleteFormValues } from '@/components/athleteForm/modalForm';
 import { newUnitAthlete } from '@/services/enrollServices';
 import { router } from 'umi';
-
+import { throttle } from '@/utils/index';
+import { TeamEnrollLimitation } from '@/models/enrollModel';
 interface ParticipantsAthleteListProps {
-  dispatch: Dispatch;
-  contestant_id: number;
-  loading: boolean;
-  matchId?: number;
-  unitId: number;
-  athleteList?: Array<any>;
+  dispatch: Dispatch,
+  contestant_id: number,
+  loading: boolean,
+  matchId?: number,
+  unitId: number,
+  athleteList?: Array<any>,
+  teamEnrollLimitation: TeamEnrollLimitation | null
 }
 
 function ParticipantsAthleteList(props: ParticipantsAthleteListProps) {
-  const { matchId, unitId, dispatch, athleteList, contestant_id, loading } = props;
+  const { matchId, unitId, dispatch, athleteList, contestant_id, loading, teamEnrollLimitation } = props;
 
   useEffect(() => {
     if (matchId && unitId && contestant_id && matchId > 0) {
@@ -30,6 +32,18 @@ function ParticipantsAthleteList(props: ParticipantsAthleteListProps) {
     }
     return () => {};
   }, [contestant_id, matchId, unitId]);
+
+  useEffect(() => {
+    // throttle, because the props change will make a new dispatch, althought dva has help us to debounce
+    if(!teamEnrollLimitation && Number(matchId) > 0){
+      (throttle(() => {
+        dispatch({
+          type: 'enroll/getTeamLimitation',
+          payload: { matchdata: Number(matchId) }
+        })
+      }, 500))()
+    }
+  }, [matchId])
 
   const add_athlete = () => {
     setAddVisible(true);
@@ -103,6 +117,29 @@ function ParticipantsAthleteList(props: ParticipantsAthleteListProps) {
       });
   };
 
+  const handleButtonClick = () => {
+    if(!athleteList || !athleteList.length) {
+      message.warn('请添加运动员后再进行报名');
+      return;
+    }
+    const countActive: Array<any>|undefined = athleteList?.filter((v: any) => {
+      return v.active === 1;
+    });
+    const { leastnumber, mostnumber } = teamEnrollLimitation;
+    if(countActive) {
+      if (countActive.length < leastnumber || countActive.length > mostnumber) {
+        message.warn(`参数运动员最少为${leastnumber}人，最多为${mostnumber}`);
+        return;
+      }
+    }
+    router.push({
+      pathname: '/enroll/individual/' + String(matchId),
+      query: {
+        teamId: String(contestant_id),
+      },
+    });
+  };
+
   if (!athleteList) {
     return <div>loading</div>;
   } else {
@@ -139,31 +176,7 @@ function ParticipantsAthleteList(props: ParticipantsAthleteListProps) {
         <div className={styles.btn}>
           <Button
             loading={loading}
-            onClick={() => {
-              // 这里没有限制到接受最少几个人报名
-              if (String(matchId) === '26') {
-                const countActive = athleteList.filter((v: any) => {
-                  return v.active === 1;
-                });
-                if (countActive.length < 5) {
-                  message.warn('不接受个人报名和人数少于5人的运动队报名，请先确认运动员参赛');
-                  return;
-                }
-              }
-              if (athleteList?.length === 0) {
-                message.warn('请添加运动员后再进行报名');
-                return;
-              }
-              if (String(matchId) === '27') {
-                message.info('请在此处点击报名添加一名随队裁判！');
-              }
-              router.push({
-                pathname: '/enroll/individual/' + String(matchId),
-                query: {
-                  teamId: String(contestant_id),
-                },
-              });
-            }}
+            onClick={handleButtonClick}
             type="primary"
           >
             进入个人赛报名
@@ -197,6 +210,7 @@ const mapStateToProps = ({ enroll, loading, router }: ConnectState) => {
     loading: loading.global,
     // 参赛队伍id
     contestant_id: Number(teamId),
+    teamEnrollLimitation: enroll?.teamEnrollLimitation
   };
 };
 
