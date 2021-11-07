@@ -9,8 +9,8 @@ import { ColumnProps } from 'antd/lib/table';
  * @param str string - UTC
  */
 function formatData(str: string) {
-  const date = new Date(str)
-  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+  const date = new Date(str);
+  return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`
 }
 
 const AmateurLevelSearchTable = (props: {data: any}) => {
