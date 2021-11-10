@@ -179,8 +179,9 @@ function NormalLogin(props: NormalLoginProps) {
               prefix={<LockOutlined />}
             />
             <span>
-              没有账号？
               <a onClick={() => router.push('/login/register')}>点击注册</a>
+              &nbsp;&nbsp;
+              <a onClick={() => router.push('/login/forgotpassword')}>忘记密码</a>
             </span>
           </div>
         </TabPane>

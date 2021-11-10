@@ -37,3 +37,8 @@ export async function newUnitAccount(data: object): Promise<any> {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
   });
 }
+
+// 重置密码
+export async function resetPassword(data: object): Promise<any> {
+  return axiosInstance.post('/resetpassword/', data);
+}

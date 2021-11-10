@@ -13,6 +13,7 @@ const config: IConfig = {
       routes: [
         { path: '/login', component: './Login/Login.tsx' },
         { path: '/login/register', component: './Login/register.tsx' },
+        { path: '/login/forgotpassword', component: './Login/ResetPassword.tsx' },
       ],
     },
     {
