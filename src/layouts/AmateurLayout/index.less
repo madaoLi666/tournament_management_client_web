@@ -1,0 +1,47 @@
+.enroll {
+  min-height: 100vh;
+  :global {
+    .ant-layout-header {
+      color: white;
+      background: linear-gradient(#58a3f7, #6633ff);
+      line-height: 50px;
+    }
+
+    @media screen and (max-width: 576px) {
+      .ant-layout-header {
+        padding: 0 1.5rem;
+      }
+    }
+  }
+
+  .matchName {
+    background-color: white;
+    padding: 0 1rem;
+    min-height: 4rem;
+    font: 600 1em/1.8 PingFang SC, Lantinghei SC, Microsoft Yahei, Hiragino Sans GB,
+      Microsoft Sans Serif, WenQuanYi Micro Hei, Helvetica, sans-serif;
+    font-size: 120%;
+    border-bottom: 1px solid #e2e2e2;
+    display: flex;
+    align-items: center;
+    @media screen and (max-width: 576px) {
+      justify-content: center;
+      text-align: center;
+    }
+  }
+
+  .content {
+    background-color: white;
+    height: auto;
+    @media screen and (max-width: 576px) {
+      padding: 0 0.5rem;
+      margin: 0.5rem 0;
+      border: 1px solid #e2e2e2;
+    }
+    @media screen and (min-width: 576px) {
+      padding: 0 1rem;
+      margin: 2rem 6rem;
+      border: 1px solid #e2e2e2;
+    }
+  }
+}

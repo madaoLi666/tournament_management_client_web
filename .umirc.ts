@@ -109,6 +109,20 @@ const config: IConfig = {
       path: '/download',
       routes: [{ path: '/download', component: './Download/staticDownload.tsx', name: '下载' }],
     },
+    {
+      path: 'amateurlevel',
+      Routes: ['./src/layouts/AmateurLayout/index.tsx'],
+      routes: [
+        { 
+          path: '/amateurlevel/examieeunit',
+          component: './AmateurLevel/Enroll/ExamineeUnit/index.tsx'
+        },
+        { 
+          path: '/amateurlevel/examieeenroll',
+          component: './AmateurLevel/Enroll/ExamieeEnroll/index.tsx'
+        }
+      ]
+    },
     { path: '/', redirect: '/home' },
   ],
   plugins: [

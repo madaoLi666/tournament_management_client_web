@@ -36,6 +36,7 @@ export interface ConnectState {
   global: GlobalModelState;
   account: AccountModelState;
   router: any;
+  amateur: any
 }
 
 /**
