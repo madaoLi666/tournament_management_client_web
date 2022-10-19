@@ -203,7 +203,7 @@ function RegisterForm(props: RegisterFormProps) {
         <Input placeholder={'请输入您的邮箱'} />
       </Form.Item>
 
-      <Form.Item label="邮箱验证码" className={styles.emailCode}>
+      {/* <Form.Item label="邮箱验证码" className={styles.emailCode}>
         <Row gutter={8}>
           <Col span={14}>
             <Form.Item
@@ -233,7 +233,7 @@ function RegisterForm(props: RegisterFormProps) {
             </Button>
           </Col>
         </Row>
-      </Form.Item>
+      </Form.Item> */}
 
       <Form.Item
         name="agreement"
