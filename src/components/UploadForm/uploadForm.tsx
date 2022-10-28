@@ -64,7 +64,7 @@ export default function UploadForm(props: UploadFormProps) {
       getValueFromEvent={normFile}
       required={required}
     >
-      <Upload accept={'image/*'} name="file" action="/upload.do" listType="picture">
+      <Upload accept={'image/*'} name="file" action="" listType="picture">
         {needUpload ? (
           <Button>
             <UploadOutlined />
