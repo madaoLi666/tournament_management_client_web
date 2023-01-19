@@ -14,8 +14,7 @@ export default function LoginLayout(props: any) {
     <Layout className={styles.login_layout}>
       <Header className={styles.header}>
         <p>
-          <img src={logo} alt="" />
-          <strong>轮滑赛事辅助系统平台</strong>
+          <strong>体育赛事辅助平台</strong>
         </p>
       </Header>
 

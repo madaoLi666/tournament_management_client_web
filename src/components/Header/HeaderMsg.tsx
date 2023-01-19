@@ -16,9 +16,8 @@ function HeaderMsg() {
       <div className={styles.header_left}>
         <strong>
           <div>
-            <img onClick={() => router.push('/home')} src={GDLogo} alt="" />
             <span className={styles.title}>
-              <a onClick={() => router.push('/home')}>轮滑赛事辅助系统平台</a>
+              <a onClick={() => router.push('/home')}>体育赛事辅助平台</a>
             </span>
           </div>
           {/* <a
