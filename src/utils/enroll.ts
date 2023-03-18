@@ -207,12 +207,8 @@ export function getGroupsByAge(
   upGroupNumber: number,
   group_age_list: Array<GroupAgeList>,
 ) {
+  // 将所有的group按照startTime排序
   qSort(groupList, 0, groupList.length - 1, 'startTime');
-  /* 这里预设年龄组别不做排序了，后台设置时必须从大到小排序设置，即青成->少年->儿童 A B C */
-  // console.log(birthday);
-  // console.log(groupList);
-  // console.log(upGroupNumber);
-  // console.log(group_age_list);
   let index = -1;
   let j = 0;
   for (j; j < group_age_list.length; j++) {
@@ -252,7 +248,7 @@ export function getGroupsByAge(
           // 找是否有符合本身年龄段的组别
           for (let k = 0; k < groupList.length; k++) {
             if (groupList[k].startTime <= birthday && groupList[k].endTime >= birthday) {
-              return groupList.slice(k, upGroupNumber);
+              return groupList.slice(k, k + 1 + upGroupNumber);
             }
           }
           return [];
