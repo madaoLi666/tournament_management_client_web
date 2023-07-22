@@ -460,7 +460,7 @@ export function legalAthleteFilter(athleteList: Array<any>, rule: FilterRule) {
           // 向下取组到底部 全取
           tarGroupList = groupList.slice(index, groupList.length - 1);
         } else {
-          tarGroupList = groupList.slice(index, index + upGroupNumber);
+          tarGroupList = groupList.slice(index, index + upGroupNumber + 1);
         }
         tarGroupList.forEach((v: any) => {
           if (
