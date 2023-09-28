@@ -4,7 +4,7 @@ import { message } from 'antd';
 
 export async function loginRequest(data: object): Promise<any> {
   return axios
-    .post('https://www.gsta.top/v3/api-token-auth/', data)
+    .post('https://www.gsta.net.cn/v3/api-token-auth/', data)
     .then(res => res.data)
     .catch(() => {
       message.error('请检查账号密码是否正确');
