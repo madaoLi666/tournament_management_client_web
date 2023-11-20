@@ -4,7 +4,7 @@ import router from 'umi/router';
 import { isIllegal } from '@/utils/judge';
 
 // prod
-const BASE_URL: string = 'https://www.gsta.net.cn/v3';
+const BASE_URL: string = 'http://101.33.230.157/v3';
 // const BASE_URL: string = 'http://127.0.0.1:8000/v3';
 // dev
 // const BASE_URL: string = 'http://192.168.1.9/v3';
