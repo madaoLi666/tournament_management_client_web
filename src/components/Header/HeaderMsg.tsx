@@ -24,7 +24,7 @@ function HeaderMsg() {
             className={styles.header_block}
             onClick={() =>
               window.open(
-                'https://www.gsta.top/nstatic/react/%E6%8A%A5%E5%90%8D%E6%AD%A5%E9%AA%A4_6fDXGU2.html',
+                'https://www.gsta.net.cn/nstatic/react/%E6%8A%A5%E5%90%8D%E6%AD%A5%E9%AA%A4_6fDXGU2.html',
               )
             }
           >

@@ -244,7 +244,7 @@ function RegisterForm(props: RegisterFormProps) {
           我已阅读并同意
           <a
             target="_blank"
-            href="https://www.gsta.top/nstatic/react/privacy.html"
+            href="https://www.gsta.net.cn/nstatic/react/privacy.html"
           >
             &nbsp;隐私政策
           </a>
