@@ -209,6 +209,7 @@ export function getGroupsByAge(
 ) {
   // 将所有的group按照startTime排序
   qSort(groupList, 0, groupList.length - 1, 'startTime');
+  qSort(group_age_list, 0, group_age_list.length - 1, 'starttime');
   let index = -1;
   let j = 0;
   for (j; j < group_age_list.length; j++) {
