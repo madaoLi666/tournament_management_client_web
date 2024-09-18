@@ -23,7 +23,7 @@ class FooterMsg extends React.PureComponent {
             href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44011802000333"
           >
             <img src={p} alt="" />
-            <p>粤公网安备 44011802000333号</p>
+            <p>粤公网安备 44011802000915号</p>
           </a>
         </div>
       </footer>
