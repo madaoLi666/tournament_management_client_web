@@ -408,10 +408,11 @@ export function legalAthleteFilter(athleteList: Array<any>, rule: FilterRule) {
         } else {
           tarGroupList = groupList.slice(index, index + upGroupNumber);
         }
+        // 特殊修改 TODO 之后要把这里判断 变成青年组得出生日期
         tarGroupList.forEach((v: any) => {
           if (
             v.startTime <= athleteList[i].athlete.birthday.substr(0, 10) &&
-            '2004-08-31' >= athleteList[i].athlete.birthday.substr(0, 10)
+            '2009-08-31' >= athleteList[i].athlete.birthday.substr(0, 10)
           ) {
             athleteList[i].groupFlag = true;
           }
